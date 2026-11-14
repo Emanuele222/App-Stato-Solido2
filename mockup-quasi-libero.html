@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup · Elettrone quasi libero</title>
+<style>
+:root{
+  --bg:#0f1114; --panel:#13161a; --line:#242930; --text:#e8e6e1; --muted:#8b9099; --dim:#5b616b;
+  --a:#58c4dd; --k:#f4d345; --E:#83c167; --V:#fc6255; --m:#b189f0; --F:#ff9f5a;
+  --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",math,serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.5 var(--sans);display:grid;
+  grid-template-columns:208px minmax(0,1fr) 400px;overflow:hidden;-webkit-font-smoothing:antialiased}
+h2{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 12px}
+math{font-family:var(--math)}
+[data-q="a"]{--c:var(--a)}[data-q="k"]{--c:var(--k)}[data-q="E"]{--c:var(--E)}[data-q="V"]{--c:var(--V)}
+
+/* barra laterale */
+.side{border-right:1px solid var(--line);padding:18px 14px;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.brand{font-weight:600;font-size:15px;margin:0 6px 18px}
+.brand small{display:block;font-weight:400;font-size:11px;color:var(--dim)}
+.chapter{padding:7px 6px;font-weight:600;font-size:13px}
+.chapter.soon{color:var(--dim);font-weight:500;padding:4px 6px}
+.soon-title{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:600;padding:12px 6px 4px;border-top:1px solid var(--line);margin-top:6px}
+.side ul{list-style:none;margin:0 0 10px;padding:0}
+.side li{padding:5px 6px 5px 16px;color:var(--muted);border-left:2px solid transparent;font-size:13px}
+.side li.active{color:var(--text);border-left-color:var(--E);background:#171b20}
+.note{margin-top:auto;font-size:11px;color:var(--dim);padding:10px 6px 0;border-top:1px solid var(--line)}
+
+/* centro */
+.stage{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;min-height:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.crumb{color:var(--muted);font-size:13px}
+.crumb strong{color:var(--text);font-weight:600}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.tools button,.step button{font:inherit;font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:99px;padding:4px 12px;cursor:pointer}
+.tools button:hover,.step button:hover{color:var(--text);border-color:var(--dim)}
+.tools button[aria-pressed="true"]{color:var(--bg);background:var(--text);border-color:var(--text)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.scene{display:grid;grid-template-rows:34% 66%;min-height:0}
+.view{position:relative;min-height:0}
+.view+.view{border-top:1px solid var(--line)}
+.view canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.view .tag{position:absolute;left:20px;top:10px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;pointer-events:none;z-index:1}
+.view .hint{position:absolute;right:20px;top:9px;font-size:12px;color:var(--dim);pointer-events:none;z-index:1}
+#bands{cursor:crosshair;touch-action:none}
+.params{display:flex;align-items:center;gap:8px 18px;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.param{display:flex;align-items:center;gap:10px;padding:5px 8px;border:1px solid transparent;border-radius:8px}
+.param .sym{font-family:var(--math);font-style:italic;font-size:17px;color:var(--c)}
+.param input[type=range]{width:140px;accent-color:var(--c)}
+.param output{font-variant-numeric:tabular-nums;min-width:58px}
+.param.on{border-color:var(--c)}
+.step{color:var(--muted);font-size:13px}
+.step button{padding:1px 9px}
+.step output{min-width:14px;text-align:center;color:var(--text)}
+.preset{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.preset select{max-width:180px;font:inherit;font-size:13px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+[hidden]{display:none!important}
+
+/* pannello destro */
+.right{border-left:1px solid var(--line);overflow:auto;min-height:0}
+.right section{padding:18px 20px}
+.right section+section{border-top:1px solid var(--line)}
+.q{color:var(--c);border-radius:4px;cursor:default;transition:opacity .15s,background-color .15s}
+.has-hl .q:not(.on){opacity:.38}
+.q.on{background:color-mix(in srgb,var(--c) 22%,transparent)}
+.q.pulse{animation:pulse .4s ease-out}
+@keyframes pulse{from{background:color-mix(in srgb,var(--c) 50%,transparent)}to{background:transparent}}
+math.hero{font-size:16px;margin:6px 0 16px}
+.defs{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:16.5px;color:var(--muted);margin-bottom:16px}
+.vals{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px;font-variant-numeric:tabular-nums;margin:0}
+.vals dt{color:var(--muted)}
+.vals dd{margin:0}
+.theory h3{font-size:13px;margin:14px 0 4px;font-weight:600}
+.theory h3:first-of-type{margin-top:0}
+.theory p{margin:0;color:#c5c7cb;font-size:13.5px;line-height:1.55}
+.theory .foot{margin-top:16px;font-size:11px;color:var(--dim)}
+
+@media (max-width:1100px){body{grid-template-columns:minmax(0,1fr) 360px}.side{display:none}}
+@media (max-width:760px){body{display:block;overflow:auto}.stage{height:88vh}.right{border-left:0;border-top:1px solid var(--line)}}
+@media (prefers-reduced-motion:reduce){.q,.q.pulse{transition:none;animation:none}}
+</style>
+</head>
+<body>
+
+<nav class="side" aria-label="Capitoli">
+  <div class="brand">Stato Solido<small>nome provvisorio</small></div>
+  <div class="chapter">Teoria delle bande</div>
+  <ul>
+    <li>Reticolo vuoto</li>
+    <li class="active" aria-current="page">Elettrone quasi libero</li>
+    <li>Kronig-Penney</li>
+    <li>Tight binding</li>
+    <li>k·p</li>
+    <li>Pseudopotenziale</li>
+  </ul>
+  <div class="soon-title">In arrivo</div>
+  <div class="chapter soon">Cristallografia</div>
+  <div class="chapter soon">Reticolo reciproco</div>
+  <div class="chapter soon">Fononi</div>
+  <div class="chapter soon">Semiconduttori</div>
+  <div class="note">Mockup di stile: è attiva solo questa sezione.</div>
+</nav>
+
+<main class="stage">
+  <header class="top">
+    <div class="crumb">Teoria delle bande › <strong>Elettrone quasi libero</strong></div>
+    <div class="tools" role="group" aria-label="Strumenti">
+      <button type="button" data-tool="fill" aria-pressed="false">Riempimento</button>
+      <button type="button" data-tool="mass" aria-pressed="false">Massa efficace</button>
+      <button type="button" data-tool="cmp" aria-pressed="false">Confronto: reticolo vuoto</button>
+    </div>
+  </header>
+
+  <section class="scene">
+    <div class="view">
+      <div class="tag">Spazio reale</div>
+      <div class="hint" id="stateHint"></div>
+      <canvas id="real" aria-label="Potenziale periodico, ioni e densità di probabilità dello stato scelto"></canvas>
+    </div>
+    <div class="view">
+      <div class="tag">Diagramma E(k)</div>
+      <div class="hint">clicca o trascina su una banda per scegliere lo stato</div>
+      <canvas id="bands" aria-label="Diagramma a bande"></canvas>
+    </div>
+  </section>
+
+  <footer class="params">
+    <label class="param" data-q="a">
+      <span class="sym">a</span>
+      <input type="range" id="sa" min="2.5" max="6" step="0.01" value="3" aria-label="Passo reticolare a">
+      <output id="oa"></output>
+    </label>
+    <label class="param" data-q="V">
+      <span class="sym">V<sub>G</sub></span>
+      <input type="range" id="sv" min="0" max="3" step="0.01" value="1" aria-label="Componente di Fourier del potenziale">
+      <output id="ov"></output>
+    </label>
+    <div class="param step" id="fillCtl" hidden>
+      elettroni per cella
+      <button type="button" id="nMinus" aria-label="Meno elettroni">−</button>
+      <output id="oN">2</output>
+      <button type="button" id="nPlus" aria-label="Più elettroni">+</button>
+    </div>
+    <label class="preset">Materiale
+      <select id="preset">
+        <option value="">Parametri liberi</option>
+        <option value="5.43,1.12">Silicio · a 5,43 Å · gap 1,12 eV</option>
+        <option value="5.66,0.67">Germanio · a 5,66 Å · gap 0,67 eV</option>
+        <option value="5.65,1.42">GaAs · a 5,65 Å · gap 1,42 eV</option>
+        <option value="3.57,5.47">Diamante · a 3,57 Å · gap 5,47 eV</option>
+      </select>
+    </label>
+  </footer>
+</main>
+
+<aside class="right">
+  <section>
+    <h2>Formula viva</h2>
+    <math display="block" class="hero">
+      <msub><mi class="q" data-q="E">E</mi><mo>±</mo></msub>
+      <mo>(</mo><mi class="q" data-q="k">k</mi><mo>)</mo>
+      <mo>=</mo>
+      <mfrac>
+        <mrow>
+          <msub><mi>ε</mi><mi class="q" data-q="k">k</mi></msub><mo>+</mo>
+          <msub><mi>ε</mi><mrow><mi class="q" data-q="k">k</mi><mo>−</mo><mi class="q" data-q="a">G</mi></mrow></msub>
+        </mrow>
+        <mn>2</mn>
+      </mfrac>
+      <mo>±</mo>
+      <msqrt>
+        <msup>
+          <mrow><mo>(</mo>
+            <mfrac>
+              <mrow>
+                <msub><mi>ε</mi><mi class="q" data-q="k">k</mi></msub><mo>−</mo>
+                <msub><mi>ε</mi><mrow><mi class="q" data-q="k">k</mi><mo>−</mo><mi class="q" data-q="a">G</mi></mrow></msub>
+              </mrow>
+              <mn>2</mn>
+            </mfrac>
+          <mo>)</mo></mrow>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <msup><mrow class="q" data-q="V"><mo>|</mo><msub><mi>V</mi><mi>G</mi></msub><mo>|</mo></mrow><mn>2</mn></msup>
+      </msqrt>
+    </math>
+    <div class="defs">
+      <math><msub><mi>ε</mi><mi class="q" data-q="k">k</mi></msub><mo>=</mo><mfrac><mrow><msup><mi>ħ</mi><mn>2</mn></msup><msup><mi class="q" data-q="k">k</mi><mn>2</mn></msup></mrow><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></math>
+      <math><mi class="q" data-q="a">G</mi><mo>=</mo><mfrac><mrow><mn>2</mn><mi>π</mi></mrow><mi class="q" data-q="a">a</mi></mfrac></math>
+      <math><msub><mi class="q" data-q="E">E</mi><mtext>gap</mtext></msub><mo>=</mo><mn>2</mn><mrow class="q" data-q="V"><mo>|</mo><msub><mi>V</mi><mi>G</mi></msub><mo>|</mo></mrow></math>
+    </div>
+    <dl class="vals">
+      <dt>passo reticolare</dt><dd id="vA"></dd>
+      <dt>gap al bordo zona</dt><dd id="vGap"></dd>
+      <dt>stato scelto</dt><dd id="vSel"></dd>
+      <dt id="tFermi" hidden>livello di Fermi</dt><dd id="vFermi" hidden></dd>
+      <dt id="tMass" hidden>massa efficace</dt><dd id="vMass" hidden></dd>
+    </dl>
+  </section>
+  <section class="theory">
+    <h2>Scheda teoria</h2>
+    <h3>L'idea</h3>
+    <p>Un elettrone libero ha energia ε<sub>k</sub> = ħ²k²/2m. Un potenziale periodico debole la lascia quasi invariata, tranne dove le onde piane k e k−G hanno la stessa energia: al bordo della zona di Brillouin, k = ±π/a.</p>
+    <h3>Perché si apre il gap</h3>
+    <p>Al bordo zona le due onde si combinano in onde stazionarie. Una concentra l'elettrone sugli ioni e ha energia più bassa; l'altra lo concentra tra gli ioni e ha energia più alta. La differenza è 2|V<sub>G</sub>|.</p>
+    <h3>Cosa osservare</h3>
+    <p>Scegli lo stato al bordo zona sulla banda inferiore, poi su quella superiore: guarda dove si accumula |ψ|² rispetto agli ioni. Se aumenti V<sub>G</sub> il gap cresce; se aumenti a la zona si restringe.</p>
+    <p class="foot">Notazione provvisoria: verrà allineata alle slide del corso. I preset dei materiali sono indicativi (passo reticolare e gap reali, modello 1D).</p>
+  </section>
+</aside>
+
+<script>
+(() => {
+  const HB2M = 3.80998;                 // ħ²/2m in eV·Å²
+  const NPW = 4;                        // onde piane n = −4 … 4
+  const NB = 6, NK = 161;               // bande disegnate, punti in k
+  const KMAX = 1.45, EMIN = -3, EMAX = 22;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const COL = { a:css('--a'), k:css('--k'), E:css('--E'), V:css('--V'), m:css('--m'), F:css('--F'),
+                text:css('--text'), muted:css('--muted'), dim:css('--dim'), line:css('--line'), bg:css('--bg') };
+  const SANS = css('--sans'), MATH = css('--math');
+  const S = { a:3, V:1, selK:1, selN:0, hl:null, fill:false, mass:false, cmp:false, N:2 };
+  const $ = id => document.getElementById(id);
+  const cvR = $('real'), cvB = $('bands');
+  const fmt = (x, d = 2) => x.toLocaleString('it-IT', { minimumFractionDigits:d, maximumFractionDigits:d });
+
+  /* ---------- fisica ---------- */
+  function jacobi(A) {
+    const n = A.length, V = [];
+    for (let i = 0; i < n; i++) { V.push(new Array(n).fill(0)); V[i][i] = 1; }
+    for (let sweep = 0; sweep < 50; sweep++) {
+      let off = 0;
+      for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) off += A[p][q] * A[p][q];
+      if (off < 1e-20) break;
+      for (let p = 0; p < n - 1; p++) for (let q = p + 1; q < n; q++) {
+        const apq = A[p][q];
+        if (Math.abs(apq) < 1e-300) continue;
+        const th = (A[q][q] - A[p][p]) / (2 * apq);
+        const t = th === 0 ? 1 : Math.sign(th) / (Math.abs(th) + Math.sqrt(th * th + 1));
+        const c = 1 / Math.sqrt(t * t + 1), s = t * c;
+        for (let k = 0; k < n; k++) { const x = A[k][p], y = A[k][q]; A[k][p] = c * x - s * y; A[k][q] = s * x + c * y; }
+        for (let k = 0; k < n; k++) { const x = A[p][k], y = A[q][k]; A[p][k] = c * x - s * y; A[q][k] = s * x + c * y; }
+        for (let k = 0; k < n; k++) { const x = V[k][p], y = V[k][q]; V[k][p] = c * x - s * y; V[k][q] = s * x + c * y; }
+      }
+    }
+    const idx = [...Array(n).keys()].sort((i, j) => A[i][i] - A[j][j]);
+    return { E: idx.map(i => A[i][i]), C: idx.map(i => V.map(r => r[i])) };
+  }
+  // Equazione centrale con V(x) = −2 V_G cos(Gx): ioni nei minimi, x = n·a
+  function solve(k, a, V) {
+    const n = 2 * NPW + 1, G = 2 * Math.PI / a, H = [];
+    for (let i = 0; i < n; i++) { H.push(new Array(n).fill(0)); const q = k + (i - NPW) * G; H[i][i] = HB2M * q * q; }
+    for (let i = 0; i < n - 1; i++) H[i][i + 1] = H[i + 1][i] = -V;
+    return jacobi(H);
+  }
+  let grid = null;
+  function recompute() {
+    const kb = Math.PI / S.a, ks = [], E = Array.from({ length: NB }, () => []);
+    for (let i = 0; i < NK; i++) {
+      const k = -kb + 2 * kb * i / (NK - 1); ks.push(k);
+      const e = solve(k, S.a, S.V).E;
+      for (let b = 0; b < NB; b++) E[b].push(e[b]);
+    }
+    grid = { ks, E, kb };
+    while (S.selN > 0 && solve(S.selK * kb, S.a, S.V).E[S.selN] > EMAX) S.selN--;
+  }
+  function fermi() {
+    const nk = NK - 1, all = [];
+    for (let b = 0; b < NB; b++) for (let i = 0; i < nk; i++) all.push(grid.E[b][i]);
+    all.sort((x, y) => x - y);
+    const idx = Math.round(S.N / 2 * nk), lo = all[idx - 1], hi = all[idx], even = S.N % 2 === 0;
+    return { EF: even ? (lo + hi) / 2 : lo, insul: even && hi - lo > 0.05 };
+  }
+  function probe() {
+    const kb = grid.kb, k0 = S.selK * kb, d = 0.01 * kb, n = S.selN;
+    const e0 = solve(k0, S.a, S.V), ep = solve(k0 + d, S.a, S.V).E[n], em = solve(k0 - d, S.a, S.V).E[n];
+    const d1 = (ep - em) / (2 * d), d2 = (ep - 2 * e0.E[n] + em) / (d * d);
+    return { k0, E0: e0.E[n], C: e0.C[n], d1, d2, mstar: 2 * HB2M / d2, v: d1 * 1.519e5 };
+  }
+
+  /* ---------- disegno ---------- */
+  function fit(cv) {
+    const r = cv.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    const w = Math.max(60, r.width), h = Math.max(60, r.height);
+    if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+    const c = cv.getContext('2d'); c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h);
+    return { c, w, h };
+  }
+  const em = q => S.hl === null ? 1 : (S.hl === q ? 1 : 0.28);
+  const lw = (q, base) => S.hl === q ? base + 1.5 : base;
+  function tagText(c, txt, x, y, color, font) {
+    c.font = font; const m = c.measureText(txt);
+    c.fillStyle = COL.bg; c.fillRect(x - 4, y - 13, m.width + 8, 18);
+    c.fillStyle = color; c.fillText(txt, x, y);
+  }
+
+  function drawReal(p) {
+    const { c, w, h } = fit(cvR), X = 9, px = x => (x + X) / (2 * X) * w;
+    const yPsi = h * 0.52, sPsi = h * 0.32 / 2.1, yV = h * 0.72, sV = h * 0.12 / 6, yIon = h - 15;
+    const G = 2 * Math.PI / S.a;
+    // ioni e guide
+    c.globalAlpha = em('a'); c.strokeStyle = COL.line; c.lineWidth = 1;
+    const n0 = Math.ceil(-X / S.a), n1 = Math.floor(X / S.a);
+    for (let n = n0; n <= n1; n++) {
+      const x = px(n * S.a);
+      c.beginPath(); c.moveTo(x, h * 0.17); c.lineTo(x, yIon); c.stroke();
+    }
+    c.fillStyle = COL.muted;
+    for (let n = n0; n <= n1; n++) { c.beginPath(); c.arc(px(n * S.a), yIon, 3.5, 0, 6.2832); c.fill(); }
+    // passo reticolare a
+    c.strokeStyle = COL.a; c.fillStyle = COL.a; c.lineWidth = lw('a', 2);
+    c.beginPath(); c.moveTo(px(0) + 6, yIon); c.lineTo(px(S.a) - 6, yIon); c.stroke();
+    c.font = 'italic 15px ' + MATH; c.textAlign = 'center'; c.fillText('a', px(S.a / 2), yIon - 6); c.textAlign = 'left';
+    // potenziale
+    c.globalAlpha = em('V'); c.strokeStyle = COL.V; c.lineWidth = lw('V', 1.75); c.beginPath();
+    for (let i = 0; i <= 360; i++) {
+      const x = -X + 2 * X * i / 360, y = yV + 2 * S.V * Math.cos(G * x) * sV;
+      i ? c.lineTo(px(x), y) : c.moveTo(px(x), y);
+    }
+    c.stroke();
+    // |ψ|²
+    c.globalAlpha = S.hl === null || S.hl === 'k' ? 1 : 0.45;
+    c.strokeStyle = COL.dim; c.lineWidth = 1; c.beginPath(); c.moveTo(0, yPsi); c.lineTo(w, yPsi); c.stroke();
+    c.beginPath(); c.moveTo(px(-X), yPsi);
+    const pts = [];
+    for (let i = 0; i <= 360; i++) {
+      const x = -X + 2 * X * i / 360; let re = 0, im = 0;
+      for (let j = 0; j < p.C.length; j++) { const ph = (p.k0 + (j - NPW) * G) * x; re += p.C[j] * Math.cos(ph); im += p.C[j] * Math.sin(ph); }
+      const y = yPsi - (re * re + im * im) * sPsi; pts.push([px(x), y]); c.lineTo(px(x), y);
+    }
+    c.lineTo(px(X), yPsi); c.closePath(); c.fillStyle = 'rgba(232,230,225,0.08)'; c.fill();
+    c.strokeStyle = COL.text; c.lineWidth = 2; c.beginPath();
+    pts.forEach((q, i) => i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1])); c.stroke();
+    c.globalAlpha = 1;
+    tagText(c, '|ψ|²', 20, yPsi - 10, COL.text, 'italic 15px ' + MATH);
+    c.globalAlpha = em('V'); tagText(c, 'V(x)', 20, yV + 5, COL.V, 'italic 15px ' + MATH); c.globalAlpha = 1;
+  }
+
+  function geom(w, h) { const L = 58, R = 22, T = 36, B = 36; return { L, T, W: w - L - R, H: h - T - B }; }
+  function drawBands(p) {
+    const { c, w, h } = fit(cvB), { L, T, W, H } = geom(w, h), kb = grid.kb;
+    const X = k => L + (k + KMAX) / (2 * KMAX) * W, Y = E => T + (EMAX - E) / (EMAX - EMIN) * H;
+    // griglia e asse energia
+    c.font = '12px ' + SANS; c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (let E = 0; E <= 20; E += 5) {
+      c.strokeStyle = COL.line; c.lineWidth = 1; c.beginPath(); c.moveTo(L, Y(E)); c.lineTo(L + W, Y(E)); c.stroke();
+      c.fillStyle = COL.muted; c.fillText(String(E), L - 8, Y(E));
+    }
+    c.save(); c.translate(16, T + H / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center';
+    c.globalAlpha = em('E'); c.fillStyle = COL.E; c.fillText('E (eV)', 0, 0); c.restore();
+    c.textBaseline = 'alphabetic';
+    // fuori dalla prima zona
+    c.fillStyle = 'rgba(255,255,255,0.022)';
+    c.fillRect(L, T, X(-kb) - L, H); c.fillRect(X(kb), T, L + W - X(kb), H);
+    c.strokeStyle = COL.dim; c.lineWidth = 1; c.beginPath(); c.moveTo(L, T + H); c.lineTo(L + W, T + H); c.stroke();
+    // bordi zona ±π/a
+    c.globalAlpha = em('a'); c.strokeStyle = COL.a; c.lineWidth = lw('a', 1.25); c.setLineDash([5, 5]);
+    for (const s of [-1, 1]) { c.beginPath(); c.moveTo(X(s * kb), T); c.lineTo(X(s * kb), T + H); c.stroke(); }
+    c.setLineDash([]); c.fillStyle = COL.a; c.textAlign = 'center'; c.font = 'italic 15px ' + MATH;
+    c.fillText('−π/a', X(-kb), T + H + 20); c.fillText('π/a', X(kb), T + H + 20);
+    c.globalAlpha = 1; c.fillStyle = COL.muted; c.font = '12px ' + SANS; c.fillText('0', X(0), T + H + 19);
+    c.globalAlpha = em('k'); c.fillStyle = COL.k; c.font = 'italic 15px ' + MATH; c.textAlign = 'right'; c.fillText('k', L + W, T + H + 20);
+    c.globalAlpha = 1; c.textAlign = 'left';
+
+    c.save(); c.beginPath(); c.rect(L, T, W, H); c.clip();
+    const path = b => { c.beginPath(); grid.ks.forEach((k, i) => i ? c.lineTo(X(k), Y(grid.E[b][i])) : c.moveTo(X(k), Y(grid.E[b][i]))); };
+    // confronto: reticolo vuoto
+    if (S.cmp) {
+      c.strokeStyle = COL.muted; c.lineWidth = 1.25; c.setLineDash([3, 4]);
+      const G = 2 * kb;
+      for (let n = -NPW; n <= NPW; n++) {
+        c.beginPath(); grid.ks.forEach((k, i) => { const y = Y(HB2M * (k + n * G) * (k + n * G)); i ? c.lineTo(X(k), y) : c.moveTo(X(k), y); }); c.stroke();
+      }
+      c.setLineDash([]);
+    }
+    // bande
+    const F = S.fill ? fermi() : null;
+    c.strokeStyle = COL.E; c.lineJoin = 'round';
+    c.globalAlpha = em('E') * (F ? 0.4 : 1); c.lineWidth = lw('E', F ? 1.5 : 2);
+    for (let b = 0; b < NB; b++) { path(b); c.stroke(); }
+    if (F) {
+      c.save(); c.beginPath(); c.rect(L, Y(F.EF), W, T + H - Y(F.EF)); c.clip();
+      c.globalAlpha = em('E'); c.lineWidth = lw('E', 3.5);
+      for (let b = 0; b < NB; b++) { path(b); c.stroke(); }
+      c.restore();
+      c.globalAlpha = 1; c.strokeStyle = COL.F; c.lineWidth = 1.5; c.setLineDash([8, 4]);
+      c.beginPath(); c.moveTo(L, Y(F.EF)); c.lineTo(L + W, Y(F.EF)); c.stroke(); c.setLineDash([]);
+      c.fillStyle = COL.F; c.font = 'italic 15px ' + MATH; c.fillText('E', L + 8, Y(F.EF) - 7);
+      c.font = 'italic 11px ' + MATH; c.fillText('F', L + 18, Y(F.EF) - 4);
+      c.font = '12px ' + SANS; c.textAlign = 'right'; c.fillText(F.insul ? 'isolante' : 'metallo', L + W - 8, Y(F.EF) - 7); c.textAlign = 'left';
+    }
+    // gap al bordo zona
+    const e0 = grid.E[0][NK - 1], e1 = grid.E[1][NK - 1], x = X(kb);
+    if (e1 - e0 > 0.02) {
+      c.globalAlpha = em('V'); c.strokeStyle = COL.V; c.fillStyle = COL.V; c.lineWidth = lw('V', 3);
+      c.beginPath(); c.moveTo(x, Y(e0)); c.lineTo(x, Y(e1)); c.stroke();
+      if (Y(e0) - Y(e1) > 15) {
+        // etichetta a destra del bordo zona se c'è spazio, altrimenti a sinistra
+        const ym = (Y(e0) + Y(e1)) / 2, x0 = L + W - x > 60 ? x + 9 : x - 46;
+        c.textAlign = 'left'; c.font = 'italic 14px ' + MATH; c.fillText('2|V', x0, ym + 5);
+        const w1 = c.measureText('2|V').width;
+        c.font = 'italic 10px ' + MATH; c.fillText('G', x0 + w1 + 1, ym + 8);
+        const w2 = c.measureText('G').width;
+        c.font = 'italic 14px ' + MATH; c.fillText('|', x0 + w1 + w2 + 2, ym + 5);
+      }
+    }
+    // sonda di massa efficace
+    if (S.mass) {
+      c.globalAlpha = 1; c.strokeStyle = COL.m; c.lineWidth = 2; c.setLineDash([6, 4]); c.beginPath();
+      for (let i = 0; i <= 60; i++) {
+        const dk = (-0.35 + 0.7 * i / 60) * kb, y = Y(p.E0 + p.d1 * dk + 0.5 * p.d2 * dk * dk);
+        i ? c.lineTo(X(p.k0 + dk), y) : c.moveTo(X(p.k0 + dk), y);
+      }
+      c.stroke(); c.setLineDash([]);
+    }
+    // stato scelto
+    const sx = X(p.k0), sy = Y(p.E0);
+    c.setLineDash([2, 4]); c.lineWidth = lw('k', 1.25);
+    c.globalAlpha = em('k'); c.strokeStyle = COL.k; c.beginPath(); c.moveTo(sx, T + H); c.lineTo(sx, sy); c.stroke();
+    c.globalAlpha = em('E'); c.strokeStyle = COL.E; c.lineWidth = lw('E', 1.25); c.beginPath(); c.moveTo(L, sy); c.lineTo(sx, sy); c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1;
+    c.fillStyle = COL.bg; c.strokeStyle = COL.text; c.lineWidth = 2;
+    c.beginPath(); c.arc(sx, sy, 5.5, 0, 6.2832); c.fill(); c.stroke();
+    c.restore();
+  }
+
+  /* ---------- testi ---------- */
+  function texts(p) {
+    $('oa').textContent = fmt(S.a) + ' Å'; $('ov').textContent = fmt(S.V) + ' eV';
+    $('vA').textContent = 'a = ' + fmt(S.a) + ' Å  →  π/a = ' + fmt(grid.kb) + ' Å⁻¹';
+    $('vGap').textContent = '2|V_G| = ' + fmt(2 * S.V) + ' eV · calcolato ' + fmt(grid.E[1][NK - 1] - grid.E[0][NK - 1]) + ' eV';
+    const st = 'k = ' + fmt(S.selK) + ' π/a · banda ' + (S.selN + 1);
+    $('vSel').textContent = st + ' · E = ' + fmt(p.E0) + ' eV';
+    $('stateHint').textContent = 'stato scelto: ' + st;
+    for (const id of ['tFermi', 'vFermi']) $(id).hidden = !S.fill;
+    for (const id of ['tMass', 'vMass']) $(id).hidden = !S.mass;
+    $('fillCtl').hidden = !S.fill; $('oN').textContent = S.N;
+    if (S.fill) { const F = fermi(); $('vFermi').textContent = 'E_F = ' + fmt(F.EF) + ' eV · ' + (F.insul ? 'isolante' : 'metallo'); }
+    if (S.mass) $('vMass').textContent = 'm* = ' + (Math.abs(p.d2) < 1e-3 ? '∞' : fmt(p.mstar) + ' m') + ' · v = ' + fmt(p.v / 1e6) + '·10⁶ m/s';
+  }
+  function update(full = true) {
+    if (full || !grid) recompute();
+    const p = probe(); drawReal(p); drawBands(p); texts(p);
+  }
+
+  /* ---------- interazione ---------- */
+  function setHL(q) {
+    S.hl = q || null;
+    document.body.classList.toggle('has-hl', !!q);
+    document.querySelectorAll('[data-q]').forEach(el => el.classList.toggle('on', el.getAttribute('data-q') === q));
+    update(false);
+  }
+  document.querySelectorAll('[data-q]').forEach(el => {
+    el.addEventListener('mouseenter', () => setHL(el.getAttribute('data-q')));
+    el.addEventListener('mouseleave', () => setHL(null));
+  });
+  function pulse(q) {
+    document.querySelectorAll('.q[data-q="' + q + '"]').forEach(el => { el.classList.remove('pulse'); el.getBoundingClientRect(); el.classList.add('pulse'); });
+  }
+  $('sa').addEventListener('input', e => { S.a = +e.target.value; $('preset').value = ''; pulse('a'); update(); });
+  $('sv').addEventListener('input', e => { S.V = +e.target.value; $('preset').value = ''; pulse('V'); update(); });
+
+  let raf = 0;
+  $('preset').addEventListener('change', e => {
+    if (!e.target.value) return;
+    const [a, gap] = e.target.value.split(',').map(Number), V = gap / 2, a0 = S.a, V0 = S.V, t0 = performance.now();
+    const set = u => { S.a = a0 + (a - a0) * u; S.V = V0 + (V - V0) * u; $('sa').value = S.a; $('sv').value = S.V; update(); };
+    cancelAnimationFrame(raf); pulse('a'); pulse('V');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { set(1); return; }
+    const step = now => { let u = Math.min(1, (now - t0) / 650); const e2 = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; set(u < 1 ? e2 : 1); if (u < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  });
+
+  document.querySelectorAll('[data-tool]').forEach(b => b.addEventListener('click', () => {
+    const t = b.getAttribute('data-tool'); S[t] = !S[t]; b.setAttribute('aria-pressed', S[t]); update(false);
+  }));
+  $('nMinus').addEventListener('click', () => { S.N = Math.max(1, S.N - 1); update(false); });
+  $('nPlus').addEventListener('click', () => { S.N = Math.min(4, S.N + 1); update(false); });
+
+  let drag = false;
+  function pick(ev) {
+    const r = cvB.getBoundingClientRect(), { L, T, W, H } = geom(r.width, r.height), kb = grid.kb;
+    const k = ((ev.clientX - r.left - L) / W * 2 - 1) * KMAX, f = Math.max(-1, Math.min(1, k / kb));
+    const E = solve(f * kb, S.a, S.V).E, my = ev.clientY - r.top;
+    let best = 0, bd = Infinity;
+    for (let b = 0; b < NB && E[b] <= EMAX; b++) { const d = Math.abs(T + (EMAX - E[b]) / (EMAX - EMIN) * H - my); if (d < bd) { bd = d; best = b; } }
+    S.selK = f; S.selN = best; update(false);
+  }
+  cvB.addEventListener('pointerdown', e => { drag = true; cvB.setPointerCapture(e.pointerId); pick(e); });
+  cvB.addEventListener('pointermove', e => { if (drag) pick(e); });
+  cvB.addEventListener('pointerup', () => { drag = false; });
+  cvB.addEventListener('pointercancel', () => { drag = false; });
+
+  new ResizeObserver(() => update(false)).observe(document.querySelector('.scene'));
+  update();
+  window.__mock = { S, update, solve, fermi, probe };   // per i controlli di verifica
+})();
+</script>
+</body>
+</html>

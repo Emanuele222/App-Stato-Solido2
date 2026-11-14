@@ -1,0 +1,263 @@
+% ------------------------------------------------------------------
+%  Preambolo delle dispense (skill dispense-latex, layout del 22/10/2026)
+%  Modello: frontespizio + indice a pagina intera, etichette colorate
+%  numerate per sezione, dimostrazioni a passi con barra laterale,
+%  riquadro verde solo per i risultati essenziali.
+%  Prima di \input{preambolo} definisci \corso, \argomento, \lezioni.
+%  Compilare con pdflatex (scripts/setup_pdflatex_it.sh per la sillabazione).
+% ------------------------------------------------------------------
+\providecommand{\corso}{Nome del corso}
+\providecommand{\argomento}{Argomento}
+\providecommand{\lezioni}{Lezioni}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\babelprovide[import, main]{italian}
+\usepackage{lmodern}            % Latin Modern (se manca: apt-get install -y lmodern)
+\usepackage{microtype}
+\usepackage[a4paper, left=2.4cm, right=2.4cm, top=2.5cm, bottom=2.7cm]{geometry}
+\usepackage[skip=6pt plus 2pt, indent=0pt]{parskip}
+
+\usepackage{amsmath, amssymb}
+\usepackage{bm}
+\numberwithin{equation}{section}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}, group-separator={\,}, exponent-product=\cdot}
+\DeclareSIUnit{\angstrom}{\text{\AA}}
+\usepackage{booktabs, array, tabularx, multirow, longtable}
+\usepackage{enumitem}
+\setlist{itemsep=3pt, topsep=4pt, parsep=0pt}
+\usepackage[font=small, labelfont=bf, format=hang, skip=6pt]{caption}
+\usepackage{float}
+\usepackage{needspace}
+% \spazio{n\baselineskip}: va a capo pagina solo se restano meno di n righe.
+% Sostituisce \needspace, il cui \penalty-100 con \vskip elastico fa spezzare
+% le pagine prima dei titoli anche quando c'è posto (pagine mezze vuote).
+\makeatletter
+\newcommand{\spazio}[1]{\par\begingroup\setlength{\dimen@}{#1}%
+  \dimen@ii\pagegoal\advance\dimen@ii-\pagetotal
+  \ifdim\dimen@>\dimen@ii\ifdim\dimen@ii>\z@\vfil\fi\penalty-10000\fi\endgroup}
+\makeatother
+
+% ---------------------------------------------------------- colori
+\usepackage{xcolor}
+\definecolor{csez}{HTML}{193C82}   % titoli di sezione
+\definecolor{csub}{HTML}{3C5995}   % sottosezioni, link
+\definecolor{cdef}{HTML}{1E5AAA}   % Definizione
+\definecolor{cris}{HTML}{14823C}   % Risultato, riquadro verde
+\definecolor{cbox}{HTML}{F1F7F3}   % fondo del riquadro verde
+\definecolor{cform}{HTML}{E4F0E8}  % fondo di \formula
+\definecolor{cformb}{HTML}{ACD3BA} % bordo di \formula
+\definecolor{coss}{HTML}{BE1E1E}   % Osservazione (refusi, convenzioni)
+\definecolor{cint}{HTML}{007D87}   % Interpretazione fisica, «Cosa dice»
+\definecolor{cappr}{HTML}{783296}  % Approfondimento
+\definecolor{crie}{HTML}{C86E00}   % Riepilogo
+\definecolor{cdim}{HTML}{6E6E6E}   % Dimostrazione
+\definecolor{cpasso}{HTML}{585858} % Passo n.
+\definecolor{cesm}{HTML}{4A6FA5}   % Esempio
+\definecolor{cenb}{HTML}{EEF3FA}   % fondo del riquadro blu dell'enunciato
+% colori per le figure
+\definecolor{accent}{HTML}{193C82}
+\definecolor{vA}{HTML}{C0392B}
+\definecolor{vB}{HTML}{2E6FB7}
+\definecolor{vC}{HTML}{23884A}
+\definecolor{atomA}{HTML}{E15759}
+\definecolor{atomB}{HTML}{4E79A7}
+\definecolor{atomC}{HTML}{F28E2B}
+\definecolor{atomD}{HTML}{59A14F}
+\definecolor{atomE}{HTML}{B07AA1}
+\definecolor{cellP}{HTML}{3C9D4E}
+\definecolor{cellC}{HTML}{1F4E8C}
+\definecolor{cellS}{HTML}{7B3FA0}
+\definecolor{bad}{HTML}{C0392B}
+\definecolor{Na}{HTML}{F28E2B}
+\definecolor{Cl}{HTML}{4E79A7}
+% nomi del preambolo precedente (figure e snippet esistenti)
+\colorlet{boxdef}{cdef}\colorlet{boxkey}{cris}\colorlet{boxwarn}{coss}
+\colorlet{boxex}{black!65}\colorlet{boxdeep}{cappr}\colorlet{mapgray}{black!60}
+
+% ---------------------------------------------------------- figure
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, decorations.pathreplacing, patterns}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18, every axis/.append style={font=\footnotesize}, trig format plots=rad}
+\usepackage[europeanresistors, cuteinductors, europeanvoltages, straightvoltages]{circuitikz}
+\ctikzset{bipoles/length=1.0cm}
+\usepackage{tikz-3dplot}
+\tikzset{
+  vec/.style={-{Stealth[length=2.4mm, width=1.7mm]}, thick},
+  bond/.style={black!22, line width=0.5pt},
+  latline/.style={black!30, thin},
+  edge/.style={black!75, line width=0.7pt},
+  edgehid/.style={black!55, line width=0.6pt, densely dashed},
+  edgelight/.style={black!50, line width=0.6pt},
+  edgelighthid/.style={black!40, line width=0.5pt, densely dashed},
+  cellprim/.style={fill=cellP!16, draw=cellP!75!black, thick},
+  cellconv/.style={fill=cellC!10, draw=cellC, thick},
+  cellbad/.style={fill=bad!14, draw=bad, thick},
+  cellconvline/.style={draw=cellC, thick, densely dashed},
+  cellshift/.style={draw=cellS, thick, dashed},
+  tri/.style={fill=vB!14, draw=vB!55, thin},
+  tri0/.style={fill=vB!45, draw=vB!80!black, thick},
+}
+
+% ---------------------------------------------------------- titoli e indice
+\usepackage{titlesec}
+\titleformat{\section}{\spazio{9\baselineskip}\Large\bfseries\color{csez}}{\thesection}{0.8em}{}%
+  [\vspace{-0.6ex}{\color{csez}\titlerule[0.7pt]}]
+\titleformat{\subsection}{\spazio{8\baselineskip}\large\bfseries\color{csub}}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\spazio{4\baselineskip}\normalsize\bfseries\color{csub}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{22pt plus 4pt minus 2pt}{10pt plus 2pt}
+\titlespacing*{\subsection}{0pt}{16pt plus 3pt minus 2pt}{6pt plus 2pt}
+\titlespacing*{\subsubsection}{0pt}{10pt plus 2pt}{3pt}
+\setcounter{tocdepth}{2}
+\usepackage[titles]{tocloft}          % titolo «Indice» con lo stile di \section*
+\renewcommand{\cftsecfont}{\bfseries}
+\renewcommand{\cftsecpagefont}{\bfseries}
+\setlength{\cftbeforesecskip}{11pt}
+\setlength{\cftbeforesubsecskip}{3pt}
+
+\pagestyle{plain}
+\usepackage[colorlinks, linkcolor=csub, citecolor=csub, urlcolor=csub]{hyperref}
+\hypersetup{pdftitle={\corso{} - \argomento}, pdfauthor={}}
+
+% ---------------------------------------------------------- etichette numerate
+%  Definizione, Risultato, Osservazione (e i riquadri Teorema, Modello) condividono il
+%  contatore: Definizione 1.2, Osservazione 1.3, ...  (numerazione per sezione)
+%  NB: \if...\else...\fi solo DENTRO le macro (\tit, \sezvoce): un \else scritto
+%  dentro \textbf{...} viene accoppiato con l'\ifmmode di \textbf («Extra \else»).
+\newcounter{enun}[section]
+\renewcommand{\theenun}{\thesection.\arabic{enun}}
+\newcommand{\tit}[1]{\if\relax\detokenize{#1}\relax\else\ (#1)\fi}   % « (titolo)» solo se c'è
+\newcommand{\etinum}[3]{% colore, nome, titolo facoltativo
+  \refstepcounter{enun}\textbf{\color{#1}#2 \theenun\tit{#3}.}\ \ignorespaces}
+\newcommand{\etisemp}[3]{% colore, nome, titolo facoltativo (senza numero)
+  \textbf{\color{#1}#2\tit{#3}.}\ \ignorespaces}
+\newenvironment{definizione}[1][]{\par\addvspace{4pt}\spazio{3\baselineskip}\noindent\etinum{cdef}{Definizione}{#1}}{\par\addvspace{4pt}}
+\newenvironment{risultato}[1][]{\par\addvspace{4pt}\spazio{3\baselineskip}\noindent\etinum{cris}{Risultato}{#1}}{\par\addvspace{4pt}}
+\newenvironment{osservazione}[1][]{\par\addvspace{4pt}\spazio{3\baselineskip}\noindent\etinum{coss}{Osservazione}{#1}}{\par\addvspace{4pt}}
+\newenvironment{interpretazione}[1][]{\par\addvspace{4pt}\spazio{3\baselineskip}\noindent\etisemp{cint}{Interpretazione fisica}{#1}}{\par\addvspace{4pt}}
+\newenvironment{riepilogo}[1][]{\par\addvspace{4pt}\spazio{3\baselineskip}\noindent\etisemp{crie}{Riepilogo}{#1}}{\par\addvspace{4pt}}
+% introduzione: titolo e testo in nero, spaziatura stretta
+\newenvironment{introduzione}{\begingroup\colorlet{csez}{black}\colorlet{crie}{black}%
+  \section*{Introduzione}\addcontentsline{toc}{section}{Introduzione}%
+  \setlength{\parskip}{3pt plus 1pt}\setlist{itemsep=1pt, topsep=2pt, parsep=0pt}%
+  \setlength{\abovedisplayskip}{4pt plus 2pt}\setlength{\belowdisplayskip}{4pt plus 2pt}%
+  \setlength{\abovedisplayshortskip}{2pt}\setlength{\belowdisplayshortskip}{3pt}}%
+  {\par\endgroup}
+% compatibilità con le dispense precedenti
+\newenvironment{attenzione}[1][]{\begin{osservazione}[#1]}{\end{osservazione}}
+
+% ---------------------------------------------------------- dimostrazioni a passi
+\usepackage[skins, breakable]{tcolorbox}
+\newcounter{passo}
+\newcommand{\passo}[1]{\par\addvspace{5pt}\stepcounter{passo}%
+  \noindent{\bfseries\color{cpasso}Passo \thepasso.}\ \textit{#1}\par\nopagebreak[4]}
+\newcommand{\qed}{\ifmmode\qquad\blacksquare\else\unskip\nobreak\ \ensuremath{\blacksquare}\fi}
+\newcommand{\iniziobarra}{\setlength{\parskip}{4pt plus 1pt}\setcounter{passo}{0}}
+\tcbset{barra/.style={blanker, breakable, parbox=false, left=10pt, right=0pt, top=1pt, bottom=1pt,
+  before skip=9pt plus 2pt, after skip=9pt plus 2pt}}
+\newtcolorbox{dimostrazione}[1][]{barra, borderline west={1.8pt}{0pt}{cdim},
+  before upper={\iniziobarra\textbf{\color{cdim}Dimostrazione\tit{#1}.}\par}}
+\newtcolorbox{approfondimento}[1][]{barra, borderline west={1.8pt}{0pt}{cappr},
+  before upper={\iniziobarra\textbf{\color{cappr}Approfondimento\tit{#1}.}\ \ignorespaces}}
+\newtcolorbox{esempio}[1][]{barra, borderline west={1.8pt}{0pt}{cesm},
+  before upper={\iniziobarra\textbf{\color{cesm}Esempio\tit{#1}.}\ \ignorespaces}}
+% niente titolo di dimostrazione/approfondimento isolato in fondo alla pagina
+\AddToHook{env/dimostrazione/before}{\par\spazio{6\baselineskip}}
+\AddToHook{env/approfondimento/before}{\par\spazio{5\baselineskip}}
+\AddToHook{env/esempio/before}{\par\spazio{4\baselineskip}}
+% conseguenze introdotte dalla domanda a cui rispondono
+\newcommand{\domanda}[1]{\par\addvspace{5pt}\spazio{5\baselineskip}\noindent{\color{cris}$\blacktriangleright$}\ \textbf{#1}\par\nopagebreak[4]}
+\newcommand{\nsp}[1]{\spazio{#1\baselineskip}}
+
+% ---------------------------------------------------------- riquadri
+%  enunciato: riquadro blu con l'enunciato sopra e, dopo \tcblower, il significato
+%  \begin{teorema}[di Bloch] enunciato \tcblower significato \end{teorema}
+%  (anche: modello). Numerazione comune con Definizione, Osservazione, ...
+\newtcolorbox{enunciato}[1]{enhanced, unbreakable, parbox=false,
+  colback=cenb, colframe=csez, boxrule=0.6pt, arc=2pt,
+  colbacktitle=csez, coltitle=white, fonttitle=\bfseries, title={#1},
+  left=9pt, right=9pt, top=6pt, bottom=6pt, toptitle=2pt, bottomtitle=2pt,
+  middle=5pt, segmentation style={csez!45, dashed, line width=0.5pt},
+  before skip=12pt plus 2pt, after skip=12pt plus 2pt,
+  before upper={\setlength{\parskip}{5pt}},
+  before lower={\setlength{\parskip}{5pt}\textbf{\color{cint}Cosa dice.}\ \ignorespaces}}
+\newenvironment{teorema}[1][]{\par\refstepcounter{enun}\begin{enunciato}{Teorema \theenun\tit{#1}}}{\end{enunciato}}
+\newenvironment{modello}[1][]{\par\refstepcounter{enun}\begin{enunciato}{Modello \theenun\tit{#1}}}{\end{enunciato}}
+%  chiave: SOLO i risultati essenziali (barra del titolo verde, non spezzabile)
+\newtcolorbox{chiave}[1][Risultato]{enhanced, unbreakable, parbox=false,
+  colback=cbox, colframe=cris, boxrule=0.6pt, arc=2pt,
+  colbacktitle=cris, coltitle=white, fonttitle=\bfseries, title={#1},
+  left=9pt, right=9pt, top=5pt, bottom=5pt, toptitle=2pt, bottomtitle=2pt,
+  before skip=11pt plus 2pt, after skip=11pt plus 2pt,
+  before upper={\setlength{\parskip}{5pt}}}
+%  formula da evidenziare senza titolo
+\newcommand{\formula}[1]{\par\addvspace{4pt}\begin{center}\begin{tcolorbox}[enhanced, hbox, colback=cform,
+  colframe=cformb, boxrule=0.5pt, arc=2pt, left=10pt, right=10pt, top=2pt, bottom=2pt]
+  $\displaystyle #1$\end{tcolorbox}\end{center}\par\addvspace{2pt}}
+%  informazioni sul corso o curiosità sull'hardware (rarissima)
+\newcommand{\titinfo}[1]{\if\relax\detokenize{#1}\relax\else\textbf{#1.}\ \fi}
+\newtcolorbox{infobox}[1][]{enhanced, breakable, parbox=false, colback=black!4, frame hidden,
+  boxrule=0pt, arc=2pt, left=9pt, right=9pt, top=5pt, bottom=5pt,
+  before upper={\setlength{\parskip}{4pt}\titinfo{#1}\ignorespaces}}
+%  formulario: riquadro verde spezzabile, una \voce per riga (si spezza tra le voci)
+\newtcolorbox{formulario}[1][Formule della lezione]{enhanced, breakable, parbox=false,
+  colback=cbox, colframe=cris, boxrule=0.6pt, arc=2pt,
+  colbacktitle=cris, coltitle=white, fonttitle=\bfseries, title={#1},
+  left=9pt, right=9pt, top=5pt, bottom=7pt, before upper={\setlength{\parskip}{0pt}}}
+\newcommand{\gruppo}[1]{\par\addvspace{6pt}\noindent\textbf{#1}\par\nopagebreak\addvspace{4pt}}
+\newcommand{\sezvoce}[1]{\if\relax\detokenize{#1}\relax\else\ {\footnotesize\color{black!55}(\S#1)}\fi}
+\newcommand{\voce}[3][]{\par\noindent\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.9cm}@{\hspace{8pt}}X@{}}
+  #2\sezvoce{#1} & $\displaystyle #3$\end{tabularx}\par\addvspace{4pt}}
+%  domande di verifica: \begin{domande}\item \textbf{Domanda?} traccia...\end{domande}
+\newlist{domande}{enumerate}{1}
+\setlist[domande]{label=\textbf{Q\arabic*.}, leftmargin=2.3em, itemsep=6pt}
+
+% ---------------------------------------------------------- macro generiche
+\newcommand{\ingl}[1]{\textit{\color{black!55}(#1)}}   % termine inglese delle slide
+\newcommand{\va}{\mathbf a}
+\newcommand{\vb}{\mathbf b}
+\newcommand{\vk}{\mathbf k}
+\newcommand{\vr}{\mathbf r}
+\newcommand{\vR}{\mathbf R}
+\newcommand{\vG}{\mathbf G}
+\newcommand{\vc}{\mathbf c}
+\newcommand{\vT}{\mathbf T}
+\newcommand{\xh}{\hat{\mathbf x}}
+\newcommand{\yh}{\hat{\mathbf y}}
+\newcommand{\zh}{\hat{\mathbf z}}
+\newcommand{\coord}[1]{\textsf{#1}}
+\newcommand{\h}{\tfrac12}
+\newcommand{\jj}{\mathrm j}
+\newcommand{\ee}{\mathrm e}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\figura}[1]{\input{figs/#1.tex}}
+
+% ---------------------------------------------------------- float
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+
+% ---------------------------------------------------------- aggiunte della Parte 3
+\newcommand{\EF}{E_{\mathrm F}}
+\newcommand{\kF}{k_{\mathrm F}}
+\newcommand{\kB}{k_{\mathrm B}}
+\newcommand{\Eg}{E_{\mathrm g}}
+\newcommand{\vion}{v_{\mathrm{ion}}}
+\newcommand{\Kt}{\tilde K}
+\definecolor{occ}{HTML}{2E6FB7}
+\definecolor{hole}{HTML}{C0392B}
+\definecolor{exc}{HTML}{23884A}
+\definecolor{bandfull}{HTML}{8C2A1F}
+\definecolor{bandempty}{HTML}{F2E6A0}
+\definecolor{bandpart}{HTML}{D9C84A}
+%  le tre approssimazioni del §6: stesso riquadro blu di teoremi e modelli
+\newenvironment{approssimazione}[1][]{\par\refstepcounter{enun}\begin{enunciato}{Approssimazione \theenun\tit{#1}}}{\end{enunciato}}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother

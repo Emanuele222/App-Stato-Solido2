@@ -1,0 +1,24 @@
+% dispersione relativistica: (a) massa nulla, (b) massa finita (Hofmann, nota sulla massa efficace del grafene)
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1, horizontal sep=1.2cm}, width=5.6cm, height=5.2cm,
+  xmin=-1, xmax=1, ymin=-1.25, ymax=1.25, xtick={0}, xticklabels={$k=0$}, ytick=\empty, axis lines=box, samples=101,
+  ylabel={$E$}]
+\nextgroupplot[title={(a) $m_{\mathrm r}=0$: grafene}]
+  \addplot[very thick, color=vA, domain=-1:1] {abs(x)};
+  \addplot[very thick, color=vB, domain=-1:1] {-abs(x)};
+  \addplot[black!50, dashed] coordinates {(-1,0) (1,0)};
+  \draw[->, >=Stealth, thick] (axis cs:-0.85,-0.82) -- (axis cs:-0.85,0.8);
+  \node[circle, ball color=vA, inner sep=2.6pt] at (axis cs:-0.85,0.85) {};
+  \node[circle, ball color=atomC, inner sep=2.6pt] at (axis cs:-0.85,-0.85) {};
+  \node[font=\scriptsize, anchor=west] at (axis cs:0.2,0.08) {$\EF$};
+\nextgroupplot[title={(b) $m_{\mathrm r}>0$: con gap}]
+  \addplot[very thick, color=vA, domain=-1:1] {sqrt(x^2+0.16)};
+  \addplot[very thick, color=vB, domain=-1:1] {-sqrt(x^2+0.16)};
+  \addplot[black!25, densely dotted] coordinates {(-0.6,0.4) (0,0.4)};\addplot[black!25, densely dotted] coordinates {(-0.6,-0.4) (0,-0.4)};
+  \addplot[black!50, dashed] coordinates {(-1,0) (1,0)};
+  \draw[<->, >=Stealth] (axis cs:-0.6,-0.4) -- node[right, font=\scriptsize] {$2m_{\mathrm r}c^2$} (axis cs:-0.6,0.4);
+  \node[circle, ball color=vA, inner sep=2.6pt] at (axis cs:0,0.4) {};
+  \node[circle, ball color=atomC, inner sep=2.6pt] at (axis cs:0,-0.4) {};
+  \node[font=\scriptsize, anchor=west] at (axis cs:0.55,0.08) {$\EF$};
+\end{groupplot}
+\end{tikzpicture}

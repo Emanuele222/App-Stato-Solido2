@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+\begin{axis}[width=9.4cm, height=6.4cm, axis lines=left, xmin=1.0, xmax=6.6, ymin=-1.6, ymax=3.4,
+  xtick={2}, xticklabels={$a$}, ytick={0}, yticklabels={$0$}, xlabel={distanza tra gli atomi}, ylabel={energia}, label style={font=\small}, tick label style={font=\small},
+  every axis x label/.style={at={(ticklabel* cs:1)}, anchor=north east}]
+\pgfmathsetmacro{\bb}{1.25}
+\foreach \f in {0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9}
+  \addplot[black!50, thin, domain=1.4:6.6, samples=60] {(1-\f)*((1-exp(-\bb*(x-2)))^2-1)+\f*((1+exp(-\bb*(x-2)))^2-1)};
+\addplot[boxkey, very thick, domain=1.4:6.6, samples=100] {((1-exp(-\bb*(x-2)))^2-1)};
+\addplot[hole!85!black, very thick, domain=1.4:6.6, samples=100] {((1+exp(-\bb*(x-2)))^2-1)};
+\draw[black!35, densely dashed] (axis cs:2,-1.6) -- (axis cs:2,3.3);
+% banda al passo reticolare, riempita fino a meta'
+\fill[bandfull] (axis cs:1.93,-1.0) rectangle (axis cs:2.07,1.0);
+\fill[bandempty] (axis cs:1.93,1.0) rectangle (axis cs:2.07,3.0);
+\draw[black!60] (axis cs:1.93,-1.0) rectangle (axis cs:2.07,3.0);
+\node[font=\scriptsize, anchor=west, bandfull, fill=white, fill opacity=0.88, text opacity=1, inner sep=1.5pt] at (axis cs:2.2,0.0) {$N$ elettroni: metà banda piena};
+\node[font=\scriptsize, anchor=west, fill=white, fill opacity=0.88, text opacity=1, inner sep=1.5pt] at (axis cs:2.2,2.15) {$2N$ stati in tutto};
+\draw[<->, black!70] (axis cs:1.62,-1.0) -- (axis cs:1.62,3.0) node[midway, left, font=\scriptsize] {$W$};
+\node[font=\scriptsize, align=left, anchor=west] at (axis cs:4.1,2.4) {$N$ livelli ravvicinati\\ (una «banda»)};
+\end{axis}
+\end{tikzpicture}

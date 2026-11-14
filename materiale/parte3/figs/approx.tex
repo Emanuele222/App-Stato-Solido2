@@ -1,0 +1,17 @@
+\begin{tikzpicture}[x=1cm,y=1cm,
+  bx/.style={rounded corners=3pt, draw=#1, fill=#1!8, line width=0.7pt, text width=12.4cm, align=center, inner sep=5pt, font=\small},
+  fl/.style={-{Stealth[length=2.4mm]}, thick, black!55},
+  lb/.style={font=\scriptsize\sffamily, text=black!70, anchor=west, align=left}]
+\node[bx=boxdef] (A) at (0,0) {\textbf{Hamiltoniana completa}\quad $H=H_e+H_n+H_{e\text{-}n}$\\
+{\footnotesize $N_e,N_n\sim10^{23}$ particelle: problema impossibile da risolvere esattamente}};
+\node[bx=boxkey] (B) at (0,-2.15) {\textbf{Elettroni di core e di valenza}\\
+{\footnotesize core + nucleo $\to$ \emph{ioni}; restano i soli elettroni di valenza: $H=H_e+H_i+H_{e\text{-}i}$}};
+\node[bx=boxwarn] (C) at (0,-4.3) {\textbf{Born--Oppenheimer}\\
+{\footnotesize ioni fermi in $\mathbf R_j^0$ per gli elettroni: $H_E=H_e+H_{e\text{-}i}(\mathbf r_i,\mathbf R_j^0)$ (bande), $H_I$ (fononi)}};
+\node[bx=boxdeep] (D) at (0,-6.45) {\textbf{Campo medio (un elettrone)}\\
+{\footnotesize $H_{1e}=\dfrac{p^2}{2m_0}+V(\mathbf r)$ con $V(\mathbf r+\mathbf T)=V(\mathbf r)$:\ \ $H_{1e}\psi_{n}=E_n(\mathbf k)\psi_n$}};
+\foreach \a/\b in {A/B,B/C,C/D} \draw[fl] (\a.south) -- (\b.north);
+\node[lb] at (0.2,-1.07) {approssimazione \#1};
+\node[lb] at (0.2,-3.22) {approssimazione \#2};
+\node[lb] at (0.2,-5.37) {approssimazione \#3};
+\end{tikzpicture}

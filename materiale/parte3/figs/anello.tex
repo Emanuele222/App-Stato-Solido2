@@ -1,0 +1,21 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+% anello di N=8 atomi
+\draw[black!35, thick] (0,0) circle (1.25);
+\foreach \j in {0,...,7} {\fill[atomB] ({90-45*\j}:1.25) circle (3.2pt);}
+\node[font=\scriptsize, black!60] at (0,0) {$N=8$};
+\draw[<->, black!60] ({90+3}:1.62) arc (93:132:1.62);
+\node[font=\scriptsize, black!70] at (112:1.88) {$a$};
+\draw[-{Stealth[length=2mm]}, hole!80!black, thick] (-60:1.62) arc (-60:-20:1.62);
+\node[font=\scriptsize, hole!80!black, anchor=north west, align=left] at (-55:1.75) {$x+Na\equiv x$};
+% asse k nella prima zona
+\begin{scope}[xshift=5.6cm, x=0.62cm]
+\draw[-{Stealth[length=2mm]}, black!60] (-4.9,0) -- (5.2,0) node[right, font=\small, black]{$k$};
+\draw[black!45, densely dashed] (-4,-0.55) -- (-4,0.75);
+\draw[black!45, densely dashed] (4,-0.55) -- (4,0.75);
+\foreach \s in {-3,...,4} {\fill[hole!85!black] (\s,0) circle (2.4pt);}
+\draw[hole!85!black, thick, fill=white] (-4,0) circle (2.4pt);
+\foreach \s/\l in {-4/{-\frac{\pi}{a}}, 0/0, 4/{\frac{\pi}{a}}} {\node[font=\scriptsize, below] at (\s,-0.55) {$\l$};}
+\draw[<->, black!60] (1,0.38) -- node[above, font=\scriptsize]{$\Delta k=\frac{2\pi}{Na}$} (2,0.38);
+\node[font=\scriptsize, black!60, align=center] at (0,-1.45) {8 valori distinti di $k=\frac{2\pi s}{Na}$\\[-1pt]($k=-\pi/a$ coincide con $k=\pi/a$)};
+\end{scope}
+\end{tikzpicture}

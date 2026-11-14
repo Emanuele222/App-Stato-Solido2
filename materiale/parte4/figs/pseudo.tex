@@ -1,0 +1,39 @@
+% Pseudopotenziale (§4): (a) potenziale dello ione e pseudopotenziale nello spazio reale (slide 24, 29);
+% (b) fattore di forma v(q) nello spazio reciproco (slide 24, 29). Curva di modello: «empty core» di Ashcroft
+% schermato alla Thomas-Fermi, v(q) = -(2/3) E_F cos(q R_c)/(1 + q^2/k_TF^2), q in unita 2pi/a, R_c = 0,58, k_TF = 1,8
+% (parametri di tipo Si; solo per la forma). Segni: V3 < 0, V8 e V11 piccoli e positivi, come nella tabella della slide 30.
+\begin{tikzpicture}
+% ---------------------------------------------------------------- (a) spazio reale
+\begin{axis}[name=re, width=6.8cm, height=6.3cm, xmin=0, xmax=4, ymin=-2.3, ymax=0.4,
+  axis lines=middle, xlabel={$r$}, ylabel={$V$}, xtick=\empty, ytick=\empty,
+  xlabel style={anchor=west}, ylabel style={anchor=south}, clip=true,
+  title={(a) spazio reale}, title style={font=\small, yshift=2pt}]
+ \fill[black!10] (axis cs:0,-2.3) rectangle (axis cs:1.25,0);
+ \node[font=\scriptsize, black!60, anchor=north] at (axis cs:0.62,-1.75) {core};
+ \draw[black!45, densely dotted] (axis cs:1.25,-2.3) -- (axis cs:1.25,0) node[above, font=\scriptsize, black!70] {$r_c$};
+ \addplot[vB, thick, dash dot, domain=0.43:4, samples=120] {-1/x};
+ \addplot[vA, very thick, domain=0.001:4, samples=200] {-(1-exp(-x^4))/x};
+ \addplot[vA, thick, densely dashed, domain=0:1.25, samples=2] {-0.8};
+ \node[font=\scriptsize, vB, anchor=west] at (axis cs:1.45,-0.9) {ione nudo $-\dfrac{Ze^2}{4\pi\varepsilon_0r}$};
+ \node[font=\scriptsize, vA, anchor=south west] at (axis cs:2.2,-0.38) {$V_{\mathrm{ps}}$};
+ \node[font=\scriptsize, vA, anchor=west, align=left] at (axis cs:0.03,-1.02) {«hard core»};
+\end{axis}
+% ---------------------------------------------------------------- (b) spazio reciproco
+\begin{axis}[at={(re.east)}, anchor=west, xshift=1.0cm, width=7.8cm, height=6.3cm,
+  xmin=0, xmax=4.3, ymin=-0.72, ymax=0.18, axis lines=middle,
+  xlabel={$q$}, ylabel={$v(q)/\EF$}, xlabel style={anchor=west},
+  ylabel style={anchor=south}, xtick={1,2,3,4}, xticklabels={$1$,$2$,$3$,$4\ \frac{2\pi}a$}, ytick={-0.6667,-0.3}, yticklabels={$-\frac23$,$-0{,}3$},
+  tick label style={font=\scriptsize},
+  title={(b) spazio reciproco}, title style={font=\small, yshift=2pt}]
+ \addplot[vA, very thick, domain=0:4.3, samples=220] {-2/3*cos(0.58*x)/(1+(x/1.8)^2)};
+ \addplot[black!45, densely dotted] coordinates {(1.732,-0.72) (1.732,0.18)};
+ \addplot[black!45, densely dotted] coordinates {(2.828,-0.72) (2.828,0.18)};
+ \addplot[black!45, densely dotted] coordinates {(3.317,-0.72) (3.317,0.18)};
+ \addplot[only marks, mark=*, mark size=1.6pt, color=vB] coordinates
+   {(1.732,-0.1857) (2.828,0.0133) (3.317,0.0524)};
+ \node[font=\scriptsize, anchor=north] at (axis cs:1.732,-0.24) {$V_3$};
+ \node[font=\scriptsize, anchor=south] at (axis cs:2.62,0.025) {$V_8$};
+ \node[font=\scriptsize, anchor=south] at (axis cs:3.42,0.07) {$V_{11}$};
+ \node[font=\scriptsize, anchor=west, align=left, fill=white, inner sep=1.5pt] at (axis cs:1.95,-0.5) {ione schermato\\[-1pt]$v(0)=-\frac23\EF$};
+\end{axis}
+\end{tikzpicture}

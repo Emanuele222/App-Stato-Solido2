@@ -1,0 +1,23 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\draw[-{Stealth[length=2mm]}, black!60] (-0.9,-3.0) -- (-0.9,3.9) node[above, font=\small] {energia};
+% ---- atomo isolato
+\draw[thick] (-0.3,1.15) -- (1.0,1.15); \node[right, font=\small] at (1.05,1.15) {$3p$ (3 orbitali)};
+\draw[thick] (-0.3,-1.05) -- (1.0,-1.05); \node[right, font=\small] at (1.05,-1.05) {$3s$ (1 orbitale)};
+\node[font=\scriptsize, align=center] at (0.85,-3.55) {atomo isolato\\ (4 elettroni di valenza)};
+% ---- ibridazione
+\begin{scope}[xshift=4.3cm]
+\draw[thick, black!80] (0,0.05) -- (1.2,0.05); \node[right, font=\small] at (1.25,0.05) {$sp^3$ ibrido};
+\node[font=\scriptsize, align=center] at (0.9,-3.55) {ibridazione\\ $3s+3p\to4\ sp^3$};
+\end{scope}
+\draw[black!35, densely dashed] (1.0,1.15) -- (4.3,0.05); \draw[black!35, densely dashed] (1.0,-1.05) -- (4.3,0.05);
+% ---- bande nel cristallo
+\begin{scope}[xshift=8.6cm]
+\fill[bandempty, draw=black!60] (0,1.35) rectangle (4.2,2.85);
+\fill[bandfull!85, draw=black!60] (0,-2.85) rectangle (4.2,-1.35);
+\draw[<->, black!70] (4.45,-1.35) -- (4.45,1.35) node[midway, right, font=\small] {$\Eg$};
+\node[font=\scriptsize, align=center] at (2.1,2.1) {banda antilegante $sp^3$\\ 4 orbitali/cella (8 posti): vuota};
+\node[font=\scriptsize, align=center, white] at (2.1,-2.1) {banda legante $sp^3$\\ 4 orbitali/cella (8 posti): piena};
+\node[font=\scriptsize, align=center] at (2.1,-3.55) {cristallo (2 atomi per cella):\\ 8 elettroni di valenza per cella};
+\end{scope}
+\draw[black!35, densely dashed] (5.5,0.05) -- (8.6,2.1); \draw[black!35, densely dashed] (5.5,0.05) -- (8.6,-2.1);
+\end{tikzpicture}

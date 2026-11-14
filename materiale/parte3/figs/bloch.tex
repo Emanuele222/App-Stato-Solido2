@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+\pgfplotsset{blochax/.style={width=10.8cm, height=3.0cm, scale only axis=false, axis lines=left,
+  xmin=-0.15, xmax=8.15, xtick=\empty, ytick=\empty, trig format plots=rad, samples=420, domain=0:8,
+  axis line style={black!55}, clip=false,
+  every axis y label/.style={at={(ticklabel* cs:0.5)}, anchor=east, xshift=-2pt, font=\small}}}
+% (a) potenziale
+\begin{axis}[blochax, name=pa, ymin=-1.15, ymax=0.25, ylabel={$V(x)$}]
+\addplot[black!70, thick] {-cos(pi*x)^8};
+\pgfplotsinvokeforeach{0,...,8}{\fill[atomB] (axis cs:#1,0.12) circle (2.1pt);}
+\draw[<->, black!60] (axis cs:3,-1.25) -- node[below, font=\scriptsize, inner sep=1pt]{$a$} (axis cs:4,-1.25);
+\node[font=\scriptsize, black!60, anchor=west] at (axis cs:8.25,0.12) {ioni};
+\end{axis}
+% (b) parte periodica
+\begin{axis}[blochax, name=pb, at={(pa.south west)}, anchor=north west, yshift=-0.35cm,
+  ymin=0, ymax=1.7, ylabel={$u_k(x)$}]
+\addplot[occ!85!black, thick] {1+0.5*cos(2*pi*x)};
+\pgfplotsinvokeforeach{0,...,8}{\draw[black!15] (axis cs:#1,0) -- (axis cs:#1,1.7);}
+\node[font=\scriptsize, occ!85!black, anchor=west] at (axis cs:8.25,1.1) {$u_k(x+a)=u_k(x)$};
+\end{axis}
+% (c) funzione di Bloch
+\begin{axis}[blochax, name=pc, at={(pb.south west)}, anchor=north west, yshift=-0.35cm,
+  ymin=-1.6, ymax=1.6, ylabel={$\mathrm{Re}\,\psi_k(x)$}]
+\addplot[black!40, thick, densely dashed] {cos(2*pi*x/8)};
+\addplot[hole!85!black, thick] {cos(2*pi*x/8)*(1+0.5*cos(2*pi*x))};
+\pgfplotsinvokeforeach{0,...,8}{\draw[black!15] (axis cs:#1,-1.7) -- (axis cs:#1,1.7);}
+\draw[black!30] (axis cs:0,0) -- (axis cs:8,0);
+\node[font=\scriptsize, black!55, anchor=west, align=left] at (axis cs:8.25,0.75) {$\cos kx$\\[-1pt](onda piana)};
+\node[font=\scriptsize, hole!85!black, anchor=west] at (axis cs:8.25,-0.6) {$e^{ikx}u_k(x)$};
+\draw[<->, black!60] (axis cs:0,-2.05) -- node[fill=white, inner sep=1pt, font=\scriptsize]{$\lambda=2\pi/k=8a$} (axis cs:8,-2.05);
+\end{axis}
+\end{tikzpicture}

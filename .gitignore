@@ -1,0 +1,19 @@
+# dipendenze e strumenti locali
+node_modules/
+.tools/
+
+# output di build
+out/
+dist/
+release/
+*.tsbuildinfo
+
+# log e cache
+npm-debug.log*
+*.log
+.vite/
+coverage/
+
+# sistema
+.DS_Store
+Thumbs.db

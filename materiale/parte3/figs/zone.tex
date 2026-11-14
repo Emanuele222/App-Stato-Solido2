@@ -1,0 +1,37 @@
+\begin{tikzpicture}
+\pgfplotsset{zax/.style={width=6.3cm, height=6.6cm, axis lines=left, ymin=0, ymax=9.6,
+  ytick={1,4,9}, yticklabels={$1$,$4$,$9$}, tick label style={font=\scriptsize}, label style={font=\small},
+  every axis x label/.style={at={(ticklabel* cs:1)}, anchor=west},
+  every axis y label/.style={at={(ticklabel* cs:1)}, anchor=south}, clip=false, samples=60}}
+% --- schema a zona estesa
+\begin{axis}[zax, name=ext, xmin=-3.2, xmax=3.2, xtick={-3,-2,-1,0,1,2,3},
+  xticklabels={$-3$,$-2$,$-1$,$0$,$1$,$2$,$3$}, xlabel={$k$}, ylabel={$E$},
+  title={\small (a) zona estesa}]
+\pgfplotsinvokeforeach{-2,-1,1,2}{\draw[black!35, densely dashed] (axis cs:#1,0) -- (axis cs:#1,9.6);}
+\addplot[occ!85!black, very thick, domain=-1:1] {x^2};
+\addplot[hole!85!black, very thick, domain=1:2] {x^2};
+\addplot[hole!85!black, very thick, domain=-2:-1] {x^2};
+\addplot[exc!85!black, very thick, domain=2:3] {x^2};
+\addplot[exc!85!black, very thick, domain=-3:-2] {x^2};
+\draw[-{Stealth[length=2.2mm]}, black!70, thick] (axis cs:1.5,2.25) -- node[above, font=\scriptsize, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt]{$-G$} (axis cs:-0.5,2.25);
+\fill[hole!85!black] (axis cs:1.5,2.25) circle (1.6pt);
+\fill[hole!85!black] (axis cs:-0.5,2.25) circle (1.6pt);
+\node[font=\scriptsize, occ!85!black] at (axis cs:0,-1.45) {1a zona};
+\end{axis}
+% --- schema a zona ridotta
+\begin{axis}[zax, name=red, at={(ext.east)}, anchor=west, xshift=1.5cm, xmin=-1.25, xmax=1.25,
+  xtick={-1,-0.5,0,0.5,1}, xticklabels={$-1$,$-\frac12$,$0$,$\frac12$,$1$}, xlabel={$k$}, ylabel={$E$},
+  title={\small (b) zona ridotta}]
+\draw[black!35, densely dashed] (axis cs:-1,0) -- (axis cs:-1,9.6);
+\draw[black!35, densely dashed] (axis cs:1,0) -- (axis cs:1,9.6);
+\addplot[occ!85!black, very thick, domain=-1:1] {x^2};
+\addplot[hole!85!black, very thick, domain=-1:0] {(x+2)^2};
+\addplot[hole!85!black, very thick, domain=0:1] {(x-2)^2};
+\addplot[exc!85!black, very thick, domain=0:1] {(x+2)^2};
+\addplot[exc!85!black, very thick, domain=-1:0] {(x-2)^2};
+\fill[hole!85!black] (axis cs:-0.5,2.25) circle (1.6pt);
+\node[font=\scriptsize, occ!85!black] at (axis cs:0,0.75) {$n=1$};
+\node[font=\scriptsize, hole!85!black] at (axis cs:0,2.6) {$n=2$};
+\node[font=\scriptsize, exc!85!black] at (axis cs:0,6.6) {$n=3$};
+\end{axis}
+\end{tikzpicture}

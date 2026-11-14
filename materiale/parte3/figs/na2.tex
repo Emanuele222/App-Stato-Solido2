@@ -1,0 +1,23 @@
+\begin{tikzpicture}[x=1cm,y=1cm,
+  el/.style={-{Stealth[length=1.5mm]}, thick, atomC!70!black}]
+% --------------------------------- livelli: atomi isolati e molecola
+\begin{scope}
+\draw[black!70, thick] (0,0) -- (1.0,0);  \node[left, font=\scriptsize] at (0,0) {$3s$};
+\draw[black!70, thick] (4.0,0) -- (5.0,0); \node[right, font=\scriptsize] at (5.0,0) {$3s$};
+\draw[boxdef, thick] (2.0,1.15) -- (3.0,1.15);
+\draw[boxdef, thick] (2.0,-1.15) -- (3.0,-1.15);
+\draw[black!35, densely dashed] (1.0,0) -- (2.0,1.15);  \draw[black!35, densely dashed] (1.0,0) -- (2.0,-1.15);
+\draw[black!35, densely dashed] (4.0,0) -- (3.0,1.15);  \draw[black!35, densely dashed] (4.0,0) -- (3.0,-1.15);
+% elettroni
+\draw[el] (0.35,-0.3) -- (0.35,0.3); \draw[el] (4.65,0.3) -- (4.65,-0.3);
+\draw[el] (2.35,-1.45) -- (2.35,-0.85); \draw[el] (2.65,-0.85) -- (2.65,-1.45);
+\node[font=\scriptsize, hole!80!black, right] at (3.1,1.15) {antilegante (più alto di $3s$)};
+\node[font=\scriptsize, boxkey, right] at (3.1,-1.15) {legante (più basso di $3s$)};
+\node[font=\scriptsize, align=center] at (0.5,-0.75) {atomo 1};
+\node[font=\scriptsize, align=center] at (4.5,-0.75) {atomo 2};
+\draw[<->, black!70] (-0.55,0) -- (-0.55,-1.15) node[midway, left, font=\scriptsize] {$\Delta E$};
+\draw[black!30, densely dotted] (-0.55,-1.15) -- (2.0,-1.15);
+\node[font=\small\sffamily\bfseries] at (2.5,2.0) {molecola $\mathrm{Na_2}$};
+\node[font=\scriptsize, align=center] at (2.5,-2.15) {capacità $2\times2=4$ elettroni;\\ ne ospita 2 (spin opposti) nel livello legante};
+\end{scope}
+\end{tikzpicture}

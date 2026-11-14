@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\begin{axis}[width=8.4cm, height=5.6cm, axis lines=left, xmin=1.0, xmax=6.5, ymin=-1.4, ymax=3.3,
+  xtick={2}, xticklabels={$a$}, ytick={0}, yticklabels={$0$}, xlabel={distanza tra i nuclei}, ylabel={energia}, label style={font=\small}, tick label style={font=\scriptsize},
+  every axis x label/.style={at={(ticklabel* cs:1)}, anchor=north east}]
+\addplot[boxkey, very thick, domain=1.35:6.5, samples=100] {((1-exp(-1.25*(x-2)))^2-1)};
+\addplot[hole!85!black, very thick, domain=1.35:6.5, samples=100] {((1+exp(-1.25*(x-2)))^2-1)};
+\draw[black!35, densely dashed] (axis cs:2,-1.4) -- (axis cs:2,3.2);
+\draw[black!50] (axis cs:1.0,0) -- (axis cs:6.5,0);
+\draw[<->, black!70] (axis cs:2.0,-1) -- (axis cs:2.0,0);
+\node[font=\scriptsize, anchor=west, fill=white, inner sep=1pt] at (axis cs:2.1,-0.55) {$\Delta E$};
+\node[font=\scriptsize, boxkey, anchor=north west] at (axis cs:3.2,-0.6) {legante};
+\node[font=\scriptsize, hole!85!black, anchor=west] at (axis cs:3.4,1.15) {antilegante};
+\end{axis}
+\end{tikzpicture}

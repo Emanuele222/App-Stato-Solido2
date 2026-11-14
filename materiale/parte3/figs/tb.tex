@@ -1,0 +1,62 @@
+% Legami forti: bande s e p di una catena e funzioni di Bloch in k=0 e k=pi/a
+\begin{tikzpicture}
+\begin{axis}[width=6.4cm, height=7.4cm, xmin=-1, xmax=1, ymin=-3, ymax=11.4,
+  xtick={-1,0,1}, xticklabels={$-\pi/a$,$0$,$\pi/a$}, ytick=\empty,
+  axis lines=left, clip=false, samples=81, domain=-1:1, enlargelimits=false,
+  xlabel={$k$}, every axis x label/.style={at={(axis description cs:1,0)}, anchor=west, xshift=4pt},
+  ylabel={$E$}, every axis y label/.style={at={(ticklabel* cs:1.0)}, anchor=south, rotate=0}]
+ \fill[bandempty!80] (axis cs:-1,2) rectangle (axis cs:1,4);
+ \node[font=\scriptsize, black!70] at (axis cs:0.02,3) {$\Eg(\pi/a)$};
+ \draw[densely dashed, black!45] (axis cs:-1,0) -- (axis cs:1,0);
+ \draw[densely dashed, black!45] (axis cs:-1,7.2) -- (axis cs:1,7.2);
+ \node[font=\scriptsize, anchor=east] at (axis cs:-1,0) {$\bar E_s$};
+ \node[font=\scriptsize, anchor=east] at (axis cs:-1,7.2) {$\bar E_p$};
+ \addplot[very thick, vB] {-2*cos(pi*x)};
+ \addplot[very thick, vA] {7.2+3.2*cos(pi*x)};
+ \node[font=\small, vB] at (axis cs:-0.5,-1.75) {$s$};
+ \node[font=\small, vA] at (axis cs:-0.5,9.2) {$p$};
+ % larghezze
+ \draw[<->, black!70] (axis cs:-0.82,-2) -- (axis cs:-0.82,2) node[midway, fill=white, inner sep=1pt, font=\scriptsize] {$4t_s$};
+ \draw[<->, black!70] (axis cs:0.42,4) -- (axis cs:0.42,10.4) node[midway, fill=white, inner sep=1pt, font=\scriptsize] {$4|t_p|$};
+ % stati al centro e al bordo
+ \fill (axis cs:0,-2) circle (1.6pt); \fill (axis cs:1,2) circle (1.6pt);
+ \fill (axis cs:1,4) circle (1.6pt); \fill (axis cs:0,10.4) circle (1.6pt);
+ \coordinate (r1) at (axis cs:1,10.4);
+ \coordinate (r2) at (axis cs:1,4);
+ \coordinate (r3) at (axis cs:1,2);
+ \coordinate (r4) at (axis cs:1,-2);
+ \draw[black!35, densely dotted] (axis cs:0,10.4) -- (axis cs:1,10.4);
+ \draw[black!35, densely dotted] (axis cs:0,-2) -- (axis cs:1,-2);
+\end{axis}
+% ---- orbitali: chiaro = segno +, scuro = segno -
+\tikzset{lobop/.style={fill=black!10, draw=black!55, line width=0.4pt},
+         lobom/.style={fill=black!60, draw=black!75, line width=0.4pt}}
+\def\orbs#1#2{% centro, segno
+  \ifnum#2>0 \draw[lobop] (#1) circle (0.25); \node[font=\tiny] at (#1) {$+$};
+  \else \draw[lobom] (#1) circle (0.25); \node[font=\tiny, white] at (#1) {$-$}; \fi}
+\def\orbp#1#2{% centro, orientazione (+1: lobo + a destra)
+  \ifnum#2>0
+    \draw[lobom] ($(#1)+(-0.145,0)$) ellipse (0.14 and 0.19); \node[font=\tiny, white] at ($(#1)+(-0.145,0)$) {$-$};
+    \draw[lobop] ($(#1)+(0.145,0)$) ellipse (0.14 and 0.19); \node[font=\tiny] at ($(#1)+(0.145,0)$) {$+$};
+  \else
+    \draw[lobop] ($(#1)+(-0.145,0)$) ellipse (0.14 and 0.19); \node[font=\tiny] at ($(#1)+(-0.145,0)$) {$+$};
+    \draw[lobom] ($(#1)+(0.145,0)$) ellipse (0.14 and 0.19); \node[font=\tiny, white] at ($(#1)+(0.145,0)$) {$-$};
+  \fi}
+\begin{scope}[shift={($(r1)+(1.0,0)$)}]
+  \foreach \i in {0,...,4} {\coordinate (c) at (0.74*\i,0); \orbp{c}{1}}
+  \node[anchor=west, font=\scriptsize, align=left] at (3.3,0) {$p$, $k=0$\\antilegante};
+\end{scope}
+\begin{scope}[shift={($(r2)+(1.0,0)$)}]
+  \foreach \i/\s in {0/1,1/-1,2/1,3/-1,4/1} {\coordinate (c) at (0.74*\i,0); \orbp{c}{\s}}
+  \node[anchor=west, font=\scriptsize, align=left] at (3.3,0) {$p$, $k=\pi/a$\\legante};
+\end{scope}
+\begin{scope}[shift={($(r3)+(1.0,0)$)}]
+  \foreach \i/\s in {0/1,1/-1,2/1,3/-1,4/1} {\coordinate (c) at (0.74*\i,0); \orbs{c}{\s}}
+  \node[anchor=west, font=\scriptsize, align=left] at (3.3,0) {$s$, $k=\pi/a$\\antilegante};
+\end{scope}
+\begin{scope}[shift={($(r4)+(1.0,0)$)}]
+  \foreach \i in {0,...,4} {\coordinate (c) at (0.74*\i,0); \orbs{c}{1}}
+  \node[anchor=west, font=\scriptsize, align=left] at (3.3,0) {$s$, $k=0$\\legante};
+\end{scope}
+\foreach \r in {r1,r2,r3,r4} \draw[->, black!40] ($(\r)+(0.1,0)$) -- ($(\r)+(0.68,0)$);
+\end{tikzpicture}

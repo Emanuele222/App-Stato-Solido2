@@ -1,0 +1,271 @@
+/* Layout, controlli e scene della sezione «Pseudopotenziale» (regge da 800×600 in su). */
+
+.stage:has(.pseudo-bands-wrap) {
+  overflow-y: auto;
+  grid-template-rows: auto minmax(560px, 1fr) auto;
+}
+
+.scene:has(.pseudo-bands-wrap) {
+  grid-template-rows: minmax(200px, 35fr) minmax(350px, 65fr);
+  min-height: 560px;
+}
+
+.pseudo-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-height: 200px;
+}
+
+.pseudo-bands-view {
+  min-height: 350px;
+  overflow: hidden;
+}
+
+.pseudo-bands-wrap {
+  display: grid;
+  grid-template-rows: minmax(195px, 71fr) minmax(82px, 29fr);
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.pseudo-bandplot-box,
+.pseudo-shells-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.pseudo-bandplot-box {
+  min-height: 195px;
+}
+
+.pseudo-shells-box {
+  min-height: 82px;
+}
+
+.pseudo-sliders-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(210px, 1fr));
+  gap: 6px 16px;
+  width: 100%;
+}
+
+.pseudo-bands-canvas {
+  cursor: crosshair;
+  outline: none;
+}
+
+.pseudo-bands-canvas:focus-visible {
+  box-shadow: inset 0 0 0 1.5px var(--focus);
+  border-radius: 4px;
+}
+
+.pseudo-static-canvas,
+.pseudo-shells-canvas {
+  cursor: default;
+}
+
+.pseudo-refine-pill {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  pointer-events: none;
+  user-select: none;
+}
+
+.pseudo-refine-pill.is-refining {
+  color: var(--q-EF);
+  border-color: color-mix(in srgb, var(--q-EF) 60%, var(--line));
+}
+
+/* Barra preset + toggle antisimmetrico GaAs */
+.pseudo-preset-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+}
+
+.pseudo-antisym-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.pseudo-antisym-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.pseudo-antisym-btn:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.pseudo-antisym-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+  border-color: var(--q-V2G);
+}
+
+.pseudo-antisym-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--q-V2G);
+  opacity: 0.35;
+}
+
+.pseudo-antisym-btn[aria-pressed='true'] .pseudo-antisym-swatch {
+  opacity: 1;
+}
+
+.pseudo-antisym-note {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* Formula viva & chip fattori V^s interattivi */
+.pseudo-formula-panel .formula-main {
+  font-size: 13px;
+}
+
+.pseudo-formula-panel .formula-main .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0.4em 0;
+}
+
+.pseudo-formula-block + .pseudo-formula-block {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+
+.pseudo-formula-subhead {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 4px 0 2px;
+  letter-spacing: 0.02em;
+}
+
+.pseudo-factor-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 4px;
+}
+
+.pseudo-factor-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text-soft);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.pseudo-factor-chip:hover,
+.pseudo-factor-chip:focus-visible,
+.pseudo-factor-chip.is-active {
+  border-color: var(--q-VG);
+  background: color-mix(in srgb, var(--q-VG) 12%, var(--panel));
+  color: var(--text);
+  outline: none;
+}
+
+.pseudo-values {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+}
+
+.pseudo-callout {
+  font-size: 12px;
+  color: var(--text-soft);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin: 10px 0 0;
+  line-height: 1.45;
+}
+
+.pseudo-verify-card {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.pseudo-verify-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+
+.pseudo-verify-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.pseudo-verify-card .values {
+  font-size: 11.5px;
+  gap: 3px 10px;
+}
+
+@media (max-width: 720px) {
+  .pseudo-top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .scene:has(.pseudo-bands-wrap) {
+    grid-template-rows: auto minmax(350px, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .pseudo-sliders-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1023px) {
+  .pseudo-formula-panel .formula-main {
+    font-size: 11.8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pseudo-antisym-btn,
+  .pseudo-factor-chip {
+    transition: none;
+  }
+}

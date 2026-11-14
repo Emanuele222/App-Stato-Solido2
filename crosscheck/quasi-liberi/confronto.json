@@ -1,0 +1,506 @@
+{
+  "rows": [
+    {
+      "grandezza": "Banda 1 (k=0, 15 PW) [eV]",
+      "mioValore": -0.02987112040842421,
+      "valoreApp": -0.029871120408181184,
+      "valoreDispensa": "—",
+      "diffAssoluta": 2.430243506434948e-13,
+      "diffRelativa": 8.135762814405764e-12
+    },
+    {
+      "grandezza": "Banda 2 (k=0, 15 PW) [eV]",
+      "mioValore": 16.707456394358353,
+      "valoreApp": 16.707456394358463,
+      "valoreDispensa": "—",
+      "diffAssoluta": 1.1013412404281553e-13,
+      "diffRelativa": 6.591914498726692e-15
+    },
+    {
+      "grandezza": "Banda 3 (k=0, 15 PW) [eV]",
+      "mioValore": 16.737326770982065,
+      "valoreApp": 16.737326770982182,
+      "valoreDispensa": "—",
+      "diffAssoluta": 1.1723955140041653e-13,
+      "diffRelativa": 7.004676015746848e-15
+    },
+    {
+      "grandezza": "Banda 4 (k=0, 15 PW) [eV]",
+      "mioValore": 66.85176376504624,
+      "valoreApp": 66.85176376504626,
+      "valoreDispensa": "—",
+      "diffAssoluta": 1.4210854715202004e-14,
+      "diffRelativa": 2.1257262209485957e-16
+    },
+    {
+      "grandezza": "Banda 1 (k=pi/2a, 15 PW) [eV]",
+      "mioValore": 1.0047757818502296,
+      "valoreApp": 1.0047757818501566,
+      "valoreDispensa": "—",
+      "diffAssoluta": -7.30526750203353e-14,
+      "diffRelativa": 7.270544965346749e-14
+    },
+    {
+      "grandezza": "Banda 2 (k=pi/2a, 15 PW) [eV]",
+      "mioValore": 9.424541204516226,
+      "valoreApp": 9.42454120451655,
+      "valoreDispensa": "—",
+      "diffAssoluta": 3.2507330161024584e-13,
+      "diffRelativa": 3.449221501142782e-14
+    },
+    {
+      "grandezza": "Banda 3 (k=pi/2a, 15 PW) [eV]",
+      "mioValore": 26.11889300779086,
+      "valoreApp": 26.11889300779076,
+      "valoreDispensa": "—",
+      "diffAssoluta": -9.947598300641403e-14,
+      "diffRelativa": 3.808583425673587e-15
+    },
+    {
+      "grandezza": "Banda 4 (k=pi/2a, 15 PW) [eV]",
+      "mioValore": 51.184514335703035,
+      "valoreApp": 51.184514335703554,
+      "valoreDispensa": "—",
+      "diffAssoluta": 5.186961971048731e-13,
+      "diffRelativa": 1.0133850127069755e-14
+    },
+    {
+      "grandezza": "Banda 1 (k=pi/a, 15 PW) [eV]",
+      "mioValore": 3.67074243707865,
+      "valoreApp": 3.6707424370786783,
+      "valoreDispensa": "~E0±|V_G|",
+      "diffAssoluta": 2.842170943040401e-14,
+      "diffRelativa": 7.742768640837444e-15
+    },
+    {
+      "grandezza": "Banda 2 (k=pi/a, 15 PW) [eV]",
+      "mioValore": 4.670518729166839,
+      "valoreApp": 4.670518729166876,
+      "valoreDispensa": "~E0±|V_G|",
+      "diffAssoluta": 3.6415315207705135e-14,
+      "diffRelativa": 7.79684598635597e-15
+    },
+    {
+      "grandezza": "Banda 3 (k=pi/a, 15 PW) [eV]",
+      "mioValore": 37.60662379439866,
+      "valoreApp": 37.60662379439803,
+      "valoreDispensa": "—",
+      "diffAssoluta": -6.252776074688882e-13,
+      "diffRelativa": 1.6626794547880166e-14
+    },
+    {
+      "grandezza": "Banda 4 (k=pi/a, 15 PW) [eV]",
+      "mioValore": 37.60684750091962,
+      "valoreApp": 37.606847500918995,
+      "valoreDispensa": "—",
+      "diffAssoluta": -6.252776074688882e-13,
+      "diffRelativa": 1.662669564242517e-14
+    },
+    {
+      "grandezza": "Banda 1 (k=0, 41 PW) [eV]",
+      "mioValore": -0.02987112040842421,
+      "valoreApp": -0.02987112041370951,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.285299975454905e-12,
+      "diffRelativa": 1.76936783831824e-10
+    },
+    {
+      "grandezza": "Banda 2 (k=0, 41 PW) [eV]",
+      "mioValore": 16.707456394358353,
+      "valoreApp": 16.707456394353212,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.140776693224325e-12,
+      "diffRelativa": 3.0769355740830924e-13
+    },
+    {
+      "grandezza": "Banda 3 (k=0, 41 PW) [eV]",
+      "mioValore": 16.737326770982065,
+      "valoreApp": 16.737326770976928,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.137223979545524e-12,
+      "diffRelativa": 3.0693216723545494e-13
+    },
+    {
+      "grandezza": "Banda 4 (k=0, 41 PW) [eV]",
+      "mioValore": 66.85176376504624,
+      "valoreApp": 66.8517637650438,
+      "valoreDispensa": "—",
+      "diffAssoluta": -2.4442670110147446e-12,
+      "diffRelativa": 3.656249100031585e-14
+    },
+    {
+      "grandezza": "Banda 1 (k=pi/2a, 41 PW) [eV]",
+      "mioValore": 1.0047757818502296,
+      "valoreApp": 1.0047757818470406,
+      "valoreDispensa": "—",
+      "diffAssoluta": -3.1890046159332996e-12,
+      "diffRelativa": 3.17384701496383e-12
+    },
+    {
+      "grandezza": "Banda 2 (k=pi/2a, 41 PW) [eV]",
+      "mioValore": 9.424541204516226,
+      "valoreApp": 9.424541204516215,
+      "valoreDispensa": "—",
+      "diffAssoluta": -1.0658141036401503e-14,
+      "diffRelativa": 1.130892295456689e-15
+    },
+    {
+      "grandezza": "Banda 3 (k=pi/2a, 41 PW) [eV]",
+      "mioValore": 26.11889300779086,
+      "valoreApp": 26.118893007785385,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.474731779031572e-12,
+      "diffRelativa": 2.0960810924867853e-13
+    },
+    {
+      "grandezza": "Banda 4 (k=pi/2a, 41 PW) [eV]",
+      "mioValore": 51.184514335703035,
+      "valoreApp": 51.184514335700115,
+      "valoreDispensa": "—",
+      "diffAssoluta": -2.9203306439740118e-12,
+      "diffRelativa": 5.705496441405085e-14
+    },
+    {
+      "grandezza": "Banda 1 (k=pi/a, 41 PW) [eV]",
+      "mioValore": 3.67074243707865,
+      "valoreApp": 3.6707424370771817,
+      "valoreDispensa": "~E0±|V_G|",
+      "diffAssoluta": -1.468158927764307e-12,
+      "diffRelativa": 3.9996239260326237e-13
+    },
+    {
+      "grandezza": "Banda 2 (k=pi/a, 41 PW) [eV]",
+      "mioValore": 4.670518729166839,
+      "valoreApp": 4.670518729165374,
+      "valoreDispensa": "~E0±|V_G|",
+      "diffAssoluta": -1.4654943925052066e-12,
+      "diffRelativa": 3.1377550920701093e-13
+    },
+    {
+      "grandezza": "Banda 3 (k=pi/a, 41 PW) [eV]",
+      "mioValore": 37.60662379439866,
+      "valoreApp": 37.606623794392654,
+      "valoreDispensa": "—",
+      "diffAssoluta": -6.0040861171728466e-12,
+      "diffRelativa": 1.596550158290766e-13
+    },
+    {
+      "grandezza": "Banda 4 (k=pi/a, 41 PW) [eV]",
+      "mioValore": 37.60684750091962,
+      "valoreApp": 37.60684750091362,
+      "valoreDispensa": "—",
+      "diffAssoluta": -6.0040861171728466e-12,
+      "diffRelativa": 1.596540661119235e-13
+    },
+    {
+      "grandezza": "Gap in pi/a (15 PW) [eV]",
+      "mioValore": 0.9997762920881894,
+      "valoreApp": 0.9997762920881974,
+      "valoreDispensa": "1 (2|V_G|)",
+      "diffAssoluta": 7.993605777301127e-15,
+      "diffRelativa": 7.995394410288691e-15
+    },
+    {
+      "grandezza": "Gap in pi/a (41 PW) [eV]",
+      "mioValore": 0.9997762920881894,
+      "valoreApp": 0.9997762920881921,
+      "valoreDispensa": "1 (2|V_G|)",
+      "diffAssoluta": 2.6645352591003757e-15,
+      "diffRelativa": 2.6651314700962447e-15
+    },
+    {
+      "grandezza": "m0/m* banda 1 inf (15 PW)",
+      "mioValore": -15.73155521069544,
+      "valoreApp": -15.73154139305284,
+      "valoreDispensa": "—",
+      "diffAssoluta": 0.000013817642599889268,
+      "diffRelativa": 8.783392623823386e-7
+    },
+    {
+      "grandezza": "m0/m* banda 2 sup (15 PW)",
+      "mioValore": 17.730658815760574,
+      "valoreApp": 17.730651116762296,
+      "valoreDispensa": "17,731 (P4 §3.2)",
+      "diffAssoluta": -0.000007698998278016234,
+      "diffRelativa": 4.3421952664120326e-7
+    },
+    {
+      "grandezza": "m0/m* banda 1 inf (41 PW)",
+      "mioValore": -15.73155521069544,
+      "valoreApp": -15.731566255185571,
+      "valoreDispensa": "—",
+      "diffAssoluta": -0.000011044490131340012,
+      "diffRelativa": 7.020591562330569e-7
+    },
+    {
+      "grandezza": "m0/m* banda 2 sup (41 PW)",
+      "mioValore": 17.730658815760574,
+      "valoreApp": 17.73062623131767,
+      "valoreDispensa": "17,731 (P4 §3.2)",
+      "diffAssoluta": -0.00003258444290210605,
+      "diffRelativa": 0.0000018377457510570403
+    },
+    {
+      "grandezza": "|psi|^2(x=0) banda 1, V_G=-0.5",
+      "mioValore": 2.0592299112125394,
+      "valoreApp": 2.0592299112125514,
+      "valoreDispensa": "~2",
+      "diffAssoluta": 1.199040866595169e-14,
+      "diffRelativa": 5.822763451843651e-15
+    },
+    {
+      "grandezza": "|psi|^2(x=a/2) banda 1, V_G=-0.5",
+      "mioValore": 8.838898616737877e-31,
+      "valoreApp": 1.0456172977365528e-24,
+      "valoreDispensa": "0",
+      "diffAssoluta": 1.045616413846691e-24,
+      "diffRelativa": 0.9999991546717296
+    },
+    {
+      "grandezza": "|psi|^2(x=0) banda 2, V_G=-0.5",
+      "mioValore": 1.8185202960519407e-30,
+      "valoreApp": 1.111689382539036e-24,
+      "valoreDispensa": "0",
+      "diffAssoluta": 1.11168756401874e-24,
+      "diffRelativa": 0.9999983641830852
+    },
+    {
+      "grandezza": "|psi|^2(x=a/2) banda 2, V_G=-0.5",
+      "mioValore": 1.9395779571941505,
+      "valoreApp": 1.939577957194147,
+      "valoreDispensa": "~2",
+      "diffAssoluta": -3.552713678800501e-15,
+      "diffRelativa": 1.8316941918333404e-15
+    },
+    {
+      "grandezza": "|psi|^2(x=0) banda 1, V_G=0.5",
+      "mioValore": 8.770280965873771e-31,
+      "valoreApp": 1.0456172908823918e-24,
+      "valoreDispensa": "0",
+      "diffAssoluta": 1.0456164138542952e-24,
+      "diffRelativa": 0.9999991612341301
+    },
+    {
+      "grandezza": "|psi|^2(x=a/2) banda 1, V_G=0.5",
+      "mioValore": 2.0592299112125394,
+      "valoreApp": 2.0592299112125514,
+      "valoreDispensa": "~2",
+      "diffAssoluta": 1.199040866595169e-14,
+      "diffRelativa": 5.822763451843651e-15
+    },
+    {
+      "grandezza": "|psi|^2(x=0) banda 2, V_G=0.5",
+      "mioValore": 1.9395779571941505,
+      "valoreApp": 1.939577957194147,
+      "valoreDispensa": "~2",
+      "diffAssoluta": -3.552713678800501e-15,
+      "diffRelativa": 1.8316941918333404e-15
+    },
+    {
+      "grandezza": "|psi|^2(x=a/2) banda 2, V_G=0.5",
+      "mioValore": 1.8267305658411186e-30,
+      "valoreApp": 1.1116893907406494e-24,
+      "valoreDispensa": "0",
+      "diffAssoluta": 1.1116875640100835e-24,
+      "diffRelativa": 0.9999983567976981
+    },
+    {
+      "grandezza": "v bordo banda 1 [m/s]",
+      "mioValore": 2.340543568276851e-10,
+      "valoreApp": 0.000706063378576237,
+      "valoreDispensa": "0",
+      "diffAssoluta": 0.0007060631445218802,
+      "diffRelativa": 0.9999996685080066
+    },
+    {
+      "grandezza": "v bordo banda 2 [m/s]",
+      "mioValore": 4.814438318703929e-11,
+      "valoreApp": 0.000713147626521818,
+      "valoreDispensa": "0",
+      "diffAssoluta": 0.0007131475783774347,
+      "diffRelativa": 0.9999999324902987
+    },
+    {
+      "grandezza": "v elettrone libero (k=1 A^-1) [m/s]",
+      "mioValore": 1157675.7189230518,
+      "valoreApp": 1157675.7183029845,
+      "valoreDispensa": "—",
+      "diffAssoluta": -0.0006200673524290323,
+      "diffRelativa": 5.356140258395165e-10
+    },
+    {
+      "grandezza": "E_F (n=1, griglia 401) [eV]",
+      "mioValore": 1.0047757818502296,
+      "valoreApp": 1.004775781845697,
+      "valoreDispensa": "—",
+      "diffAssoluta": -4.532596520334664e-12,
+      "diffRelativa": 4.511052716645081e-12
+    },
+    {
+      "grandezza": "E_F (n=1, griglia 2001) [eV]",
+      "mioValore": 1.0047757818502296,
+      "valoreApp": 1.0047757818457113,
+      "valoreDispensa": "—",
+      "diffAssoluta": -4.518385665619462e-12,
+      "diffRelativa": 4.4969094072899994e-12
+    },
+    {
+      "grandezza": "Classificazione (n=1)",
+      "mioValore": "metal",
+      "valoreApp": "metal",
+      "valoreDispensa": "metallo",
+      "diffAssoluta": "0",
+      "diffRelativa": "0"
+    },
+    {
+      "grandezza": "E_F (n=2, griglia 401) [eV]",
+      "mioValore": 4.170630583122745,
+      "valoreApp": 4.170630583118708,
+      "valoreDispensa": "—",
+      "diffAssoluta": -4.036770917537069e-12,
+      "diffRelativa": 9.67904214262619e-13
+    },
+    {
+      "grandezza": "E_F (n=2, griglia 2001) [eV]",
+      "mioValore": 4.170630583122745,
+      "valoreApp": 4.170630583118708,
+      "valoreDispensa": "—",
+      "diffAssoluta": -4.036770917537069e-12,
+      "diffRelativa": 9.67904214262619e-13
+    },
+    {
+      "grandezza": "Classificazione (n=2)",
+      "mioValore": "insulator",
+      "valoreApp": "insulator",
+      "valoreDispensa": "isolante",
+      "diffAssoluta": "0",
+      "diffRelativa": "0"
+    },
+    {
+      "grandezza": "E_F (n=3, griglia 401) [eV]",
+      "mioValore": 9.424541204516226,
+      "valoreApp": 9.42454120451275,
+      "valoreDispensa": "—",
+      "diffAssoluta": -3.47633033470629e-12,
+      "diffRelativa": 3.688593703681234e-13
+    },
+    {
+      "grandezza": "E_F (n=3, griglia 2001) [eV]",
+      "mioValore": 9.424541204516226,
+      "valoreApp": 9.42454120451275,
+      "valoreDispensa": "—",
+      "diffAssoluta": -3.47633033470629e-12,
+      "diffRelativa": 3.688593703681234e-13
+    },
+    {
+      "grandezza": "Classificazione (n=3)",
+      "mioValore": "metal",
+      "valoreApp": "metal",
+      "valoreDispensa": "metallo",
+      "diffAssoluta": "0",
+      "diffRelativa": "0"
+    },
+    {
+      "grandezza": "E_F (n=4, griglia 401) [eV]",
+      "mioValore": 16.72239158267021,
+      "valoreApp": 16.722391582665068,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.140776693224325e-12,
+      "diffRelativa": 3.074187485569844e-13
+    },
+    {
+      "grandezza": "E_F (n=4, griglia 2001) [eV]",
+      "mioValore": 16.72239158267021,
+      "valoreApp": 16.722391582665068,
+      "valoreDispensa": "—",
+      "diffAssoluta": -5.140776693224325e-12,
+      "diffRelativa": 3.074187485569844e-13
+    },
+    {
+      "grandezza": "Classificazione (n=4)",
+      "mioValore": "insulator",
+      "valoreApp": "insulator",
+      "valoreDispensa": "isolante",
+      "diffAssoluta": "0",
+      "diffRelativa": "0"
+    },
+    {
+      "grandezza": "2 armoniche: gap pi/a (15 PW) [eV]",
+      "mioValore": 3.4661683183931613,
+      "valoreApp": 3.466168318393841,
+      "valoreDispensa": "—",
+      "diffAssoluta": 6.799005802804459e-13,
+      "diffRelativa": 1.96153365280166e-13
+    },
+    {
+      "grandezza": "2 armoniche: gap k=0 bande 2-3 (15 PW) [eV]",
+      "mioValore": 2.8692139816579374,
+      "valoreApp": 2.8692139816579036,
+      "valoreDispensa": "—",
+      "diffAssoluta": -3.375077994860476e-14,
+      "diffRelativa": 1.1763075240941883e-14
+    },
+    {
+      "grandezza": "2 armoniche: gap pi/a (41 PW) [eV]",
+      "mioValore": 3.466168318393159,
+      "valoreApp": 3.4661683183954293,
+      "valoreDispensa": "—",
+      "diffAssoluta": 2.27018404075352e-12,
+      "diffRelativa": 6.549549335805024e-13
+    },
+    {
+      "grandezza": "2 armoniche: gap k=0 bande 2-3 (41 PW) [eV]",
+      "mioValore": 2.8692139816579356,
+      "valoreApp": 2.869213981658799,
+      "valoreDispensa": "—",
+      "diffAssoluta": 8.633094239485217e-13,
+      "diffRelativa": 3.0088708247873886e-13
+    }
+  ],
+  "diagnostics": {
+    "strongPotential_a6_vGneg3_11pw_vs_41pw": {
+      "E0_eV": 1.0445276493350673,
+      "band0_11pw": -2.7178839252947613,
+      "band0_41pw": -2.7178839253805678,
+      "psi2_at_0_11pw": 3.086876323548777,
+      "psi2_at_a2_11pw": 6.167516301065902e-13,
+      "psi2_at_0_41pw": 3.086879379745943,
+      "psi2_at_a2_41pw": 3.3701687413124615e-28,
+      "standingWave_11pw": "c"
+    },
+    "smallGapEffectiveMass_a3": [
+      {
+        "vG_eV": -0.001,
+        "exact_kp_m0_over_m": 8357.221232074986,
+        "app_default_h1e4": 7333.103509853928,
+        "app_fine_h1e6": 8357.036074233583,
+        "relError_default_h1e4": 0.12254285171852312
+      },
+      {
+        "vG_eV": -0.01,
+        "exact_kp_m0_over_m": 836.6224932616551,
+        "app_default_h1e4": 835.2964974713557,
+        "app_fine_h1e6": 836.5128564394022,
+        "relError_default_h1e4": 0.0015849392061285672
+      },
+      {
+        "vG_eV": -0.05,
+        "exact_kp_m0_over_m": 168.12628924846928,
+        "app_default_h1e4": 168.11550417730066,
+        "app_fine_h1e6": 167.70959692076997,
+        "relError_default_h1e4": 0.00006414863027562359
+      }
+    ],
+    "effMass11PW_a3_vGneg0_5": 17.730648505830402,
+    "twoHarmonics_fill4": {
+      "kind": "insulator",
+      "fermiLevel": 16.814520311736274,
+      "gap": 2.869213981658799
+    },
+    "extendedK_3pi_over_a": {
+      "app_band0_at_3pi_over_a": 3.6707424370772745,
+      "app_band0_at_pi_over_a": 3.6707424370771817,
+      "solveCentral1D_naive_center_band0": 3.6707424370786503
+    }
+  }
+}

@@ -1,0 +1,153 @@
+/* Controlli, altezze minime e viste della sezione «Legami forti». */
+
+.tb-variant-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  color: var(--muted);
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.tb-variant-group {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 2px;
+  background: var(--panel);
+  gap: 2px;
+}
+
+.tb-variant-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.tb-variant-btn:hover {
+  color: var(--text);
+}
+
+.tb-variant-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+.tb-linked-param {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  font-size: 12px;
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.tb-linked-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.tb-bands-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.tb-bands-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tb-real-split {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 215px;
+}
+
+@media (max-width: 960px) {
+  .tb-real-split {
+    grid-template-columns: minmax(0, 1fr) 175px;
+  }
+}
+
+.tb-real-main {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.tb-edges-card {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border-left: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px 4px;
+  background: var(--bg);
+}
+
+.tb-edges-caption {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin: 0 0 2px;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  flex-wrap: wrap;
+  line-height: 1.25;
+}
+
+.tb-edges-canvas-box {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.tb-compare-notice {
+  font-size: 12px;
+  color: var(--text-soft);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin: 10px 0 0;
+  line-height: 1.45;
+}
+
+/* Altezze minime garantite su viewport corte/strette (800x600, 800x700):
+   impedisce che lo spazio reale o il diagramma E(k) si schiaccino e fa scorrere la colonna. */
+.stage:has(.tb-bands-wrap) {
+  overflow-y: auto;
+  grid-template-rows: auto minmax(445px, 1fr) auto;
+}
+
+.scene:has(.tb-bands-wrap) {
+  grid-template-rows: minmax(185px, 38fr) minmax(260px, 62fr);
+  min-height: 445px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tb-variant-btn {
+    transition: none;
+  }
+}

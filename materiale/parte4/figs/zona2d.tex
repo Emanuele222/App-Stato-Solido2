@@ -1,0 +1,15 @@
+% Prima zona di Brillouin del reticolo quadrato con i punti Gamma, X, M (esercizio delle slide 63-65, §5)
+\begin{tikzpicture}[x=1.25cm, y=1.25cm]
+ \fill[vB!8] (-1,-1) rectangle (1,1);
+ \draw[vB!70!black, thick] (-1,-1) rectangle (1,1);
+ \draw[->, black!60] (-1.45,0) -- (1.55,0) node[right, font=\scriptsize] {$k_x$};
+ \draw[->, black!60] (0,-1.45) -- (0,1.55) node[above, font=\scriptsize] {$k_y$};
+ \draw[very thick, vA] (0,0) -- (1,0);
+ \draw[very thick, color=vC] (0,0) -- (1,1);
+ \fill (0,0) circle (1.5pt) node[below left, font=\scriptsize] {$\Gamma$};
+ \fill (1,0) circle (1.5pt) node[below right, font=\scriptsize] {$X$};
+ \fill (1,1) circle (1.5pt) node[above right, font=\scriptsize] {$M$};
+ \node[font=\scriptsize, vA, anchor=north] at (0.5,0) {$\frac\pi a$};
+ \node[font=\scriptsize, color=vC, anchor=south east] at (0.45,0.55) {$\sqrt2\,\frac\pi a$};
+ \draw[|<->|, black!55] (-1,-1.25) -- (1,-1.25) node[midway, below, font=\scriptsize] {$2\pi/a$};
+\end{tikzpicture}

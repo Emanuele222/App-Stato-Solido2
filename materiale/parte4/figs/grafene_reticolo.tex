@@ -1,0 +1,41 @@
+% grafene: reticolo a nido d'ape (A rosso, B blu), vettori primitivi, cella, vicini; zona di Brillouin
+\begin{tikzpicture}[x=0.62cm,y=0.62cm, atA/.style={circle, fill=vA, draw=vA!60!black, inner sep=1.5pt}, atB/.style={circle, fill=vB, draw=vB!60!black, inner sep=1.5pt}]
+\begin{scope}
+  \clip (-4.1,-2.9) rectangle (4.6,2.9);
+  % a = sqrt(3) (unita' a_CC = 1); a1=(3/2,-sqrt3/2), a2=(3/2,sqrt3/2) ruotati come slide 20
+  \pgfmathsetmacro{\s}{sqrt(3)}
+  \foreach \i in {-4,...,4} \foreach \j in {-4,...,4} {
+    \pgfmathsetmacro{\x}{1.5*(\i+\j)} \pgfmathsetmacro{\y}{0.8660*(\j-\i)}
+    \pgfmathparse{(abs(\x)<5.5 && abs(\y)<4.5)?1:0}
+    \ifnum\pgfmathresult=1
+      \draw[black!35] (\x,\y) -- ++(1,0); \draw[black!35] (\x,\y) -- ++(-0.5,0.866); \draw[black!35] (\x,\y) -- ++(-0.5,-0.866);
+    \fi }
+  \foreach \i in {-4,...,4} \foreach \j in {-4,...,4} {
+    \pgfmathsetmacro{\x}{1.5*(\i+\j)} \pgfmathsetmacro{\y}{0.8660*(\j-\i)}
+    \pgfmathparse{(abs(\x)<5.5 && abs(\y)<4.5)?1:0}
+    \ifnum\pgfmathresult=1 \node[atA] at (\x,\y) {}; \node[atB] at (\x+1,\y) {}; \fi }
+  \fill[cellP!25, opacity=0.6] (0,0) -- (1.5,-0.866) -- (3,0) -- (1.5,0.866) -- cycle;
+  \draw[cellP!70!black, thick] (0,0) -- (1.5,-0.866) -- (3,0) -- (1.5,0.866) -- cycle;
+  \draw[vec, color=accent] (0,0) -- node[below left=-2pt, font=\footnotesize] {$\va_1$} (1.5,-0.866);
+  \draw[vec, color=accent] (0,0) -- node[above left=-2pt, font=\footnotesize] {$\va_2$} (1.5,0.866);
+  \node[atA] at (0,0) {}; \node[atB] at (1,0) {};
+  \draw[vec, color=vC] (-3,0) -- node[above, font=\scriptsize] {$\bm\delta_1$} (-2,0);
+  \draw[vec, color=vC] (-3,0) -- (-3.5,0.866); \draw[vec, color=vC] (-3,0) -- (-3.5,-0.866);
+  \node[atA] at (-3,0) {};
+\end{scope}
+  \node[font=\footnotesize] at (0.25,-3.6) {(a) spazio reale: \textcolor{vA}{$A$}, \textcolor{vB}{$B$}};
+\begin{scope}[xshift=6.6cm, x=1.15cm, y=1.15cm]
+  % zona: esagono con vertici K a |GK|, b1=(1/sqrt3,-1) 2pi/a ... in unita' 2pi/a: |b|=1.1547
+  \fill[vB!10] (30:0.6667) \foreach \t in {90,150,...,330} { -- (\t:0.6667) } -- cycle;
+  \draw[vB!70!black, thick] (30:0.6667) \foreach \t in {90,150,...,330} { -- (\t:0.6667) } -- cycle;
+  \foreach \t in {0,60,...,300} \node[circle, fill=black, inner sep=1.2pt] at (\t:1.1547) {};
+  \node[circle, fill=black, inner sep=1.2pt, label={[font=\footnotesize]below:$\Gamma$}] at (0,0) {};
+  \draw[vec] (0,0) -- node[pos=0.75, right, font=\footnotesize] {$\vb_1$} (-60:1.1547);
+  \draw[vec] (0,0) -- node[pos=0.75, right, font=\footnotesize] {$\vb_2$} (60:1.1547);
+  \node[circle, fill=vA, inner sep=1.3pt, label={[font=\footnotesize]right:$K$}] at (30:0.6667) {};
+  \node[circle, fill=vA, inner sep=1.3pt, label={[font=\footnotesize]left:$K'$}] at (90:0.6667) {};
+  \node[circle, fill=vC, inner sep=1.3pt, label={[font=\footnotesize]left:$M$}] at (180:0.5774) {};
+  \draw[black!50, densely dashed] (180:0.5774) -- (0,0) -- (30:0.6667);
+  \node[font=\footnotesize] at (0,-1.62) {(b) prima zona di Brillouin};
+\end{scope}
+\end{tikzpicture}

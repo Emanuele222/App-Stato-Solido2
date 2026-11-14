@@ -1,0 +1,82 @@
+/* Formula viva: termini colorati per grandezza, evidenziazione e impulso. */
+
+/* Il passaggio del mouse deve cadere sui termini marcati: le impalcature di
+   KaTeX (vlist di frazioni, apici, righe) si sovrappongono ai termini vicini,
+   quindi non ricevono eventi; li ricevono solo i termini [data-q]. */
+.katex .katex-html,
+.katex .katex-html * {
+  pointer-events: none;
+}
+
+.katex .katex-html [data-q],
+.katex .katex-html [data-q] * {
+  pointer-events: auto;
+}
+
+.live-formula {
+  color: var(--text);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+.live-formula .katex-display {
+  margin: 0.4em 0;
+  text-align: left;
+}
+
+.live-formula .katex-display > .katex {
+  text-align: left;
+}
+
+.live-formula [data-q] {
+  color: var(--q);
+  border-radius: 3px;
+  cursor: default;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+/* con un'evidenziazione attiva, tutto si attenua tranne i termini accesi */
+.live-formula.has-hl .katex {
+  color: var(--dim);
+}
+
+.live-formula.has-hl [data-q]:not(.is-on) {
+  color: color-mix(in srgb, var(--q) 40%, var(--bg));
+}
+
+.live-formula [data-q].is-on {
+  background: color-mix(in srgb, var(--q) 22%, transparent);
+}
+
+.live-formula [data-q].is-pulse {
+  animation: q-pulse 0.45s ease-out;
+}
+
+@keyframes q-pulse {
+  from {
+    background: color-mix(in srgb, var(--q) 50%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+.band-canvas {
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.band-canvas:focus-visible,
+.real-canvas:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-formula [data-q],
+  .live-formula [data-q].is-pulse {
+    transition: none;
+    animation: none;
+  }
+}

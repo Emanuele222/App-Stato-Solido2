@@ -1,0 +1,28 @@
+% Banda s a legami forti nel cubico semplice lungo R-Gamma-X-R (esercizio delle slide 66-68, §1)
+% t = 1, centro della banda Ebar = 0; ascissa: lunghezza del percorso in unita' pi/a
+\begin{tikzpicture}
+\begin{axis}[width=10.4cm, height=5.6cm, xmin=0, xmax=4.146, ymin=-7.2, ymax=7.4,
+  xtick={0,1.732,2.732,4.146}, xticklabels={$R$,$\Gamma$,$X$,$R$},
+  ytick={-6,-2,0,6}, yticklabels={$\bar E_s-6t$,$\bar E_s-2t$,$\bar E_s$,$\bar E_s+6t$},
+  y tick label style={font=\scriptsize}, axis lines=left, clip=false, enlargelimits=false,
+  ylabel={$E$}, every axis y label/.style={at={(ticklabel* cs:1.0)}, anchor=south, rotate=0}]
+ \draw[black!30] (axis cs:1.732,-7.2) -- (axis cs:1.732,7.4);
+ \draw[black!30] (axis cs:2.732,-7.2) -- (axis cs:2.732,7.4);
+ \draw[black!25, densely dashed] (axis cs:0,0) -- (axis cs:4.146,0);
+ % R -> Gamma lungo [111]: |k| = (sqrt3 - x) pi/a, E = -6 cos(|k|a/sqrt3)
+ \addplot[very thick, vB, domain=0:1.732, samples=80] {-6*cos(pi*(1.732-x)/1.732)};
+ % Gamma -> X lungo [100]
+ \addplot[very thick, vB, domain=1.732:2.732, samples=60] {-4-2*cos(pi*(x-1.732))};
+ % X -> R: k = (pi/a)(1,u,u), u = (x - 2.732)/sqrt2
+ \addplot[very thick, vB, domain=2.732:4.146, samples=80] {2-4*cos(pi*(x-2.732)/1.4142)};
+ \node[font=\scriptsize, anchor=south] at (axis cs:0.866,-7.1) {$\sqrt3\,\pi/a$};
+ \node[font=\scriptsize, anchor=south] at (axis cs:2.232,-7.1) {$\pi/a$};
+ \node[font=\scriptsize, anchor=south] at (axis cs:3.44,-7.1) {$\sqrt2\,\pi/a$};
+ \node[font=\scriptsize, anchor=west, fill=white, inner sep=1pt] at (axis cs:0.25,3.6) {$[111]$};
+ \node[font=\scriptsize, anchor=west, fill=white, inner sep=1pt] at (axis cs:1.85,-2.9) {$[100]$};
+ \draw[<->, black!60] (axis cs:4.3,-6) -- (axis cs:4.3,6) node[midway, right, font=\scriptsize] {$W=12t$};
+ \draw[black!25, densely dotted] (axis cs:4.146,-6) -- (axis cs:4.3,-6);
+ \draw[black!25, densely dotted] (axis cs:4.146,6) -- (axis cs:4.3,6);
+ \draw[black!25, densely dotted] (axis cs:1.732,-6) -- (axis cs:4.146,-6);
+\end{axis}
+\end{tikzpicture}

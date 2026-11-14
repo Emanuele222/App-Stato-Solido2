@@ -1,0 +1,2537 @@
+\documentclass[11pt,a4paper]{article}
+\newcommand{\corso}{Fisica dello Stato Solido}
+\newcommand{\argomento}{Parte 4: bande reali}
+\newcommand{\lezioni}{Lezioni 5d, 5e e 6a}
+\input{preambolo}
+
+\begin{document}
+
+% ============================================================ frontespizio
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{5.2cm}
+{\fontsize{24}{30}\selectfont\bfseries \corso\par}
+\vspace{1.1cm}
+{\Large \argomento\par}
+\vspace{0.9cm}
+{\large Legami forti con più orbitali e catena biatomica, metodo $\vk\cdot\mathbf p$,\\ lacune pesanti e leggere, pseudopotenziale,\\ bande di Al, Si e GaAs, riempimento delle bande,\\ semimetalli: bismuto e grafene, ibridazione sp$^2$,\\ pacchetti d'onde e quasi-impulso\par}
+\vspace{0.35cm}
+{\color{black!60} \lezioni{} \textperiodcentered{} A.A. 2026/2027\par}
+\vspace{0.2cm}
+{\small\color{black!60} Slide del corso, Ashcroft--Mermin capp.~8, 10 e 11, Kittel capp.~7--9, Hofmann capp.~5--6 e note integrative, Yu--Cardona cap.~2\par}
+\vspace{2.6cm}
+\begin{minipage}{0.86\linewidth}\small\setlength{\parskip}{0pt}
+\textbf{Struttura del testo.} Gli enunciati sono numerati per sezione e contrassegnati da
+un'etichetta colorata: \textbf{\color{cdef}Definizione}, \textbf{\color{cris}Risultato},
+\textbf{\color{coss}Osservazione} (imprecisioni delle slide,
+convenzioni di segno), \textbf{\color{cint}Interpretazione fisica}. Le dimostrazioni e gli
+\textbf{\color{cappr}approfondimenti} (Kittel, Ashcroft--Mermin) sono segnalati da una barra
+laterale; le dimostrazioni sono divise in passi numerati, ciascuno dei quali svolge un solo
+passaggio. Gli enunciati di teoremi e modelli, con il loro significato, sono in un
+\textbf{\color{csez}riquadro blu}; i \textbf{\color{cris}risultati essenziali} in un riquadro verde. I richiami di meccanica
+quantistica rimandano alle dispense di Quantum Physics di V.~Penna (PoliTo, versione del 14 aprile 2025) con la sigla \QP{sezione e pagina}.
+\end{minipage}
+\vfill
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+% ============================================================ indice
+{\small\setlength{\cftbeforesecskip}{4pt}\setlength{\cftbeforesubsecskip}{0.5pt}\tableofcontents}
+\newpage
+
+% ============================================================ introduzione
+\begin{introduzione}
+Il filo della parte: \emph{dai modelli alle bande dei materiali veri}. Con più orbitali e più atomi per cella i legami forti danno bande di valenza e
+di conduzione separate da un gap; vicino a $\Gamma$ il metodo $\vk\cdot\mathbf p$ ricava le masse efficaci e, con lo spin--orbita, le tre bande di
+lacune dei semiconduttori; lo pseudopotenziale spiega perché gli elettroni quasi liberi danno le bande dei solidi veri; contando gli elettroni per cella
+si capisce perché l'alluminio è un metallo e Si e GaAs sono semiconduttori, e perché bismuto e grafene stanno a metà strada. Si dà per nota la Parte~3 (teorema di Bloch, elettroni quasi liberi, legami forti, modello semiclassico); i rimandi sono
+del tipo «Parte~3, §12.5».
+\begin{enumerate}[label=\textbf{\Alph*.}, leftmargin=2.2em]
+\item \textbf{Legami forti in tre dimensioni} (§\ref{sec:tb3d}). Con $M$ orbitali per atomo le bande vengono da un sistema $M\times M$, l'equazione
+(I); la banda $s$ di una catena e del cubico semplice.
+\item \textbf{La catena biatomica} (§\ref{sec:biat}). Due atomi diversi per cella: banda di valenza e banda di conduzione, con il gap $E_B-E_A$ al
+bordo di zona. È un semiconduttore in una dimensione.
+\item \textbf{Il metodo $\vk\cdot\mathbf p$} (§\ref{sec:kp}). Bande vicino a $\Gamma$ a partire dalle energie in $\Gamma$; la massa efficace è decisa
+dalle bande vicine; lo spin--orbita separa lacune pesanti, leggere e split-off.
+\item \textbf{Lo pseudopotenziale} (§\ref{sec:pseudo}). Le onde piane ortogonalizzate al core portano a un'equazione di Schrödinger per la sola
+parte liscia della funzione di valenza, con un potenziale efficace debole: si tornano a usare gli elettroni quasi liberi, con $V_{\mathrm{ps}}$ al posto
+di $V$; bande e masse di Si, Ge, GaAs.
+\item \textbf{Bande dei materiali veri} (§\ref{sec:reali}). Schemi di zona; l'alluminio, metallo quasi libero; la fotoemissione che misura
+$E(\vk)$; il gap assoluto di Si e GaAs; metallo se $g(\mu)\ne0$; una banda contiene 2 elettroni per cella, quindi un numero dispari di elettroni dà
+un metallo.
+\item \textbf{Semimetalli} (§\ref{sec:semimetalli}). Con un numero pari di elettroni una banda piena e una vuota possono sovrapporsi (bismuto: pochi
+elettroni e lacune, effetto Hall enorme) o toccarsi in un punto (grafene: ibridi sp$^2$, cono di Dirac, $g(\EF)=0$ senza gap, massa efficace nulla).
+\item \textbf{Trasporto} (§\ref{sec:trasporto}). Pacchetto d'onde di Bloch; il reticolo perfetto non fa resistenza; il quasi-impulso si conserva negli
+urti a meno di $\hbar\mathbf G$.
+\item \textbf{Esercizi delle slide} (§\ref{sec:eserslide}). Elettrone in una scatola; elettroni quasi liberi su un reticolo quadrato.
+\end{enumerate}
+\begin{riepilogo}[filo logico]
+\begin{gather*}
+\underbrace{(E-\bar E_m)\,b_m+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\,t_{mn}(\vR)\,b_n=0}_{\text{legami forti, (I)}}
+\ \Longrightarrow\ \underbrace{E_\pm(k),\ \ \Eg=E_B-E_A}_{\text{catena }AB}\\
+\Longrightarrow\ \underbrace{\frac1{m^*}=\frac1{m_0}+\frac2{m_0^2k^2}\sum_{n'\ne n}\frac{|\langle u_{n0}|\vk\cdot\hp|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)}}_{\vk\cdot\mathbf p:\ \text{massa dalle bande vicine}}
+\\
+\Longrightarrow\ \underbrace{\Bigl[\frac{\hp^2}{2m_0}+V+\sum_c(E-E_c)|\psi_{c\vk}\rangle\langle\psi_{c\vk}|\Bigr]\psi^{\mathrm f}_{\vk}=E\,\psi^{\mathrm f}_{\vk}}_{\text{pseudopotenziale debole}}\\
+\Longrightarrow\ \underbrace{1\ \text{banda}=2N\ \text{elettroni};\ \ g(\mu)\ne0\ \text{o gap assoluto}}_{\text{metallo o semiconduttore}}
+\ \Longrightarrow\ \underbrace{E_\pm=\pm\hbar\vF|\vq|}_{\text{grafene}}\\
+\Longrightarrow\ \underbrace{\hbar\dot k=-e\mathcal E,\ \ \vk=\vk_f+\vq+\mathbf G}_{\text{trasporto}}
+\end{gather*}
+\end{riepilogo}
+\end{introduzione}
+
+% =================================================================
+\section{Il modello a legami forti in tre dimensioni}\label{sec:tb3d}
+% =================================================================
+Il modello a legami forti della Parte~3 (§12) con tutti gli orbitali atomici insieme: la funzione di Bloch combina $M$ orbitali per atomo e le bande
+si ottengono da un sistema lineare $M\times M$, l'equazione~(I) (slide 1--15, da Ashcroft--Mermin, cap.~10).
+
+\begin{osservazione}[notazione]
+Le slide scrivono $\psi_n(\vr-\vR)$ per gli orbitali atomici, $\Psi_{\vk}$ per la funzione di Bloch, $E_{\vk}$ o $\varepsilon(\vk)$ per la banda,
+$\Delta U(\vr)$ (Ashcroft--Mermin) o $\sum_{\vR'}U(\vR,\vR')$ per il potenziale degli altri atomi, $\gamma_{mn}(\vR)$ per l'integrale di
+sovrapposizione (nelle slide 12--15 $\alpha$, nella catena biatomica $\mu$, nell'esercizio delle slide 66--68 $\gamma$), $N$ per il numero di orbitali,
+$\varepsilon$ per il livello atomico. Qui, come nella Parte~3: $\varphi_n$, $\psi_{\vk}$, $E(\vk)$, $\Delta V(\vr)$,
+$t_{mn}(\vR)=-\int\varphi_m^*\,\Delta V\,\varphi_n(\vr-\vR)\,\dd\vr$ (quindi $\gamma_{mn}=\alpha=t$), $M$ orbitali per atomo, $n_{\mathrm{at}}$ atomi per
+cella, $N$ celle, $E_n$ livello atomico e $\bar E_n$ livello spostato dagli altri atomi.
+\end{osservazione}
+
+\subsection{Il modello: atomi più interazioni tra primi vicini}
+Il solido monoatomico in 3D ha l'Hamiltoniana vera $H=p^2/2m_0+V(\vr)$, con $V$ potenziale cristallino dotato di tutta la simmetria e la periodicità
+del reticolo (slide 4). Il modello la approssima con le Hamiltoniane atomiche più le interazioni tra atomi:
+\[
+H\simeq\sum_{\vR}H_{\mathrm{at}}(\vR)+\sum_{\vR,\vR'}U(\vR,\vR'),
+\]
+con $H_{\mathrm{at}}(\vR)$ Hamiltoniana dell'atomo in $\vR$ e $U(\vR,\vR')$ interazione tra gli elettroni e gli atomi in $\vR$ e $\vR'$; più avanti
+$U(\vR,\vR')=0$ se $\vR$ e $\vR'$ non sono primi vicini. $H$ è la somma delle Hamiltoniane a un elettrone, $H=\sum_eH_{1e}(\vR)$, con
+\[
+H_{1e}(\vR)=H_{\mathrm{at}}(\vR)+\sum_{\vR'}U(\vR,\vR');
+\]
+per l'elettrone dell'atomo nell'origine $H_{1e}=H_{\mathrm{at}}+\Delta V$, con $\Delta V(\vr)=\sum_{\vR\ne0}U(0,\vR)$ potenziale degli altri atomi.
+
+\begin{modello}[a legami forti con $M$ orbitali per atomo]\label{mod:tb}
+Ipotesi (slide 5--6):
+\begin{enumerate}[leftmargin=*, label=\arabic*.]
+\item l'Hamiltoniana a un elettrone è $H_{1e}=H_{\mathrm{at}}+\Delta V$;
+\item il problema atomico è risolto: $H_{\mathrm{at}}\varphi_n=E_n\varphi_n$, con $n=s,p,d,\dots$ etichetta dell'orbitale ed $E_n$ energia
+dell'elettrone atomico;
+\item ogni $\varphi_n(\vr-\vR)$ è molto localizzato attorno a $\vR$, e gli orbitali dello stesso atomo sono ortonormali,
+$\int\varphi_m^*\varphi_n\,\dd\vr=\delta_{mn}$;
+\item (\textbf{ipotesi LCAO}) la funzione di Bloch è una combinazione lineare di orbitali atomici, con coefficienti $b_n$ da determinare:
+\[
+\psi_{\vk}(\vr)=\sum_{\vR}e^{i\vk\cdot\vR}f(\vr-\vR),\qquad f(\vr-\vR)=\sum_{n=1}^Mb_n\,\varphi_n(\vr-\vR);
+\]
+\item (usata in seguito) solo interazioni tra primi vicini.
+\end{enumerate}
+Allora i $b_n$ e la banda $E(\vk)$ risolvono, per $m=1,\dots,M$,
+\begin{equation*}
+\bigl[E(\vk)-\bar E_m\bigr]b_m+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\,t_{mn}(\vR)\,b_n=0,
+\tag{I}
+\end{equation*}
+con l'integrale di sovrapposizione $t_{mn}(\vR)=-\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr$.
+\tcblower
+Le funzioni di Bloch sono combinazioni di orbitali atomici \ingl{tight binding, LCAO}: ogni livello atomico dà una banda, centrata vicino al livello
+e allargata dalle sovrapposizioni $t_{mn}$ con gli atomi vicini, che mescolano anche orbitali diversi. Il problema del cristallo si riduce, per ogni
+$\vk$, a un sistema lineare $M\times M$.
+\end{modello}
+
+\subsection{Dimostrazione principale: l'equazione (I)}\label{sec:dimI}
+Si proietta l'equazione di Schrödinger del cristallo su un orbitale dell'atomo nell'origine (slide 6--9; Ashcroft--Mermin, eq.~10.8--10.12). Nella
+Parte~3 (§12.5) la (I) era ricavata in breve dalle funzioni di Bloch dei singoli orbitali; qui la strada delle slide.
+\begin{dimostrazione}[l'equazione (I) dei legami forti]
+\passo{Equazione di Schrödinger per un elettrone del cristallo (eq.~10.8).}
+\[
+H_{1e}\psi_{\vk}(\vr)=\bigl[H_{\mathrm{at}}+\Delta V(\vr)\bigr]\psi_{\vk}(\vr)=E(\vk)\,\psi_{\vk}(\vr).
+\]
+\passo{Proiettiamo sull'orbitale $\varphi_m$ dell'atomo nell'origine.}
+Moltiplichiamo per $\varphi_m^*(\vr)$ e integriamo (in notazione di Dirac, $\langle\varphi_m|H_{1e}|\psi_{\vk}\rangle=E\langle\varphi_m|\psi_{\vk}\rangle$, slide 6;
+\QP{§10.2, pp.~128--130}):
+\[
+\int\varphi_m^*\,H_{\mathrm{at}}\,\psi_{\vk}\,\dd\vr+\int\varphi_m^*\,\Delta V\,\psi_{\vk}\,\dd\vr=E(\vk)\int\varphi_m^*\,\psi_{\vk}\,\dd\vr .
+\]
+\passo{$H_{\mathrm{at}}$ è hermitiano: agisce a sinistra su $\varphi_m^*$ e dà $E_m$ (eq.~10.9).}
+Definizione di operatore hermitiano, $(\psi,H\phi)=(H\psi,\phi)$: \QP{§2.4, p.~24}; $E_m$ è reale (\QP{§4.1, Teorema~1, p.~55}).
+\[
+\int\varphi_m^*(\vr)\,H_{\mathrm{at}}\psi_{\vk}(\vr)\,\dd\vr=\int\bigl(H_{\mathrm{at}}\varphi_m\bigr)^*\psi_{\vk}\,\dd\vr=E_m\int\varphi_m^*(\vr)\,\psi_{\vk}(\vr)\,\dd\vr .
+\]
+\passo{Portiamo $E_m$ a sinistra (eq.~10.10).}
+\[
+\bigl[E(\vk)-E_m\bigr]\int\varphi_m^*\,\psi_{\vk}\,\dd\vr=\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\psi_{\vk}(\vr)\,\dd\vr .
+\]
+\passo{Sostituiamo la LCAO e separiamo $\vR=0$ da $\vR\ne0$ (eq.~10.12).}
+Con $\int\varphi_m^*\varphi_n\,\dd\vr=\delta_{mn}$:
+\begin{multline*}
+\bigl[E-E_m\bigr]\Bigl[b_m+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\Bigl(\int\varphi_m^*(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr\Bigr)b_n\Bigr]\\
+=\sum_n\Bigl(\int\varphi_m^*\,\Delta V\,\varphi_n\,\dd\vr\Bigr)b_n+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\Bigl(\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr\Bigr)b_n .
+\end{multline*}
+\passo{Trascuriamo le sovrapposizioni tra orbitali di atomi diversi.}
+Gli orbitali sono localizzati: $\int\varphi_m^*(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr\ll1$ per $\vR\ne0$, e a sinistra resta $[E-E_m]\,b_m$.
+\passo{Il termine con $\vR=0$ sposta soltanto il livello atomico.}
+$\Delta V$, dovuto agli altri atomi, varia molto più lentamente di $\varphi_n$ dove gli orbitali dell'origine sono apprezzabili: esce dall'integrale con
+il valore $\Delta V(\vr_0)$ e, per l'ortogonalità, $\int\varphi_m^*\,\Delta V\,\varphi_n\,\dd\vr\simeq\Delta V(\vr_0)\,\delta_{mn}$. È una costante per
+$b_m$ (slide 8: $\beta_mb_m$), che si assorbe nel livello, $E_m\to\bar E_m$:
+\[
+\bigl[E(\vk)-\bar E_m\bigr]b_m=\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\Bigl(\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr\Bigr)b_n .
+\]
+\passo{Chiamiamo $-t_{mn}(\vR)$ l'integrale rimasto (slide 9).}
+È l'\textbf{integrale di sovrapposizione} \ingl{overlap energy integral}, l'analogo del $t$ della catena (Parte~3, §12.4):
+\[
+t_{mn}(\vR)=-\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr .
+\]
+\passo{Conclusione.}
+\[
+\bigl[E(\vk)-\bar E_m\bigr]b_m+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\,t_{mn}(\vR)\,b_n=0 .\qed
+\]
+Proiettando su ciascun $\varphi_m$ si ottengono $M$ equazioni per gli $M$ coefficienti $b_n$.
+\end{dimostrazione}
+
+\begin{chiave}[Legami forti: il sistema (I)]
+\[
+\boxed{\ \bigl[E(\vk)-\bar E_m\bigr]b_m+\sum_{n=1}^M\sum_{\vR\ne0}e^{i\vk\cdot\vR}\,t_{mn}(\vR)\,b_n=0,\qquad m=1,\dots,M\ }
+\]
+Sistema lineare omogeneo nei $b_n$: ha soluzioni non nulle solo se il determinante dei coefficienti si annulla. Per ogni $\vk$ si trovano $M$ radici
+$E(\vk)$, cioè $M$ bande.
+\end{chiave}
+
+\begin{osservazione}[le slide 1, 8 e 9]
+Nella slide 8 «i primi due termini a destra sono più piccoli del terzo e si trascurano»: il primo (le sovrapposizioni, passo~6) lo è davvero; il
+secondo (passo~7) non è piccolo in generale, ma è una costante che si assorbe nel livello, come dice la stessa slide. La slide 9 definisce
+$-\gamma_{mn}(\vR)\equiv\langle\psi_m|U|\psi_n\rangle$, con il segno meno: $\gamma_{mn}=t_{mn}$. Le slide 1, 3 e 11 lo omettono, come la terza parte
+della 5c (Parte~3, §12.5).
+\end{osservazione}
+
+\subsection{Conseguenze: quante bande, che cosa sono i parametri}
+\domanda{Quante bande dà la (I)? (slide 1--2, 9--10)}
+$M$ equazioni lineari omogenee: si annulla un determinante $M\times M$ e si ottengono \textbf{$M$ bande}, ciascuna con le radici in un orbitale
+atomico. Si è assunto implicitamente un atomo per cella: con $n_{\mathrm{at}}$ atomi per cella la somma su $n$ corre su tutti gli orbitali della
+cella, e equazioni e bande diventano $n_{\mathrm{at}}M$. Casi particolari («artificiali»):
+\begin{itemize}[leftmargin=*]
+\item \#1, un livello $s$ per atomo: 1 banda, di tipo $s$;
+\item \#2, tre livelli $p$ per atomo: 3 bande, di tipo $p$;
+\item \#3, un livello $s$ e tre $p$ con legami $sp^3$: 4 bande (nel Si, con 2 atomi per cella, 8 bande; Parte~3, §12.5).
+\end{itemize}
+Un atomo per cella con un orbitale dà una sola equazione; due atomi per cella con un orbitale ciascuno danno un sistema $2\times2$ (§\ref{sec:biat};
+slide 9).
+
+\domanda{Come si calcolano i $t_{mn}$?}
+Con orbitali atomici veri gli integrali sono proibitivi: in pratica i $t_{mn}$ (e i livelli $\bar E_m$) sono \textbf{parametri} da adattare ai dati
+sperimentali.
+
+\domanda{Quando una banda resta vicina al livello atomico?}
+Se i $t_{mn}$ sono «piccoli», ogni banda è un livello atomico più correzioni che dipendono da $\vk$: $E(\vk)\simeq E_n+{}$correzioni, cioè la
+dispersione.
+
+\subsection{La banda $s$: catena di atomi e cubico semplice}\label{sec:bandas}
+Caso \#1 con le sole interazioni tra primi vicini (slide 3 e 11): un solo orbitale, quindi $b_m=1$ e la somma su $n$ ha il solo termine $n=m=s$:
+\[
+E(\vk)=\bar E_s-\sum_{\vR\ \text{p.v.}}t(\vR)\,e^{i\vk\cdot\vR}=\bar E_s-t\sum_{\vR\ \text{p.v.}}e^{i\vk\cdot\vR},
+\]
+perché $t(\vR)=t$ è lo stesso per tutti i primi vicini (p.v.). Nel cubico semplice di passo $a$ i 6 vicini sono in $\pm a\xh$, $\pm a\yh$, $\pm a\zh$:
+\begin{equation}\label{eq:sc}
+E(\vk)=\bar E_s-2t\bigl[\cos k_xa+\cos k_ya+\cos k_za\bigr],
+\end{equation}
+un coseno per ogni direzione (l'«effetto 3D» della slide 11).
+
+\domanda{E in una dimensione? La catena monoatomica (slide 12--15)}
+Le slide rifanno il caso della catena con l'Hamiltoniana scritta per esteso: catena infinita di passo $a$, un orbitale $s$ per atomo di energia nota
+($\varepsilon\to\bar E_s$), solo primi vicini ($U(n,n')=0$ se $n'\ne n\pm1$):
+\[
+H=\frac{p^2}{2m_0}+V(x),\ \ V(x+a)=V(x)\qquad\longrightarrow\qquad H\simeq\sum_n\bigl[H_{\mathrm{at}}(n)+U(n,n-1)+U(n,n+1)\bigr].
+\]
+In notazione di Dirac (slide 15; l'elemento di matrice è un integrale nello spazio)
+\[
+E(k)=\langle\psi_k|H|\psi_k\rangle=\Bigl\langle\psi_k\Bigl|\sum_nH_{\mathrm{at}}(n)\Bigr|\psi_k\Bigr\rangle+\Bigl\langle\psi_k\Bigl|\sum_n\bigl[U(n,n-1)+U(n,n+1)\bigr]\Bigr|\psi_k\Bigr\rangle;
+\]
+con $H_{\mathrm{at}}(n)|\varphi_n\rangle=\bar E_s|\varphi_n\rangle$, orbitali ortogonali, $\langle\varphi_n|\varphi_{n'}\rangle=\delta_{nn'}$, e la sola sovrapposizione tra
+primi vicini,
+\[
+\langle\varphi_{n''}|U(n,n\pm1)|\varphi_{n'}\rangle=-t\quad(n''=n,\ n'=n\pm1),\qquad 0\ \ \text{altrimenti},
+\]
+la (I) con $\vR=\pm a$ dà
+\[
+\boxed{\ E(k)=\bar E_s-2t\cos ka=\bar E_s-2t+4t\sin^2\frac{ka}2\ }\qquad\Bigl(\cos ka=1-2\sin^2\frac{ka}2\Bigr).
+\]
+Larghezza $4t$ e minimo $\bar E_s-2t$ in $k=0$; $E_T\equiv E(k)-\bar E_s+2t=4t\sin^2(ka/2)$ è l'energia misurata dal fondo della banda (figura
+della slide 14, disegnata per $2t<\bar E_s$). Per orbitali $s$ ($\varphi>0$) e $\Delta V<0$ l'elemento di matrice è negativo, cioè $t>0$ (slide 15: «per $\alpha>0$ deve essere
+negativo»). È la forma $E=A-B\cos ka$ del Kronig--Penney nell'approssimazione lineare (Parte~3, §10.6); come lì, $\bar E_s$ e $t$ si prendono come
+parametri adattati alla banda sperimentale.
+
+\begin{esempio}[esercizio delle slide 66--68: banda $s$ nel cubico semplice]
+Con la notazione del Kittel, $E(\vk)=E_0-\alpha-\gamma\sum_je^{-i\vk\cdot\boldsymbol\rho_j}$, con $E_0$, $\alpha$, $\gamma$ energie positive e
+$\boldsymbol\rho_j$ vettori verso i primi vicini: qui $E_0-\alpha=\bar E_s$ e $\gamma=t$. I sei vicini $\boldsymbol\rho=(\pm a,0,0)$, $(0,\pm a,0)$,
+$(0,0,\pm a)$ ridanno la (\ref{eq:sc}); lungo le direzioni principali, con $\vk=\frac\pi a(k_x,k_y,k_z)$ ai bordi (figura~\ref{fig:tbsc}):
+\begin{itemize}[leftmargin=*]
+\item $\Gamma$, $\vk=0$: $E(\Gamma)=\bar E_s-6t$;
+\item $[100]$, $\Gamma X$, $\vk=(k,0,0)$: $E=\bar E_s-4t-2t\cos ka$; $X=\frac\pi a(1,0,0)$ è sul bordo, $\cos ka=-1$: $E(X)=\bar E_s-2t$;
+\item $[110]$, $\Gamma M$, $k_x=k_y=k/\sqrt2$: $E=\bar E_s-2t-4t\cos(ka/\sqrt2)$; in $M=\frac\pi a(1,1,0)$, $k^2=(\pi/a)^2(1+1+0)$: $E(M)=\bar E_s+2t$;
+\item $[111]$, $\Gamma R$, $k_x=k_y=k_z=k/\sqrt3$: $E=\bar E_s-6t\cos(ka/\sqrt3)$; in $R=\frac\pi a(1,1,1)$, $k^2=3(\pi/a)^2$: $E(R)=\bar E_s+6t$.
+\end{itemize}
+Larghezza $12t$. Lungo $\Gamma X$ e $\Gamma M$ le curve sono quelle del reticolo quadrato, $\bar E_s-2t(\cos k_xa+\cos k_ya)$, spostate di $-2t$.
+\end{esempio}
+
+\begin{figure}[tbp]
+\centering
+\figura{tbsc}
+\caption{Banda $s$ a legami forti nel cubico semplice lungo $R$--$\Gamma$--$X$--$R$ (figura~15 della slide 68): dal fondo $\bar E_s-6t$ in $\Gamma$ alla
+cima $\bar E_s+6t$ nel vertice $R$ della zona; in $X$, centro di una faccia, $E=\bar E_s-2t$. In ascissa le lunghezze dei tratti.}\label{fig:tbsc}
+\end{figure}
+
+\begin{osservazione}[slide 66--68]
+Le slide chiamano $W$ il vertice $\frac\pi a(1,1,1)$ della zona cubica: nel cubico semplice si chiama $R$ ($W$ è un punto della zona del reticolo FCC).
+La slide 67 nota che, a meno di una traslazione in energia, lungo $[100]$ e $[110]$ si ottengono gli stessi risultati del reticolo quadrato; lì però
+$E(\Gamma)=E_0-\alpha-4\gamma$ (la slide scrive $-6\gamma$, il valore del cubico).
+\end{osservazione}
+
+% =================================================================
+\section{La catena biatomica: un semiconduttore in una dimensione}\label{sec:biat}
+% =================================================================
+Due atomi diversi per cella, un orbitale $s$ ciascuno: la (I) diventa un sistema $2\times2$ e dà due bande, una di valenza e una di conduzione,
+separate da un gap. È il modello più semplice di semiconduttore (slide 16--32; dimostrazione a mano nelle slide 21--27).
+
+\begin{osservazione}[notazione]
+Slide: $\varepsilon_A,\varepsilon_B\to E_A,E_B$ (livelli atomici, già spostati; $E_A<E_B$ come nella slide 30); $C_A,C_B\to b_A,b_B$ (i $b_n$ della
+(I)); $\mu\equiv\langle\psi_{An}|U(n,n-1)|\psi_{B,n-1}\rangle=-\gamma_{AB}\to-t$, con $t>0$ per orbitali $s$ come nel §\ref{sec:tb3d};
+$\psi_{\gamma n}\to\varphi_{\gamma n}$, orbitale dell'atomo $\gamma=A,B$ della cella $n$; $E_{\vk}\to E(k)$; $H$ (larghezza delle bande, slide 30--31)
+$\to W$, per non confonderla con l'Hamiltoniana.
+\end{osservazione}
+
+\subsection{Il modello}
+Catena infinita di due specie atomiche alternate, $A$ e $B$ (cristallo con due atomi per cella), un elettrone di valenza $s$ per atomo, distanza di
+ripetizione della cella $a$; solo interazioni tra primi vicini: quelle tra atomi più lontani di circa $a/2$ sono trascurabili (slide 16). È la
+\textbf{catena biatomica} \ingl{diatomic chain} (figura~\ref{fig:catena}).
+
+\begin{modello}[catena biatomica]\label{mod:biat}
+Catena di passo $a$ con gli atomi $A$ in $x_{A_n}=na$ e $B$ in $x_{B_n}=(n+\frac12)a$; un orbitale $s$ per atomo,
+$H_{\mathrm{at}}(\gamma,n)\varphi_{\gamma n}=E_\gamma\varphi_{\gamma n}$ ($\gamma=A,B$, $E_A<E_B$), orbitali localizzati e ortonormali; sovrapposizione
+solo tra primi vicini $A$--$B$, $\langle\varphi_{A}|U|\varphi_{B}\rangle=-t$. Funzione di Bloch LCAO (slide 19), con i coefficienti $b_A$, $b_B$
+incogniti:
+\[
+\psi_k(x)=\sum_ne^{ikna}\bigl[b_A\,\varphi_{An}(x)+b_B\,\varphi_{Bn}(x)\bigr],\qquad \varphi_{\gamma n}(x)=\varphi_\gamma(x-x_{\gamma_n}).
+\]
+Le bande sono
+\[
+E_\pm(k)=\frac{E_A+E_B}2\pm\sqrt{\Bigl(\frac{E_B-E_A}2\Bigr)^2+4t^2\cos^2\frac{ka}2}\ .
+\]
+\tcblower
+Due atomi per cella danno due bande: quella bassa (valenza) viene soprattutto dal livello $E_A$, quella alta (conduzione) da $E_B$; la sovrapposizione
+$t$ le mescola e le allontana. Con un elettrone per atomo la valenza è piena e la conduzione vuota: un «semiconduttore» in una dimensione, con gap
+$E_B-E_A$ al bordo di zona.
+\end{modello}
+Le slide 17--19 partono dall'Hamiltoniana: quella vera, $H=p^2/2m_0+V(x)$ con $V(x+a)=V(x)$, si approssima con le Hamiltoniane atomiche $H_{\mathrm{at}}(\gamma,n)$
+dell'atomo $\gamma$ nella cella $n$ e le interazioni $U(\gamma,n;\gamma',n')$ tra elettrone e atomo $\gamma$ della cella $n$ ed elettrone e atomo
+$\gamma'$ della cella $n'$:
+\[
+H\simeq\sum_{\gamma,n}H_{\mathrm{at}}(\gamma,n)+\sum_{\gamma n,\gamma'n'}U(\gamma,n;\gamma',n')\ \ \longrightarrow\ \
+H\simeq\sum_{\gamma,n}H_{\mathrm{at}}(\gamma,n)+\sum_n\bigl[U(n,n-1)+U(n,n+1)\bigr]:
+\]
+con i soli primi vicini restano le interazioni $A$--$B$, scritte $U(n,n\pm1)$ (con il vicino a sinistra e con quello a destra).
+
+\begin{figure}[tbp]
+\centering
+\figura{catena}
+\caption{Catena biatomica di passo $a$: l'atomo $A_n$ ha come primi vicini $B_{n-1}$ e $B_n$, a distanza $a/2$; l'atomo $B_n$ ha $A_n$ e $A_{n+1}$.
+Le frecce sono gli integrali di sovrapposizione $-t$ tra primi vicini.}\label{fig:catena}
+\end{figure}
+
+
+\subsection{Dimostrazione principale: le equazioni per $b_A$ e $b_B$}
+È la dimostrazione a mano delle slide 21--27 (pagine 1--7): si proietta l'equazione di Schrödinger sull'orbitale di un atomo $A$, con i vicini
+dell'osservazione~\ref{oss:vicini}.
+\begin{dimostrazione}[equazioni (1a) e (2a) delle slide]
+\passo{Hamiltoniana a un elettrone (pag.~1).}
+Solo primi vicini: $\sum_{n'}U(n,n')=U(n,n-1)+U(n,n+1)$. Con due specie $H_{\mathrm{at}}(n)=H_{\mathrm{at}}(A,n)+H_{\mathrm{at}}(B,n)$, e ciascuna agisce
+solo sugli orbitali della propria specie:
+\[
+H_{1e}(n)=H_{\mathrm{at}}(A,n)+H_{\mathrm{at}}(B,n)+U(n,n-1)+U(n,n+1).
+\]
+\passo{Funzione di Bloch e proiezione su $\langle\varphi_{An}|$ (pag.~2).}
+Con $|\psi_k\rangle=\sum_me^{ikma}\bigl(b_A|\varphi_{Am}\rangle+b_B|\varphi_{Bm}\rangle\bigr)$ e $H_{1e}|\psi_k\rangle=E|\psi_k\rangle$, l'uguaglianza
+proiettata si scrive come quattro contributi:
+\[
+\underbrace{\langle\varphi_{An}|H_{\mathrm{at}}(A,n)|\psi_k\rangle}_{\cer1}+\underbrace{\langle\varphi_{An}|H_{\mathrm{at}}(B,n)|\psi_k\rangle}_{\cer2}
++\underbrace{\langle\varphi_{An}|U(n,n-1)+U(n,n+1)|\psi_k\rangle}_{\cer3}=\underbrace{E\,\langle\varphi_{An}|\psi_k\rangle}_{\cer4}.
+\]
+\passo{Termine \cer1 (pag.~3).}
+$H_{\mathrm{at}}(A,n)$ agisce sugli orbitali $A$ e dà $E_A$ (hermiticità, come nel §\ref{sec:dimI}); poi $\langle\varphi_{An}|\varphi_{Am}\rangle=\delta_{nm}$
+e $\langle\varphi_{An}|\varphi_{Bm}\rangle=0$:
+\[
+\cer1=\sum_me^{ikma}\langle\varphi_{An}|\varphi_{Am}\rangle\,E_A\,b_A=e^{ikna}E_A\,b_A .
+\]
+\passo{Termine \cer2 (pag.~4): è nullo.}
+$H_{\mathrm{at}}(B,n)$ agisce sugli orbitali $B$, e $|\varphi_{An}\rangle\perp|\varphi_{Bm}\rangle$ sempre ($A\ne B$):
+\[
+\cer2=\sum_me^{ikma}\langle\varphi_{An}|\varphi_{Bm}\rangle\,E_B\,b_B=0 .
+\]
+\passo{Termine \cer4 (pag.~4).}
+\[
+\cer4=E\sum_me^{ikma}\bigl[b_A\langle\varphi_{An}|\varphi_{Am}\rangle+b_B\langle\varphi_{An}|\varphi_{Bm}\rangle\bigr]=E\,e^{ikna}\,b_A .
+\]
+\passo{Termine \cer3 (pag.~5--6): restano i due atomi $B$ vicini di $A_n$.}
+L'interazione collega $\varphi_{An}$ solo agli orbitali dei primi vicini, $B_{n-1}$ (a sinistra, nella cella $n-1$) e $B_n$ (a destra, nella stessa
+cella), con lo stesso integrale $-t$:
+\begin{multline*}
+\cer3=\langle\varphi_{An}|U(n,n-1)|\varphi_{B,n-1}\rangle\,e^{ik(n-1)a}\,b_B+\langle\varphi_{An}|U(n,n+1)|\varphi_{Bn}\rangle\,e^{ikna}\,b_B\\
+=-t\bigl(e^{ik(n-1)a}+e^{ikna}\bigr)b_B .
+\end{multline*}
+\passo{Sommiamo $\cer1+\cer2+\cer3=\cer4$ e dividiamo per il fattore comune $e^{ikna}$ (pag.~7).}
+\[
+E_A\,b_A-t\bigl(1+e^{-ika}\bigr)b_B=E\,b_A .\qquad\text{(1a)}
+\]
+\passo{Stesso calcolo proiettando su $\langle\varphi_{Bn}|$: i vicini di $B_n$ sono $A_n$ e $A_{n+1}$.}
+\[
+E_B\,b_B-t\bigl(1+e^{ika}\bigr)b_A=E\,b_B .\qquad\text{(2a)}\qed
+\]
+\end{dimostrazione}
+
+\begin{osservazione}[i vicini di $A_n$ nelle slide 20 e 25--30]\label{oss:vicini}
+Le slide (e la pagina 5 della dimostrazione a mano, «catena BABABAB») prendono come vicini di $A_n$ gli atomi $B_{n-1}$ e $B_{n+1}$, con fasi
+$e^{ik(n\mp1)a}$: ottengono $\mu\bigl[e^{ik(n-1)a}+e^{ik(n+1)a}\bigr]$ e poi $2\mu\cos ka$. Con il passo $a$ della slide 16 ($A$ e $B$ a distanza
+$a/2$) i vicini di $A_n$ sono $B_{n-1}$ e $B_n$, e il fattore è $1+e^{-ika}$, di modulo $2|\cos(ka/2)|$. Le formule delle slide valgono se $a$ è la
+distanza $A$--$B$ (cella di lato $2a$, bordo di zona in $\pi/2a$); con il passo $a$ si legge $\cos(ka/2)$ al posto di $\cos ka$, e il gap cade al bordo
+$k=\pi/a$, come nella figura della slide 31 (verificato diagonalizzando una catena di 60 celle).
+\end{osservazione}
+
+\subsection{Le due bande}
+$E_A$, $E_B$ e $t$ sono di solito parametri della teoria, non calcolati dagli orbitali (slide 29). Le (1a)--(2a) sono lineari e omogenee in $b_A$ e
+$b_B$.
+\begin{dimostrazione}[bande della catena biatomica (slide 29--30)]
+\passo{Sistema omogeneo (eq.~(3)--(4) delle slide).}
+\[
+\begin{cases}(E_A-E)\,b_A-t\bigl(1+e^{-ika}\bigr)\,b_B=0 & \text{(atomo $A$)}\\[3pt] -t\bigl(1+e^{ika}\bigr)\,b_A+(E_B-E)\,b_B=0 & \text{(atomo $B$)}\end{cases}
+\]
+\passo{Determinante $2\times2$ nullo.}
+Con $\bigl|1+e^{ika}\bigr|^2=2+2\cos ka=4\cos^2(ka/2)$ si ottiene un'equazione di secondo grado in $E$:
+\[
+(E_A-E)(E_B-E)-4t^2\cos^2\frac{ka}2=0 .
+\]
+\passo{Risolviamo.}
+$E^2-(E_A+E_B)E+E_AE_B-4t^2\cos^2(ka/2)=0$, e $\frac14(E_A+E_B)^2-E_AE_B=\frac14(E_B-E_A)^2$:
+\[
+E_\pm(k)=\frac{E_A+E_B}2\pm\sqrt{\Bigl(\frac{E_B-E_A}2\Bigr)^2+4t^2\cos^2\frac{ka}2}\ .\qed
+\]
+\end{dimostrazione}
+\begin{chiave}[Bande della catena biatomica]
+\[
+\boxed{\begin{gathered}E_\pm(k)=\frac{E_A+E_B}2\pm\sqrt{\Bigl(\frac{E_B-E_A}2\Bigr)^2+4t^2\cos^2\frac{ka}2}\\[2pt]
+\Eg=E_+\bigl(\tfrac\pi a\bigr)-E_-\bigl(\tfrac\pi a\bigr)=E_B-E_A\end{gathered}}
+\]
+Due soluzioni: la \textbf{banda di valenza} $E_-$ e la \textbf{banda di conduzione} $E_+$, separate da un gap diretto al bordo di zona.
+\end{chiave}
+Con le fasi sulle posizioni degli atomi ($b_B\to b_Be^{ika/2}$) il sistema diventa reale e simmetrico,
+$(E_A-E)b_A-2t\cos(ka/2)\,b_B=0$ e $-2t\cos(ka/2)\,b_A+(E_B-E)b_B=0$: sono le (3)--(4) delle slide con $\mu\to-t$ e $\cos ka\to\cos(ka/2)$.
+
+\subsection{Conseguenze: gap, larghezze, carattere degli stati}
+\domanda{Dov'è il gap e quanto vale? (slide 30--31)}
+$\cos(ka/2)$ si annulla al bordo $k=\pm\pi/a$: lì $E_+=E_B$ ed $E_-=E_A$, e la distanza tra le bande è minima, $\Eg=E_B-E_A$. In $k=0$ le bande sono
+invece alla massima distanza (la slide 30 la chiama «gap in $k=0$»):
+\[
+E_+(0)-E_-(0)=2\Bigl[\tfrac14(E_B-E_A)^2+4t^2\Bigr]^{1/2}.
+\]
+Il gap esiste solo perché $A\ne B$: lo apre la differenza tra i livelli atomici dei due atomi.
+
+\domanda{Quanto sono larghe le bande? (slide 30--31)}
+Se $4t^2\ll\frac14(E_B-E_A)^2$ si sviluppa la radice al primo ordine, $\sqrt{D^2+x}\simeq D+x/2D$ con $D=\frac12(E_B-E_A)$:
+\[
+E_+(k)\simeq E_B+W\cos^2\frac{ka}2,\qquad E_-(k)\simeq E_A-W\cos^2\frac{ka}2,\qquad W\equiv\frac{4t^2}{E_B-E_A}.
+\]
+Ogni banda è larga circa $W$; la conduzione sta \emph{sopra} $E_B$ (tra $E_B$ e $E_B+W$), la valenza \emph{sotto} $E_A$ (tra $E_A-W$ ed $E_A$): la
+sovrapposizione respinge i due livelli, come legante e antilegante nella molecola $AB$ (Parte~3, §12.1). In $k=0$ la distanza è $\Eg+2W$
+(figura~\ref{fig:biat}a); bande strette se $t\ll E_B-E_A$.
+
+\begin{figure}[tbp]
+\centering
+\figura{biatomica}
+\caption{Bande della catena biatomica. (a) $E_A<E_B$ (qui $t=0{,}3\,(E_B-E_A)$): gap $\Eg=E_B-E_A$ al bordo di zona (in giallo), bande larghe $W$
+fuori dall'intervallo $[E_A,E_B]$, distanza massima $\Eg+2W$ in $k=0$. (b) $E_A=E_B$: le bande si toccano in $k=\pm\pi/a$ e il gap scompare.}\label{fig:biat}
+\end{figure}
+
+\begin{osservazione}[slide 30--31: quadrati e segni]
+La slide 30 scrive gli sviluppi $\varepsilon_B+H[\cos ka]$ e $\varepsilon_A-H[\cos ka]$, senza il quadrato, e il gap $E_G(\pi/a)\simeq\varepsilon_A
+-\varepsilon_B+2H$; la slide 31 disegna le bande \emph{dentro} l'intervallo $[\varepsilon_A,\varepsilon_B]$ e scrive $E_G\simeq\varepsilon_A-
+\varepsilon_B-2H$. Dalla formula esatta $E_+\ge E_B$ ed $E_-\le E_A$ sempre, perché la radice vale almeno $\frac12(E_B-E_A)$: le bande stanno fuori
+dall'intervallo, il gap al bordo è esattamente $E_B-E_A>0$, ed $E_B-E_A+2W$ è la distanza in $k=0$.
+\end{osservazione}
+
+\domanda{Su quali atomi stanno gli elettroni? Valenza e conduzione}
+In $k=\pm\pi/a$ il termine misto si annulla: lo stato di valenza è puramente $A$ ($b_B=0$), quello di conduzione puramente $B$. Per $t\ll E_B-E_A$ la
+valenza ha carattere $A$ e la conduzione carattere $B$ in tutta la zona (con $E_B-E_A=4t$, in $k=0$ la valenza ha $|b_A|^2=0{,}85$). Con un elettrone
+per atomo ci sono 2 elettroni per cella: riempiono i 2 posti per cella della valenza (con lo spin), e la conduzione resta vuota. Sopra la banda piena
+c'è il gap $E_B-E_A$: un isolante o, se il gap è piccolo, un semiconduttore, con gli elettroni di valenza sull'atomo di livello più basso.
+
+\domanda{E se i due atomi sono uguali?}
+Per $E_A=E_B$ il gap si chiude: $E_\pm=E_A\pm2t|\cos(ka/2)|$ si toccano in $k=\pm\pi/a$ (figura~\ref{fig:biat}b). È la banda della catena monoatomica
+di passo $a/2$, $E_A-2t\cos(ka/2)$, ripiegata nella zona $|k|\le\pi/a$ della cella doppia (Parte~3, §9.3); con un elettrone per atomo è piena a metà:
+un metallo.
+
+\begin{risultato}[masse efficaci al gap]
+Vicino al bordo, $k=\pi/a+q$, $\cos^2(ka/2)\simeq a^2q^2/4$ e lo sviluppo dà $E_\pm\simeq E_{B,A}\pm t^2a^2q^2/(E_B-E_A)$ (non nelle slide):
+\[
+m^*_c=-m^*_v=\frac{\hbar^2(E_B-E_A)}{2t^2a^2}.
+\]
+Gap piccolo, masse piccole: la stessa tendenza $m^*\propto\Eg$ dei quasi liberi (Parte~3, §13.3) e del metodo $\vk\cdot\mathbf p$ (§\ref{sec:kp}).
+\end{risultato}
+
+\domanda{Come si ritrova dalla (I)? (slide 32)}
+Si pone $b_m=b_A$, $b_n=b_B$ e la somma su $\vR$ corre sui due vicini $B$ di $A_n$ (solo primi vicini). Proiettando su $\varphi_A$:
+\[
+(E-E_A)\,b_A+t_{AB}\bigl(1+e^{-ika}\bigr)b_B=0,\qquad t_{AB}=-\langle\varphi_A|\Delta V|\varphi_B\rangle=t ,
+\]
+cioè la (1a); proiettando su $\varphi_B$ si ritrova la (2a). La slide 32 scrive $\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\gamma_{mn}(\vR)b_n=\frac12\gamma_{AB}
+\sum_{n=\pm1}\sum_{l=\pm1}e^{ikal}b_n=\gamma_{AB}(e^{-ika}+e^{ika})C_B$ e $(E_k-E_A)C_A+\gamma_{AB}(e^{-ika}+e^{ika})C_B=0$ con $\gamma_{AB}=\mu$: con il
+segno della (I) è $\gamma_{AB}=-\mu=t$ (come nella slide 20, $\mu=-\gamma_{AB}$), e per il fattore vale l'osservazione~\ref{oss:vicini}.
+
+% =================================================================
+\section{Il metodo $\vk\cdot\mathbf p$}\label{sec:kp}
+% =================================================================
+Un metodo semi-empirico per le bande vicino a un punto di alta simmetria, di solito $\Gamma$ \ingl{k dot p method}: note energie e funzioni d'onda in
+$\vk=0$, le bande per $\vk$ piccolo si ottengono con la teoria delle perturbazioni. Dà soprattutto le masse efficaci (e le proprietà ottiche) e, con lo
+spin--orbita, le tre bande di lacune dei semiconduttori (slide 33--48, «solo un breve riassunto»).
+
+\begin{osservazione}[notazione]
+Slide: $E_{n\vk}\to E_n(\vk)$, $E_{n0}\to E_n(0)$, $u_{n0}\equiv u_{n,\vk=0}$, $m$ o $m_o\to m_0$, $E_G\to\Eg$, $\mathcal H'\to H'_{\vk}$,
+$\mathcal H_{\mathrm{so}}\to H_{\mathrm{so}}$, indici $i,j$ delle bande (slide 40) $\to n,n'$. $P$ è il parametro di Kane della slide 41 (un'energia per
+una lunghezza), da non confondere con il $P$ del Kronig--Penney della Parte~3; $\Delta$ è l'energia di separazione spin--orbita. Lo zero delle energie
+è la cima della banda di valenza.
+\end{osservazione}
+
+\subsection{Enunciato e significato}
+\begin{modello}[metodo $\vk\cdot\mathbf p$]\label{mod:kp}
+La parte periodica $u_{n\vk}$ della funzione di Bloch $\psi_{n\vk}=e^{i\vk\cdot\vr}u_{n\vk}$ risolve l'equazione di Schrödinger efficace
+\[
+\Bigl[\frac{\hp^2}{2m_0}+V(\vr)+\frac{\hbar\vk\cdot\hp}{m_0}+\frac{\hbar^2k^2}{2m_0}\Bigr]u_{n\vk}=E_n(\vk)\,u_{n\vk},\qquad
+u_{n\vk}(\vr+\vR)=u_{n\vk}(\vr),\qquad \hp=-i\hbar\nabla .
+\]
+Con $H_0=\hp^2/2m_0+V$, esatta in $\Gamma$, e $H'_{\vk}=\hbar\vk\cdot\hp/m_0+\hbar^2k^2/2m_0$, piccola per $\vk$ piccolo, le bande vicino a $\Gamma$
+si ottengono da $E_n(0)$ e $u_{n0}$ con la teoria delle perturbazioni.
+\tcblower
+Un metodo molto empirico: non serve $V(\vr)$ (potenziale vero o pseudopotenziale), bastano pochi parametri misurati in $\Gamma$ e adattati alle bande:
+il gap, gli elementi di matrice di $\hp$ tra le bande («ottici»), lo spin--orbita. Vicino ai punti di alta simmetria le bande sono quasi parabole, e la
+loro curvatura, la massa efficace, è fissata dall'accoppiamento $\vk\cdot\hp$ con le altre bande: conta di più la banda più vicina.
+\end{modello}
+
+
+\subsection{Dimostrazione principale (I): l'equazione per $u_{n\vk}$}\label{sec:kpu}
+Slide 34--37; i passi 3--5 sono già nella Parte~3 (§8.3) per l'equazione di $u_{\vk}$.
+\begin{dimostrazione}[equazione di Schrödinger efficace per $u_{n\vk}$]
+\passo{Equazione di Schrödinger a un elettrone (eq.~(1)).}
+$n$ è l'indice di banda:
+\[
+\Bigl[-\frac{\hbar^2\nabla^2}{2m_0}+V(\vr)\Bigr]\psi_{n\vk}(\vr)=E_n(\vk)\,\psi_{n\vk}(\vr).
+\]
+\passo{Forma di Bloch (eq.~(2)).}
+\[
+\psi_{n\vk}(\vr)=e^{i\vk\cdot\vr}u_{n\vk}(\vr),\qquad u_{n\vk}(\vr+\vR)=u_{n\vk}(\vr).
+\]
+\passo{Applichiamo l'impulso $\hp=-i\hbar\nabla$ (slide 35).}
+Regola del prodotto:
+\[
+\hp\,\psi_{n\vk}=\hbar\vk\,\psi_{n\vk}+e^{i\vk\cdot\vr}\,\frac\hbar i\nabla u_{n\vk}(\vr)=e^{i\vk\cdot\vr}\,\hbar\Bigl(\vk+\frac1i\nabla\Bigr)u_{n\vk}(\vr).
+\]
+\passo{Applichiamo di nuovo: l'energia cinetica.}
+Il fattore $e^{i\vk\cdot\vr}$ esce allo stesso modo:
+\[
+\frac{\hp^2}{2m_0}\,\psi_{n\vk}=e^{i\vk\cdot\vr}\,\frac{\hbar^2}{2m_0}\Bigl(\frac1i\nabla+\vk\Bigr)^2u_{n\vk}.
+\]
+\passo{Semplifichiamo $e^{i\vk\cdot\vr}$ (slide 35).}
+\[
+H_{\vk}u_{n\vk}\equiv\Bigl[\frac{\hbar^2}{2m_0}\Bigl(\frac1i\nabla+\vk\Bigr)^2+V(\vr)\Bigr]u_{n\vk}(\vr)=E_n(\vk)\,u_{n\vk}(\vr).
+\]
+\passo{Sviluppiamo il quadrato (slide 36).}
+$\vk$ è un parametro costante, quindi $\vk\cdot\hp=\hp\cdot\vk$:
+\[
+\frac{\hbar^2}{2m_0}\Bigl(\frac1i\nabla+\vk\Bigr)^2=\frac{\hp^2}{2m_0}+\frac{\hbar^2k^2}{2m_0}+\frac{\hbar}{2m_0}\,2\,\vk\cdot\hp,\qquad
+\vk\cdot\hp=k_x\Bigl(-i\hbar\frac{\partial}{\partial x}\Bigr)+k_y\Bigl(-i\hbar\frac{\partial}{\partial y}\Bigr)+k_z\Bigl(-i\hbar\frac{\partial}{\partial z}\Bigr).
+\]
+\passo{Conclusione (slide 34 e 37).}
+\[
+\Bigl[\frac{\hp^2}{2m_0}+\frac{\hbar\vk\cdot\hp}{m_0}+\frac{\hbar^2k^2}{2m_0}+V(\vr)\Bigr]u_{n\vk}(\vr)=E_n(\vk)\,u_{n\vk}(\vr).\qed
+\]
+\end{dimostrazione}
+In forma esplicita (slide 38): $\bigl[-\frac{\hbar^2\nabla^2}{2m_0}+V(\vr)+\frac{\hbar^2k^2}{2m_0}-i\frac{\hbar^2}{m_0}\vk\cdot\nabla\bigr]u_{n\vk}(\vr)
+=E_n(\vk)\,u_{n\vk}(\vr)$.
+
+\begin{interpretazione}[non sono elettroni liberi (slide 37)]
+$\hp$ è un operatore che agisce su $u_{n\vk}$, $\vk$ un numero: $\hp\ne\hbar\vk$, e i due non sono legati in modo semplice (se lo fossero, l'equazione
+non avrebbe senso). Vicino a $\Gamma$ i termini $\hbar\vk\cdot\hp/m_0$ e $\hbar^2k^2/2m_0$ sono «piccoli» e si trattano con la teoria delle
+perturbazioni.
+\end{interpretazione}
+
+\subsection{Dimostrazione principale (II): bande e massa efficace vicino a $\Gamma$}\label{sec:kpmassa}
+La slide 40 dà già pronte le formule della teoria delle perturbazioni; prima le ricaviamo, con la notazione delle QP, poi le applichiamo.
+\begin{approfondimento}[teoria delle perturbazioni non degenere fino al secondo ordine (\QP{§13, pp.~167--169})]
+\passo{Impostazione.}
+$H_0$ ha spettro noto e non degenere; il parametro $\tau$ serve solo a contare l'ordine ($\tau\to1$ alla fine):
+\begin{gather*}
+H=H_0+\tau V,\qquad H_0|n\rangle=E^0_n|n\rangle,\\
+|E_n\rangle=|n\rangle+\tau|b_n\rangle+\tau^2|c_n\rangle+\dots,\qquad E_n=E^0_n+\tau E^1_n+\tau^2E^2_n+\dots
+\end{gather*}
+\passo{Sostituiamo in $H|E_n\rangle=E_n|E_n\rangle$ e uguagliamo le potenze di $\tau$.}
+\[
+\tau^1:\ \ \bigl(H_0-E^0_n\bigr)|b_n\rangle=-V|n\rangle+E^1_n|n\rangle,\qquad
+\tau^2:\ \ \bigl(H_0-E^0_n\bigr)|c_n\rangle=-V|b_n\rangle+E^1_n|b_n\rangle+E^2_n|n\rangle .
+\]
+\passo{Scegliamo le correzioni ortogonali a $|n\rangle$.}
+Il contributo di $|n\rangle$ è già nel primo termine: $\langle n|b_n\rangle=\langle n|c_n\rangle=0$, cioè $|b_n\rangle=\sum_{k\ne n}B_k(n)\,|k\rangle$.
+\passo{Proiettiamo su $\langle n|$: le correzioni all'energia.}
+$\langle n|(H_0-E^0_n)=0$ perché $H_0$ è hermitiana; restano
+\[
+E^1_n=\langle n|V|n\rangle,\qquad E^2_n=\langle n|V|b_n\rangle .
+\]
+\passo{Proiettiamo l'ordine $\tau^1$ su $\langle k|$, $k\ne n$: l'autovettore al primo ordine.}
+\[
+\bigl(E^0_k-E^0_n\bigr)B_k(n)=-\langle k|V|n\rangle\qquad\Longrightarrow\qquad B_k(n)=-\frac{\langle k|V|n\rangle}{E^0_k-E^0_n}.
+\]
+\passo{Sostituiamo in $E^2_n$.}
+$V$ è hermitiana, $\langle n|V|k\rangle=\langle k|V|n\rangle^*$:
+\[
+E^2_n=\sum_{k\ne n}\langle n|V|k\rangle\,B_k(n)=\sum_{k\ne n}\frac{|\langle k|V|n\rangle|^2}{E^0_n-E^0_k}.
+\]
+\passo{Risultato ($\tau=1$): energia al secondo ordine, autovettore al primo.}
+\[
+E_n\simeq E^0_n+\langle n|V|n\rangle+\sum_{k\ne n}\frac{|\langle k|V|n\rangle|^2}{E^0_n-E^0_k},\qquad
+|E_n\rangle\simeq|n\rangle+\sum_{k\ne n}\frac{\langle k|V|n\rangle}{E^0_n-E^0_k}\,|k\rangle .
+\]
+Per $E^2_n$ basta $|b_n\rangle$: la correzione $|c_n\rangle$ non entra. Nel $\vk\cdot\mathbf p$: $|n\rangle\to u_{n0}$, $E^0_n\to E_n(0)$, $\tau V\to H'_{\vk}$,
+$k\to n'$.\qed
+\end{approfondimento}
+\begin{dimostrazione}[massa efficace al secondo ordine (slide 39--40 e 48)]
+\passo{Problema imperturbato: $\vk=0$ (slide 39).}
+Si risolve prima
+\[
+H_0u_{n0}=\Bigl[\frac{\hp^2}{2m_0}+V(\vr)\Bigr]u_{n0}=E_n(0)\,u_{n0}:
+\]
+$H_0$ è l'Hamiltoniana esatta in $\Gamma$, e le $u_{n0}$, autofunzioni della stessa $H_0$ hermitiana, formano un insieme completo e ortonormale di
+funzioni periodiche (\QP{§4.1, Teorema~2, p.~56}; relazione di completezza in \QP{§3.1, p.~41}).
+\passo{Perturbazione (slide 40).}
+Sempre più piccola per $\vk\to0$: la teoria è tanto più accurata quanto più $k$ è piccolo.
+\[
+H=H_0+H'_{\vk},\qquad H'_{\vk}=\frac{\hbar^2k^2}{2m_0}+\frac{\hbar\vk\cdot\hp}{m_0}.
+\]
+\passo{Formule della teoria delle perturbazioni per una banda $n$ non degenere (slide 40; approfondimento precedente).}
+\begin{gather*}
+E_n(\vk)=E_n(0)+\langle u_{n0}|H'_{\vk}|u_{n0}\rangle+\sum_{n'\ne n}\frac{|\langle u_{n0}|H'_{\vk}|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)},\\
+u_{n\vk}=u_{n0}+\sum_{n'\ne n}\frac{\langle u_{n'0}|H'_{\vk}|u_{n0}\rangle}{E_n(0)-E_{n'}(0)}\,u_{n'0}.
+\end{gather*}
+\passo{Primo ordine.}
+Il secondo termine è $\hbar\vk\cdot\mathbf v_n(0)$, nullo in un estremo della banda (in $\Gamma$ per la simmetria di inversione):
+\[
+\langle u_{n0}|H'_{\vk}|u_{n0}\rangle=\frac{\hbar^2k^2}{2m_0}+\frac\hbar{m_0}\,\vk\cdot\langle u_{n0}|\hp|u_{n0}\rangle .
+\]
+\passo{Secondo ordine: nei termini misti conta solo $\vk\cdot\hp$.}
+$\hbar^2k^2/2m_0$ è un numero e $\langle u_{n0}|u_{n'0}\rangle=0$ per $n'\ne n$:
+\[
+E_n(\vk)\simeq E_n(0)+\frac{\hbar^2k^2}{2m_0}+\frac{\hbar^2}{m_0^2}\sum_{n'\ne n}\frac{|\langle u_{n0}|\vk\cdot\hp|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)} .
+\]
+\passo{Conclusione: confronto con la parabola $E_n(0)+\hbar^2k^2/2m^*$ (slide 48).}
+Dividendo per $\hbar^2k^2/2$:
+\[
+\frac1{m^*}=\frac1{m_0}+\frac2{m_0^2k^2}\sum_{n'\ne n}\frac{|\langle u_{n0}|\vk\cdot\hp|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)} .\qed
+\]
+\end{dimostrazione}
+
+\begin{chiave}[Massa efficace dal metodo $\vk\cdot\mathbf p$]
+\[
+\boxed{\ E_n(\vk)\simeq E_n(0)+\frac{\hbar^2k^2}{2m^*},\qquad
+\frac1{m^*}=\frac1{m_0}+\frac2{m_0^2k^2}\sum_{n'\ne n}\frac{|\langle u_{n0}|\vk\cdot\hp|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)}\ }
+\]
+Risultato del secondo ordine: le bande $n'$ più vicine a $n$ (denominatore piccolo) decidono la massa efficace di $n$. In generale $m^*$ dipende dalla
+direzione di $\vk$ (tensore, Parte~3, §13.2).
+\end{chiave}
+
+\begin{osservazione}[slide 40]
+Nella formula per $u_{i\vk}$ la somma contiene $u_{i0}$: va letto $u_{j0}$. Inoltre $\mathcal H_{\mathrm{so}}$ (§\ref{sec:so}) non dipende da $\vk$ e non
+diventa piccolo per $\vk\to0$: va unito ad $H_0$ (si diagonalizza $H_0+H_{\mathrm{so}}$ in $\Gamma$), e la perturbazione resta
+$\hbar\vk\cdot\hp/m_0+\hbar^2k^2/2m_0$.
+\end{osservazione}
+
+\begin{dimostrazione}[verifica: la massa al bordo dei quasi liberi]
+Attorno a un punto $\vk_0\ne0$ vale la stessa formula, con $u_{n\vk_0}$ al posto di $u_{n0}$ e gli elementi di matrice
+$\langle\psi_{n\vk_0}|\hp|\psi_{n'\vk_0}\rangle$. Due bande dei quasi liberi al bordo $k_0=\pi/a$ (Parte~3, §11): $\psi_c\propto\cos(\pi x/a)$ e
+$\psi_s\propto\sin(\pi x/a)$, separate da $\Eg=2|V_G|$.
+\passo{Elemento di matrice.}
+$\hp\,\psi_s=-i\hbar\frac\pi a\,\psi_c$, quindi $|\langle\psi_c|\hp|\psi_s\rangle|=\hbar\pi/a$.
+\passo{Formula con le sole due bande, $E_\pm-E_\mp=\pm\Eg$.}
+\[
+\frac{m_0}{m^*_\pm}=1\pm\frac2{m_0}\,\frac{(\hbar\pi/a)^2}{\Eg}=1\pm\frac{4E_0}{\Eg},\qquad E_0=\frac{\hbar^2\pi^2}{2m_0a^2}.
+\]
+\passo{Conclusione.}
+$m^*_\pm=m_0\Eg/(\Eg\pm4E_0)$: la massa al bordo dei quasi liberi e del Kronig--Penney (Parte~3, §13.3).\qed
+\end{dimostrazione}
+Con tutte le bande la somma riproduce la curvatura esatta: per $a=\SI{3}{\angstrom}$ e $V_G=\SI{-0.5}{eV}$ si ha $m_0/m^*_+=17{,}731$ sia dalla
+curvatura numerica sia dalla somma, e $17{,}72$ con le sole due bande (verificato con Python).
+
+\subsection{Conseguenze: bande vicine, spin--orbita, lacune}\label{sec:so}
+\domanda{Perché le bande vicine contano? Il segno dei contributi}
+Una banda $n'$ \emph{sopra} $n$ ($E_{n'}>E_n$) dà un contributo negativo a $1/m^*$, una banda \emph{sotto} un contributo positivo. Per il fondo della
+conduzione la banda più vicina è la valenza, più in basso di $\Eg$; tenendo solo quella,
+\[
+\frac{m_0}{m^*_c}\simeq1+\frac{E_P}{\Eg},\qquad E_P\equiv\frac2{m_0}\bigl|\langle u_{c0}|\hat p_x|u_{v0}\rangle\bigr|^2 ,
+\]
+e con $E_P\approx\SI{20}{eV}\gg\Eg$ (valore tipico, simile nei semiconduttori comuni) $m^*_c\simeq m_0\Eg/E_P\ll m_0$: \textbf{gap piccolo, massa
+piccola}. È la tendenza $m^*\propto\Eg$ della tabella della Parte~3 (§13.3), da InSb a GaAs. Per la cima della valenza la conduzione sta sopra:
+$m_0/m^*\simeq1-E_P/\Eg<0$, massa negativa, cioè lacune leggere.
+
+\domanda{Che cosa aggiunge lo spin--orbita? (slide 38, 42, 44)}
+L'interazione spin--orbita, che deriva dall'equazione di Dirac (qui senza dimostrazione; per un potenziale centrale è il termine
+$H_{SL}=\frac1{2m_0^2c^2}\frac1r\frac{\dd U}{\dd r}\,\mathbf S\cdot\mathbf L$ di \QP{§12.2, p.~161}, con $U$ energia potenziale), è (slide 38, eq.~6.7--6.8)
+\[
+H_{\mathrm{so}}=-\frac{\hbar}{4m_0^2c^2}\,\boldsymbol\sigma\cdot\hp\times(\nabla V),\qquad
+\sigma_x=\begin{pmatrix}0&1\\1&0\end{pmatrix},\ \ \sigma_y=\begin{pmatrix}0&-i\\i&0\end{pmatrix},\ \ \sigma_z=\begin{pmatrix}1&0\\0&-1\end{pmatrix};
+\]
+aggiunta all'Hamiltoniana $\vk\cdot\mathbf p$ dà (eq.~6.9)
+\[
+\Bigl[\frac{\hp^2}{2m_0}+V+\frac{\hbar^2k^2}{2m_0}+\frac\hbar{m_0}\vk\cdot\boldsymbol\pi+\frac{\hbar}{4m_0^2c^2}\,\hp\cdot\boldsymbol\sigma\times\nabla V\Bigr]|n\vk\rangle
+=E_n(\vk)\,|n\vk\rangle,\qquad\boldsymbol\pi\equiv\hp+\frac\hbar{4m_0c^2}\,\boldsymbol\sigma\times\nabla V .
+\]
+Vicino ai nuclei ha la forma atomica $H_{\mathrm{so}}=\lambda\,\mathbf L\cdot\mathbf S$ (slide 42). L'effetto più importante è alla cima della valenza in
+$\Gamma=(0,0,0)$: senza $H_{\mathrm{so}}$ gli stati sono di tipo $p$ ($L=1$), tre volte degeneri (sei volte con lo spin). Con $\mathbf J=\mathbf L+\mathbf S$,
+$J^2=L^2+S^2+2\,\mathbf L\cdot\mathbf S$ (\QP{§11.2, p.~150}), e $L=1$, $S=\frac12$:
+\[
+\lambda\,\mathbf L\cdot\mathbf S=\frac\lambda2\bigl(J^2-L^2-S^2\bigr)=\frac{\lambda\hbar^2}2\Bigl[J(J+1)-2-\frac34\Bigr]=
+\begin{cases}+\frac12\lambda\hbar^2 & J=\frac32\ \ (4\ \text{stati})\\[2pt] -\lambda\hbar^2 & J=\frac12\ \ (2\ \text{stati})\end{cases}
+\]
+mentre per $L=0$ è $\mathbf L\cdot\mathbf S=0$. $H_{\mathrm{so}}$ separa quindi in parte la degenerazione (figura~\ref{fig:kp}a): in alto i quattro stati
+$J=\frac32$, le \textbf{lacune pesanti} \ingl{heavy holes}, $m_J=\pm\frac32$, e le \textbf{lacune leggere} \ingl{light holes}, $m_J=\pm\frac12$, ancora
+degeneri in $\Gamma$; più in basso di
+\[
+\Delta=\tfrac32\lambda\hbar^2
+\]
+i due stati $J=\frac12$, la banda \textbf{split-off} \ingl{spin-orbit split-off}. Gli stati $s$ ($L=0$) non si separano.
+
+\begin{figure}[tbp]
+\centering
+\figura{kp}
+\caption{(a) Livelli in $\Gamma$: senza spin--orbita la cima della valenza $p$ è sei volte degenere; $\lambda\mathbf L\cdot\mathbf S$ la separa in $J=\frac32$
+(lacune pesanti e leggere) e $J=\frac12$ (split-off), più in basso di $\Delta$; la conduzione $s$ non si separa. (b) Bande vicino a $\Gamma$ dalle formule
+della slide 41 con parametri di tipo GaAs ($\Eg=\SI{1.52}{eV}$, $\Delta=\SI{0.34}{eV}$, $E_P=\SI{20}{eV}$): conduzione $c$, lacune pesanti $hh$,
+leggere $lh$ (tratteggiata), split-off $so$ (schema della slide 43).}\label{fig:kp}
+\end{figure}
+
+\domanda{Che carattere hanno le funzioni d'onda ai bordi delle bande? (slide 44)}
+La parte della funzione d'onda nella cella centrale decide la natura delle transizioni ottiche nei dispositivi optoelettronici. In un materiale a gap
+diretto il minimo della conduzione ($\vk=0$) è di tipo $s$; in uno a gap indiretto (minimo in $X$) è una miscela $s+p$ (longitudinale) e $p$
+(trasversale). La cima della valenza è fatta di stati $p$: con lo spin il momento angolare totale è $\frac32\hbar$, e con gli orbitali $|p_x\rangle$,
+$|p_y\rangle$, $|p_z\rangle$:
+\begin{align*}
+\Phi_{\frac32,\frac32}&=-\tfrac1{\sqrt2}\bigl(|p_x\rangle+i|p_y\rangle\bigr){\uparrow}, &
+\Phi_{\frac32,-\frac32}&=-\tfrac1{\sqrt2}\bigl(|p_x\rangle-i|p_y\rangle\bigr){\downarrow},\\
+\Phi_{\frac32,\frac12}&=-\tfrac1{\sqrt6}\bigl[(|p_x\rangle+i|p_y\rangle){\downarrow}-2|p_z\rangle{\uparrow}\bigr], &
+\Phi_{\frac32,-\frac12}&=\tfrac1{\sqrt6}\bigl[(|p_x\rangle-i|p_y\rangle){\uparrow}+2|p_z\rangle{\downarrow}\bigr]:
+\end{align*}
+nella prima riga le lacune pesanti ($m_J=\pm\frac32$), nella seconda le leggere ($m_J=\pm\frac12$).
+I due stati split-off, ortogonali a questi, sono fatti degli stessi orbitali $p$ (Clebsch--Gordan, non nelle slide: gli stati $|j=\ell\pm\frac12,m_j\rangle$
+di \QP{§11.2, p.~151} con $\ell=1$; verificati con Python):
+$\Phi_{\frac12,\frac12}=-\frac1{\sqrt3}\bigl[(|p_x\rangle+i|p_y\rangle){\downarrow}+|p_z\rangle{\uparrow}\bigr]$ e
+$\Phi_{\frac12,-\frac12}=-\frac1{\sqrt3}\bigl[(|p_x\rangle-i|p_y\rangle){\uparrow}-|p_z\rangle{\downarrow}\bigr]$.
+
+\begin{osservazione}[slide 44]
+L'etichetta $L=0$ accanto alla banda split-off, con le frecce verso $|s\rangle{\uparrow}$ e $|s\rangle{\downarrow}$, va letta $J=\frac12$: la split-off
+nasce dagli orbitali $p$ ($L=1$), con $J=L-S$; si comporta come un doppietto di spin $\frac12$, come gli stati $s$. Il valore
+$\lambda\mathbf L\cdot\mathbf S=\lambda$ «se $L=1$» dipende da $J$: $+\frac12\lambda\hbar^2$ per $J=\frac32$ e $-\lambda\hbar^2$ per $J=\frac12$; è nullo
+per $L=0$, come scritto.
+\end{osservazione}
+
+\domanda{Come sono le bande vicino a $\Gamma$ in un semiconduttore a gap diretto? (slide 41, 43)}
+Per un materiale a gap diretto come GaAs, con la conduzione $s$ e le tre valenze $p$ accoppiate da $\vk\cdot\hp$ e lo spin--orbita, il metodo dà
+(Kittel, cap.~8; $P$, $\Eg$ e $\Delta$ sono parametri da adattare):
+\begin{gather*}
+E_c=\Eg+\frac{\hbar^2k^2}{2m_0}+\frac{P^2k^2}3\Bigl(\frac2\Eg+\frac1{\Eg+\Delta}\Bigr)\qquad(\text{conduzione più bassa}),\\
+E_{hh}=-\frac{\hbar^2k^2}{2m_0},\qquad
+E_{lh}=-\frac{\hbar^2k^2}{2m_0}-\frac{2P^2k^2}{3\Eg},\qquad
+E_{so}=-\Delta-\frac{\hbar^2k^2}{2m_0}-\frac{P^2k^2}{3(\Eg+\Delta)}\\
+(\text{le tre valenze più alte: lacune pesanti, leggere e split-off}),
+\end{gather*}
+con $P=\frac\hbar{m_0}|\langle S|\hat p_x|X\rangle|$, l'elemento di matrice «ottico» tra la conduzione $s$ e le valenze $p$. Sono parabole; con
+$E_P=2m_0P^2/\hbar^2$ le masse (delle lacune, per le valenze) sono
+\[
+\frac{m_0}{m_c}=1+\frac{E_P}3\Bigl(\frac2\Eg+\frac1{\Eg+\Delta}\Bigr),\qquad
+\frac{m_0}{m_{lh}}=1+\frac{2E_P}{3\Eg},\qquad
+\frac{m_0}{m_{so}}=1+\frac{E_P}{3(\Eg+\Delta)},\qquad m_{hh}=m_0 .
+\]
+Le lacune pesanti non si accoppiano alla conduzione e restano «pesanti»; leggere e split-off si accoppiano e sono leggere come gli elettroni
+(figura~\ref{fig:kp}b, schema della slide 43).
+
+\begin{osservazione}[segno nella slide 41]
+Nella formula delle lacune leggere manca il segno meno tra i due termini: $E_{lh}=-\frac{\hbar^2k^2}{2m_0}-\frac{2P^2k^2}{3\Eg}$.
+\end{osservazione}
+
+\begin{approfondimento}[da dove vengono le formule: un modello a due bande]
+Senza spin--orbita e con $\vk$ lungo $z$. In $\Gamma$ ci sono la conduzione $|S\rangle$ (energia $\Eg$) e le valenze $|X\rangle$, $|Y\rangle$, $|Z\rangle$
+(energia $0$); per simmetria $\langle S|\hat p_z|Z\rangle$ è l'unico elemento di $\hat p_z$ non nullo tra questi stati.
+\passo{$\vk\cdot\hp=k\hat p_z$ accoppia $|S\rangle$ solo con $|Z\rangle$.}
+Nella base $\{|S\rangle,|Z\rangle\}$, con $Pk=\frac{\hbar k}{m_0}\langle S|\hat p_z|Z\rangle$ (reale con una scelta di fase):
+\[
+H=\begin{pmatrix}\Eg&Pk\\Pk&0\end{pmatrix}+\frac{\hbar^2k^2}{2m_0}.
+\]
+\passo{Autovalori.}
+\[
+E=\frac{\hbar^2k^2}{2m_0}+\frac\Eg2\pm\sqrt{\frac{\Eg^2}4+P^2k^2}.
+\]
+\passo{Sviluppo per $Pk\ll\Eg$.}
+$|X\rangle$ e $|Y\rangle$ non sono accoppiati e restano a $E=\hbar^2k^2/2m_0$, mentre
+\[
+E_c\simeq\Eg+\frac{\hbar^2k^2}{2m_0}+\frac{P^2k^2}\Eg,\qquad E_{lh}\simeq\frac{\hbar^2k^2}{2m_0}-\frac{P^2k^2}\Eg .
+\]
+\passo{Conclusione.}
+Elettroni e lacune leggere hanno $|m^*|\simeq m_0\Eg/E_P$, piccola; le lacune pesanti non si accoppiano alla conduzione. Con lo spin--orbita
+l'accoppiamento si divide tra lacune leggere ($\frac23$) e split-off ($\frac13$), e per $\Delta\to0$ la $E_c$ della slide 41 diventa
+$\Eg+\hbar^2k^2/2m_0+P^2k^2/\Eg$, come qui.
+\end{approfondimento}
+Qui il termine libero delle valenze è $+\hbar^2k^2/2m_0$; la slide 41 (dal Kittel) scrive $-\hbar^2k^2/2m_0$. Per lacune leggere e split-off la
+differenza conta poco ($E_P\gg\Eg$); per le pesanti la curvatura viene dalle bande lontane, e $m_{hh}=m_0$ è solo un ordine di grandezza
+(misurata $0{,}3$--$0{,}5\,m_0$, tabella sotto).
+
+\begin{esempio}[masse efficaci di GaAs e InSb]
+Con $E_P=\SI{20}{eV}$: GaAs ($\Eg=\SI{1.43}{eV}$, $\Delta=\SI{0.34}{eV}$) dà $m_c=0{,}071\,m_0$ e $m_{lh}=0{,}097\,m_0$; InSb ($\Eg=\SI{0.18}{eV}$,
+$\Delta=\SI{0.82}{eV}$) dà $m_c=0{,}012\,m_0$. Misurate: $0{,}067$ e $0{,}0145$ (tabella della Parte~3, §13.3), e $m_{lh}=0{,}082$ per il GaAs. Un
+solo parametro, quasi uguale per tutti, spiega masse che variano di un fattore 5 seguendo il gap.
+\end{esempio}
+
+\begin{center}\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+& $m_{hh}/m_0$ & $m_{lh}/m_0$ & $m_{so}/m_0$ & $\Delta$ (eV)\\
+\midrule
+Si & 0,52 & 0,16 & & 0,044\\
+Ge & 0,34 & 0,043 & & 0,29\\
+GaAs & 0,5 & 0,082 & 0,17 & 0,34\\
+InSb & 0,39 & 0,021 & 0,11 & 0,82\\
+\bottomrule
+\end{tabular}\\[3pt]
+{\footnotesize Masse delle lacune e separazione spin--orbita misurate (Kittel, cap.~8).}
+\end{center}
+
+\domanda{Che cosa mostrano le bande calcolate di GaAs, Ge e Si? (slide 45--47)}
+\begin{itemize}[leftmargin=*]
+\item \textbf{GaAs} (slide 45): gap diretto in $\Gamma$, circa \SI{1.5}{eV}; in $\Gamma$ lacune pesanti e leggere degeneri e, più in basso
+di $\Delta\simeq\SI{0.34}{eV}$, la split-off.
+\item \textbf{Ge} (slide 46, calcolo di C.\,Y.~Fong): gap indiretto, con il minimo della conduzione in $L=\frac{2\pi}a\bigl(\frac12,\frac12,\frac12\bigr)$
+(\SI{0.9}{eV} nel calcolo; misurato \SI{0.66}{eV} a \SI{300}{K}) e superfici di energia costante ellissoidali attorno a $L$; in $\Gamma$ la
+conduzione è a circa \SI{1.1}{eV}; la struttura fine della cima della valenza è lo spin--orbita, $\Delta=\SI{0.29}{eV}$.
+\item \textbf{Si} (slide 47): gap indiretto, con il minimo della conduzione («electrons») lungo $\Gamma X$, vicino a $X$, e la cima della valenza
+(«holes») in $\Gamma$; la figura è senza spin--orbita (cima tre volte degenere, $\Gamma_{25'}$): nel Si la split-off è solo \SI{0.044}{eV} sotto.
+\end{itemize}
+Il metodo attorno a $\Gamma$ descrive la cima della valenza di tutti e tre; per la conduzione di Si e Ge si sviluppa attorno al minimo ($X$ o $L$).
+
+\domanda{A che cosa serve il metodo? (slide 48)}
+(A) Dà bande ragionevoli vicino ai punti di simmetria della zona con una parametrizzazione e un calcolo semplici («con una calcolatrice tascabile»).
+(B) Dà masse efficaci ragionevolmente accurate (chiave del §\ref{sec:kpmassa}). Con abbastanza termini nello sviluppo può essere accurato in tutta la
+zona di Brillouin (slide 40).
+
+\begin{infobox}[Curiosità di laboratorio: lacune pesanti nei qubit di germanio]
+Nei pozzi quantici di Ge compresso tra strati di SiGe, la piattaforma dei qubit di lacuna di Delft (Veldhorst, Scappucci), deformazione e
+confinamento separano lacune pesanti e leggere di oltre \SI{100}{meV}: le lacune dei qubit hanno carattere di lacuna pesante ($J_z=\pm\frac32$). Per
+un'«inversione di massa» la lacuna pesante, pesante lungo la direzione di crescita, nel piano del pozzo ha massa efficace molto piccola, circa
+$0{,}05\,m_0$ ($0{,}061\,m_0$ misurata in dispositivi non drogati): i livelli orbitali dei punti quantici sono ben separati anche in punti grandi (circa
+\SI{100}{nm}), con requisiti di litografia meno severi (Scappucci et al., «The germanium quantum information route», 2021).
+\end{infobox}
+
+% =================================================================
+\section{Il metodo dello pseudopotenziale}\label{sec:pseudo}
+% =================================================================
+Le bande vere di Si, Ge e GaAs si ottengono con gli elettroni quasi liberi, ma con un potenziale efficace debole e liscio, lo
+\textbf{pseudopotenziale} \ingl{pseudopotential}, al posto del potenziale vero, e senza trattarlo come una perturbazione (slide 1). Si ricava dalle
+onde piane ortogonalizzate (OPW) e in pratica si adatta ai dati (Lezione 5e, slide 1--38; Ashcroft--Mermin, cap.~11; Yu--Cardona, cap.~2).
+
+\begin{osservazione}[notazione]
+Le slide scrivono $U(\vr)$ o $V(\vr)$ per il potenziale cristallino; $\psi^c_{\vk n}$, $\psi^c_n$ o $|\Phi_{j\vk}\rangle$ per gli stati di core e
+$E_n$, $E(\vk)_n$ o $E_j$ per le loro energie; $\psi^O_{\vk}$, $\phi_{\vk}$ o $\chi_i$ per l'onda piana ortogonalizzata, con coefficienti
+$\beta_n(\vk)$, $b_c$ o $\mu_{ij}$; $E_{\vk}$ o $\varepsilon(\vk)$ per la banda di valenza; $V'$, $V^R$ o $V_B$ per il potenziale repulsivo,
+$V_{\mathrm{ps}}$ o $W$ per lo pseudopotenziale, $H'$ per la pseudo-Hamiltoniana; nell'esercizio (slide 35--38) $\hat p$ è il proiettore,
+$\varphi$ la pseudo-funzione, $C_i$ i suoi coefficienti, $\vk_i$ i vettori reciproci, $\mu_{ij}=-\beta$, $W'$ ed $E'$ la scelta alternativa; unità
+gaussiane. Qui: $V(\vr)$ potenziale vero e $H=\hp^2/2m_0+V$; stati di core $\psi_{c\vk}$ di energia $E_c$ ($c$ conta i livelli
+di core); OPW $\chi_{\vk}$ con coefficienti $\beta_c(\vk)$; stato di valenza $\psi_{\vk}$ di energia $E(\vk)$ ($E_{\vk}$ resta la parabola libera);
+parte liscia $\psi^{\mathrm f}_{\vk}$; $V'$ e $V_{\mathrm{ps}}=V+V'$; pseudo-Hamiltoniana $H_{\mathrm{ps}}$ ($H'_{\vk}$ è la perturbazione del
+§\ref{sec:kp}); proiettore sul core $\hat\Pi_c$ ($\hp$ è l'impulso); $c_{\vG}$, $\vG_i$, $\tilde V_{\mathrm{ps}}$ e $\tilde E$ nell'esercizio; $Z$ carica del nucleo e $Z_{\mathrm{ion}}$ dello ione (Parte~3, §6.1); unità SI
+($e^2\to e^2/4\pi\varepsilon_0$).
+\end{osservazione}
+
+\subsection{Perché il potenziale vero non è «quasi libero»}\label{sec:pseudomotivi}
+Ashcroft--Mermin (cap.~11, slide 3) parte dai limiti dei due metodi visti: i legami forti, nella forma semplice, descrivono bene solo le bande dei
+livelli di core; gli elettroni quasi liberi non si applicano direttamente a nessun solido reale. Tre premesse sul modello a elettroni indipendenti:
+\begin{itemize}[leftmargin=*]
+\item[\#1] scrivere per ogni elettrone l'equazione (11.1), $\bigl[-\frac{\hbar^2}{2m_0}\nabla^2+V(\vr)\bigr]\psi_{\vk}=E(\vk)\,\psi_{\vk}$, semplifica
+già molto il problema di tanti elettroni interagenti, che in un trattamento esatto non hanno ciascuno una propria funzione d'onda;
+\item[\#2] l'approssimazione a elettroni indipendenti non trascura le interazioni: le include con una scelta opportuna di $V$, che contiene il potenziale
+degli ioni \emph{e} gli effetti periodici dell'interazione con gli altri elettroni;
+\item[\#3] quest'ultima dipende dalle funzioni d'onda degli altri elettroni, soluzioni della stessa (11.1): per conoscere $V$ bisogna conoscere le
+soluzioni, e il problema diventa autoconsistente. Lo si vedrà con lo pseudopotenziale, che dà risultati vicini ai quasi liberi.
+\end{itemize}
+I metodi di calcolo puntano alle bande più alte, le \textbf{bande di valenza} \ingl{valence bands}, piene, in parte piene o vuote, che decidono il
+comportamento elettronico del solido; gli elettroni di core sono inerti per molti scopi (Parte~3, §6.1, con l'esempio del Si, slide 8--9:
+core $1s^22s^22p^6$, valenza $3s^23p^2$, ibridi $sp^3$ con i 4 primi vicini del diamante). Lo pseudopotenziale cerca insieme una funzione d'onda migliore
+e un potenziale efficace (slide 4).
+
+\domanda{Come sono fatte le funzioni d'onda di core e di valenza? (slide 4--5)}
+Le funzioni di core sono apprezzabili solo vicino allo ione, dove hanno le oscillazioni tipiche degli orbitali atomici (alta energia cinetica che, con
+la grande energia potenziale negativa, dà l'energia del livello); tra gli ioni sono quasi nulle, e l'inviluppo è la $\mathrm{Re}\,e^{i\vk\cdot\vr}$ di
+Bloch. Le funzioni di valenza hanno le stesse oscillazioni atomiche nel core, ma tra gli ioni non sono piccole: variano lentamente, come onde piane
+(figura 11.2 di Ashcroft--Mermin). Poiché la velocità è $\frac\hbar{im_0}\nabla$, più rapida è la variazione, maggiore è la velocità dell'elettrone in
+quella regione.
+
+\begin{dimostrazione}[perché la funzione di valenza oscilla nel core (slide 6)]
+\passo{Argomento energetico (\#1).}
+Nel core un elettrone di valenza sente la stessa grande energia potenziale negativa di un elettrone di core, ma ha energia totale più alta: la sua
+energia cinetica è ancora maggiore, quindi nel core oscilla \emph{più} delle funzioni di core.
+\passo{Valenza e core sono autostati della stessa $H$ hermitiana con autovalori diversi (\#2).}
+Le autofunzioni di un operatore hermitiano con autovalori diversi sono ortogonali (\QP{§4.1, Teorema~2, p.~56}):
+\[
+0=\int\dd\vr\;\psi_{c\vk}^*(\vr)\,\psi_{\vk}(\vr)\qquad\text{per ogni livello di core }c\qquad\text{(eq.~11.5)}.
+\]
+\passo{Basta una cella.}
+Per il teorema di Bloch ($\psi_{n\vk}=e^{i\vk\cdot\vr}u_{n\vk}$, eq.~8.3) l'integrando $\psi^*_{c\vk}\psi_{\vk}=u^*_{c\vk}u_{\vk}$ è lo stesso in ogni cella:
+l'integrale è $N$ volte quello su una cella.
+\passo{Conclusione: solo la regione del core di un solo ione.}
+Le funzioni di core sono apprezzabili solo vicino allo ione: perché la (11.5) valga per \emph{tutti} i livelli di core, nel core $\psi_{\vk}$ deve avere
+oscillazioni che si intrecciano con quelle di ciascun $\psi_{c\vk}$ e ne cancellano l'integrale.\qed
+\end{dimostrazione}
+
+\domanda{Perché allora poche onde piane non bastano? (slide 7, 26)}
+Una funzione che oscilla sulla scala del core ha nello sviluppo di Fourier (eq.~9.1 di Ashcroft--Mermin, l'equazione centrale della Parte~3, §11.3)
+\[
+\psi_{\vk}(\vr)=\sum_{\vG}c_{\vG}\,e^{i(\vk+\vG)\cdot\vr}
+\]
+molti termini con $|\vG|$ grande: il metodo dei quasi liberi, con poche onde piane, è insostenibile. Ci si aspetta bande di valenza di carattere
+\textbf{atomico vicino agli ioni} e di \textbf{onda piana nella regione interstiziale} \ingl{interstitial region}: tutti i metodi in uso cercano di
+riprodurre la struttura atomica nel core tenendo conto che i livelli di valenza non sono di tipo a legami forti.
+Inoltre il potenziale vero non è piccolo. Nel core $V(\vr)\simeq-Ze^2/4\pi\varepsilon_0r$ (eq.~11.2), e il suo coefficiente di Fourier (eq.~11.3--11.4,
+con $\Omega$ volume per atomo e $a_0$ raggio di Bohr) è
+\[
+V_{\vG}\simeq-\frac{Ze^2}{\varepsilon_0\Omega G^2},\qquad
+|V_{\vG}|\simeq\frac{e^2}{8\pi\varepsilon_0a_0}\Bigl(\frac{a_0^3}\Omega\Bigr)\frac{8\pi Z}{(a_0G)^2},\qquad\frac{e^2}{8\pi\varepsilon_0a_0}=\SI{13.6}{eV}:
+\]
+alcuni eV per moltissimi $\vG$, quanto le energie cinetiche dell'equazione centrale. L'ipotesi $|V_{\vG}|\ll E_{\vk+\vG}$ non è lecita
+(è piccolo solo $V_{\mathrm{ps}}$, §\ref{sec:pseudoconseg}).
+\begin{esempio}[il Si]
+$a=\SI{5.431}{\angstrom}$, $\Omega=a^3/8=\SI{20.0}{\angstrom^3}$, $Z=14$, $|\vG_{111}|=2\pi\sqrt3/a=\SI{2.00}{\angstrom^{-1}}$: $|V_{\vG}|\simeq\SI{31}{eV}$
+($\SI{12}{eV}$ e \SI{9}{eV} per $|\vG|^2=8$ e $11$ in unità $(2\pi/a)^2$), contro un'energia cinetica libera di \SI{3.8}{eV} in $\vG_{111}/2$.
+Il fattore di forma dello pseudopotenziale per lo stesso $\vG$ è \SI{-2.9}{eV} (tabella del §\ref{sec:pseudoconseg}): dieci volte più piccolo
+(verificato con Python).
+\end{esempio}
+
+\domanda{Che cosa chiede Yu--Cardona? (slide 10)}
+Perché un'approssimazione che parte dagli elettroni quasi liberi dovrebbe funzionare per elettroni di valenza legati fortemente nei legami? La
+risposta è nel §\ref{sec:pseudoconseg}.
+
+\subsection{Le onde piane ortogonalizzate}\label{sec:opw}
+Per dare a $\psi_{\vk}$ il doppio carattere, oscillante nel core e di onda piana tra gli ioni, Herring propose di non usare onde piane semplici ma
+onde piane già ortogonalizzate ai livelli di core (slide 11--13). Approssimazione «zero»: elettroni liberi, $\psi^{\mathrm f}_{\vk}=e^{i\vk\cdot\vr}$
+(f per \emph{free}); approssimazione successiva, «quasi liberi»: $\psi_{\vk}$ simile a un'onda piana ma, per la regola della slide 6, ortogonale a tutti
+gli stati di core.
+
+\begin{modello}[onde piane ortogonalizzate, OPW]\label{mod:opw}
+Gli stati di core sono noti, $H\psi_{c\vk}=E_c\psi_{c\vk}$, normalizzati ($\int|\psi_{c\vk}|^2\dd\vr=1$) e in pratica combinazioni a legami forti dei
+livelli atomici. L'\textbf{onda piana ortogonalizzata} \ingl{orthogonalized plane wave, OPW} è (eq.~11.24)
+\[
+\chi_{\vk}(\vr)=\underbrace{e^{i\vk\cdot\vr}}_{\text{interstizi}}+\underbrace{\sum_c\beta_c(\vk)\,\psi_{c\vk}(\vr)}_{\text{core}},\qquad
+\int\chi_{\vk}^*\,\psi_{c\vk}\,\dd\vr=0\ \ \text{per ogni }c,
+\]
+con la somma su tutti i livelli di core. Gli stati di valenza si sviluppano in OPW:
+$\psi_{\vk}=\sum_{\vG}c_{\vG}\,\chi_{\vk+\vG}$.
+\tcblower
+All'onda piana si tolgono le sue componenti sugli stati di core. Nel core $\chi_{\vk}$ oscilla come le funzioni di core che contiene, tra gli ioni il
+secondo termine è piccolo e $\chi_{\vk}\simeq e^{i\vk\cdot\vr}$: ha già il carattere di una funzione di valenza, e ne servono poche dove servivano
+moltissime onde piane.
+\end{modello}
+
+\begin{dimostrazione}[i coefficienti $\beta_c(\vk)$ (slide 15 e 17)]
+\passo{L'OPW.}
+\[
+\chi_{\vk}(\vr)=e^{i\vk\cdot\vr}+\sum_{c'}\beta_{c'}(\vk)\,\psi_{c'\vk}(\vr).
+\]
+\passo{Imponiamo l'ortogonalità al livello di core $c$.}
+\[
+\int\dd\vr\;\chi_{\vk}^*(\vr)\,\psi_{c\vk}(\vr)=0 .
+\]
+\passo{Sostituiamo il complesso coniugato dell'OPW.}
+\[
+\int e^{-i\vk\cdot\vr}\,\psi_{c\vk}\,\dd\vr+\sum_{c'}\beta_{c'}^*(\vk)\int\psi^*_{c'\vk}\,\psi_{c\vk}\,\dd\vr=0 .
+\]
+\passo{Gli stati di core sono ortonormali.}
+Livelli diversi sono ortogonali per lo stesso teorema della slide 6 (\QP{§4.1, Teorema~2, p.~56}), e ciascuno è normalizzato:
+$\int\psi^*_{c'\vk}\psi_{c\vk}\,\dd\vr=\delta_{c'c}$.
+\passo{Conclusione.}
+\[
+\beta_c^*(\vk)=-\int\dd\vr\;e^{-i\vk\cdot\vr}\,\psi_{c\vk}(\vr),\qquad\text{cioè}\qquad
+\beta_c(\vk)=-\int\psi^*_{c\vk}(\vr)\,e^{i\vk\cdot\vr}\,\dd\vr=-\langle\psi_{c\vk}|e^{i\vk\cdot\vr}\rangle .\qed
+\]
+\end{dimostrazione}
+\formula{\chi_{\vk}=e^{i\vk\cdot\vr}-\sum_c\langle\psi_{c\vk}|e^{i\vk\cdot\vr}\rangle\,\psi_{c\vk}}
+L'ultima forma è in notazione di Dirac, con $\langle\psi|\phi\rangle=\int\psi^*\phi\,\dd\vr$ (\QP{§10.2, pp.~128--130}).
+
+\domanda{L'OPW è una funzione di Bloch? (slide 13 e 15)}
+Sì, con lo stesso $\vk$.
+\begin{dimostrazione}[$\chi_{\vk}$ soddisfa la condizione di Bloch]
+\passo{L'onda piana la soddisfa banalmente.}
+\[
+e^{i\vk\cdot(\vr+\vR)}=e^{i\vk\cdot\vR}\,e^{i\vk\cdot\vr}.
+\]
+\passo{La somma di core è una funzione di Bloch, come nei legami forti.}
+Le $\psi_{c\vk}$ hanno vettore $\vk$, quindi
+\[
+\sum_c\beta_c(\vk)\,\psi_{c\vk}(\vr)=e^{i\vk\cdot\vr}\,u^c_{\vk}(\vr),\qquad u^c_{\vk}(\vr+\vR)=u^c_{\vk}(\vr).
+\]
+\passo{Conclusione.}
+\[
+\chi_{\vk}(\vr)=e^{i\vk\cdot\vr}\bigl[1+u^c_{\vk}(\vr)\bigr]:
+\]
+una funzione di Bloch di parte periodica $1+u^c_{\vk}$.\qed
+\end{dimostrazione}
+Per la stessa ragione $\chi_{\vk}$ è ortogonale anche agli stati di core $\psi_{c\vk'}$ con $\vk'\ne\vk$ (nota 26 di Ashcroft--Mermin), e la
+combinazione $\sum_{\vG}c_{\vG}\chi_{\vk+\vG}$ ha ancora la forma di Bloch.
+
+\begin{osservazione}[slide 11]
+La nota «questa condizione definisce un insieme completo di funzioni» va letta così: l'ortogonalità fissa i $\beta_c$; le OPW $\chi_{\vk+\vG}$ di tutti i
+$\vG$, insieme agli stati di core, formano un insieme completo, perché le onde piane lo sono (\QP{§3.2, p.~44}) e l'ortogonalizzazione toglie solo la
+loro parte di core. Le OPW con $\vG$ diversi non sono ortogonali tra loro.
+\end{osservazione}
+
+\subsection{Dimostrazione principale: l'equazione di pseudo-Schrödinger}\label{sec:pseudodim}
+L'OPW suggerisce di separare lo stato di valenza in una parte liscia e una parte di core, e di scrivere un'equazione per la sola parte liscia
+(slide 18--22). Al posto di $e^{i\vk\cdot\vr}$ si mette una funzione più generale $\psi^{\mathrm f}_{\vk}$, per esempio una combinazione di onde piane.
+
+\begin{teorema}[equazione di pseudo-Schrödinger]\label{teo:pseudo}
+Sia lo stato di valenza
+\[
+\psi_{\vk}(\vr)=\psi^{\mathrm f}_{\vk}(\vr)+\sum_c\beta_c(\vk)\,\psi_{c\vk}(\vr),\qquad \beta_c(\vk)=-\langle\psi_{c\vk}|\psi^{\mathrm f}_{\vk}\rangle,
+\]
+ortogonale a tutti gli stati di core. Allora l'equazione vera $H\psi_{\vk}=E(\vk)\psi_{\vk}$ equivale all'equazione per la sola parte liscia
+\[
+\Bigl[\frac{\hp^2}{2m_0}+V_{\mathrm{ps}}\Bigr]\psi^{\mathrm f}_{\vk}=E(\vk)\,\psi^{\mathrm f}_{\vk},\qquad V_{\mathrm{ps}}=V+V',\qquad
+V'=\sum_c\bigl[E(\vk)-E_c\bigr]\,|\psi_{c\vk}\rangle\langle\psi_{c\vk}| .
+\]
+\tcblower
+Le energie sono le stesse dell'equazione vera, ma la funzione d'onda è solo la parte liscia, quella che serve tra gli atomi: le grandi oscillazioni
+nel core, necessarie per l'ortogonalità, sono tutte raccolte nel potenziale efficace $V'$. Poiché $E(\vk)>E_c$, $V'$ è repulsivo e compensa in buona
+parte il potenziale attrattivo $V$: lo \textbf{pseudopotenziale} $V_{\mathrm{ps}}$ è piccolo e liscio.
+\end{teorema}
+
+\begin{dimostrazione}[dall'equazione vera all'equazione per $\psi^{\mathrm f}_{\vk}$ (slide 20)]
+\passo{Equazione di Schrödinger del solido (1).}
+$V$ è il potenziale cristallino vero:
+\[
+H\psi_{\vk}=E(\vk)\,\psi_{\vk},\qquad H=\frac{\hp^2}{2m_0}+V(\vr).
+\]
+\passo{Equazione degli stati di core (2).}
+Le soluzioni, di tipo legami forti, sono note:
+\[
+H\psi_{c\vk}=E_c\,\psi_{c\vk}.
+\]
+\passo{Sostituiamo $\psi_{\vk}=\psi^{\mathrm f}_{\vk}+\sum_c\beta_c\psi_{c\vk}$ nella (1).}
+$H$ è lineare:
+\[
+H\psi^{\mathrm f}_{\vk}+\sum_c\beta_c\,H\psi_{c\vk}=E\,\psi^{\mathrm f}_{\vk}+E\sum_c\beta_c\,\psi_{c\vk}.
+\]
+\passo{Usiamo la (2).}
+\[
+H\psi^{\mathrm f}_{\vk}+\sum_c\beta_c\,E_c\,\psi_{c\vk}=E\,\psi^{\mathrm f}_{\vk}+E\sum_c\beta_c\,\psi_{c\vk}.
+\]
+\passo{Portiamo i termini di core a sinistra.}
+\[
+H\psi^{\mathrm f}_{\vk}-\sum_c\beta_c\,(E-E_c)\,\psi_{c\vk}=E\,\psi^{\mathrm f}_{\vk}.
+\]
+\passo{Definiamo l'operatore $V'$ (3).}
+È una definizione operatoriale: dice che cosa fa $V'$ quando agisce su $\psi^{\mathrm f}_{\vk}$.
+\[
+V'\psi^{\mathrm f}_{\vk}\equiv-\sum_c\bigl(E-E_c\bigr)\beta_c(\vk)\,\psi_{c\vk}\qquad\Longrightarrow\qquad(H+V')\,\psi^{\mathrm f}_{\vk}=E\,\psi^{\mathrm f}_{\vk}.
+\]
+\passo{Usiamo l'ortogonalità al core.}
+Come per l'OPW, con $\psi^{\mathrm f}_{\vk}$ al posto di $e^{i\vk\cdot\vr}$: $0=\langle\psi_{c\vk}|\psi_{\vk}\rangle=\langle\psi_{c\vk}|\psi^{\mathrm f}_{\vk}\rangle+\beta_c$.
+\passo{Conclusione.}
+\[
+V'\psi^{\mathrm f}_{\vk}=\sum_c\bigl(E-E_c\bigr)\langle\psi_{c\vk}|\psi^{\mathrm f}_{\vk}\rangle\,\psi_{c\vk},\qquad\text{cioè}\qquad
+V'=\sum_c\bigl(E-E_c\bigr)|\psi_{c\vk}\rangle\langle\psi_{c\vk}| .\qed
+\]
+\end{dimostrazione}
+
+\begin{chiave}[Equazione di pseudo-Schrödinger]
+\[
+\boxed{\ H_{\mathrm{ps}}\,\psi^{\mathrm f}_{\vk}=\Bigl[-\frac{\hbar^2\nabla^2}{2m_0}+V_{\mathrm{ps}}(\vr)\Bigr]\psi^{\mathrm f}_{\vk}=E(\vk)\,\psi^{\mathrm f}_{\vk},\qquad
+V_{\mathrm{ps}}=V+\sum_c\bigl(E(\vk)-E_c\bigr)|\psi_{c\vk}\rangle\langle\psi_{c\vk}|\ }
+\]
+La (1) è equivalente alla (3), cioè alla (4) $H_{\mathrm{ps}}\psi^{\mathrm f}_{\vk}=E\psi^{\mathrm f}_{\vk}$: stessa banda $E(\vk)$. Lo stato vero è
+$\psi_{\vk}=\psi^{\mathrm f}_{\vk}+{}$correzioni di core $\sum_c\beta_c\psi_{c\vk}$.
+\end{chiave}
+
+\begin{osservazione}[slide 19]
+La slide deduce «$V'$ positivo» dalla condizione sui $\beta^*_n$; il motivo preciso è la forma con il proiettore: per ogni funzione $\phi$
+\[
+\langle\phi|V'|\phi\rangle=\sum_c\bigl(E-E_c\bigr)\,|\langle\psi_{c\vk}|\phi\rangle|^2\ \ge0\qquad(E>E_c),
+\]
+cioè $V'$ è un operatore positivo (repulsivo), non una funzione positiva di $\vr$: è \emph{non locale} (agisce proiettando sul core) e dipende
+dall'energia. La slide avverte anche che Ashcroft--Mermin (pp.~208--209) usa un'altra notazione e ha un errore nella formula (11.34).
+\end{osservazione}
+
+\subsection{Conseguenze: pseudopotenziale debole, pochi coefficienti, bande vere}\label{sec:pseudoconseg}
+\domanda{Che cos'è $\psi^{\mathrm f}_{\vk}$? (slide 19)}
+La parte «liscia» di $\psi_{\vk}$, quella necessaria tra gli atomi; la parte $\sum_c(E-E_c)\beta_c\psi_{c\vk}$, con le grandi oscillazioni vicino agli
+atomi richieste dall'ortogonalità, è conglobata nel potenziale efficace $V'$. L'equazione (3) contiene solo $\psi^{\mathrm f}_{\vk}$.
+
+\domanda{Perché $V_{\mathrm{ps}}$ è piccolo? (slide 19, 24, 38)}
+$E(\vk)>E_c$, perché la valenza sta sopra il core: $V'$ è repulsivo (osservazione precedente) e compensa in parte il potenziale vero $V$, attrattivo e
+negativo. $V_{\mathrm{ps}}=V+V'$ è piccolo (\emph{schermatura} del potenziale). Nel Si il fattore di forma per $\vG_{111}$ scende da circa
+\SI{31}{eV} (ione nudo, esempio del §\ref{sec:pseudomotivi}) a \SI{2.9}{eV}.
+
+\domanda{Come si usa in pratica? (slide 22--23)}
+In linea di principio si potrebbe usare l'espressione formale $V_{\mathrm{ps}}=V+V'$, liscia e piccola, con la somma sugli stati di core: \emph{non si fa
+quasi mai}. Si sceglie invece fra:
+\begin{enumerate}[leftmargin=*, label=\arabic*.]
+\item \textbf{pseudopotenziale empirico} \ingl{empirical pseudopotential method}: $V_{\mathrm{ps}}$ si scrive con pochi parametri, adattati alle bande
+e ad altre proprietà misurate;
+\item \textbf{pseudopotenziale autoconsistente} \ingl{self-consistent pseudopotential method}: l'equazione di pseudo-Schrödinger
+$[-\hbar^2\nabla^2/2m_0+V_{\mathrm{ps}}]\psi^{\mathrm f}_{\vk}=E\psi^{\mathrm f}_{\vk}$ si accoppia all'equazione di Poisson per la carica degli
+elettroni, $\nabla^2V_{\mathrm{ps}}=-4\pi\rho=-4\pi e|\psi^{\mathrm f}_{\vk}|^2$ (unità gaussiane, slide 23), e si risolvono insieme.
+\end{enumerate}
+\begin{osservazione}[l'equazione di Poisson della slide 23]
+È una scrittura schematica: in SI il potenziale elettrostatico $\phi$ soddisfa $\nabla^2\phi=-\rho/\varepsilon_0$, l'energia potenziale
+dell'elettrone è $-e\phi$, e $\rho$ contiene la carica degli ioni e quella di \emph{tutti} gli stati di valenza occupati, $-e\sum_{\text{occ}}|\psi|^2$.
+È la premessa \#3: il potenziale dipende dalle soluzioni.
+\end{osservazione}
+
+\domanda{Perché bastano pochi coefficienti di Fourier? (slide 24, 29--30)}
+Lo ione è fortemente schermato: vicino al nucleo $V_{\mathrm{ps}}$ non è più una «sfera dura» coulombiana, ma tende dolcemente a zero
+(pseudopotenziale \emph{soft core}) o a una costante (\emph{hard core}) entro un raggio $r_c$ di circa metà della lunghezza di legame, e fuori
+coincide con il potenziale dello ione (figura~\ref{fig:pseudo}a). La sua trasformata di Fourier ha \textbf{pochi coefficienti non nulli}: è per questo
+che gli elettroni quasi liberi davano bande «buone» (slide 24). Con i coefficienti sui vettori reciproci (Parte~3, §11.2)
+\[
+V_{\mathrm{ps}}(\vr)=\sum_{\vG}V_{\vG}\,e^{i\vG\cdot\vr},\qquad V_{\vG}=\frac1{\Omega_{\mathrm{cella}}}\int_{\text{cella}}V_{\mathrm{ps}}(\vr)\,e^{-i\vG\cdot\vr}\,\dd\vr ,
+\]
+e per un solo ione la trasformata continua $V_{\mathrm{ps}}(\vr)\sim\int v(q)\,e^{i\vq\cdot\vr}\,\dd\vq$: $v(q)$ parte da $-\frac23\EF$ per $q\to0$
+(ione schermato, sotto), risale con l'andamento $\propto-1/q^2$ dello ione (slide 29), cambia segno e tende a zero (figura~\ref{fig:pseudo}b). Nel diamante e nella zincoblenda i $\vG$
+più corti hanno $|\vG|^2=3,4,8,11$ in unità $(2\pi/a)^2$, e il fattore di struttura dei due atomi in $\pm\boldsymbol\tau$,
+$\boldsymbol\tau=\frac a8(1,1,1)$ (Parte~1, §14), lascia i fattori di forma \ingl{form factors} simmetrici $V^s_3$, $V^s_8$, $V^s_{11}$ (moltiplicati
+per $\cos\vG\cdot\boldsymbol\tau$, nullo per $|\vG|^2=4$) e, nei composti, gli antisimmetrici $V^a_3$, $V^a_4$, $V^a_{11}$ (per
+$\sin\vG\cdot\boldsymbol\tau$, nullo per $|\vG|^2=8$). Sono i parametri del metodo empirico (slide 30, in Ry $=\SI{13.6}{eV}$):
+\begin{center}\small
+\begin{tabular}{@{}lcccccccc@{}}
+\toprule
+& Si & Ge & GaAs & GaP & InAs & InSb & ZnSe & CdTe\\
+\midrule
+$V^s_3$ & $-0{,}211$ & $-0{,}269$ & $-0{,}252$ & $-0{,}249$ & $-0{,}27$ & $-0{,}25$ & $-0{,}23$ & $-0{,}245$\\
+$V^s_8$ & $0{,}04$ & $0{,}038$ & $0$ & $0{,}017$ & $0{,}02$ & $0{,}01$ & $0{,}01$ & $-0{,}015$\\
+$V^s_{11}$ & $0{,}08$ & $0{,}035$ & $0{,}08$ & $0{,}083$ & $0{,}041$ & $0{,}044$ & $0{,}06$ & $0{,}073$\\
+\bottomrule
+\end{tabular}\\[3pt]
+{\footnotesize Fattori di forma simmetrici (Yu--Cardona); la slide non riporta le colonne antisimmetriche, il cui segno dipende dalla scelta di
+anione e catione.}
+\end{center}
+
+\begin{figure}[tbp]
+\centering
+\figura{pseudo}
+\caption{(a) Potenziale dello ione nudo ($\propto-1/r$) e pseudopotenziale: dentro il core, di raggio $r_c$ (circa metà della lunghezza di
+legame), tende a zero (\emph{soft core}) o a una costante (\emph{hard core}, tratteggiato); fuori coincide con lo ione. (b) Fattore di forma
+$v(q)$ di uno ione schermato (curva di modello, «empty core» di Ashcroft con la schermatura di Thomas--Fermi, parametri di tipo Si): parte da
+$-\frac23\EF$, cambia segno e tende a zero; nei $\vG$ del diamante ($|\vG|^2=3$, $8$, $11$): $V_3<0$ e $V_8$, $V_{11}$ piccoli e positivi, come nella
+tabella (slide 24 e 29).}\label{fig:pseudo}
+\end{figure}
+
+\begin{osservazione}[slide 24]
+«$V_3$, $V_8$, $V_9$ vengono dal fattore di struttura» va letto $V_3$, $V_8$, $V_{11}$ ($|\vG|^2=9$ non è un vettore dell'FCC); «$V_8$, $V_{11}\sim0$»
+vuol dire piccoli rispetto a $V_3$, non nulli (tabella).
+\end{osservazione}
+
+\domanda{Quanto vale lo pseudopotenziale per $q\to0$? (slide 25, metalli)}
+Lo ione nudo diverge per $q\to0$ come il potenziale coulombiano; la schermatura elimina la divergenza e lascia un valore finito, fissato dalla densità
+di stati al livello di Fermi.
+\begin{dimostrazione}[$v(0)=-\frac23\EF$]
+\passo{Ione nudo di carica $Z_{\mathrm{ion}}e$.}
+Per $q$ piccolo la trasformata di Fourier è coulombiana ($\Omega$ volume per ione) e diverge:
+\[
+\vion(q)\to-\frac{Z_{\mathrm{ion}}e^2}{\varepsilon_0\Omega q^2}\qquad\Bigl(\text{gaussiane: }-\frac{4\pi Z_{\mathrm{ion}}e^2}{\Omega q^2}\Bigr).
+\]
+\passo{Schermatura del gas di elettroni.}
+Il gas risponde e riduce il potenziale, $v(q)=\vion(q)/\varepsilon(q)$, con la costante dielettrica di Thomas--Fermi. Per $q\ll\kF$ la funzione di
+Lindhard coincide con quella di Thomas--Fermi, quindi il limite è esatto:
+\[
+\varepsilon(q)=1+\frac{k_{\mathrm{TF}}^2}{q^2}\ \xrightarrow{q\to0}\ \frac{k_{\mathrm{TF}}^2}{q^2}.
+\]
+\passo{Il fattore $q^2$ si semplifica.}
+\[
+v(0)=-\frac{Z_{\mathrm{ion}}e^2}{\varepsilon_0\Omega\,k_{\mathrm{TF}}^2}.
+\]
+\passo{Vettore d'onda di Thomas--Fermi.}
+$k_{\mathrm{TF}}^2=e^2g(\EF)/\varepsilon_0$, con $g(\EF)$ densità di stati per unità di volume al livello di Fermi; per il gas libero con
+$n=Z_{\mathrm{ion}}/\Omega$ (Parte~2, §3), $g(\EF)=3n/2\EF$:
+\[
+k_{\mathrm{TF}}^2=\frac{3e^2Z_{\mathrm{ion}}}{2\varepsilon_0\Omega\EF}.
+\]
+\passo{Conclusione: $Z_{\mathrm{ion}}$, $\Omega$ ed $e^2$ si semplificano.}
+\[
+v(0)=-\frac{Z_{\mathrm{ion}}e^2}{\varepsilon_0\Omega}\cdot\frac{2\varepsilon_0\Omega\EF}{3e^2Z_{\mathrm{ion}}}=-\frac23\EF .\qed
+\]
+\end{dimostrazione}
+\begin{interpretazione}[schermatura perfetta]
+Per $q\to0$ la carica indotta, $-g(\EF)\,v$ elettroni per unità di volume, compensa esattamente la carica dello ione, $Z_{\mathrm{ion}}/\Omega$:
+$v(0)=-Z_{\mathrm{ion}}/\Omega g(\EF)=-\frac23\EF$. Il potenziale sposta il livello di Fermi quanto basta perché nella regione dello ione entri la
+carica che lo neutralizza. Il risultato non dipende dal modello di ione: nell'«empty core» di Ashcroft $\vion(q)=-Z_{\mathrm{ion}}e^2\cos(qR_c)/
+\varepsilon_0\Omega q^2$, e $\cos(qR_c)\to1$.
+\end{interpretazione}
+Conseguenza: lo pseudopotenziale non diverge e in $q=0$ vale una frazione definita di $\EF$; nei metalli semplici è debole e la teoria perturbativa dei
+quasi liberi funziona bene. Per esempio Na ($\EF=\SI{3.24}{eV}$): $v(0)=\SI{-2.16}{eV}$; Al ($\SI{11.7}{eV}$): \SI{-7.8}{eV} (verificato con Python).
+\begin{osservazione}[slide 25]
+«TF = temperatura di Fermi, $k$ costante di Boltzmann» va letto: TF = Thomas--Fermi, e $k_{\mathrm{TF}}$ è il vettore d'onda di schermatura di
+Thomas--Fermi (l'inverso della lunghezza di schermatura). «Per elettrone» vuol dire che $v(0)$ è un'energia potenziale, il coefficiente di Fourier
+per un elettrone.
+\end{osservazione}
+
+\domanda{Perché allora gli elettroni di valenza sono «quasi liberi»? (slide 10, 27--28)}
+Risposta di Yu--Cardona: sono quasi liberi nel senso che gran parte della carica del nucleo è schermata dagli elettroni di core, legati molto
+fortemente. Riassumendo: l'equazione di pseudo-Schrödinger dà la banda $E(\vk)$ cercata; di solito si assume $V_{\mathrm{ps}}$ debole (non è
+indispensabile, ma giustifica l'approssimazione originale), e schematicamente
+\[
+\psi_{\vk}\simeq\psi^{\mathrm f}_{\vk}+\text{correzioni}\ \Bigl(\sum_c\beta_c\psi_{c\vk}\Bigr).
+\]
+Così si torna agli elettroni quasi liberi (Parte~3, §11), ma \textbf{con $V_{\mathrm{ps}}$ al posto del potenziale vero $V$}: l'equazione centrale con i
+$V_{\vG}$ della tabella. Nel metodo empirico non la si tratta con la teoria delle perturbazioni (slide 1): si diagonalizza con abbastanza onde piane.
+
+\domanda{Che cosa danno le bande calcolate? (slide 2, 31--34)}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Si} (slide 2 e 33): bande con pseudopotenziale non locale (continue) e locale (tratteggiate), quasi uguali; cima della valenza in
+$\Gamma$ ($\Gamma_{25'}$), minimo della conduzione lungo $\Gamma X$ vicino a $X$: gap \textbf{indiretto}.
+\item \textbf{Ge} (slide 33): gap \textbf{indiretto}, con il minimo della conduzione in $L$; la cima della valenza in $\Gamma$ mostra lo spin--orbita.
+\item \textbf{GaAs} e \textbf{ZnSe} (slide 34): gap \textbf{diretto} in $\Gamma$ (circa \SI{1.5}{eV} e \SI{2.7}{eV}).
+\end{itemize}
+Le masse efficaci della conduzione in $\Gamma$ si confrontano con le misure (slide 31; $\Eg(\Gamma)$ è il gap diretto in $\Gamma$, $E_0$ nella slide):
+\begin{center}\small
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+& Ge & GaAs & InP & InAs & GaSb & InSb & CdTe\\
+\midrule
+$\Eg(\Gamma)$ (eV) & 0,89 & 1,55 & 1,34 & 0,45 & 0,81 & 0,24 & 1,59\\
+$m^*_c/m_0$ misurata & 0,041 & 0,067 & 0,073 & 0,026 & 0,047 & 0,015 & 0,11\\
+$m^*_c/m_0$ calcolata & 0,04 & 0,078 & 0,067 & 0,023 & 0,04 & 0,012 & 0,08\\
+\bottomrule
+\end{tabular}
+\end{center}
+La riga «calcolata» (eq.~2.44 di Yu--Cardona) coincide, entro gli arrotondamenti, con $m^*_c/m_0\simeq\Eg(\Gamma)/E_P$, $E_P=\SI{20}{eV}$: è la formula a
+due bande del §\ref{sec:so}, $m_0/m^*_c\simeq1+E_P/\Eg$, senza l'1 (verificato con Python). $E_P$ è quasi uguale per tutti perché le pseudo-funzioni
+sono quasi onde piane: con $|\langle u_{c0}|\hat p_x|u_{v0}\rangle|\sim\hbar\,2\pi/a$ si stima $E_P\sim4\,\frac{\hbar^2}{2m_0}\bigl(\frac{2\pi}a\bigr)^2
+\approx\SIrange{14}{20}{eV}$ per $a=\SIrange{6.5}{5.4}{\angstrom}$ (stima, non nelle slide).
+
+\subsection{Altre dimostrazioni: l'esercizio delle slide 35--38, con il proiettore}\label{sec:pseudoes}
+\textbf{Testo} (SUNY Buffalo). Il metodo delle onde piane ortogonalizzate, legato a quello dello pseudopotenziale, si usa spesso per le bande dei
+metalli e spiega perché vale l'approssimazione degli elettroni quasi liberi anche se il potenziale vero non è affatto debole. Discuti le idee fisiche e
+i passaggi matematici: (a) costruzione delle funzioni di Bloch degli stati di core e loro proprietà; (b) costruzione delle onde piane ortogonalizzate e
+loro proprietà; (c) costruzione dello pseudopotenziale e sua non unicità; (d) perché lo pseudopotenziale si può trattare come piccolo.
+
+\begin{dimostrazione}[pseudopotenziale con il proiettore sul core]
+Fuori dai core l'onda è quasi piana: $|\vk+\vG_i\rangle=\frac1{\sqrt{N\Omega}}e^{i(\vk+\vG_i)\cdot\vr}$, con $N$ celle di volume $\Omega$ e $\vG_i$
+vettore reciproco (\QP{§3.2, p.~44}: onde piane normalizzate in una scatola con condizioni periodiche); tutte hanno lo stesso $\vk$ nella zona ridotta.
+\passo{(a) Stati di core a legami forti.}
+Nel core gli elettroni sono fortemente legati; con $\varphi_c(\vr-\vR_l)$ orbitale di core dell'atomo in $\vR_l$ e la somma su tutti gli atomi:
+\[
+|\psi_{c\vk}\rangle=\frac1{\sqrt N}\sum_le^{i\vk\cdot\vR_l}\,\varphi_c(\vr-\vR_l),\qquad H|\psi_{c\vk}\rangle=E_c|\psi_{c\vk}\rangle .
+\]
+\passo{(b) OPW: togliamo all'onda piana le componenti di core.}
+Come nel §\ref{sec:opw}, con $|\vk+\vG_i\rangle$ al posto di $e^{i\vk\cdot\vr}$:
+\[
+\chi_{\vk+\vG_i}=|\vk+\vG_i\rangle+\sum_c\beta_c(\vk+\vG_i)\,|\psi_{c\vk}\rangle,\qquad
+\langle\psi_{c\vk}|\chi_{\vk+\vG_i}\rangle=0\ \Longrightarrow\ \beta_c(\vk+\vG_i)=-\langle\psi_{c\vk}|\vk+\vG_i\rangle ;
+\]
+lo stato di valenza è una combinazione di OPW, $\psi_{\vk}=\sum_ic_{\vG_i}\,\chi_{\vk+\vG_i}$.
+\passo{(c) Il proiettore sugli stati di core.}
+$\hat\Pi_c$ è la parte della relazione di completezza $\hat I=\sum_n|n\rangle\langle n|$ (\QP{§3.1, p.~41; §10.2, eq.~(115), p.~130}) ristretta al core:
+\[
+\hat\Pi_c=\sum_c|\psi_{c\vk}\rangle\langle\psi_{c\vk}|,\qquad\chi_{\vk+\vG_i}=\bigl(1-\hat\Pi_c\bigr)|\vk+\vG_i\rangle .
+\]
+\passo{Pseudo-funzione e stato vero.}
+\[
+\psi^{\mathrm f}_{\vk}\equiv\sum_ic_{\vG_i}\,|\vk+\vG_i\rangle\qquad\Longrightarrow\qquad\psi_{\vk}=\bigl(1-\hat\Pi_c\bigr)\psi^{\mathrm f}_{\vk}.
+\]
+\passo{Sostituiamo nell'equazione di Schrödinger (slide 37).}
+\[
+H\bigl(1-\hat\Pi_c\bigr)\psi^{\mathrm f}_{\vk}=E\bigl(1-\hat\Pi_c\bigr)\psi^{\mathrm f}_{\vk}\qquad\Longrightarrow\qquad
+H\psi^{\mathrm f}_{\vk}-H\hat\Pi_c\psi^{\mathrm f}_{\vk}+E\hat\Pi_c\psi^{\mathrm f}_{\vk}=E\psi^{\mathrm f}_{\vk}.
+\]
+\passo{$H\hat\Pi_c$: gli stati di core sono autostati di $H$.}
+\[
+H\hat\Pi_c=\sum_cH|\psi_{c\vk}\rangle\langle\psi_{c\vk}|=\sum_cE_c\,|\psi_{c\vk}\rangle\langle\psi_{c\vk}| .
+\]
+\passo{Conclusione: lo pseudopotenziale.}
+Con $H=-\frac{\hbar^2}{2m_0}\nabla^2+V$:
+\[
+-\frac{\hbar^2}{2m_0}\nabla^2\psi^{\mathrm f}_{\vk}+V_{\mathrm{ps}}\psi^{\mathrm f}_{\vk}=E\psi^{\mathrm f}_{\vk},\qquad
+V_{\mathrm{ps}}=V-H\hat\Pi_c+E\hat\Pi_c=V+\sum_c(E-E_c)\,|\psi_{c\vk}\rangle\langle\psi_{c\vk}| ,
+\]
+lo stesso $V_{\mathrm{ps}}$ del Teorema~\ref{teo:pseudo}.\qed
+\end{dimostrazione}
+
+\domanda{(c) Perché lo pseudopotenziale non è unico?}
+Con una funzione arbitraria $f(E,E_c)$ al posto di $E-E_c$ si ottiene la stessa energia.
+\begin{dimostrazione}[non unicità: $\tilde E=E$]
+\passo{Un'altra scelta.}
+\[
+\tilde V_{\mathrm{ps}}=V+\sum_cf(E,E_c)\,|\psi_{c\vk}\rangle\langle\psi_{c\vk}|,\qquad
+-\frac{\hbar^2}{2m_0}\nabla^2\tilde\psi^{\mathrm f}+\tilde V_{\mathrm{ps}}\tilde\psi^{\mathrm f}=\tilde E\,\tilde\psi^{\mathrm f}.
+\]
+\passo{Prodotto scalare con lo stato vero $\psi_{\vk}$.}
+$\psi_{\vk}$ è ortogonale al core, $\langle\psi_{\vk}|\psi_{c\vk}\rangle=0$: il termine con $f$ sparisce,
+\[
+\Bigl\langle\psi_{\vk}\Bigl|-\frac{\hbar^2}{2m_0}\nabla^2+V\Bigr|\tilde\psi^{\mathrm f}\Bigr\rangle=\langle\psi_{\vk}|H|\tilde\psi^{\mathrm f}\rangle
+=\tilde E\,\langle\psi_{\vk}|\tilde\psi^{\mathrm f}\rangle .
+\]
+\passo{$H$ è hermitiana: agisce a sinistra su $\psi_{\vk}$.}
+$\langle\psi_{\vk}|H\tilde\psi^{\mathrm f}\rangle=\langle H\psi_{\vk}|\tilde\psi^{\mathrm f}\rangle$ (\QP{§2.4, p.~24}), e $H\psi_{\vk}=E\psi_{\vk}$ con $E$
+reale (\QP{§4.1, Teorema~1, p.~55}):
+\[
+E\,\langle\psi_{\vk}|\tilde\psi^{\mathrm f}\rangle=\tilde E\,\langle\psi_{\vk}|\tilde\psi^{\mathrm f}\rangle .
+\]
+\passo{Conclusione.}
+Se $\langle\psi_{\vk}|\tilde\psi^{\mathrm f}\rangle\ne0$, $\tilde E=E$: anche $\tilde V_{\mathrm{ps}}$ è uno pseudopotenziale.\qed
+\end{dimostrazione}
+Anche la pseudo-funzione non è unica: $\psi^{\mathrm f}_{\vk}+\alpha\,\psi_{c\vk}$ dà lo stesso $\psi_{\vk}$, perché $(1-\hat\Pi_c)\psi_{c\vk}=0$. La
+libertà si usa per rendere $V_{\mathrm{ps}}$ il più debole e liscio possibile. Equivalenza ($E$ autovalore di $H+\sum_c(E-E_c)|\psi_{c\vk}\rangle
+\langle\psi_{c\vk}|$, $\psi_{\vk}=(1-\hat\Pi_c)\psi^{\mathrm f}_{\vk}$) e non unicità verificate con Python su un modello unidimensionale.
+
+\domanda{(d) Perché lo pseudopotenziale è piccolo?}
+$V_{\mathrm{ps}}=V+V'$, con $V'=\sum_c(E-E_c)|\psi_{c\vk}\rangle\langle\psi_{c\vk}|$. Nel cristallo l'energia $E$ di un elettrone di valenza è maggiore
+di quella $E_c$ di un elettrone interno: $V'>0$ respinge gli elettroni, mentre il potenziale vero $V$ è attrattivo, cioè negativo. $V'$ tende a
+cancellare $V$, e la cancellazione è di solito apprezzabile: $V_{\mathrm{ps}}$ è debole e abbastanza liscio.
+
+\begin{osservazione}[slide 35--38]
+Nella slide 36 la
+scrittura $\psi_{\vk}=(1-\hat p)|\vk+\vk_i\rangle$, segnata come errore nella slide stessa, è l'OPW $\chi_{\vk+\vG_i}$; nella condizione di ortogonalità
+va letto $\Phi^*_{j\vk}$. L'annotazione «$H\psi^{\mathrm f}_{\vk}=E(\vk)\psi^{\mathrm f}_{\vk}$» accanto all'equazione di Schrödinger va letta
+$\bigl(-\frac{\hbar^2}{2m_0}\nabla^2+V_{\mathrm{ps}}\bigr)\psi^{\mathrm f}_{\vk}=E\psi^{\mathrm f}_{\vk}$: la pseudo-funzione non risolve l'equazione
+con $H$. Nella dimostrazione a mano (slide 37) $|\vk-\vk_i\rangle$ è $|\vk+\vk_i\rangle$.
+\end{osservazione}
+
+% =================================================================
+\section{Le bande dei materiali veri: metalli e semiconduttori}\label{sec:reali}
+% =================================================================
+Con i metodi dei §§\ref{sec:tb3d}--\ref{sec:pseudo} si leggono le bande calcolate e misurate dei solidi in tre dimensioni: l'alluminio, metallo
+quasi libero, e Si e GaAs, semiconduttori con un gap assoluto. Contando gli stati di una banda e gli elettroni per cella si capisce quando un cristallo
+è un metallo (Lezione 6a, prima parte, slide 1--23; Hofmann, cap.~6; Ashcroft--Mermin, cap.~8; Kittel, cap.~9). In questa sezione «slide» indica la
+Lezione 6a.
+
+\begin{osservazione}[notazione]
+Le slide scrivono $\varepsilon_{\vk}$, $\varepsilon_{n,\vk'}$ o $E_{n\vk}$ per la banda; $U_G$, $U_{2G}$ per i coefficienti di Fourier del potenziale;
+$g$ per il vettore reciproco in 1D ($k=k'\pm ng$) e $\vG'$ nella (6.41); $g(E)$ con il volume $V$ del campione; nella fotoemissione $E_f$, $\vk_f$
+(stato finale), $E_i$, $\vk_i$ (iniziale), $h\nu$, $\mathbf K$ (elettrone nel vuoto), $V_0$ (fondo della banda finale). Qui: $E_n(\vk)$; $V_G$,
+$V_{2G}$ come nella Parte~3, §11; $\vG$; $g(E)$ \emph{per unità di volume}, come nel §\ref{sec:pseudoconseg}; $E_{\mathrm{fin}}$, $\vk_{\mathrm{fin}}$
+($E_f$ si confonde con $\EF$), $E_{\mathrm i}$, $\vk_{\mathrm i}$, $\hbar\omega$, $\mathbf K$ con le componenti $K_\parallel$, $K_\perp$ ($K$ da solo è il
+punto della zona), $V_{\mathrm{int}}$ potenziale interno ($V_0$ è già usato), $\phi_{\mathrm e}$ lavoro di estrazione; $N$ celle primitive,
+$n_{\mathrm{val}}$ elettroni di valenza per cella primitiva.
+\end{osservazione}
+
+\subsection{Tre modi di disegnare le bande}\label{sec:schemi}
+Nei tre metodi (quasi liberi, legami forti, pseudopotenziale; slide 1) il potenziale periodico ha due effetti.
+\begin{enumerate}[leftmargin=*, label=\arabic*.]
+\item \textbf{Simmetria delle bande} (eq.~6.41; Parte~3, Teorema~9.1): basta la prima zona di Brillouin, perché le bande sono identiche attorno
+agli altri punti del reticolo reciproco; al bordo della zona le bande si \textbf{ripiegano} \ingl{back-folding}.
+\formula{E_n(\vk+\vG)=E_n(\vk)}
+\item \textbf{Gap} dove le bande dell'elettrone libero erano degeneri.
+\end{enumerate}
+
+\begin{definizione}[i tre schemi di zona]
+Lo stesso spettro si disegna in tre modi (slide 3; Kittel, cap.~9):
+\begin{itemize}[leftmargin=*]
+\item \textbf{zona estesa}: la banda $n$ sta nella zona $n$; $E(k)$ segue la parabola libera e salta di $2|V_G|$, $2|V_{2G}|$, \ldots{} ai bordi;
+\item \textbf{zona ridotta}: tutte le bande nella prima zona; un $\vk$ fuori si riporta in $\vk'$ con una traslazione di $\pm n\vG$,
+\[
+\vk=\vk'+\vG,\qquad E_{n}(\vk')\ \ \text{con }\vk'\ \text{nella prima zona};
+\]
+\item \textbf{zona periodica}: la zona ridotta ripetuta con periodo $\vG$, comoda per seguire una banda attraverso il bordo.
+\end{itemize}
+\end{definizione}
+
+\begin{figure}[tbp]
+\centering
+\figura{schemi}
+\caption{Gli stessi elettroni quasi liberi in 1D nei tre schemi (slide 3; $V_G=0{,}45\,E_0$, $V_{2G}=0{,}3\,E_0$, $E_0=\hbar^2\pi^2/2m_0a^2$,
+calcolati con 15 onde piane). Il gap tra le bande 1 e 2 si apre in $\pm\pi/a$; quello tra le bande 2 e 3 in $\pm2\pi/a$, cioè, ripiegato, in
+$k=0$. In grigio la prima zona.}\label{fig:schemi}
+\end{figure}
+
+\subsection{L'alluminio: un metallo quasi libero}\label{sec:al}
+L'alluminio ($1s^22s^22p^63s^23p^1$) ha un core di neon e \textbf{3 elettroni di valenza} $s$ e $p$; il reticolo è fcc con un atomo per cella
+primitiva. La zona di Brillouin è l'ottaedro troncato (Parte~1, §13), con i punti di alta simmetria (unità $2\pi/a$):
+\begin{center}\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+& $\Gamma$ & $X$ & $L$ & $K$ & $W$\\
+\midrule
+coordinate & $(0,0,0)$ & $(1,0,0)$ & $(\h,\h,\h)$ & $(\frac34,\frac34,0)$ & $(1,\h,0)$\\
+distanza da $\Gamma$ & 0 & 1 & 0,866 & 1,061 & 1,118\\
+\bottomrule
+\end{tabular}
+\end{center}
+$\Gamma$ è il centro della zona; $X$, $L$, $K$, $W$ stanno sul bordo.
+
+\domanda{Che cosa mostra la banda lungo $\Gamma$--$X$--$\Gamma$? (slide 2, 4, 6)}
+In zona periodica (Hofmann, fig.~6.12a): da $\Gamma$ parte la parabola libera; in $X$, sul bordo, si apre un gap (circa \SI{1.5}{eV}) tra la banda
+$s$ sotto e la banda $p$ sopra; sopra il gap una banda torna verso $\Gamma$: è la parabola centrata nel $\Gamma$ della zona successiva,
+$(2\pi/a)(2,0,0)$, come nel modello 1D. Unica differenza dal modello 1D: lo zero delle energie, che nei metalli si mette quasi sempre in $\EF$.
+
+\domanda{E nelle altre direzioni? (slide 2, 5, 7)}
+In zona ridotta lungo $\Gamma$--$X$--$W$--$K$--$L$--$\Gamma$ (fig.~6.12b) compaiono le bande ripiegate dalle zone vicine e i gap ai bordi. L'alluminio
+è descritto molto bene dagli elettroni quasi liberi: \emph{sembra} complicato solo perché in 3D molte zone vicine si ripiegano nella prima. Lo si vede
+confrontando la fig.~6.12b con le parabole libere ripiegate (fig.~\ref{fig:al}).
+
+\begin{figure}[tbp]
+\centering
+\figura{al_libero}
+\caption{Alluminio nel reticolo vuoto ($V=0$): lungo $\Gamma$--$X$--$W$--$K$--$L$--$\Gamma$, in zona ridotta, ogni curva è una parabola
+$\hbar^2|\vk+\vG|^2/2m_0$ con un diverso $\vG$. Con $a=\SI{4.05}{\angstrom}$ e 3 elettroni per cella $\EF$ sta \SI{11.65}{eV} sopra il fondo. Le bande
+vere (slide 5, fig.~6.12b) sono quasi uguali, con piccoli gap dove qui le curve si incrociano ($X$, $W$, $K$, $L$).}\label{fig:al}
+\end{figure}
+
+\domanda{Perché l'alluminio è un metallo? (slide 5--7)}
+Le bande sono piene fino a $\EF$ e \textbf{più bande attraversano $\EF$}: un elettrone appena sotto $\EF$ passa a uno stato libero appena sopra, nella
+stessa banda, con un'energia piccola a piacere, e così trasporta corrente elettrica e termica, in più direzioni. In 3D non c'è un gap assoluto:
+$\EF$ taglia alcune bande.
+
+\begin{esempio}[la sfera di Fermi contiene tutta la prima zona]
+Slide 9: $\EF$ dista circa \SI{12}{eV} dal fondo della banda. Il gas libero (Parte~2, §3) con $n=3\cdot4/a^3=\SI{1.81e29}{m^{-3}}$ dà
+$\kF=\SI{1.75}{\angstrom^{-1}}=1{,}127\,(2\pi/a)$ ed $\EF=\SI{11.65}{eV}$. La sfera di Fermi ha volume $\frac32$ di quello della zona (3 elettroni, 2
+per stato) e $\kF>|\Gamma W|$, il punto più lontano della zona: la prima banda è tutta piena e la mezza zona che resta riempie in parte la seconda e la
+terza banda. Per questo più bande tagliano $\EF$ (verificato con Python).
+\end{esempio}
+
+\domanda{E con un solo elettrone per cella? (slide 9, 15)}
+$\EF$ scende di un fattore $3^{2/3}$: $\EF'=\SI{5.6}{eV}$ sopra il fondo, $\kF'=\kF/3^{1/3}=0{,}78\,(2\pi/a)$, minore della distanza del punto più
+vicino del bordo, $|\Gamma L|=0{,}866\,(2\pi/a)$. La sfera di Fermi resta dentro la prima zona: le bande tagliano $\EF'$ alla stessa distanza da
+$\Gamma$ in tutte le direzioni e la superficie di Fermi è una sfera, come nel gas di elettroni liberi. Sarebbe un metallo davvero libero, come il
+sodio.
+
+\begin{osservazione}[slide 2, 9 e 15: la linea tratteggiata]
+Nella fig.~6.12b $\EF'$ è disegnata a \SI{-8}{eV}, circa \SI{3}{eV} sopra il fondo: corrisponderebbe a circa mezzo elettrone per cella. Con un
+elettrone il gas libero dà \SI{5.6}{eV} sopra il fondo, cioè circa \SI{-6}{eV} (fig.~\ref{fig:al}); la linea è indicativa e la conclusione non cambia.
+\end{osservazione}
+
+\begin{osservazione}[slide 5 e 12: $\Gamma$ non è sul bordo]
+«$\Gamma$, $X$, $W$, $K$, $L$ are all BZ boundary» (slide 5) e la nota della slide 12 («$L$, $\Gamma$, $X$, $W$, $K$ BZ zone boundaries»): $\Gamma$ è
+il centro della zona; sul bordo stanno $X$, $W$, $K$, $L$, come scrive la slide 6.
+\end{osservazione}
+
+\subsection{Come si misurano le bande: la fotoemissione}\label{sec:arpes}
+Le bande si misurano con la \textbf{fotoemissione risolta in angolo} \ingl{angle-resolved photoemission spectroscopy, ARPES} (slide 8). Il campione,
+in ultra alto vuoto ($p<\SI{e-7}{mbar}$), è illuminato con fotoni ultravioletti monocromatici di energia $\hbar\omega$; per effetto fotoelettrico
+emette elettroni, che un analizzatore separa per energia cinetica $E_{\mathrm{kin}}$ e direzione (angolo $\theta$ dalla normale). Dalle leggi di
+conservazione si risale a energia e $\vk$ dentro il campione, cioè a $E(\vk)$ (la copertina di Hofmann è la versione misurata della fig.~6.12a).
+
+\begin{risultato}[leggi di conservazione nella fotoemissione]
+Con le energie misurate dal livello del vuoto ($E_{\mathrm{vuoto}}=0$, figura (a) della slide 8):
+\[
+E_{\mathrm{fin}}=E_{\mathrm i}+\hbar\omega,\qquad \vk_{\mathrm{fin}}=\vk_{\mathrm i},\qquad K_\parallel=k_{\mathrm{fin}\parallel},\qquad
+K_\perp\ne k_{\mathrm{fin}\perp},
+\]
+con $\vk_{\mathrm i}$ ed $E_{\mathrm i}$ dello stato occupato nella banda, $\vk_{\mathrm{fin}}$ ed $E_{\mathrm{fin}}=E_{\mathrm{kin}}$ dello stato finale nel
+solido, $\mathbf K$ dell'elettrone nel vuoto. La transizione è «verticale» (l'impulso del fotone è trascurabile); attraversando la superficie si
+conserva solo la componente parallela, per la simmetria di traslazione nel piano.
+\end{risultato}
+
+\begin{dimostrazione}[$k_\parallel$ dall'angolo di emissione]
+\passo{Nel vuoto l'elettrone è libero.}
+\[
+E_{\mathrm{kin}}=\frac{\hbar^2K^2}{2m_0}\qquad\Longrightarrow\qquad K=\frac{\sqrt{2m_0E_{\mathrm{kin}}}}\hbar .
+\]
+\passo{Componente parallela alla superficie.}
+\[
+K_\parallel=K\sin\theta=\frac{\sqrt{2m_0E_{\mathrm{kin}}}}\hbar\,\sin\theta .
+\]
+\passo{Conclusione: conservazione di $\vk$ nella transizione e di $K_\parallel$ alla superficie.}
+\[
+k_{\mathrm i\parallel}=k_{\mathrm{fin}\parallel}=K_\parallel=\frac{\sqrt{2m_0E_{\mathrm{kin}}}}\hbar\,\sin\theta,\qquad
+E_{\mathrm i}=E_{\mathrm{kin}}-\hbar\omega .\qed
+\]
+\end{dimostrazione}
+
+\begin{chiave}[Fotoemissione risolta in angolo]
+\[
+\boxed{\ k_{\mathrm i\parallel}=\frac{\sqrt{2m_0E_{\mathrm{kin}}}}\hbar\,\sin\theta,\qquad
+E_{\mathrm{kin}}=\hbar\omega-\phi_{\mathrm e}-\bigl(\EF-E_{\mathrm i}\bigr)\ }
+\]
+(la seconda è $E_{\mathrm i}=E_{\mathrm{kin}}-\hbar\omega$ con lo zero spostato da $E_{\mathrm{vuoto}}$ a $\EF=-\phi_{\mathrm e}$.) Misurando
+$E_{\mathrm{kin}}$ a vari $\theta$ si traccia $E(k_\parallel)$; con $\hbar\omega=\SI{21.2}{eV}$ bastano poche decine di gradi per attraversare la zona
+(esercizio E12).
+\end{chiave}
+
+\begin{approfondimento}[impulso del fotone e componente perpendicolare]
+Per $\hbar\omega=\SI{21.2}{eV}$ il fotone ha $k=\omega/c=\SI{0.011}{\angstrom^{-1}}$, lo $0{,}7\,\%$ di $2\pi/a$: per questo $\vk_{\mathrm{fin}}=
+\vk_{\mathrm i}$ (a meno di un $\vG$). Per $k_\perp$ serve un modello dello stato finale: una parabola libera con il fondo a $-V_{\mathrm{int}}$
+sotto il vuoto (figura (a) della slide 8; $V_{\mathrm{int}}$, potenziale interno, si stima o si misura).
+\passo{Stato finale quasi libero.}
+\[
+E_{\mathrm{kin}}=\frac{\hbar^2\bigl(k_{\mathrm{fin}\parallel}^2+k_{\mathrm{fin}\perp}^2\bigr)}{2m_0}-V_{\mathrm{int}} .
+\]
+\passo{Sostituiamo $k_{\mathrm{fin}\parallel}^2=2m_0E_{\mathrm{kin}}\sin^2\theta/\hbar^2$ e risolviamo.}
+\[
+k_{\mathrm{fin}\perp}=\frac1\hbar\sqrt{2m_0\bigl(E_{\mathrm{kin}}\cos^2\theta+V_{\mathrm{int}}\bigr)} .
+\]
+Variando $\hbar\omega$ (luce di sincrotrone) si esplora anche la direzione perpendicolare.
+\end{approfondimento}
+
+\subsection{Si e GaAs: il gap assoluto}\label{sec:gapass}
+Si e GaAs hanno la stessa zona di Brillouin dell'alluminio (reticolo fcc), ma bande molto più complicate: due atomi e otto elettroni di valenza per
+cella (slide 10--11, fig.~\ref{fig:epm}). Le caratteristiche principali:
+\begin{itemize}[leftmargin=*]
+\item in fondo alle bande si riconosce la \textbf{parabola libera}: con 8 elettroni per cella liberi il fondo starebbe \SI{12.5}{eV} sotto $\EF$
+(Si); il fondo della valenza calcolato è a \SI{-12.6}{eV};
+\item ci sono \textbf{gap assoluti}, come in 1D;
+\item il gap di GaAs in $\Gamma$ somiglia a quello che in 1D apre il secondo coefficiente di Fourier, $2|V_{2G}|$ in $k=0$ (fig.~\ref{fig:schemi}b);
+\item Si: cima della valenza in $\Gamma$, minimo della conduzione lungo $\Gamma X$ vicino a $X$, a un $\vk$ diverso: \textbf{gap indiretto}
+(\SI{1.12}{eV}); GaAs: entrambi in $\Gamma$, \textbf{gap diretto} (\SI{1.42}{eV}).
+\end{itemize}
+
+\begin{definizione}[gap assoluto]
+Intervallo di energia in cui non c'è nessuno stato, per \emph{nessun} $\vk$ della zona (slide 12). Non basta un gap a un bordo, lungo una direzione.
+\end{definizione}
+
+\begin{figure}[tbp]
+\centering
+\figura{epm}
+\caption{Bande di Si e GaAs con lo pseudopotenziale empirico del §\ref{sec:pseudoconseg} (fattori di forma della tabella, per GaAs anche
+$V^a_3=0{,}068$, $V^a_4=0{,}066$, $V^a_{11}=\SI{0.012}{Ry}$; 113 onde piane, senza spin--orbita). In blu le 4 bande di valenza, in rosa il gap
+assoluto, tratteggiato $\mu$. Il modello locale dà gap di \SI{0.8}{eV} (Si, indiretto, minimo a $0{,}85$ di $\Gamma X$) e \SI{1.9}{eV} (GaAs,
+diretto): la forma delle bande è quella delle slide 10--11, i gap sono indicativi (misurati \SI{1.12}{eV} e \SI{1.42}{eV}).}\label{fig:epm}
+\end{figure}
+
+\domanda{Che cosa succede riempiendo le bande? (slide 12)}
+Con il principio di Pauli le bande sotto il gap si riempiono \textbf{esattamente}; sopra non resta nessun elettrone. Il potenziale chimico cade quindi
+nel gap, quasi a metà (Parte~5, §4.7: $\mu_i=\frac12\Eg+\frac34\kB T\ln(m_h/m_e)$); lo zero delle energie si mette di solito alla cima della
+valenza. Questi materiali non sono metalli: nessuna banda attraversa $\mu$, e per aumentare l'energia di un elettrone bisogna dargli almeno $\Eg$.
+
+\subsection{Metalli e isolanti: la densità degli stati}\label{sec:dos}
+La differenza tra metallo e isolante si vede meglio nella densità degli stati (slide 13).
+
+\begin{definizione}[densità degli stati]
+$g(E)\,\dd E$ è il numero di stati (spin compreso) per unità di volume con energia tra $E$ ed $E+\dd E$:
+\[
+g(E)=\frac2{(2\pi)^3}\sum_n\oint_{E_n(\vk)=E}\frac{\dd S_E}{|\nabla_{\vk}E_n(\vk)|},
+\]
+con l'integrale sulla superficie a energia costante nella prima zona (slide 13, che la scrive per tutto il campione, con $2V$ al numeratore).
+\end{definizione}
+
+\needspace{12\baselineskip}
+\begin{dimostrazione}[la densità degli stati da una superficie a energia costante]
+\passo{Stati per unità di volume nello spazio $\vk$.}
+Con le condizioni periodiche ogni $\vk$ occupa $(2\pi)^3/N\Omega$, con $N\Omega$ volume del campione (§\ref{sec:riempimento}; \QP{§3.2, p.~44}); per unità di volume e con
+lo spin:
+\[
+\dd n=2\,\frac{\dd^3k}{(2\pi)^3}.
+\]
+\passo{Guscio tra le superfici $E$ ed $E+\dd E$: area per spessore.}
+\[
+\dd^3k=\dd S_E\,\dd k_\perp .
+\]
+\passo{Lo spessore viene dal gradiente, normale alla superficie a energia costante.}
+\[
+\dd E=|\nabla_{\vk}E|\,\dd k_\perp\qquad\Longrightarrow\qquad\dd k_\perp=\frac{\dd E}{|\nabla_{\vk}E|}.
+\]
+\passo{Conclusione: sommiamo su tutta la superficie e su tutte le bande.}
+\[
+g(E)\,\dd E=\frac2{(2\pi)^3}\sum_n\oint_{E_n(\vk)=E}\frac{\dd S_E}{|\nabla_{\vk}E_n|}\,\dd E .\qed
+\]
+\end{dimostrazione}
+
+\begin{dimostrazione}[verifica: elettrone libero]
+\passo{Superficie sferica di raggio $k$, gradiente costante su di essa.}
+$E=\hbar^2k^2/2m_0$, $|\nabla_{\vk}E|=\hbar^2k/m_0$, $\oint\dd S_E=4\pi k^2$:
+\[
+g(E)=\frac2{(2\pi)^3}\,\frac{4\pi k^2m_0}{\hbar^2k}=\frac{m_0k}{\pi^2\hbar^2}.
+\]
+\passo{Esprimiamo $k$ con $E$.}
+\[
+g(E)=\frac1{2\pi^2}\Bigl(\frac{2m_0}{\hbar^2}\Bigr)^{3/2}\sqrt E,
+\]
+la densità della Parte~2, §3 (per unità di volume).\qed
+\end{dimostrazione}
+
+\begin{interpretazione}
+$g$ è grande dove le bande sono piatte ($|\nabla_{\vk}E|$ piccolo) e va a zero ai bordi di una banda. Le forme della slide 13: $\sqrt E$ in fondo
+(gas libero); una cuspide dove la superficie a energia costante tocca il bordo della zona; zero nel gap.
+\end{interpretazione}
+
+\begin{figure}[tbp]
+\centering
+\figura{dos_metsc}
+\caption{Stessa densità degli stati (schematica) e stati occupati a $T=0$ (in blu), con un numero diverso di elettroni (slide 13--14). (a) Metallo:
+$\mu$ cade dentro una banda, $g(\mu)\ne0$. (b) Semiconduttore o isolante: gli elettroni riempiono esattamente le bande fino a un gap assoluto, $\mu$
+cade nel gap e $g(\mu)=0$.}\label{fig:dos}
+\end{figure}
+
+\begin{definizione}[metallo e semiconduttore, slide 14]
+Un \textbf{metallo} ha una densità degli stati finita al potenziale chimico (energia di Fermi): $g(\mu)\ne0$. Un \textbf{semiconduttore} (o
+isolante) deve avere un \textbf{gap assoluto} (condizione necessaria, non sufficiente) e un numero di elettroni per cella che riempie
+\emph{esattamente} le bande fino al gap: $g(\mu)=0$.
+\end{definizione}
+Isolante e semiconduttore si distinguono poi per l'ampiezza del gap (Parte~5, §1.3).
+
+\domanda{Basta che $\EF$ cada in un gap lungo una direzione? (slide 15)}
+No. Se nell'alluminio, mettendo meno elettroni, $\EF$ cadesse nel gap in $X$, sembrerebbe un semiconduttore; ma quel gap non è assoluto: verso $W$ e $K$
+altre bande attraversano la stessa energia e $g(\EF)\ne0$.
+
+\subsection{Il riempimento delle bande: contare gli elettroni}\label{sec:riempimento}
+Si può prevedere dalla struttura cristallina se un materiale è un metallo? Sì, contando bande, stati $\vk$ ed elettroni di valenza per cella
+primitiva (slide 16--19).
+
+\domanda{Perché basta una cella primitiva? (slide 16)}
+Dall'equazione di Schrödinger a un elettrone (1) con la forma di Bloch (2), $\psi_{n\vk}=e^{i\vk\cdot\vr}u_{n\vk}$, si ottiene l'equazione per la
+parte periodica, la stessa del §\ref{sec:kpu}:
+\[
+\Bigl[\frac{\hp^2}{2m_0}+\frac{\hbar\vk\cdot\hp}{m_0}+\frac{\hbar^2k^2}{2m_0}+V(\vr)\Bigr]u_{n\vk}(\vr)=E_n(\vk)\,u_{n\vk}(\vr),\qquad
+u_{n\vk}(\vr+\vR)=u_{n\vk}(\vr).
+\]
+Per ogni $\vk$ è un problema in una sola cella primitiva, con autovalori discreti $E_1(\vk)\le E_2(\vk)\le\dots$, uno per banda. Lo stato
+fondamentale degli elettroni di Bloch si costruisce come quello del gas libero (slide 17, Ashcroft--Mermin p.~141): si occupano i livelli $(n,\vk)$
+più bassi, con $\vk$ in una sola cella del reticolo reciproco perché ogni livello va contato una volta. Ne escono due configurazioni: (a) alcune bande
+del tutto piene e le altre vuote; (b) alcune bande piene solo in parte.
+
+\begin{dimostrazione}[quanti stati contiene una banda (slide 19)]
+\passo{Condizioni periodiche su una catena di $N$ celle (Parte~2, §2).}
+\[
+\psi(x+Na)=\psi(x).
+\]
+\passo{Applichiamo il teorema di Bloch $N$ volte.}
+\[
+\psi(x+Na)=e^{ikNa}\,\psi(x)\qquad\Longrightarrow\qquad e^{ikNa}=1 .
+\]
+\passo{I valori permessi di $k$.}
+\[
+k=\frac{2\pi}{aN}\,n,\qquad\Delta k=k_{n+1}-k_n=\frac{2\pi}{aN}.
+\]
+\passo{Contiamo i $k$ in una zona, larga $2\pi/a$.}
+$(2\pi/a)/\Delta k=N$ valori: $n=1,\dots,N$ come nella slide, o $-N/2<n\le N/2$ nella prima zona. In 3D, con $N=N_1N_2N_3$ celle, la zona
+(volume $(2\pi)^3/\Omega$) contiene $N$ valori di $\vk$, ciascuno di volume $(2\pi)^3/N\Omega$.
+\passo{Conclusione: due stati di spin per ogni $(n,\vk)$.}
+Ogni banda ha $N$ valori di $\vk$, e $\vk$ è un numero quantico anche nel senso di Pauli: contiene $2N$ elettroni, 2 per cella primitiva.\qed
+\end{dimostrazione}
+
+\begin{chiave}[Riempimento delle bande]
+\[
+\boxed{\ \text{una banda}=N\ \text{valori di }\vk\times2\ \text{spin}=2N\ \text{elettroni}=2\ \text{per cella primitiva}\ }
+\]
+Con $n_{\mathrm{val}}$ elettroni di valenza per cella primitiva:
+\begin{itemize}[leftmargin=*, itemsep=1pt, topsep=1pt]
+\item $n_{\mathrm{val}}$ \textbf{dispari}: almeno una banda resta piena a metà $\Rightarrow$ \textbf{metallo};
+\item $n_{\mathrm{val}}$ \textbf{pari}: le bande possono essere tutte piene o vuote $\Rightarrow$ isolante o semiconduttore \emph{solo se} c'è un gap
+assoluto (condizione necessaria, non sufficiente).
+\end{itemize}
+\end{chiave}
+
+\begin{figure}[tbp]
+\centering
+\figura{riempimento1d}
+\caption{Una banda di una catena di $N=18$ celle: 18 valori di $k$, ciascuno con due elettroni (slide 19). (a) Con 2 elettroni per cella tutti i
+$k$ sono occupati: la banda è piena e $\EF$ cade sopra. (b) Con 1 elettrone per cella se ne occupano 9, per $|k|\le\kF=\pi/2a$: banda piena a metà,
+metallo.}\label{fig:riemp}
+\end{figure}
+
+\begin{osservazione}[slide 18: stati per cella, non per atomo]
+«\# of states in the band = \# primitive cells = \# number of atoms in the solid»: la seconda uguaglianza vale solo con un atomo per cella primitiva
+(Al, Na). Nel Si, con due atomi per cella, una banda ha $N=N_{\mathrm{at}}/2$ valori di $\vk$: si conta per cella, non per atomo.
+\end{osservazione}
+
+\domanda{Che cosa dà il conteggio nei materiali delle slide? (slide 18, 20--21)}
+\begin{center}\small
+\begin{tabular}{@{}llccl@{}}
+\toprule
+& struttura & atomi per cella & $n_{\mathrm{val}}$ & risultato\\
+\midrule
+Al & fcc & 1 & 3 & una banda piena e mezza: metallo\\
+Si & diamante & 2 & $4+4=8$ & 4 bande piene, gap assoluto: semiconduttore\\
+GaAs & zincoblenda & 2 & $3+5=8$ & 4 bande piene, gap assoluto: semiconduttore\\
+Be & hcp & 2 & $2+2=4$ & bande $2s$ e $2p$ sovrapposte: metallo\\
+\bottomrule
+\end{tabular}
+\end{center}
+Nell'alluminio la mezza banda è divisa tra seconda e terza banda (esempio del §\ref{sec:al}). In Si e GaAs le 4 bande di valenza sono quelle blu
+della fig.~\ref{fig:epm}: una in fondo, di tipo $s$, e tre di tipo $p$, degeneri in $\Gamma$ (le «degenerate bands» della slide 20; §\ref{sec:so}).
+
+\domanda{Perché il berillio, con un numero pari di elettroni, è un metallo? (slide 22--23)}
+Il Be ($1s^22s^2$) ha 2 elettroni di valenza e cristallizza hcp con 2 atomi per cella: 4 elettroni per cella, abbastanza per riempire esattamente le
+due bande $2s$. Ma la banda $2p$ (vuota) si sovrappone alla $2s$: in alcune regioni della zona di Brillouin la $2p$ scende sotto la cima della $2s$. Gli
+elettroni si dividono tra le due bande, entrambe piene in parte, e bastano energie piccole a piacere per eccitarli: metallo. Con 2 elettroni si può
+riempire una banda o riempirne a metà due: il numero pari è necessario per un isolante, non sufficiente (così anche Mg e Ca). Il litio, con un solo
+elettrone $2s$, è il caso semplice: banda $2s$ piena a metà.
+
+\begin{osservazione}[slide 20--22]
+(1) Slide 20, «Si: fcc (It is not a Bravais Lattice)»: il reticolo di Bravais del Si è l'fcc; a non essere di Bravais è la struttura del diamante,
+fcc con una base di due atomi (Parte~1, §10). (2) Slide 21, «As has 5 valence electrons (column IV)»: l'arsenico è nella colonna V. (3) Slide 22:
+la banda più bassa, indicata come «1s», viene come la seconda dagli orbitali $2s$ (2 atomi per cella danno 2 bande $s$); il livello $1s$ del Be è di
+core, circa \SI{111}{eV} sotto $\EF$, fuori dalla figura.
+\end{osservazione}
+
+% =================================================================
+\section{Semimetalli: il bismuto e il grafene}\label{sec:semimetalli}
+% =================================================================
+Il conteggio del §\ref{sec:riempimento} dice quando un cristallo \emph{deve} essere un metallo; con un numero pari di elettroni per cella decide la
+struttura a bande. Due casi limite (Lezione 6a, seconda parte; Hofmann capp.~5--6 e note integrative): il bismuto, quasi un isolante ma con pochi
+elettroni e lacune, e il grafene, in cui banda piena e banda vuota si toccano in un punto. Le slide 1--12 della seconda parte ripetono le slide 12--23
+della prima (§§\ref{sec:gapass}--\ref{sec:riempimento}); in questa sezione «slide» indica la seconda parte.
+
+\begin{osservazione}[notazione]
+Le slide chiamano $\mu_e$, $\mu_h$ le mobilità: qui $b_e$, $b_h$ come nella Parte~5 ($\mu$ è il potenziale chimico). Per il grafene la slide 34
+chiama $\mathbf b_1$, $\mathbf b_2$ i vettori primitivi del reticolo diretto, $\mathbf d_1$, $\mathbf d_2$ quelli del reciproco, $\mathbf r_i$ i vettori
+verso i primi vicini e $a_0=\SI{1.42}{\angstrom}$ la distanza C--C; qui, come nella slide 20, $\va_1$, $\va_2$ (diretto), $\vb_1$, $\vb_2$
+(reciproco), $\bm\delta_i$ (primi vicini), $a_{\mathrm{CC}}$ (distanza C--C). I coefficienti degli ibridi $u_l$, $v_l$, $w_l$ diventano $\alpha_l$, $\beta_l$,
+$\gamma_l$ ($u$ e $v$ sono già la parte periodica di Bloch e la velocità). La velocità degli elettroni del grafene $c_g$ (slide 30) è $v_{\mathrm F}$;
+la massa dell'elettrone libero $m_e$ (slide 29--30) è $m_0$; la massa a riposo relativistica $m_0$ (slide 31--32) è $m_{\mathrm r}$.
+\end{osservazione}
+
+\subsection{Il bismuto: quasi un isolante}\label{sec:bismuto}
+\domanda{Perché l'effetto Hall del bismuto è «anomalo»? (slide 13--15)}
+Se ogni atomo di Bi contribuisse con i suoi 5 elettroni di valenza, il gas libero darebbe $\RH=-1/ne$ con $n=5n_{\mathrm{at}}$: circa
+\SI{-4e-11}{m^3/C}. Il valore misurato (Hofmann, tab.~5.1) è più grande di diversi ordini di grandezza: i portatori sono molti meno.
+
+\domanda{Che cosa dice il conteggio degli elettroni?}
+Il Bi ($6s^26p^3$, gruppo V) ha 5 elettroni di valenza e \textbf{2 atomi per cella primitiva}: 10 elettroni per cella, numero pari. Le due bande più
+basse vengono dai $6s$ (4 elettroni), ben separate dalle bande $6p$; i 6 elettroni $p$ bastano a riempire esattamente altre tre bande. In tutto
+\textbf{5 bande piene}: il Bi potrebbe essere un isolante. Non lo è, ma per poco (fig.~\ref{fig:bismuto}):
+\begin{itemize}
+\item la cima della banda di «valenza» nel punto $T$ della zona supera $\EF$: pochissime \textbf{lacune};
+\item il fondo della banda di «conduzione» nel punto $L$ scende sotto $\EF$: pochissimi \textbf{elettroni};
+\item le due bande si sovrappongono in energia di circa \SI{40}{meV}; per la neutralità il numero di elettroni e di lacune è lo stesso, $n=p$;
+\item la densità degli stati vicino a $\EF$ sembra nulla, come in un gap, ma è solo piccolissima: il Bi è un metallo, con portatori elettroni
+\emph{e} lacune, in numero molto minore di uno per atomo ($n=p\approx\SI{3e23}{m^{-3}}$, un portatore ogni $10^5$ atomi circa).
+\end{itemize}
+
+\begin{figure}[tbp]
+\centering\figura{bismuto}
+\caption{Bismuto, schema delle bande che attraversano $\EF$ (slide 13 e 17, Hofmann): la «valenza» supera $\EF$ in $T$ (lacune), la «conduzione»
+scende sotto $\EF$ in $L$ (elettroni); la sovrapposizione è di circa \SI{40}{meV}, e questi stati si eccitano anche termicamente.}\label{fig:bismuto}
+\end{figure}
+
+\begin{definizione}[semimetallo]
+Un \textbf{semimetallo} \ingl{semimetal} ha un numero pari di elettroni per cella, che basterebbe a riempire esattamente delle bande, ma una banda
+piena e una vuota si sovrappongono (Bi) o si toccano (grafene, §\ref{sec:grafenebande}) in una piccola regione della zona: $g(\EF)$ è nulla o
+piccolissima e i portatori sono pochi, elettroni e lacune insieme.
+\end{definizione}
+
+\domanda{Come si legge allora il coefficiente di Hall? (slide 14--17)}
+Con elettroni e lacune insieme vale la formula a due portatori (dimostrata nella Parte~5, §8.1, Kittel cap.~8; Hofmann problema 7.6):
+\[
+\RH=\frac{p\,b_h^2-n\,b_e^2}{e\,(p\,b_h+n\,b_e)^2}\qquad\xrightarrow{\ n=p\ }\qquad
+\RH=\frac{b_h^2-b_e^2}{e\,n\,(b_h+b_e)^2}=\frac{b_h-b_e}{e\,n\,(b_h+b_e)} .
+\]
+\begin{itemize}
+\item Il conteggio sbagliava perché attribuiva all'effetto Hall \emph{tutti} gli elettroni: contribuiscono solo i pochi portatori vicino a $\EF$.
+Con $n$ piccolo il denominatore è piccolo e $\RH$ è grande.
+\item Il segno dipende dalle mobilità: contributo negativo dagli elettroni in $L$, positivo dalle lacune in $T$, entrambi grandi; per $b_e=b_h$ si
+annulla il numeratore.
+\item Bande strette vicino a $\EF$: scale di energia piccole (decine di meV) e masse efficaci piccole; spin--orbita forte, ma ogni banda contiene
+sempre due elettroni (slide 13).
+\end{itemize}
+
+\begin{esempio}[ordine di grandezza]
+Con $n=p=\SI{3e23}{m^{-3}}$ e $b_e=2b_h$: $\RH=-1/(3en)=\SI{-6.9e-6}{m^3/C}$, circa $1{,}6\cdot10^5$ volte il valore del gas libero con 5 elettroni
+per atomo (\SI{-4.4e-11}{m^3/C}, $n_{\mathrm{at}}=\SI{2.82e28}{m^{-3}}$).
+\end{esempio}
+
+\begin{riepilogo}[la conclusione della slide 14]
+Nei metalli complessi (come il Bi) e soprattutto nei semiconduttori la densità dei portatori è molto minore di uno per atomo e il loro segno può
+essere positivo. Questi effetti Hall «anomali» li spiega la teoria delle bande: pochi portatori, eccitati anche termicamente, che possono essere
+elettroni (carica efficace negativa) o lacune (carica efficace positiva).
+\end{riepilogo}
+
+\begin{osservazione}[slide 13]
+«Two atoms per primitive cell (HCP not bravais)»: il Bi non è hcp; ha una struttura romboedrica (tipo A7, Kittel cap.~1) con 2 atomi per cella
+primitiva. Per il conteggio conta solo questo numero.
+\end{osservazione}
+
+\subsection{Il grafene: reticolo e zona di Brillouin}\label{sec:grafenereticolo}
+Il grafene è un singolo strato di atomi di carbonio disposti a nido d'ape (slide 18--20, 33--34). Il nido d'ape \textbf{non è un reticolo di
+Bravais}: due atomi vicini, $A$ e $B$, hanno intorni ruotati di \ang{180}. Il reticolo di Bravais è esagonale (triangolare), con una base di due atomi.
+
+\begin{risultato}[vettori del grafene (slide 20)]
+Con $a=|\va_1|=|\va_2|=\SI{2.46}{\angstrom}$ e la distanza C--C $a_{\mathrm{CC}}=a/\sqrt3=\SI{1.42}{\angstrom}$:
+\[
+\va_1=a\Bigl(\tfrac{\sqrt3}2,\,-\tfrac12\Bigr),\quad \va_2=a\Bigl(\tfrac{\sqrt3}2,\,\tfrac12\Bigr);\qquad
+\vb_1=\frac{2\pi}a\Bigl(\tfrac1{\sqrt3},\,-1\Bigr),\quad \vb_2=\frac{2\pi}a\Bigl(\tfrac1{\sqrt3},\,1\Bigr),\quad |\vb_i|=\frac{4\pi}{\sqrt3\,a}.
+\]
+\end{risultato}
+\begin{dimostrazione}[i $\vb_i$ sono i vettori reciproci]
+\passo{Condizione che definisce il reticolo reciproco (Parte~1, §13; slide 20, eq.~1.3 con $\va_3=c\,\zh$).}
+\[ \va_i\cdot\vb_j=2\pi\,\delta_{ij}. \]
+\passo{Prodotti diagonali.}
+\[ \va_1\cdot\vb_1=2\pi\Bigl(\tfrac{\sqrt3}2\cdot\tfrac1{\sqrt3}+\tfrac12\Bigr)=2\pi,\qquad \va_2\cdot\vb_2=2\pi\Bigl(\tfrac12+\tfrac12\Bigr)=2\pi. \]
+\passo{Prodotti misti.}
+\[ \va_1\cdot\vb_2=2\pi\Bigl(\tfrac12-\tfrac12\Bigr)=0,\qquad \va_2\cdot\vb_1=0.\qed \]
+\end{dimostrazione}
+
+\begin{itemize}
+\item \textbf{Cella primitiva}: il rombo di lati $\va_1$, $\va_2$, con un atomo $A$ e uno $B$; equivalente la cella esagonale, che contiene
+$6\times\frac13=2$ atomi (slide 19).
+\item \textbf{Primi vicini}: ogni atomo $A$ ha tre vicini $B$ a distanza $a_{\mathrm{CC}}$, nelle direzioni $\bm\delta_1$, $\bm\delta_2$, $\bm\delta_3$ a
+\ang{120} l'una dall'altra (slide 34, eq.~1: $a_0(0,-1)$, $a_0(\pm\frac{\sqrt3}2,\frac12)$ nel suo sistema di assi).
+\item \textbf{Zona di Brillouin}: un esagono (la cella di Wigner--Seitz del reticolo reciproco esagonale). Punti di alta simmetria: $\Gamma$ al centro;
+$M$ al centro di un lato, $|\Gamma M|=|\vb_i|/2=2\pi/(\sqrt3a)$; $K$ e $K'$ ai vertici, $|\Gamma K|=4\pi/(3a)$. I vertici sono di due tipi non
+equivalenti, $K$ e $K'$, alternati.
+\end{itemize}
+
+\begin{figure}[tbp]
+\centering\figura{grafene_reticolo}
+\caption{Grafene. (a) Nido d'ape con gli atomi $A$ e $B$, i vettori primitivi $\va_1$, $\va_2$ con la cella (in verde) e i vettori $\bm\delta_i$ verso
+i primi vicini. (b) Reticolo reciproco (punti neri) e prima zona di Brillouin, con i punti $\Gamma$, $M$, $K$, $K'$.}\label{fig:grafenereticolo}
+\end{figure}
+
+\begin{osservazione}[slide 18, 20 e 34]
+(1) La nota della slide 18 dice che nel grafene «la cella primitiva non è propriamente definita»: lo è, è il rombo della fig.~\ref{fig:grafenereticolo}a
+con due atomi non equivalenti; non di Bravais è il nido d'ape, non la cella. (2) La slide 34 chiama i vettori primitivi diretti «basis for the first
+Brillouin zone» (corretto a mano in «primitive cell») e li disegna ruotati di \ang{90} rispetto alla slide 20; la fisica non cambia. (3) Slide 20, per la
+grafite: con $\vb_3=(2\pi/c)\zh$ i piani della zona sono a $k_z=\pm\pi/c$ (metà di $|\vb_3|$) e il prisma è alto $2\pi/c$, non $\pm2\pi/c$ e $4\pi/c$.
+\end{osservazione}
+
+\subsection{L'ibridazione sp$^2$: legami $\sigma$ e $\pi$}\label{sec:ibridi}
+Il carbonio ($1s^22s^22p^2$) ha 4 elettroni di valenza. Nel grafene l'orbitale $2s$ e due orbitali $2p$ ($2p_x$, $2p_y$) si combinano in tre
+\textbf{orbitali ibridi sp$^2$}, nel piano e alla stessa energia, che formano con i tre vicini i forti \textbf{legami $\sigma$}; l'orbitale $2p_z$,
+perpendicolare al piano, forma i \textbf{legami $\pi$} (slide 21--22, 33--37).
+
+\begin{dimostrazione}[gli orbitali ibridi sp$^2$ (slide 35--37)]
+\passo{Combinazione lineare per ogni ibrido (eq.~6--7 della slide 35, notazione di Dirac).}
+\[ |\mathrm{sp}^2_l\rangle=\alpha_l\,|2s\rangle+\beta_l\,|2p_x\rangle+\gamma_l\,|2p_y\rangle,\qquad l=1,2,3. \]
+\passo{Condizioni di ortonormalità: $|2s\rangle$, $|2p_x\rangle$, $|2p_y\rangle$ sono ortonormali, quindi i prodotti scalari si calcolano sui coefficienti.}
+\[ \langle\mathrm{sp}^2_l|\mathrm{sp}^2_l\rangle=\alpha_l^2+\beta_l^2+\gamma_l^2=1,\qquad
+   \langle\mathrm{sp}^2_l|\mathrm{sp}^2_{l'}\rangle=\alpha_l\alpha_{l'}+\beta_l\beta_{l'}+\gamma_l\gamma_{l'}=0\quad(l\ne l'). \]
+\passo{L'orbitale $2s$ si divide in parti uguali tra i tre ibridi (eq.~10).}
+\[ \alpha_1^2+\alpha_2^2+\alpha_3^2=1,\quad \alpha_1=\alpha_2=\alpha_3\quad\Longrightarrow\quad \alpha_l=\frac1{\sqrt3}. \]
+\passo{Scegliamo il primo ibrido orientato lungo $\yh$: niente $2p_x$, e la normalizzazione fissa $\gamma_1$.}
+\[ \beta_1=0,\qquad \gamma_1^2=1-\frac13\quad\Longrightarrow\quad\gamma_1=\sqrt{\frac23}. \]
+\passo{Ortogonalità con il primo ibrido.}
+\[ \frac1{\sqrt3}\cdot\frac1{\sqrt3}+0\cdot\beta_2+\sqrt{\frac23}\,\gamma_2=0\quad\Longrightarrow\quad\gamma_2=-\frac1{\sqrt6},\qquad
+   \text{e allo stesso modo}\quad\gamma_3=-\frac1{\sqrt6}. \]
+\passo{Normalizzazione del secondo e del terzo.}
+\[ \frac13+\beta_{2,3}^2+\frac16=1\quad\Longrightarrow\quad\beta_{2,3}=\pm\frac1{\sqrt2}. \]
+\passo{Ortogonalità tra il secondo e il terzo: i segni sono opposti.}
+\[ \frac13+\beta_2\beta_3+\frac16=0\quad\Longrightarrow\quad\beta_2\beta_3=-\frac12,\qquad \beta_2=\frac1{\sqrt2},\ \ \beta_3=-\frac1{\sqrt2}.\qed \]
+\end{dimostrazione}
+
+\begin{chiave}[Orbitali ibridi sp$^2$ (eq.~11 della slide 37)]
+\[
+|\mathrm{sp}^2_1\rangle=\frac1{\sqrt3}|2s\rangle+\sqrt{\frac23}\,|2p_y\rangle,\qquad
+|\mathrm{sp}^2_{2,3}\rangle=\frac1{\sqrt3}|2s\rangle\pm\frac1{\sqrt2}|2p_x\rangle-\frac1{\sqrt6}|2p_y\rangle
+\]
+La parte $p$ di ciascun ibrido punta a \ang{90}, \ang{-30} e \ang{210}: tre direzioni nel piano a \ang{120}, quelle dei legami con i tre vicini
+(fig.~\ref{fig:ibridi}a). Ogni legame $\sigma$ ha due elettroni (spin su e giù, Pauli); resta un elettrone per atomo nel $2p_z$ (legame $\pi$),
+simmetrico per rotazioni attorno a $z$.
+\end{chiave}
+
+\domanda{E gli ibridi sp e sp$^3$? (slide 37--38)}
+Allo stesso modo. \textbf{sp}: $(|2s\rangle\pm|2p_x\rangle)/\sqrt2$, a \ang{180}. \textbf{sp$^3$} (diamante, Si, Ge): un $2s$ e tre $2p$ in quattro ibridi
+equivalenti, ciascuno con un lobo grande e uno piccolo,
+\begin{align*}
+|\mathrm{sp}^3_1\rangle&=\tfrac12\bigl(|2s\rangle+|2p_x\rangle+|2p_y\rangle+|2p_z\rangle\bigr), &
+|\mathrm{sp}^3_2\rangle&=\tfrac12\bigl(|2s\rangle+|2p_x\rangle-|2p_y\rangle-|2p_z\rangle\bigr),\\
+|\mathrm{sp}^3_3\rangle&=\tfrac12\bigl(|2s\rangle-|2p_x\rangle-|2p_y\rangle+|2p_z\rangle\bigr), &
+|\mathrm{sp}^3_4\rangle&=\tfrac12\bigl(|2s\rangle-|2p_x\rangle+|2p_y\rangle-|2p_z\rangle\bigr),
+\end{align*}
+diretti verso i vertici di un tetraedro: l'angolo tra due ibridi è $\arccos(-\tfrac13)=\ang{109.5}$. I quattro ibridi sono degeneri, con energia
+tra quella del $2s$ e quella del $2p$, e ognuno ospita due elettroni.
+
+\begin{figure}[tbp]
+\centering\figura{ibridi}
+\caption{Direzioni degli orbitali ibridi: (a) i tre sp$^2$ nel piano, con il lobo grande verso i tre legami $\sigma$; (b) i quattro sp$^3$ verso i vertici
+di un tetraedro. Il colore dei lobi indica il segno della funzione d'onda.}\label{fig:ibridi}
+\end{figure}
+
+\begin{osservazione}[slide 38]
+Nella figura della slide i colori dei lobi «rappresentano la carica, positiva e negativa»: rappresentano il \emph{segno} della funzione d'onda (la
+densità di carica $-e|\psi|^2$ ha un solo segno). «All four sp$^3$ hybrid orbitals are delocalized» va letto «sono degeneri» (stessa energia): sono
+orbitali atomici, localizzati sull'atomo.
+\end{osservazione}
+
+\subsection{Le bande del grafene: un semiconduttore a gap nullo}\label{sec:grafenebande}
+\domanda{Quante bande ci sono e quante sono piene? (slide 22--25)}
+Per cella: 2 atomi $\times$ 4 elettroni $=$ \textbf{8 elettroni}. Ogni atomo ha 3 orbitali sp$^2$ e un $2p_z$: 8 orbitali per cella, quindi 8 bande
+(§\ref{sec:tb3d}):
+\begin{itemize}
+\item dai 6 sp$^2$: 3 bande $\sigma$ (leganti) e 3 bande $\sigma^*$ (antileganti, più in alto, non disegnate nella slide); 6 elettroni $\sigma$ riempiono
+le 3 bande $\sigma$, due per banda;
+\item dai 2 $p_z$: la banda $\pi$ (legante) e la $\pi^*$ (antilegante); i 2 elettroni $\pi$ riempiono la $\pi$.
+\end{itemize}
+In tutto \textbf{4 bande piene}: il grafene potrebbe essere un isolante. Ma tra la banda $\pi$ piena e la $\pi^*$ vuota non c'è gap: si toccano
+esattamente ai vertici $K$ (e $K'$) della zona, e $\EF$ passa proprio lì (fig.~\ref{fig:grafenebande}).
+
+\begin{figure}[tbp]
+\centering\figura{grafene_bande}
+\caption{Bande $\pi$ e $\pi^*$ del grafene a legami forti, $E=\pm t|f(\vk)|$ con $t=\SI{2.8}{eV}$ (approfondimento qui sotto), e densità degli stati: lineare e nulla in
+$\EF$, con i picchi in $\pm t$ dai punti $M$. Le bande $\sigma$ (nella slide 24, da $-4$ a $-20$ eV circa) non sono disegnate.}\label{fig:grafenebande}
+\end{figure}
+
+\begin{approfondimento}[le bande $\pi$ a legami forti (Wallace; Ashcroft--Mermin cap.~10)]
+Le slide mostrano le bande senza ricavarle. Si ottengono come quelle della catena biatomica (§\ref{sec:biat}) con un orbitale $p_z$ per atomo.
+\passo{Funzione di Bloch con un orbitale $p_z$ su $A$ e uno su $B$, coefficienti $b_A$, $b_B$.}
+\[ \psi_{\vk}=\sum_{\vR}e^{i\vk\cdot\vR}\bigl[b_A\,\varphi(\vr-\vR)+b_B\,\varphi(\vr-\vR-\bm\delta_1)\bigr]. \]
+\passo{Proiezione sugli orbitali, come nel §\ref{sec:biat}: atomi uguali, $E_A=E_B=\bar E_p$, e i tre vicini $B$ di ogni $A$ danno tre fasi.}
+\[ (\bar E_p-E)\,b_A-t\,f(\vk)\,b_B=0,\qquad -t\,f^*(\vk)\,b_A+(\bar E_p-E)\,b_B=0,\qquad f(\vk)=\sum_{i=1}^3e^{i\vk\cdot\bm\delta_i}. \]
+\passo{Determinante nullo, con lo zero dell'energia in $\bar E_p$.}
+\[ E^2=t^2|f(\vk)|^2\quad\Longrightarrow\quad E_\pm(\vk)=\pm t\,|f(\vk)|\qquad(\pi^*:\ +,\ \ \pi:\ -). \]
+\passo{Valori nei punti della zona.}
+In $\Gamma$ le tre fasi valgono 1: $|f|=3$, $E=\pm3t$; in $M$ $|f|=1$, $E=\pm t$; in $K$ le tre fasi sono $1$, $e^{2\pi i/3}$, $e^{-2\pi i/3}$ e la loro
+somma è nulla: $E_+=E_-=0$. \textbf{Le due bande si toccano in $K$ per la simmetria tra $A$ e $B$} (come nella catena biatomica con $E_A=E_B$, senza gap).
+\passo{Sviluppo vicino a $K$: $\vk=\mathbf K+\vq$ con $q\ll1/a_{\mathrm{CC}}$.}
+\[ |f(\mathbf K+\vq)|\simeq\frac32\,a_{\mathrm{CC}}\,q\quad\Longrightarrow\quad E_\pm=\pm\hbar\vF\,q,\qquad \vF=\frac{3\,t\,a_{\mathrm{CC}}}{2\hbar}. \]
+\passo{Numeri: con $t\simeq\SI{2.8}{eV}$.}
+$\vF=\SI{9.1e5}{m/s}\approx c/330$; la banda $\pi$ va da $-3t=\SI{-8.4}{eV}$ in $\Gamma$ a $0$ in $K$, come nella slide 27.
+\end{approfondimento}
+
+\begin{chiave}[Il cono di Dirac]
+Vicino a $K$ e $K'$, con $\vq=\vk-\mathbf K$:
+\[ \boxed{E_\pm(\vq)=\pm\hbar\vF\,|\vq|},\qquad \vF\approx\SI{1e6}{m/s}. \]
+Dispersione lineare, come per i fotoni ($\hbar\omega=\hbar ck$), con $\vF$ al posto di $c$: nello spazio $\vk$ bidimensionale le due bande formano due coni
+con il vertice in $\EF$ (\textbf{cono di Dirac}). La velocità di gruppo $\vF$ è la stessa a ogni energia.
+\end{chiave}
+
+\domanda{Com'è la densità degli stati vicino a $\EF$? (slide 26, Hofmann problema 6.2)}
+Lineare in $E$ e nulla in $\EF$ (fig.~\ref{fig:grafenebande}).
+\begin{dimostrazione}[densità degli stati del cono di Dirac]
+\passo{Stati con $|\vq|<q$ in un cono, per unità di area: un cerchio nello spazio $\vk$ 2D, $(2\pi)^2$ per stato (Parte~2, §2).}
+\[ N(q)=\frac{\pi q^2}{(2\pi)^2}=\frac{q^2}{4\pi}. \]
+\passo{In funzione dell'energia, $q=|E|/\hbar\vF$.}
+\[ N(E)=\frac{E^2}{4\pi\hbar^2\vF^2}\quad\Longrightarrow\quad\frac{\dd N}{\dd E}=\frac{|E|}{2\pi\hbar^2\vF^2}. \]
+\passo{Degenerazioni: 2 di spin e 2 di valle ($K$ e $K'$).}
+\[ g(E)=4\cdot\frac{|E|}{2\pi\hbar^2\vF^2}=\frac{2|E|}{\pi\hbar^2\vF^2}\quad(\text{per unità di area}).\qed \]
+\end{dimostrazione}
+Il calcolo numerico con tutta la banda della fig.~\ref{fig:grafenebande} coincide con questa formula entro lo \SI{0.5}{\percent} fino a \SI{0.3}{eV}.
+
+\begin{chiave}[Il grafene è un semimetallo]
+$g(\EF)=0$, quindi secondo la definizione del §\ref{sec:dos} il grafene \emph{non è un metallo}; ma non ha nemmeno un gap tra l'ultimo stato
+occupato e il primo vuoto, come un isolante o un semiconduttore. Si chiama \textbf{semimetallo} o \textbf{semiconduttore a gap nullo}
+\ingl{zero band gap semiconductor}.
+\end{chiave}
+
+\begin{osservazione}[slide 24 e 27]
+(1) Slide 24, «6 available bands per atom, 12 available states per unit cell»: le 6 bande $\sigma+\sigma^*$ sono per \emph{cella} (3 orbitali sp$^2$
+per 2 atomi) e contengono 12 stati; allo stesso modo $\pi+\pi^*$ sono 2 bande per cella, 4 stati. (2) Slide 27, «group velocity
+$\sim\SI{e7}{ms^{-1}}$, close to speed of light»: $\vF\approx\SI{1e6}{m/s}$, circa $c/300$. Gli elettroni del grafene si dicono «relativistici» per la
+\emph{forma} della dispersione, non per la velocità (lo dice la slide 31).
+\end{osservazione}
+
+\subsection{La massa efficace nel grafene}\label{sec:massagrafene}
+\domanda{Gli elettroni del grafene hanno massa infinita o nulla? (slide 28--32)}
+Il grafene ha la conducibilità a temperatura ambiente più alta di ogni materiale noto, per due ragioni: la temperatura di Debye alta, che riduce la
+diffusione da fononi, e la struttura a bande lineare vicino a $\EF$. Ma con la definizione della Parte~3, §13.2,
+\[ m^*=\hbar^2\Bigl(\frac{\dd^2E}{\dd k^2}\Bigr)^{-1}, \]
+una dispersione lineare dà $\dd^2E/\dd k^2=0$ e $m^*\to\infty$: sembrerebbe impossibile accelerare gli elettroni con un campo. Eppure si dicono
+«senza massa». La definizione con la curvatura presuppone una banda parabolica; ne serve una che non lo presupponga.
+
+\begin{dimostrazione}[una definizione alternativa della massa efficace]
+\passo{Definiamo la massa dalla relazione tra quantità di moto e velocità (eq.~3).}
+Si identifica, in senso semiclassico, la quantità di moto con $\hbar k$ (sappiamo che non è esatto: §\ref{sec:trasporto}); per il grafene $k$ si misura da $K$.
+\[ p=\hbar k=\tilde m\,v_g. \]
+\passo{Velocità di gruppo (eq.~4).}
+\[ v_g=\frac1\hbar\frac{\dd E}{\dd k}. \]
+\passo{Sostituiamo e risolviamo per $\tilde m$ (eq.~2).}
+\[ \tilde m=\hbar^2k\Bigl(\frac{\dd E}{\dd k}\Bigr)^{-1}.\qed \]
+\end{dimostrazione}
+\begin{dimostrazione}[verifica: elettrone libero]
+\passo{Banda parabolica (eq.~5--6).}
+\[ E=\frac{\hbar^2k^2}{2m_0},\qquad\frac{\dd E}{\dd k}=\frac{\hbar^2k}{m_0}. \]
+\passo{Sostituiamo.}
+\[ \tilde m=\hbar^2k\cdot\frac{m_0}{\hbar^2k}=m_0:\ \text{per una parabola coincide con }m^*.\qed \]
+\end{dimostrazione}
+(In $k=0$ la formula è indeterminata, $0/0$: si prende il limite.)
+
+\begin{chiave}[Massa efficace del grafene (eq.~7)]
+Con $E=\hbar\vF k$:
+\[ \boxed{\tilde m=\frac{\hbar k}{\vF}}\ \xrightarrow{\ k\to0\ }\ 0 . \]
+La massa dipende da $k$ e si annulla al punto di Dirac: per questo gli elettroni del grafene si dicono \emph{senza massa} \ingl{massless}.
+\end{chiave}
+
+\domanda{Perché «senza massa» e «relativistici»? (slide 31--32)}
+Per una particella relativistica di massa a riposo $m_{\mathrm r}$:
+\[ E^2=(pc)^2+(m_{\mathrm r}c^2)^2=(\hbar kc)^2+(m_{\mathrm r}c^2)^2 . \]
+\begin{itemize}
+\item \textbf{$m_{\mathrm r}=0$} (fotone): $E=\pm\hbar kc$. È esattamente la dispersione del grafene vicino a $\EF$ con $c\to\vF$: la parte con il segno $-$ è la
+banda $\pi$ (legante), quella con $+$ la $\pi^*$ (antilegante). Eccitare un elettrone dalla $\pi$ alla $\pi^*$ crea un elettrone e una lacuna, come una
+particella e la sua antiparticella; tutta l'energia va in energia cinetica, perché non c'è massa a riposo da creare (fig.~\ref{fig:dirac}a).
+\item \textbf{$m_{\mathrm r}>0$}: servono almeno $2m_{\mathrm r}c^2$ per creare la coppia, anche a energia cinetica nulla. È un semiconduttore normale, con
+gap $\Eg=2m_{\mathrm r}c^2$ (fig.~\ref{fig:dirac}b).
+\item Con la definizione $\tilde m$:
+\[ \tilde m=\hbar^2k\,\frac{E}{\hbar^2kc^2}=\frac{E}{c^2}=\frac{\sqrt{(\hbar kc)^2+(m_{\mathrm r}c^2)^2}}{c^2}\qquad(\text{eq.~9}), \]
+che in $k=0$ restituisce la massa a riposo $m_{\mathrm r}$ (e $0$ per $m_{\mathrm r}=0$).
+\end{itemize}
+
+\begin{figure}[H]
+\centering\figura{dirac}
+\caption{Dispersione relativistica (slide 31--32): (a) particella senza massa, come gli elettroni del grafene con $c\to\vF$: l'eccitazione di una coppia
+elettrone (rosso)--lacuna (arancione) non ha soglia; (b) particella con massa: serve almeno $2m_{\mathrm r}c^2$, come il gap di un semiconduttore.}\label{fig:dirac}
+\end{figure}
+
+% =================================================================
+\section{Pacchetti d'onde, diffusione e quasi-impulso}\label{sec:trasporto}
+% =================================================================
+Come si muove un elettrone di Bloch e che cosa ne limita il moto: il pacchetto d'onde, il lavoro del campo elettrico, la diffusione da difetti e
+vibrazioni e il ruolo di $\hbar\vk$ negli urti (Lezione 5d, slide 49--54). Molto è già nella Parte~3 (§§8.3 e 13); qui le dimostrazioni delle slide 50--51 e il
+quasi-impulso negli urti.
+
+\subsection{Il pacchetto d'onde di Bloch}\label{sec:pacchetto}
+Le onde di Bloch sono delocalizzate su tutto il solido: non sono un buon quadro per un elettrone che viaggia nel cristallo (slide 49--50, da Hofmann).
+Come per le vibrazioni reticolari, l'elettrone si descrive come un \textbf{pacchetto d'onde} \ingl{wave packet}, sovrapposizione di onde di Bloch
+con $k$ in un intervallo $\Delta k$ attorno al valore di interesse $k_0$, pesate da una funzione $\Phi(k)$:
+\[
+\psi_k(x,t)=e^{ikx-i\omega(k)t}\,u_k(x),\qquad
+\Psi(x,t)=\frac1{\sqrt{2\pi}}\int_{-\infty}^{\infty}\Phi(k)\,e^{i[kx-\omega(k)t]}\,u_k(x)\,\dd k .
+\]
+Questa «particella» ha velocità di gruppo $v_g=\frac1\hbar\frac{\dd E}{\dd k}$ (eq.~6.47 di Hofmann) e porta a una descrizione quasi classica della
+conduzione elettrica.
+
+\begin{dimostrazione}[il pacchetto gaussiano si muove con $v_g$ senza deformarsi (slide 51)]
+\passo{Peso gaussiano in $k$.}
+$\Phi(k)=e^{-(k-k_0)^2/b^2}$ (costanti di normalizzazione omesse, come nella slide):
+\[
+\Psi(x,t)=\int_{-\infty}^{\infty}e^{-(k-k_0)^2/b^2}\,e^{ikx-i\omega(k)t}\,u_k(x)\,\dd k .
+\]
+\passo{$b$ piccolo rispetto alla zona: $u_k\simeq u_{k_0}$.}
+Per descrivere un pacchetto in moto la gaussiana deve essere stretta, $b\ll2\pi/a$: è concentrata attorno a $k_0$, e $u_k(x)\simeq u_{k_0}(x)$ esce
+dall'integrale.
+\passo{Sviluppo di Taylor di $\omega(k)$ al primo ordine.}
+\[
+\omega(k)\simeq\omega(k_0)+v_g(k-k_0)=v_gk+\omega_0,\qquad v_g=\frac{\dd\omega}{\dd k}\Big|_{k_0}=\frac1\hbar\frac{\dd E}{\dd k}\Big|_{k_0},
+\qquad\omega_0=\omega(k_0)-v_gk_0 .
+\]
+\passo{Poniamo $q=k-k_0$.}
+\[
+\Psi(x,t)\simeq u_{k_0}(x)\,e^{i[k_0x-\omega(k_0)t]}\int_{-\infty}^{\infty}e^{-q^2/b^2}\,e^{iq(x-v_gt)}\,\dd q .
+\]
+\passo{Integrale gaussiano: $\int e^{-q^2/b^2}e^{iqX}\,\dd q=\sqrt\pi\,b\,e^{-b^2X^2/4}$.}
+\[
+\Psi(x,t)\simeq\sqrt\pi\,b\;u_{k_0}(x)\,e^{i[k_0x-\omega(k_0)t]}\,e^{-b^2(x-v_gt)^2/4}.
+\]
+\passo{Conclusione.}
+Un inviluppo gaussiano largo $1/b$, centrato in $x=v_gt$, che trasla rigidamente con velocità $v_g$; $|u_{k_0}|^2$ dà la struttura dentro ogni cella:
+\[
+|\Psi(x,t)|^2=\pi b^2\,|u_{k_0}(x)|^2\,e^{-b^2(x-v_gt)^2/2}.\qed
+\]
+\end{dimostrazione}
+
+\begin{figure}[tbp]
+\centering
+\figura{pacchetto}
+\caption{Pacchetto d'onde gaussiano (slide 50--51). (a) Peso $\Phi(k)$ concentrato attorno a $k_0$, di larghezza $b$. (b) Parte reale di $\Psi$ a
+$t=0$ (senza la struttura di $u_{k_0}$) con il suo inviluppo, e l'inviluppo al tempo $t$, traslato di $v_gt$ senza deformarsi.}\label{fig:pacchetto}
+\end{figure}
+
+\begin{interpretazione}[descrizione quasi classica]
+Il pacchetto si muove con velocità $v_g$ e non si allarga (figura~\ref{fig:pacchetto}): è la «particella» del modello semiclassico (Parte~3,
+Modello~13.2), e il suo moto genera una corrente quasi classica nel solido. Poiché $b\ll2\pi/a$, la larghezza $1/b$ è molto maggiore del passo: il
+pacchetto si estende su molte celle.
+\end{interpretazione}
+\begin{osservazione}[il termine successivo dello sviluppo]
+«Non si allarga» vale al primo ordine. Con il termine $\frac12\omega''(k-k_0)^2$, dove $\omega''=\hbar/m^*$, la larghezza cresce come
+$\frac1b\sqrt{1+(\hbar b^2t/2m^*)^2}$ (verificato numericamente): l'allargamento è trascurabile per $t\ll2m^*/\hbar b^2$. Per $u_k$ costante e
+$m^*=m_0$ è il pacchetto gaussiano della particella libera, con la velocità del picco e l'allargamento, di \QP{§2.6, pp.~30--33}.
+\end{osservazione}
+
+\subsection{Il lavoro del campo: $\hbar\dot k=-e\mathcal E$}
+Una particella con velocità $v_g$ e carica $-e$ in un campo elettrico $\mathcal E$ (slide 50, eq.~6.63 di Hofmann).
+\begin{dimostrazione}[equazione del moto dal bilancio di energia]
+\passo{Lavoro del campo nel tempo $\dd t$.}
+\[
+\dd E=-e\mathcal E\,v_g\,\dd t .
+\]
+\passo{Variazione dell'energia lungo la banda.}
+\[
+\dd E=\frac{\dd E}{\dd k}\,\dd k=\hbar v_g\,\dd k .
+\]
+\passo{Uguagliamo e semplifichiamo $v_g$.}
+\[
+\hbar\frac{\dd k}{\dd t}=-e\mathcal E .\qed
+\]
+\end{dimostrazione}
+È l'equazione del moto del modello semiclassico (Parte~3, Modello~13.2), qui ricavata dalla conservazione dell'energia.
+
+\subsection{Il reticolo perfetto non fa resistenza}
+\begin{risultato}[elettroni di Bloch senza urti (slide 49, 50, 52)]
+Le onde di Bloch sono soluzioni stazionarie: in un cristallo perfetto l'elettrone nel livello $(n,\vk)$ ha velocità media
+$\mathbf v_n(\vk)=\frac1\hbar\nabla_{\vk}E_n(\vk)$ (Ashcroft--Mermin, eq.~8.51), che si conserva senza degradarsi pur interagendo con gli ioni: le onde
+di Bloch si propagano liberamente. Questo toglie molti problemi del modello di Drude: per esempio non è un problema spiegare cammini liberi medi
+\ingl{mean free path} lunghissimi a bassa temperatura.
+\end{risultato}
+La resistenza finita nasce da qualunque deviazione dal reticolo perfetto, cioè dalla rottura della simmetria di traslazione (slide 52):
+\begin{itemize}[leftmargin=*]
+\item difetti di punto ed estesi, vacanze, atomi sostituzionali nel reticolo;
+\item vibrazioni termiche, che sulla scala dei tempi dell'elettrone sono come distorsioni statiche.
+\end{itemize}
+Queste cause danno il tempo di rilassamento $\tau$ \ingl{relaxation time} del modello di Drude (Parte~2).
+
+\subsection{Il quasi-impulso negli urti}
+$\vk$ è insieme vettore d'onda e (tre) numeri quantici. È forte la tentazione di leggere $\hbar\vk$ come quantità di moto dell'elettrone, ma è sbagliato
+(slide 53; Parte~3, §8.3):
+\[
+\psi_{\vk}(\vr)=e^{i\vk\cdot\vr}u_{\vk}(\vr),\qquad -i\hbar\nabla\psi_{\vk}(\vr)=\hbar\vk\,\psi_{\vk}(\vr)-e^{i\vk\cdot\vr}\,i\hbar\nabla u_{\vk}(\vr):
+\]
+$\hbar\vk$ sarebbe la quantità di moto, con $E_{\mathrm{kin}}=\hbar^2k^2/2m$, solo per $u_{\vk}$ costante, cioè per l'onda di un elettrone libero.
+
+Ma $\hbar\vk$ resta utile: è l'\textbf{impulso cristallino} \ingl{crystal momentum}, una grandezza dell'intero cristallo che si conserva negli urti a
+meno di $\hbar\mathbf G$ (slide 54). Come la quantità di moto $\mathbf P$ si conserva per la simmetria di traslazione continua dello spazio, $\hbar\vk$
+si conserva per quella discreta del cristallo.
+
+\begin{risultato}[urto anelastico elettrone--fonone (slide 54)]
+Un elettrone in $(\vk,E(\vk))$ emette un fonone $(\vq,\hbar\omega)$ e passa in $\vk_f$ (figura~\ref{fig:urto}):
+\[
+\vk=\vk_f+\vq+\mathbf G,\qquad E(\vk_f)=E(\vk)-\hbar\omega ,
+\]
+con $\mathbf G$ vettore del reticolo reciproco: $\mathbf G=0$ (processo normale) oppure $\mathbf G\ne0$ (processo \emph{umklapp}, che riporta $\vk_f$
+nella prima zona). $\hbar\vk$ è una quantità di moto che si scambia negli urti.
+\end{risultato}
+
+\begin{figure}[tbp]
+\centering
+\figura{urto}
+\caption{Urto anelastico di un elettrone con un fonone (slide 54): il quasi-impulso si conserva a meno di un vettore $\mathbf G$ del reticolo reciproco,
+l'energia perde $\hbar\omega$.}\label{fig:urto}
+\end{figure}
+
+% =================================================================
+\section{Esercizi svolti delle slide}\label{sec:eserslide}
+% =================================================================
+Due esercizi con la soluzione nelle slide 55--65 della Lezione 5d: un ripasso degli elettroni liberi in una scatola (Parte~2, §2) e un esercizio sugli elettroni quasi
+liberi in due dimensioni (Parte~3, §11). Il terzo, sui legami forti nel cubico semplice (slide 66--68), è nel §\ref{sec:bandas}.
+
+\subsection{Elettrone libero in una scatola rettangolare (slide 55--62)}
+\textbf{Testo.} Un elettrone di massa $m$ ha energia potenziale nulla dentro una scatola rettangolare di lati $a$, $b$, $c$ lungo $Ox$, $Oy$, $Oz$, e
+infinita fuori (condizioni al contorno fisse, FBC \ingl{fixed boundary conditions}). (1) Qual è l'equazione differenziale della funzione d'onda?
+(2) Cercala per separazione delle variabili, $\phi(x,y,z)=\phi_x(x)\phi_y(y)\phi_z(z)$: mostra che l'equazione si scrive
+\[
+\frac1{\phi_x}\frac{\partial^2\phi_x}{\partial x^2}+\frac1{\phi_y}\frac{\partial^2\phi_y}{\partial y^2}+\frac1{\phi_z}\frac{\partial^2\phi_z}{\partial z^2}
+=-\frac{2m}{\hbar^2}E
+\]
+e che basta risolvere $\phi_x''+k_x^2\phi_x=0$, $\phi_y''+k_y^2\phi_y=0$, $\phi_z''+k_z^2\phi_z=0$, con $k_x^2+k_y^2+k_z^2=2mE/\hbar^2$. (3) Integra
+queste equazioni. (4) Mostra che le condizioni sulle pareti impongono $\phi_x=A\sin(n_x\pi x/a)$, $\phi_y=B\sin(n_y\pi y/b)$,
+$\phi_z=C\sin(n_z\pi z/c)$ con $n_x,n_y,n_z$ interi maggiori di zero, e scrivi la funzione d'onda completa. (5) Esprimi la quantizzazione
+dell'energia in funzione di $n_x,n_y,n_z$ e delle dimensioni. (6) Per una cavità cubica ($a=b=c=L$) trova (a) le funzioni d'onda dei primi tre livelli
+distinti, (b) la loro energia, (c) la loro degenerazione, trascurando lo spin.
+
+\begin{esempio}[soluzione]
+\passo{Equazione di Schrödinger (domanda 1).}
+$-\frac{\hbar^2}{2m}\nabla^2\psi+V\psi=E\psi$, con $V=\infty$ fuori dalla scatola (quindi $\psi=0$) e $V=0$ dentro:
+\[
+-\frac{\hbar^2}{2m}\Bigl(\frac{\partial^2\psi}{\partial x^2}+\frac{\partial^2\psi}{\partial y^2}+\frac{\partial^2\psi}{\partial z^2}\Bigr)=E\psi .
+\]
+\passo{Separazione delle variabili (domanda 2).}
+Sostituendo $\phi=\phi_x\phi_y\phi_z$, e poi dividendo per $\phi$, si ha la forma $f(x)+g(y)+h(z)=\text{cost}<0$:
+\[
+\phi_y\phi_z\frac{\dd^2\phi_x}{\dd x^2}+\phi_x\phi_z\frac{\dd^2\phi_y}{\dd y^2}+\phi_x\phi_y\frac{\dd^2\phi_z}{\dd z^2}=-\frac{2mE}{\hbar^2}\,\phi_x\phi_y\phi_z .
+\]
+Le variabili sono indipendenti: l'uguaglianza vale solo se $f$, $g$, $h$ sono separatamente costanti, $-k_x^2$, $-k_y^2$, $-k_z^2$:
+\[
+\frac{\dd^2\phi_x}{\dd x^2}+k_x^2\phi_x=0,\quad\frac{\dd^2\phi_y}{\dd y^2}+k_y^2\phi_y=0,\quad\frac{\dd^2\phi_z}{\dd z^2}+k_z^2\phi_z=0,\qquad
+\frac{\hbar^2}{2m}\bigl(k_x^2+k_y^2+k_z^2\bigr)=E .
+\]
+\passo{Soluzioni (domanda 3).}
+$\phi_x=A\sin k_xx+D\cos k_xx$, o equivalentemente $\phi_x=A'e^{ik_xx}+D'e^{-ik_xx}$; lo stesso per $y$ e $z$.
+\passo{Condizioni al contorno (domanda 4).}
+$\phi_x(0)=\phi_y(0)=\phi_z(0)=0$ impone $D=0$; $\phi_x(a)=\phi_y(b)=\phi_z(c)=0$ impone $k_xa=n_x\pi$, $k_yb=n_y\pi$, $k_zc=n_z\pi$ con $n_x,n_y,n_z$
+interi positivi ($n=0$ dà $\phi=0$, $n<0$ lo stesso stato). La normalizzazione $\int_0^a\!\int_0^b\!\int_0^c\phi^2\,\dd x\,\dd y\,\dd z=1$ dà
+$ABC=(8/abc)^{1/2}$:
+\[
+\phi(x,y,z)=\Bigl(\frac8{abc}\Bigr)^{1/2}\sin\frac{n_x\pi x}a\,\sin\frac{n_y\pi y}b\,\sin\frac{n_z\pi z}c .
+\]
+\passo{Energia (domanda 5).}
+\[
+E=\frac{\hbar^2\pi^2}{2m}\Bigl(\frac{n_x^2}{a^2}+\frac{n_y^2}{b^2}+\frac{n_z^2}{c^2}\Bigr).
+\]
+\passo{Cavità cubica (domanda 6).}
+\[
+\phi(x,y,z)=\Bigl(\frac8{L^3}\Bigr)^{1/2}\sin\frac{n_x\pi x}L\,\sin\frac{n_y\pi y}L\,\sin\frac{n_z\pi z}L,\qquad
+E=\frac{\hbar^2\pi^2}{2mL^2}\bigl(n_x^2+n_y^2+n_z^2\bigr).
+\]
+I primi tre livelli distinti hanno $n_x^2+n_y^2+n_z^2=3$, $6$, $9$:
+\begin{center}\small
+\begin{tabular}{@{}cccl@{}}
+\toprule
+livello & $E$ (unità $\hbar^2\pi^2/2mL^2$) & degenerazione & stati $(n_xn_yn_z)$\\
+\midrule
+1 & 3 & 1 & $(111)$\\
+2 & 6 & 3 & $(211)$, $(121)$, $(112)$\\
+3 & 9 & 3 & $(221)$, $(212)$, $(122)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+Per esempio $\phi(211)=\sqrt{8/L^3}\,\sin(2\pi x/L)\sin(\pi y/L)\sin(\pi z/L)$; i livelli successivi hanno $n^2=11$ (3 stati) e $12$ (1 stato).
+\end{esempio}
+Con le condizioni fisse gli stati sono onde stazionarie con $n>0$; con quelle periodiche (Parte~2) sono onde progressive. La slide 58 scrive due
+volte $\partial^2\psi/\partial x^2$ (l'ultimo termine è $\partial^2\psi/\partial z^2$); la slide 59 chiama le tre costanti $k_x^2$, $k_y^2$, $k_z^2$: con
+il segno delle equazioni sono $-k_x^2$, $-k_y^2$, $-k_z^2$.
+
+\subsection{Elettroni quasi liberi su un reticolo quadrato (slide 63--65)}
+\textbf{Testo.} Reticolo quadrato bidimensionale di passo $a$. (a) Mostra che l'energia cinetica di un elettrone libero in un vertice della prima zona
+di Brillouin è maggiore di quella nel punto medio di un lato di un fattore $b$, e calcola $b$. (b) Il potenziale cristallino è
+$V(x,y)=-2V_0\bigl[\cos(2\pi x/a)+\cos(2\pi y/a)\bigr]$, con $V_0$ costante: trova approssimativamente il gap nel punto medio del lato della zona.
+(c) Supponendo esatto il risultato di (b) e il materiale bivalente, scrivi la condizione perché il sistema sia un metallo.
+
+\begin{figure}[H]
+\centering
+\figura{zona2d}
+\caption{Prima zona di Brillouin del reticolo quadrato di passo $a$ (figura~1.16 dell'esercizio): $X$ è il punto medio di un lato, $M$ un vertice.}\label{fig:zona2d}
+\end{figure}
+
+\begin{esempio}[soluzione]
+\passo{Rapporto delle energie cinetiche (domanda a).}
+$E=p^2/2m=\hbar^2k^2/2m\propto k^2$. La prima zona è un quadrato di lato $2\pi/a$ (figura~\ref{fig:zona2d}): il punto medio del lato è $X$, a distanza
+$\overline{\Gamma X}=\pi/a$, il vertice è $M$, a distanza $\overline{\Gamma M}=\sqrt2\,\overline{\Gamma X}$:
+\[
+b=\frac{E_M}{E_X}=\frac{\overline{\Gamma M}^2}{\overline{\Gamma X}^2}=2 .
+\]
+\passo{Coefficienti di Fourier e gap in $X$ (domanda b).}
+\[
+V(x,y)=-V_0\bigl(e^{i2\pi x/a}+e^{-i2\pi x/a}+e^{i2\pi y/a}+e^{-i2\pi y/a}\bigr):
+\]
+i coefficienti dei quattro $\mathbf G$ più corti, $(\pm2\pi/a,0)$ e $(0,\pm2\pi/a)$, valgono $V_{\mathbf G}=V_{-\mathbf G}=-V_0$. In $X$,
+$\vk=\frac\pi a\xh=\frac12\mathbf G_1$ (condizione di Bragg), e il gap è (Parte~3, §11.4)
+\[
+\Delta_X=2|V_{\mathbf G_1}|=2|V_0| .
+\]
+\passo{Condizione per un metallo (domanda c).}
+Bivalente: 2 elettroni per cella, quanti ne contiene una banda. Il solido è un metallo solo se le bande si sovrappongono, cioè se la seconda banda
+comincia sotto la cima della prima:
+\[
+E_X+\Delta_X\le E_M\ \Longrightarrow\ \frac{\hbar^2}{2m}\Bigl(\frac\pi a\Bigr)^2+2|V_0|\le2\,\frac{\hbar^2}{2m}\Bigl(\frac\pi a\Bigr)^2
+\ \Longrightarrow\ |V_0|\le\frac{\pi^2\hbar^2}{4ma^2}.
+\]
+\end{esempio}
+\begin{osservazione}[slide 64--65: una stima più accurata]
+La slide 64 scrive $E=-p^2/2m$: è $p^2/2m$. La condizione (c) mette il gap tutto sopra $E_X$ e ignora il potenziale in $M$. Con i quasi liberi il gap in
+$X$ è centrato in $E_X$ ($E_X\pm|V_0|$), e in $M$ le quattro onde piane degeneri danno $E_M-2|V_0|$, $E_M$ (doppio), $E_M+2|V_0|$: serve
+$E_X+|V_0|<E_M-2|V_0|$, cioè $|V_0|<E_X/3=\pi^2\hbar^2/6ma^2$ (con 121 onde piane: $0{,}35\,E_X$). La stima della slide, $E_X/2$, è dello stesso ordine
+ma meno restrittiva.
+\end{osservazione}
+
+% =================================================================
+\section{Riepilogo finale}\label{sec:finale}
+% =================================================================
+\begin{formulario}
+\gruppo{Legami forti (§\ref{sec:tb3d})}
+\voce[\ref{sec:tb3d}]{Modello LCAO}{H_{1e}=H_{\mathrm{at}}+\Delta V,\qquad\psi_{\vk}(\vr)=\sum_{\vR}e^{i\vk\cdot\vR}\sum_nb_n\,\varphi_n(\vr-\vR)}
+\voce[\ref{sec:dimI}]{Equazione (I)}{\bigl[E(\vk)-\bar E_m\bigr]b_m+\sum_n\sum_{\vR\ne0}e^{i\vk\cdot\vR}\,t_{mn}(\vR)\,b_n=0}
+\voce{\quad sovrapposizione}{t_{mn}(\vR)=-\int\varphi_m^*(\vr)\,\Delta V(\vr)\,\varphi_n(\vr-\vR)\,\dd\vr}
+\voce{\quad numero di bande}{M\ \text{orbitali}\ \Rightarrow\ M\ \text{bande};\qquad n_{\mathrm{at}}\ \text{atomi per cella}\ \Rightarrow\ n_{\mathrm{at}}M}
+\voce[\ref{sec:bandas}]{Catena, orbitale $s$}{E(k)=\bar E_s-2t\cos ka=\bar E_s-2t+4t\sin^2\frac{ka}2,\qquad W=4t}
+\voce{\quad cubico semplice}{E(\vk)=\bar E_s-2t\,(\cos k_xa+\cos k_ya+\cos k_za),\qquad W=12t}
+\voce{\quad punti della zona}{\Gamma:\ \bar E_s-6t,\qquad X:\ \bar E_s-2t,\qquad M:\ \bar E_s+2t,\qquad R:\ \bar E_s+6t}
+\gruppo{Catena biatomica (§\ref{sec:biat})}
+\voce[\ref{sec:biat}]{Equazione (1a)}{(E_A-E)\,b_A-t\,(1+e^{-ika})\,b_B=0}
+\voce{\quad equazione (2a)}{-t\,(1+e^{ika})\,b_A+(E_B-E)\,b_B=0}
+\voce{\quad bande}{E_\pm(k)=\frac{E_A+E_B}2\pm\sqrt{\Bigl(\frac{E_B-E_A}2\Bigr)^2+4t^2\cos^2\frac{ka}2}}
+\voce{\quad gap in $k=\pm\pi/a$}{\Eg=E_B-E_A}
+\voce{\quad distanza in $k=0$}{E_+(0)-E_-(0)=2\sqrt{\tfrac14(E_B-E_A)^2+4t^2}}
+\voce{\quad per $t\ll E_B-E_A$}{E_\pm\simeq E_{B,A}\pm W\cos^2\frac{ka}2,\qquad W=\frac{4t^2}{E_B-E_A}}
+\voce{\quad masse al gap}{m^*_c=-m^*_v=\frac{\hbar^2(E_B-E_A)}{2t^2a^2}}
+\gruppo{Metodo $\vk\cdot\mathbf p$ (§\ref{sec:kp})}
+\voce[\ref{sec:kpu}]{Equazione per $u_{n\vk}$}{\Bigl[\frac{\hp^2}{2m_0}+V+\frac{\hbar\vk\cdot\hp}{m_0}+\frac{\hbar^2k^2}{2m_0}\Bigr]u_{n\vk}=E_n(\vk)\,u_{n\vk}}
+\voce[\ref{sec:kpmassa}]{Perturbazione}{H_0=\frac{\hp^2}{2m_0}+V\ \ (\text{esatta in }\Gamma),\qquad H'_{\vk}=\frac{\hbar^2k^2}{2m_0}+\frac{\hbar\vk\cdot\hp}{m_0}}
+\voce{\quad massa efficace}{\frac1{m^*}=\frac1{m_0}+\frac2{m_0^2k^2}\sum_{n'\ne n}\frac{|\langle u_{n0}|\vk\cdot\hp|u_{n'0}\rangle|^2}{E_n(0)-E_{n'}(0)}}
+\voce[\ref{sec:so}]{\quad due bande}{\frac{m_0}{m^*_c}\simeq1+\frac{E_P}\Eg,\qquad E_P=\frac2{m_0}\bigl|\langle u_{c0}|\hat p_x|u_{v0}\rangle\bigr|^2\approx\SI{20}{eV}}
+\voce{Spin--orbita}{\lambda\,\mathbf L\cdot\mathbf S=\frac\lambda2\bigl(J^2-L^2-S^2\bigr)}
+\voce{\quad livelli $p$ in $\Gamma$}{+\tfrac12\lambda\hbar^2\ \ (J=\tfrac32),\qquad-\lambda\hbar^2\ \ (J=\tfrac12),\qquad\Delta=\tfrac32\lambda\hbar^2}
+\voce{\quad conduzione}{E_c=\Eg+\frac{\hbar^2k^2}{2m_0}+\frac{P^2k^2}3\Bigl(\frac2\Eg+\frac1{\Eg+\Delta}\Bigr)}
+\voce{\quad lacune pesanti e leggere}{E_{hh}=-\frac{\hbar^2k^2}{2m_0},\qquad E_{lh}=-\frac{\hbar^2k^2}{2m_0}-\frac{2P^2k^2}{3\Eg}}
+\voce{\quad split-off}{E_{so}=-\Delta-\frac{\hbar^2k^2}{2m_0}-\frac{P^2k^2}{3(\Eg+\Delta)}}
+\voce{\quad masse}{\frac{m_0}{m_c}=1+\frac{E_P}3\Bigl(\frac2\Eg+\frac1{\Eg+\Delta}\Bigr),\qquad\frac{m_0}{m_{lh}}=1+\frac{2E_P}{3\Eg}}
+\voce{}{\frac{m_0}{m_{so}}=1+\frac{E_P}{3(\Eg+\Delta)},\qquad m_{hh}=m_0,\qquad E_P=\frac{2m_0P^2}{\hbar^2}}
+\gruppo{Pseudopotenziale (§\ref{sec:pseudo})}
+\voce[\ref{sec:opw}]{OPW}{\chi_{\vk}=e^{i\vk\cdot\vr}+\sum_c\beta_c(\vk)\,\psi_{c\vk},\qquad\beta_c(\vk)=-\langle\psi_{c\vk}|e^{i\vk\cdot\vr}\rangle}
+\voce{\quad forma di Bloch}{\chi_{\vk}=e^{i\vk\cdot\vr}\bigl[1+u^c_{\vk}(\vr)\bigr],\qquad\psi_{\vk}=\sum_{\vG}c_{\vG}\,\chi_{\vk+\vG}}
+\voce[\ref{sec:pseudodim}]{Pseudo-Schrödinger}{\Bigl[\frac{\hp^2}{2m_0}+V_{\mathrm{ps}}\Bigr]\psi^{\mathrm f}_{\vk}=E(\vk)\,\psi^{\mathrm f}_{\vk},\qquad
+\psi_{\vk}=\psi^{\mathrm f}_{\vk}+\sum_c\beta_c\psi_{c\vk}=(1-\hat\Pi_c)\,\psi^{\mathrm f}_{\vk}}
+\voce{\quad pseudopotenziale}{V_{\mathrm{ps}}=V+V',\qquad V'=\sum_c\bigl(E-E_c\bigr)|\psi_{c\vk}\rangle\langle\psi_{c\vk}|,\qquad\langle\phi|V'|\phi\rangle\ge0}
+\voce[\ref{sec:pseudomotivi}]{Ione nudo (stima)}{|V_{\vG}|\simeq\SI{13.6}{eV}\,\Bigl(\frac{a_0^3}\Omega\Bigr)\frac{8\pi Z}{(a_0G)^2}}
+\voce[\ref{sec:pseudoconseg}]{Coefficienti}{V_{\vG}=\frac1{\Omega_{\mathrm{cella}}}\int_{\text{cella}}V_{\mathrm{ps}}\,e^{-i\vG\cdot\vr}\,\dd\vr}
+\voce{\quad diamante, zincoblenda}{V^s_3,\ V^s_8,\ V^s_{11}\ \ (\text{composti: anche }V^a_3,\ V^a_4,\ V^a_{11})}
+\voce{\quad ione schermato}{\vion(q)=-\frac{Z_{\mathrm{ion}}e^2}{\varepsilon_0\Omega q^2},\qquad v(q)=\frac{\vion(q)}{\varepsilon(q)},\qquad\varepsilon(q)\simeq\frac{k_{\mathrm{TF}}^2}{q^2}}
+\voce{\quad limite $q\to0$}{k_{\mathrm{TF}}^2=\frac{e^2g(\EF)}{\varepsilon_0},\qquad g(\EF)=\frac{3n}{2\EF}\ \Longrightarrow\ v(0)=-\frac23\EF}
+\voce{\quad masse in $\Gamma$}{m^*_c/m_0\simeq\Eg(\Gamma)/E_P,\qquad E_P\approx\SI{20}{eV}}
+\gruppo{Bande reali e riempimento (§\ref{sec:reali})}
+\voce[\ref{sec:schemi}]{Simmetria delle bande}{E_n(\vk+\vG)=E_n(\vk),\qquad\vk=\vk'+\vG\ \ (\vk'\ \text{nella prima zona})}
+\voce{\quad gap in 1D}{2|V_G|\ \text{in}\ k=\pm\frac\pi a,\qquad2|V_{2G}|\ \text{in}\ k=0\ \ (\text{zona ridotta})}
+\voce[\ref{sec:al}]{Zona dell'fcc}{|\Gamma L|:|\Gamma X|:|\Gamma K|:|\Gamma W|=0{,}866:1:1{,}061:1{,}118\quad(\text{unità }2\pi/a)}
+\voce{\quad Al, 3 elettroni}{\kF=1{,}127\,\frac{2\pi}a>|\Gamma W|,\qquad\frac{V_{\text{sfera}}}{V_{\text{zona}}}=\frac32,\qquad\EF=\SI{11.65}{eV}}
+\voce{\quad Al, 1 elettrone}{\kF'=\frac{\kF}{3^{1/3}}=0{,}78\,\frac{2\pi}a<|\Gamma L|,\qquad\EF'=\frac{\EF}{3^{2/3}}=\SI{5.6}{eV}}
+\voce[\ref{sec:arpes}]{Fotoemissione}{E_{\mathrm{fin}}=E_{\mathrm i}+\hbar\omega,\quad\vk_{\mathrm{fin}}=\vk_{\mathrm i},\quad K_\parallel=k_{\mathrm{fin}\parallel}}
+\voce{\quad dall'angolo}{k_{\mathrm i\parallel}=\frac{\sqrt{2m_0E_{\mathrm{kin}}}}\hbar\sin\theta,\qquad E_{\mathrm{kin}}=\hbar\omega-\phi_{\mathrm e}-\bigl(\EF-E_{\mathrm i}\bigr)}
+\voce{\quad perpendicolare}{k_{\mathrm{fin}\perp}=\frac1\hbar\sqrt{2m_0\bigl(E_{\mathrm{kin}}\cos^2\theta+V_{\mathrm{int}}\bigr)}}
+\voce[\ref{sec:dos}]{Densità degli stati}{g(E)=\frac2{(2\pi)^3}\sum_n\oint_{E_n(\vk)=E}\frac{\dd S_E}{|\nabla_{\vk}E_n|}\quad(\text{per unità di volume})}
+\voce{\quad criterio}{\text{metallo: }g(\mu)\ne0;\qquad\text{semiconduttore: gap assoluto e }g(\mu)=0}
+\voce[\ref{sec:riempimento}]{Stati di una banda}{k=\frac{2\pi}{aN}\,n,\quad\Delta k=\frac{2\pi}{aN};\qquad N\ \text{valori di }\vk\ \Rightarrow\ 2N\ \text{elettroni}}
+\voce{\quad conteggio}{n_{\mathrm{val}}\ \text{dispari}\Rightarrow\text{metallo};\qquad n_{\mathrm{val}}\ \text{pari}+\text{gap assoluto}\Rightarrow\text{isolante}}
+\gruppo{Semimetalli: bismuto e grafene (§\ref{sec:semimetalli})}
+\voce[\ref{sec:bismuto}]{Hall con due portatori}{\RH=\frac{p\,b_h^2-n\,b_e^2}{e\,(p\,b_h+n\,b_e)^2}\ \xrightarrow{\ n=p\ }\ \frac{b_h-b_e}{e\,n\,(b_h+b_e)}}
+\voce[\ref{sec:grafenereticolo}]{Grafene}{\va_{1,2}=a\bigl(\tfrac{\sqrt3}2,\mp\tfrac12\bigr),\quad\vb_{1,2}=\tfrac{2\pi}a\bigl(\tfrac1{\sqrt3},\mp1\bigr),\quad a_{\mathrm{CC}}=\frac a{\sqrt3}}
+\voce{\quad zona esagonale}{|\Gamma M|=\frac{2\pi}{\sqrt3\,a},\qquad|\Gamma K|=\frac{4\pi}{3a}}
+\voce[\ref{sec:ibridi}]{Ibridi sp$^2$}{|\mathrm{sp}^2_1\rangle=\tfrac1{\sqrt3}|2s\rangle+\sqrt{\tfrac23}|2p_y\rangle,\quad|\mathrm{sp}^2_{2,3}\rangle=\tfrac1{\sqrt3}|2s\rangle\pm\tfrac1{\sqrt2}|2p_x\rangle-\tfrac1{\sqrt6}|2p_y\rangle}
+\voce{\quad sp$^3$}{\tfrac12\bigl(|2s\rangle\pm|2p_x\rangle\pm|2p_y\rangle\pm|2p_z\rangle\bigr)\ (\text{4 combinazioni}),\qquad\ang{109.5}}
+\voce[\ref{sec:grafenebande}]{Bande $\pi$}{E_\pm(\vk)=\pm t\,|f(\vk)|,\quad f(\vk)=\sum_{i=1}^3e^{i\vk\cdot\bm\delta_i};\quad\Gamma:\pm3t,\ M:\pm t,\ K:0}
+\voce{\quad cono di Dirac}{E_\pm=\pm\hbar\vF|\vq|,\qquad\vF=\frac{3ta_{\mathrm{CC}}}{2\hbar}\approx\SI{1e6}{m/s}}
+\voce{\quad densità degli stati}{g(E)=\frac{2|E|}{\pi\hbar^2\vF^2}\quad(\text{per unità di area})}
+\voce[\ref{sec:massagrafene}]{Massa efficace}{\tilde m=\hbar^2k\Bigl(\frac{\dd E}{\dd k}\Bigr)^{-1}:\ \ \text{grafene }\frac{\hbar k}{\vF},\ \ \text{relat. }\frac{\sqrt{(\hbar kc)^2+(m_{\mathrm r}c^2)^2}}{c^2}}
+\gruppo{Trasporto (§\ref{sec:trasporto})}
+\voce[\ref{sec:pacchetto}]{Pacchetto gaussiano}{\Psi(x,t)=\int e^{-(k-k_0)^2/b^2}e^{i[kx-\omega(k)t]}u_k(x)\,\dd k}
+\voce{\quad al primo ordine}{|\Psi|^2=\pi b^2\,|u_{k_0}(x)|^2\,e^{-b^2(x-v_gt)^2/2},\qquad v_g=\frac1\hbar\frac{\dd E}{\dd k}}
+\voce{\quad lavoro del campo}{\dd E=-e\mathcal E\,v_g\,\dd t=\hbar v_g\,\dd k\ \Longrightarrow\ \hbar\dot k=-e\mathcal E}
+\voce{Quasi-impulso}{-i\hbar\nabla\psi_{\vk}=\hbar\vk\,\psi_{\vk}-e^{i\vk\cdot\vr}\,i\hbar\nabla u_{\vk}}
+\voce{\quad urto con un fonone}{\vk=\vk_f+\vq+\mathbf G,\qquad E(\vk_f)=E(\vk)-\hbar\omega}
+\gruppo{Esercizi delle slide (§\ref{sec:eserslide})}
+\voce{Scatola}{E=\frac{\hbar^2\pi^2}{2m}\Bigl(\frac{n_x^2}{a^2}+\frac{n_y^2}{b^2}+\frac{n_z^2}{c^2}\Bigr),\qquad n_x,n_y,n_z=1,2,\dots}
+\voce{\quad cubo di lato $L$}{n_x^2+n_y^2+n_z^2=3,\ 6,\ 9:\ \ \text{degenerazioni }1,\ 3,\ 3}
+\voce{Quasi liberi 2D}{E_M=2E_X,\qquad\Delta_X=2|V_0|}
+\voce{\quad metallo (slide)}{E_X+\Delta_X\le E_M\ \Longrightarrow\ |V_0|\le\frac{\pi^2\hbar^2}{4ma^2}}
+\end{formulario}
+
+\begin{riepilogo}[concetti fondamentali]\
+\begin{enumerate}[itemsep=1pt]
+\item Funzione di Bloch LCAO con $M$ orbitali $\Rightarrow$ sistema lineare $M\times M$, la (I) $\Rightarrow$ $M$ bande ($n_{\mathrm{at}}M$ con $n_{\mathrm{at}}$
+atomi per cella); i $t_{mn}$ sono parametri adattati agli esperimenti.
+\item Ogni livello atomico diventa una banda attorno a $\bar E$, con la dispersione data dalle sovrapposizioni con i vicini: per un orbitale $s$ un coseno
+per direzione, $W=2zt$.
+\item Due atomi diversi per cella $\Rightarrow$ due bande e gap $E_B-E_A$ al bordo ($A=B$ $\Rightarrow$ nessun gap); la sovrapposizione respinge i
+livelli: valenza sotto $E_A$ (carattere $A$), conduzione sopra $E_B$; 2 elettroni per cella $\Rightarrow$ semiconduttore in 1D.
+\item $\vk\cdot\mathbf p$: equazione per $u_{n\vk}$ con $H_0$ esatta in $\Gamma$ $\Rightarrow$ teoria delle perturbazioni $\Rightarrow$ $1/m^*$ dalle
+bande vicine (secondo ordine); banda sotto $\Rightarrow$ più leggera, banda sopra $\Rightarrow$ più pesante o negativa; $m^*\propto\Eg$.
+\item Spin--orbita: valenza $p$ ($L=1$) $\Rightarrow$ $J=\frac32$ (lacune pesanti e leggere, degeneri in $\Gamma$) e $J=\frac12$ (split-off, più in basso di
+$\Delta=\frac32\lambda\hbar^2$); la conduzione $s$ non si separa.
+\item Kane: elettroni, lacune leggere e split-off sono accoppiati dall'elemento ottico $P$ $\Rightarrow$ masse $\sim m_0\Eg/E_P$; le lacune pesanti no
+$\Rightarrow$ pesanti.
+\item Valenza ortogonale al core (stessa $H$ hermitiana) $\Rightarrow$ oscilla nel core $\Rightarrow$ troppe onde piane; OPW: onda piana meno le sue
+componenti di core $\Rightarrow$ equazione per la sola parte liscia con $V_{\mathrm{ps}}=V+\sum_c(E-E_c)|c\rangle\langle c|$.
+\item $E>E_c$ $\Rightarrow$ $V'$ repulsivo cancella in parte $V$ $\Rightarrow$ $V_{\mathrm{ps}}$ debole, pochi $V_{\vG}$ ($V_3$, $V_8$, $V_{11}$), finito in
+$q=0$ ($-\frac23\EF$) $\Rightarrow$ quasi liberi con $V_{\mathrm{ps}}$; non unico (stesse energie per ogni $f(E,E_c)$).
+\item Bande vere: $E_n(\vk+\vG)=E_n(\vk)$ e gap; una banda $=2N$ stati (2 per cella) $\Rightarrow$ $n_{\mathrm{val}}$ dispari $\Rightarrow$ metallo
+(Al), $n_{\mathrm{val}}$ pari $\Rightarrow$ isolante solo con gap assoluto (Si, GaAs; Be: $2s$ e $2p$ sovrapposte, metallo); metallo $\Leftrightarrow
+g(\mu)\ne0$.
+\item Numero pari ma bande che si sovrappongono o si toccano $\Rightarrow$ semimetallo: Bi (pochi elettroni in $L$ e lacune in $T$, $\RH$ enorme, segno
+deciso dalle mobilità); grafene (bande $\sigma$ e $\pi$ piene, $\pi$ e $\pi^*$ si toccano in $K$: cono di Dirac, $g(\EF)=0$ senza gap, $\tilde m=\hbar k/\vF\to0$).
+\item Pacchetto gaussiano di onde di Bloch $\Rightarrow$ trasla con $v_g$ senza deformarsi (al primo ordine); il lavoro del campo dà $\hbar\dot k=-e\mathcal E$.
+\item Reticolo perfetto $\Rightarrow$ nessuna resistenza; difetti, impurezze e vibrazioni termiche $\Rightarrow$ urti e tempo di rilassamento $\tau$.
+\item $\hbar\vk$ non è la quantità di moto ($u_{\vk}$ non costante), ma si conserva negli urti a meno di $\hbar\mathbf G$ (processi normali e
+\emph{umklapp}).
+\end{enumerate}
+\end{riepilogo}
+
+\subsection*{Domande di verifica (con traccia di risposta)}
+\addcontentsline{toc}{subsection}{Domande di verifica}
+\begin{domande}
+\item \textbf{Ricava l'equazione (I) dei legami forti.} $H_{1e}=H_{\mathrm{at}}+\Delta V$, LCAO con $M$ orbitali; proiezione su $\varphi_m$; hermiticità di
+$H_{\mathrm{at}}$ $\Rightarrow E_m$; ortonormalità; sovrapposizioni tra atomi diversi trascurate; il termine $\vR=0$ sposta $E_m\to\bar E_m$; definizione di
+$t_{mn}$; sistema omogeneo $M\times M$, $M$ bande.
+\item \textbf{Banda $s$ in una catena e nel cubico semplice.} (I) con un orbitale; primi vicini, $t$ uguale per tutti; $\bar E_s-2t\cos ka=\bar E_s-2t
++4t\sin^2(ka/2)$, $W=4t$, $t>0$; cubico: tre coseni, valori in $\Gamma$, $X$, $M$, $R$, $W=12t$; dispersione lungo $[100]$, $[110]$, $[111]$.
+\item \textbf{Ricava le bande della catena biatomica.} LCAO con $b_A$, $b_B$; proiezione su $\varphi_{An}$, quattro termini; i vicini di $A_n$
+sono $B_{n-1}$ e $B_n$; (1a), (2a); determinante $2\times2$ con $|1+e^{ika}|^2=4\cos^2(ka/2)$; $E_\pm$.
+\item \textbf{Gap, larghezze e carattere degli stati della catena biatomica.} $\Eg=E_B-E_A$ al bordo; distanza massima in $k=0$; sviluppo per $t$
+piccolo, $W=4t^2/(E_B-E_A)$, bande fuori da $[E_A,E_B]$; valenza $A$, conduzione $B$, 2 elettroni per cella; $A=B$ senza gap; $m^*\propto E_B-E_A$.
+\item \textbf{Ricava l'equazione $\vk\cdot\mathbf p$ per $u_{n\vk}$.} Forma di Bloch; $\hp\psi=e^{i\vk\cdot\vr}\hbar(\vk+\nabla/i)u$; quadrato; sviluppo con
+$\vk\cdot\hp=\hp\cdot\vk$; $H_0+\hbar\vk\cdot\hp/m_0+\hbar^2k^2/2m_0$; perché $\hp\ne\hbar\vk$.
+\item \textbf{Ricava e commenta la massa efficace al secondo ordine.} $H_0$ esatta in $\Gamma$; $H'_{\vk}$ piccola; primo ordine nullo in un estremo;
+secondo ordine con il solo $\vk\cdot\hp$; $1/m^*$; segno dei contributi; due bande $m_0/m^*\simeq1+E_P/\Eg$; verifica con i quasi liberi al bordo.
+\item \textbf{Spin--orbita alla cima della valenza.} $H_{\mathrm{so}}$ con le matrici di Pauli; forma atomica $\lambda\mathbf L\cdot\mathbf S=\frac\lambda2(J^2-L^2-S^2)$;
+$L=1$: $J=\frac32$ ($+\frac12\lambda\hbar^2$, 4 stati) e $J=\frac12$ ($-\lambda\hbar^2$, 2 stati), $\Delta=\frac32\lambda\hbar^2$; lacune pesanti $m_J=\pm\frac32$,
+leggere $\pm\frac12$, split-off; stati $\Phi$; $L=0$ non si separa.
+\item \textbf{Scrivi e commenta le bande di Kane vicino a $\Gamma$.} $E_c$, $E_{hh}$, $E_{lh}$, $E_{so}$; parametri $P$, $\Eg$, $\Delta$; masse con $E_P$;
+lacune pesanti non accoppiate; modello a due bande e ripartizione $\frac23$, $\frac13$; GaAs, InSb; bande calcolate di GaAs, Ge, Si.
+\item \textbf{Perché gli elettroni quasi liberi non si applicano al potenziale vero?} Limiti di legami forti e quasi liberi; funzioni di core e di
+valenza; oscillazioni nel core (energia cinetica, ortogonalità per il Teorema~2 delle QP, una sola cella per Bloch); molte onde piane; $|V_{\vG}|$
+dello ione nudo di alcuni eV (Si: \SI{31}{eV}).
+\item \textbf{Onde piane ortogonalizzate.} Definizione; $\beta_c=-\langle\psi_{c\vk}|e^{i\vk\cdot\vr}\rangle$ dall'ortogonalità e dall'ortonormalità del
+core; forma di Bloch $e^{i\vk\cdot\vr}(1+u^c_{\vk})$; proprietà nel core e negli interstizi; sviluppo $\psi_{\vk}=\sum c_{\vG}\chi_{\vk+\vG}$.
+\item \textbf{Ricava l'equazione di pseudo-Schrödinger.} $\psi=\psi^{\mathrm f}+\sum\beta_c\psi_c$ in $H\psi=E\psi$; $H\psi_c=E_c\psi_c$; definizione di
+$V'$; $\beta_c=-\langle\psi_c|\psi^{\mathrm f}\rangle$; $V'=\sum(E-E_c)|\psi_c\rangle\langle\psi_c|$ positivo e non locale; stesse energie. Con il
+proiettore: $\psi=(1-\hat\Pi_c)\psi^{\mathrm f}$ e $V_{\mathrm{ps}}=V-H\hat\Pi_c+E\hat\Pi_c$; non unicità con $f(E,E_c)$.
+\item \textbf{Perché lo pseudopotenziale è debole e che cosa se ne fa.} Cancellazione di $V$ da parte di $V'$; soft/hard core; pochi fattori di forma
+e fattore di struttura del diamante; $v(0)=-\frac23\EF$ con Thomas--Fermi; metodo empirico o autoconsistente; risposta di Yu--Cardona; bande di Si,
+Ge, GaAs, ZnSe; masse in $\Gamma$ e $E_P$.
+\item \textbf{Schemi di zona e bande dell'alluminio.} I due effetti del potenziale periodico, $E(\vk+\vG)=E(\vk)$ e gap dove le bande libere sono
+degeneri; zona estesa, ridotta (ripiegamento con $\vk=\vk'+\vG$) e periodica; Al: fcc, 3 elettroni, banda $s$ e banda $p$ in $X$, banda che torna
+verso $\Gamma$ dalla zona vicina; reticolo vuoto lungo $\Gamma XWKL\Gamma$; più bande tagliano $\EF$ $\Rightarrow$ metallo; $\kF>|\Gamma W|$; con un
+elettrone sfera di Fermi dentro la zona.
+\item \textbf{Come si misura $E(\vk)$: la fotoemissione.} Fotoni UV monocromatici, effetto fotoelettrico, analizzatore in energia e angolo;
+$E_{\mathrm i}=E_{\mathrm{kin}}-\hbar\omega$; $\vk_{\mathrm{fin}}=\vk_{\mathrm i}$ (impulso del fotone trascurabile); alla superficie si conserva
+$K_\parallel$: $k_\parallel=\sqrt{2m_0E_{\mathrm{kin}}}\sin\theta/\hbar$; $k_\perp$ con il potenziale interno.
+\item \textbf{Densità degli stati e definizione di metallo.} $2\,\dd^3k/(2\pi)^3$ stati per unità di volume; guscio $\dd S_E\,\dd k_\perp$ con
+$\dd E=|\nabla_{\vk}E|\dd k_\perp$; verifica sul gas libero; metallo $g(\mu)\ne0$; semiconduttore: gap assoluto ed elettroni che riempiono esattamente
+le bande; un gap in una sola direzione non basta.
+\item \textbf{Riempimento delle bande e conteggio degli elettroni.} Equazione per $u_{n\vk}$ in una cella; condizioni periodiche $\Rightarrow$
+$k=2\pi n/aN$, $N$ valori $\Rightarrow$ $2N$ elettroni per banda; dispari $\Rightarrow$ metallo, pari $\Rightarrow$ serve il gap assoluto; Al (3), Si
+($4+4$), GaAs ($3+5$), Be ($2+2$, sovrapposizione $2s$--$2p$); si conta per cella, non per atomo.
+\item \textbf{Perché il bismuto è un semimetallo? Che cosa dice l'effetto Hall?} 10 elettroni per cella, 5 bande piene; sovrapposizione di
+\SI{40}{meV} tra valenza in $T$ e conduzione in $L$; $n=p$ piccoli; $\RH$ a due portatori, grande per $n$ piccolo, segno dalle mobilità.
+\item \textbf{Reticolo e zona di Brillouin del grafene.} Nido d'ape non di Bravais: esagonale con base $A$, $B$; $\va_i$, $\vb_i$ con $\va_i\cdot\vb_j=2\pi\delta_{ij}$;
+esagono con $\Gamma$, $M$, $K$, $K'$.
+\item \textbf{Ricava gli orbitali ibridi sp$^2$.} Combinazione di $2s$, $2p_x$, $2p_y$; ortonormalità; $\alpha_l=1/\sqrt3$; primo lungo $\yh$; ortogonalità
+e normalizzazione per gli altri; direzioni a \ang{120}; legami $\sigma$ e $\pi$.
+\item \textbf{Bande del grafene: perché è un semimetallo?} 8 elettroni e 8 bande per cella, 4 piene; legami forti con $p_z$: $E=\pm t|f|$, $f(K)=0$;
+cono $\pm\hbar\vF q$; $g(E)\propto|E|$, nulla in $\EF$ senza gap.
+\item \textbf{Massa efficace nel grafene.} $m^*$ con la curvatura diverge; $\tilde m=\hbar^2k/(\dd E/\dd k)$ da $p=\tilde mv_g$; $m_0$ per la parabola,
+$\hbar k/\vF\to0$ per il cono; analogia con $E^2=(\hbar kc)^2+(m_{\mathrm r}c^2)^2$, gap $2m_{\mathrm r}c^2$.
+\item \textbf{Il pacchetto d'onde di Bloch gaussiano.} $\Psi=\int\Phi e^{i(kx-\omega t)}u_k\,\dd k$; $b\ll2\pi/a$, $u_k\simeq u_{k_0}$; Taylor al primo ordine;
+integrale gaussiano; $|\Psi|^2$ trasla con $v_g$; allargamento al secondo ordine; $\dd E=-e\mathcal Ev_g\dd t\Rightarrow\hbar\dot k=-e\mathcal E$.
+\item \textbf{Resistenza e quasi-impulso.} Onde di Bloch stazionarie: nessuna resistenza nel reticolo perfetto (contro Drude); cause degli urti e $\tau$;
+$-i\hbar\nabla\psi_{\vk}\ne\hbar\vk\psi_{\vk}$; impulso cristallino conservato a meno di $\hbar\mathbf G$; urto con un fonone, \emph{umklapp}.
+\end{domande}
+
+\subsection*{Esercizi d'esame}
+\addcontentsline{toc}{subsection}{Esercizi d'esame}
+Nello stile dell'esame, con soluzioni in fondo; $\hbar^2/2m_0=\SI{3.81}{eV.\angstrom^2}$, $\hbar^2/m_0=\SI{7.62}{eV.\angstrom^2}$.
+
+\textbf{Risposta multipla} (una sola risposta giusta).
+\begin{enumerate}[label=\textbf{R\arabic*.}, leftmargin=2.3em, itemsep=2pt]
+\item Cristallo con due atomi per cella, ciascuno con un orbitale $s$ e tre $p$: le bande a legami forti sono
+(a) 4; (b) 2; (c) 8.
+\item Nella catena biatomica la distanza minima tra le due bande è
+(a) $E_B-E_A$, al bordo di zona; (b) $2t$, in $k=0$; (c) $E_B-E_A+2W$, al bordo di zona.
+\item Catena biatomica con $E_A=E_B$:
+(a) gap $2t$ al bordo; (b) gap $E_A$; (c) nessun gap: è la banda della catena di passo $a/2$ ripiegata.
+\item Rispetto ai livelli atomici $E_A<E_B$, le bande della catena biatomica stanno
+(a) fuori: valenza sotto $E_A$, conduzione sopra $E_B$; (b) tra $E_A$ ed $E_B$; (c) entrambe sopra $E_B$.
+\item Nel metodo $\vk\cdot\mathbf p$, $H_0=\hp^2/2m_0+V$ è
+(a) l'Hamiltoniana di un elettrone libero; (b) l'Hamiltoniana esatta in $\Gamma$; (c) l'Hamiltoniana atomica.
+\item Una banda vicina che sta \emph{sopra} la banda $n$ rende la massa efficace di $n$
+(a) più piccola; (b) uguale a $m_0$; (c) più grande, o negativa (contributo negativo a $1/m^*$).
+\item Nelle formule di Kane la banda non accoppiata alla conduzione è quella delle
+(a) lacune pesanti; (b) lacune leggere; (c) lacune split-off.
+\item La banda split-off è fatta di
+(a) stati $s$, con $L=0$; (b) stati $p$ con $J=\frac12$, più in basso di $\Delta=\frac32\lambda\hbar^2$; (c) stati $p$ con $J=\frac32$.
+\item Un pacchetto gaussiano di onde di Bloch, al primo ordine in $k-k_0$,
+(a) trasla con $v_g$ senza deformarsi; (b) si allarga linearmente nel tempo; (c) resta fermo.
+\item Un elettrone di Bloch in un cristallo perfetto e statico
+(a) è diffuso dagli ioni a ogni passo reticolare; (b) ha velocità media nulla; (c) non subisce urti: la resistenza viene da difetti e vibrazioni.
+\item In un urto elettrone--fonone si conserva
+(a) la quantità di moto dell'elettrone; (b) il quasi-impulso totale, a meno di $\hbar\mathbf G$; (c) solo l'energia.
+\item Nella regione del core la funzione d'onda di valenza
+(a) è quasi nulla; (b) oscilla più delle funzioni di core, per essere ortogonale a tutte; (c) è un'onda piana.
+\item Il potenziale $V'=\sum_c(E-E_c)|\psi_{c\vk}\rangle\langle\psi_{c\vk}|$ è
+(a) repulsivo e non locale; (b) attrattivo e locale; (c) nullo nel core.
+\item Lo pseudopotenziale di un metallo per $q\to0$ vale
+(a) $-\infty$, come lo ione nudo; (b) zero; (c) $-\frac23\EF$.
+\item Nel Si i fattori di forma dello pseudopotenziale che contano sono
+(a) $V^s_3$, $V^s_8$, $V^s_{11}$; (b) $V^s_3$, $V^s_4$, $V^s_8$; (c) tutti i $V_{\vG}$ fino a $|\vG|^2\sim100$.
+\item Sostituendo in $V'$ il fattore $E-E_c$ con una funzione arbitraria $f(E,E_c)$
+(a) cambiano le bande; (b) le energie non cambiano: lo pseudopotenziale non è unico; (c) la pseudo-funzione diventa lo stato vero.
+\item In zona ridotta uno stato della banda $n$ con $\vk$ fuori dalla prima zona si disegna in
+(a) $\vk'=\vk-\vG$ nella prima zona, con la stessa energia; (b) $-\vk$; (c) $\vk$, nella banda $n+1$.
+\item Nella zona di Brillouin dell'fcc \emph{non} sta sul bordo il punto
+(a) $X$; (b) $\Gamma$; (c) $L$.
+\item Nella fotoemissione, attraversando la superficie, si conserva
+(a) tutto il vettore d'onda; (b) la componente parallela alla superficie; (c) la componente perpendicolare.
+\item Un cristallo con 3 elettroni di valenza per cella primitiva è
+(a) un metallo; (b) un isolante, se c'è un gap assoluto; (c) un semiconduttore a gap indiretto.
+\item Il berillio (hcp, 4 elettroni di valenza per cella) è un metallo perché
+(a) il numero di elettroni per cella è dispari; (b) le bande $2s$ e $2p$ si sovrappongono; (c) il livello $1s$ forma una banda.
+\item Il gap del Si è indiretto perché
+(a) la cima della valenza è in $\Gamma$ e il minimo della conduzione vicino a $X$; (b) non è assoluto; (c) la valenza è piena solo in parte.
+\item Il bismuto ha 10 elettroni di valenza per cella ed è un metallo perché
+(a) il numero di elettroni è dispari; (b) valenza e conduzione si sovrappongono di circa \SI{40}{meV} in punti diversi della zona; (c) tutti i 10
+elettroni contribuiscono all'effetto Hall.
+\item Nel grafene le bande $\pi$ e $\pi^*$ si toccano
+(a) in $\Gamma$; (b) in $M$; (c) nei vertici $K$ e $K'$ della zona.
+\item Vicino a $\EF$ la densità degli stati del grafene è
+(a) costante, come nel gas 2D; (b) proporzionale a $|E-\EF|$ e nulla in $\EF$; (c) proporzionale a $\sqrt{E}$.
+\item Con la definizione $m^*=\hbar^2/(\dd^2E/\dd k^2)$ gli elettroni del grafene vicino a $K$ hanno massa
+(a) nulla; (b) infinita; (c) uguale a $m_0$.
+\end{enumerate}
+
+\textbf{Esercizi numerici.}
+\begin{enumerate}[label=\textbf{E\arabic*.}, leftmargin=2.3em, itemsep=2pt]
+\item \emph{(Catena biatomica)} $E_A=0$, $E_B=\SI{2}{eV}$, $t=\SI{0.5}{eV}$, $a=\SI{4}{\angstrom}$. (a) $E_\pm$ in $k=0$ e $k=\pi/a$; gap e distanza in $k=0$.
+(b) Larghezza esatta di ciascuna banda e stima $W=4t^2/(E_B-E_A)$. (c) Massa efficace al gap. (d) Peso $|b_A|^2$ dello stato di valenza in $k=0$ e
+$k=\pi/a$.
+\item \emph{($\vk\cdot\mathbf p$)} InSb: $\Eg=\SI{0.18}{eV}$, $\Delta=\SI{0.82}{eV}$, $E_P=\SI{20}{eV}$. (a) $m_c$, $m_{lh}$, $m_{so}$ dalle formule di Kane.
+(b) $m_c$ con il modello a due bande. (c) Confronta con le misure ($m_c=0{,}0145\,m_0$, $m_{lh}=0{,}021\,m_0$).
+\item \emph{(Spin--orbita)} Nel Ge $\Delta=\SI{0.29}{eV}$. (a) Trova $\lambda\hbar^2$. (b) Di quanto si spostano i livelli $J=\frac32$ e $J=\frac12$ rispetto al
+livello $p$ senza spin--orbita? (c) A che energia sta quel livello rispetto alla cima della valenza?
+\item \emph{(Pacchetto d'onde)} Banda $E=\bar E-2t\cos ka$, $t=\SI{1}{eV}$, $a=\SI{3}{\angstrom}$, pacchetto con $b=0{,}02\,(2\pi/a)$. (a) $v_g$ per
+$k_0=\pi/2a$. (b) Larghezza $1/b$ in \AA{} e in celle. (c) Per $k_0=\pi/4a$: $m^*$ e tempo di allargamento $2m^*/\hbar b^2$, da confrontare con
+$\tau\sim\SI{e-14}{s}$.
+\item \emph{(Quasi-impulso)} Catena di passo $a=\SI{3}{\angstrom}$, banda $\bar E-2t\cos ka$ con $t=\SI{1}{eV}$. Un elettrone in $k=0{,}9\pi/a$ emette un
+fonone con $q=-0{,}2\pi/a$ e $\hbar\omega\ll t$. (a) Trova $k_f$ nella prima zona e $G$. (b) Velocità prima e dopo l'urto. (c) Perché questi urti
+contano per la resistenza?
+\item \emph{(Scatola)} Elettrone in una scatola cubica di lato $L=\SI{10}{\angstrom}$. (a) Energie dei primi tre livelli distinti e degenerazioni.
+(b) Energia e degenerazione dei due livelli successivi.
+\item \emph{(Quasi liberi 2D)} Reticolo quadrato con $a=\SI{3}{\angstrom}$ e il potenziale delle slide 63--65. (a) $E_X$ ed $E_M$ dell'elettrone libero.
+(b) Il valore massimo di $|V_0|$ per avere un metallo secondo la condizione della slide e secondo la stima accurata ($E_X/3$).
+\item \emph{(Ione nudo e pseudopotenziale)} Si: $a=\SI{5.431}{\angstrom}$, $Z=14$, $\Omega=a^3/8$. (a) Stima $|V_{\vG}|$ del potenziale nudo per
+$|\vG|^2=3$, $8$, $11$ (unità $(2\pi/a)^2$). (b) Confronta con l'energia cinetica libera in $\vG_{111}/2$ e con i fattori di forma della tabella.
+\item \emph{(Ione schermato)} Na: $n=\SI{2.65e28}{m^{-3}}$, $Z_{\mathrm{ion}}=1$. (a) $\EF$, $g(\EF)$ e $k_{\mathrm{TF}}$. (b) $v(0)$ dalla formula
+$-Z_{\mathrm{ion}}e^2/\varepsilon_0\Omega k_{\mathrm{TF}}^2$ e confronto con $-\frac23\EF$.
+\item \emph{(Masse in $\Gamma$)} Con $E_P=\SI{20}{eV}$ calcola $m^*_c/m_0$ per GaAs ($\Eg(\Gamma)=\SI{1.55}{eV}$) e InSb (\SI{0.24}{eV}) con
+$\Eg/E_P$ e con $1/(1+E_P/\Eg)$; confronta con la tabella del §\ref{sec:pseudoconseg}.
+\item \emph{(Sfera di Fermi dell'alluminio)} Al: fcc, $a=\SI{4.05}{\angstrom}$, 3 elettroni per atomo. (a) $n$, $\kF$, $\EF$ del gas libero. (b) Confronta
+$\kF$ con $|\Gamma L|$, $|\Gamma X|$, $|\Gamma W|$ e calcola il rapporto tra il volume della sfera e quello della zona. (c) Ripeti con un elettrone per
+atomo: la sfera tocca il bordo?
+\item \emph{(Fotoemissione)} Riga He I, $\hbar\omega=\SI{21.2}{eV}$, su Al con $\phi_{\mathrm e}=\SI{4.3}{eV}$. (a) $E_{\mathrm{kin}}$ degli elettroni
+che vengono da $\EF$ e da uno stato \SI{2}{eV} sotto. (b) $k_\parallel$ a $\theta=\ang{30}$ per gli elettroni da $\EF$, e l'angolo per cui
+$k_\parallel=2\pi/a$. (c) Confronta l'impulso del fotone con $2\pi/a$.
+\item \emph{(Conteggio)} Prevedi con il conteggio degli elettroni, e poi spiega: Na (bcc, $3s^1$), Mg (hcp, $3s^2$), C diamante ($2s^22p^2$), NaCl
+(fcc con base Na e Cl), Ca (fcc, $4s^2$). Quali sono metalli per forza? Che cosa serve agli altri per essere isolanti?
+\item \emph{(Grafene)} $a=\SI{2.46}{\angstrom}$, $t=\SI{2.8}{eV}$. (a) $a_{\mathrm{CC}}$, $|\vb_i|$, $|\Gamma M|$, $|\Gamma K|$. (b) $\vF$. (c) Grafene drogato
+con $\EF=\SI{0.1}{eV}$ sopra il punto di Dirac: densità di elettroni per unità di area. (d) $\tilde m/m_0$ a quell'energia.
+\item \emph{(Bismuto)} $n_{\mathrm{at}}=\SI{2.82e28}{m^{-3}}$, $n=p=\SI{3e23}{m^{-3}}$. (a) $\RH$ del gas libero con 5 elettroni per atomo. (b) $\RH$ con due
+portatori per $b_e=2b_h$ e per $b_e=b_h$. (c) Quanti atomi per portatore?
+\end{enumerate}
+
+\textbf{Soluzioni.}
+\begingroup\small
+\textbf{R1} (c): $n_{\mathrm{at}}M=2\times4$. \textbf{R2} (a): $\cos(ka/2)=0$ al bordo; $\Eg+2W$ è la distanza \emph{massima}, in $k=0$. \textbf{R3} (c):
+senza differenza tra gli atomi il gap si chiude. \textbf{R4} (a): la radice vale almeno $\frac12(E_B-E_A)$, i livelli si respingono. \textbf{R5} (b):
+$H'_{\vk}$ si annulla per $\vk=0$. \textbf{R6} (c): denominatore $E_n-E_{n'}<0$. \textbf{R7} (a): $|X\rangle$, $|Y\rangle$ non hanno elemento di
+$\hat p_z$ con $|S\rangle$. \textbf{R8} (b): $J=L-S$ con $L=1$; l'etichetta $L=0$ della slide 44 va letta $J=\frac12$. \textbf{R9} (a): l'allargamento
+viene dal termine $\omega''$. \textbf{R10} (c): stati stazionari, $\mathbf v_n(\vk)$ costante. \textbf{R11} (b): $\vk=\vk_f+\vq+\mathbf G$. \textbf{R12} (b): energia cinetica
+maggiore e ortogonalità (11.5). \textbf{R13} (a): $\langle\phi|V'|\phi\rangle=\sum(E-E_c)|\langle\psi_c|\phi\rangle|^2\ge0$, agisce proiettando.
+\textbf{R14} (c): la schermatura toglie la divergenza. \textbf{R15} (a): $V^s_4=0$ per il fattore di struttura, gli altri sono piccoli. \textbf{R16} (b):
+il termine con $f$ sparisce nel prodotto scalare con $\psi_{\vk}$, ortogonale al core. \textbf{R17} (a): $E_n(\vk+\vG)=E_n(\vk)$. \textbf{R18} (b):
+$\Gamma$ è il centro della zona. \textbf{R19} (b): simmetria di traslazione nel piano; $k_\perp$ cambia alla superficie. \textbf{R20} (a): con un
+numero dispari una banda resta piena a metà. \textbf{R21} (b): il numero pari è necessario ma non sufficiente. \textbf{R22} (a): massimo e minimo a
+$\vk$ diversi. \textbf{R23} (b): numero pari, ma bande sovrapposte. \textbf{R24} (c): $f(\mathbf K)=0$ per la simmetria tra $A$ e $B$.
+\textbf{R25} (b): cono di Dirac in 2D. \textbf{R26} (b): $\dd^2E/\dd k^2=0$; con $\tilde m=\hbar k/\vF$ invece tende a zero.
+
+\smallskip\noindent\textbf{E1.} (a) $\sqrt{1+4\cdot0{,}25}=\SI{1.414}{eV}$: $E_\pm(0)=1\pm1{,}414$, cioè \SI{2.414}{eV} e \SI{-0.414}{eV}; in $\pi/a$:
+\SI{2}{eV} e \SI{0}{eV}. Gap $\SI{2}{eV}$, distanza in $k=0$ \SI{2.83}{eV}. (b) Larghezza $1{,}414-1=\SI{0.414}{eV}$; $W=4\cdot0{,}25/2=\SI{0.5}{eV}$
+(lo sviluppo richiede $4t^2\ll\frac14(E_B-E_A)^2$, qui $1$ contro $1$: stima grossolana). (c) $m^*/m_0=7{,}62\cdot2/(2\cdot0{,}25\cdot16)=1{,}9$.
+(d) In $k=0$: $|b_A|^2=0{,}85$; in $\pi/a$: $|b_A|^2=1$.
+
+\smallskip\noindent\textbf{E2.} (a) $m_0/m_c=1+\frac{20}3\bigl(\frac2{0{,}18}+\frac1{1{,}00}\bigr)=81{,}7$, $m_c=0{,}012\,m_0$;
+$m_0/m_{lh}=1+\frac{40}{0{,}54}=75{,}1$, $m_{lh}=0{,}013\,m_0$; $m_0/m_{so}=1+\frac{20}{3{,}00}=7{,}67$, $m_{so}=0{,}13\,m_0$. (b) $m_c=m_0/(1+20/0{,}18)
+=0{,}009\,m_0$. (c) Stesso ordine di grandezza delle misure (il modello trascura le bande lontane); la formula completa è più vicina del modello a due
+bande.
+
+\smallskip\noindent\textbf{E3.} (a) $\lambda\hbar^2=\frac23\Delta=\SI{0.193}{eV}$. (b) $J=\frac32$: $+\frac12\lambda\hbar^2=\SI{+0.097}{eV}$; $J=\frac12$:
+$-\lambda\hbar^2=\SI{-0.193}{eV}$ (baricentro invariato: $4\cdot0{,}097=2\cdot0{,}193$). (c) \SI{0.097}{eV} sotto la cima della valenza.
+
+\smallskip\noindent\textbf{E4.} (a) $v_g=\frac{2ta}\hbar\sin k_0a=\SI{9.1e5}{m/s}$ (il massimo, nel flesso). (b) $b=\SI{0.0419}{\angstrom^{-1}}$,
+$1/b=\SI{23.9}{\angstrom}\simeq8$ celle. (c) $m^*=\hbar^2/(2ta^2\cos k_0a)=0{,}60\,m_0$; $2m^*/\hbar b^2=\SI{5.9e-14}{s}$, circa $6\tau$: entro il tempo
+tra due urti il pacchetto resta compatto.
+
+\smallskip\noindent\textbf{E5.} (a) $k-q=1{,}1\pi/a$ è fuori dalla zona: $k_f=1{,}1\pi/a-2\pi/a=-0{,}9\pi/a$, con $G=2\pi/a$ (\emph{umklapp}); l'energia
+$E(\pm0{,}9\pi/a)$ è la stessa, compatibile con $\hbar\omega\ll t$. (b) $v=\frac{2ta}\hbar\sin ka=\SI{9.1e5}{m/s}\times\sin(0{,}9\pi)=\SI{+2.8e5}{m/s}$
+prima, \SI{-2.8e5}{m/s} dopo. (c) Un fonone di piccolo $q$ inverte la velocità: questi urti degradano la corrente in modo molto efficace.
+
+\smallskip\noindent\textbf{E6.} (a) $\frac{\hbar^2\pi^2}{2mL^2}=3{,}81\cdot\pi^2/100=\SI{0.376}{eV}$: \SI{1.13}{eV} (1 stato), \SI{2.26}{eV} (3 stati),
+\SI{3.38}{eV} (3 stati). (b) $n^2=11$: \SI{4.14}{eV} (3 stati, $(311)$ e permutazioni); $n^2=12$: \SI{4.51}{eV} (1 stato, $(222)$).
+
+\smallskip\noindent\textbf{E7.} (a) $E_X=3{,}81\,(\pi/3)^2=\SI{4.18}{eV}$, $E_M=2E_X=\SI{8.36}{eV}$. (b) Slide: $|V_0|\le E_X/2=\SI{2.09}{eV}$; stima
+accurata: $|V_0|<E_X/3=\SI{1.39}{eV}$ (il calcolo con molte onde piane dà \SI{1.46}{eV}).
+
+\smallskip\noindent\textbf{E8.} (a) $\Omega=\SI{20.0}{\angstrom^3}$, $a_0^3/\Omega=0{,}0074$; $|\vG|=\num{2.00}$, $\num{3.27}$, \SI{3.84}{\angstrom^{-1}}:
+$|V_{\vG}|\simeq\SI{31}{eV}$, \SI{12}{eV}, \SI{8.6}{eV}. (b) $E_{\vG_{111}/2}=3{,}81\cdot1{,}00^2=\SI{3.8}{eV}$: il potenziale nudo è molto più grande, non
+è una perturbazione; i fattori di forma sono $-2{,}9$, $0{,}5$, \SI{1.1}{eV}, da circa 8 a 20 volte più piccoli.
+
+\smallskip\noindent\textbf{E9.} (a) $\kF=(3\pi^2n)^{1/3}=\SI{0.922}{\angstrom^{-1}}$, $\EF=3{,}81\cdot0{,}922^2=\SI{3.24}{eV}$;
+$g(\EF)=3n/2\EF=\SI{0.0123}{eV^{-1}.\angstrom^{-3}}$; $k_{\mathrm{TF}}^2=4\pi\cdot14{,}4\cdot0{,}0123=\SI{2.22}{\angstrom^{-2}}$,
+$k_{\mathrm{TF}}=\SI{1.49}{\angstrom^{-1}}$ (con $e^2/4\pi\varepsilon_0=\SI{14.4}{eV.\angstrom}$). (b) $\Omega=1/n=\SI{37.7}{\angstrom^3}$:
+$v(0)=-4\pi\cdot14{,}4/(37{,}7\cdot2{,}22)=\SI{-2.16}{eV}=-\frac23\EF$.
+
+\smallskip\noindent\textbf{E10.} GaAs: $1{,}55/20=0{,}078$ (tabella $0{,}078$), $1/(1+20/1{,}55)=0{,}072$; InSb: $0{,}012$ e $0{,}012$ (tabella $0{,}012$).
+Misurate $0{,}067$ e $0{,}015$: la riga della tabella è $\Eg/E_P$.
+
+\smallskip\noindent\textbf{E11.} (a) $n=12/a^3=\SI{1.81e29}{m^{-3}}$, $\kF=(3\pi^2n)^{1/3}=\SI{1.75}{\angstrom^{-1}}$, $\EF=3{,}81\cdot1{,}749^2=
+\SI{11.65}{eV}$. (b) $2\pi/a=\SI{1.551}{\angstrom^{-1}}$: $|\Gamma L|=\num{1.34}$, $|\Gamma X|=\num{1.55}$, $|\Gamma W|=\SI{1.73}{\angstrom^{-1}}<\kF$: la
+sfera contiene tutta la prima zona, prima banda piena; $\frac43\pi\kF^3/4(2\pi/a)^3=\frac32$. (c) $\kF'=\SI{1.21}{\angstrom^{-1}}<|\Gamma L|$ (90\,\%):
+non tocca il bordo; $\EF'=\SI{5.6}{eV}$.
+
+\smallskip\noindent\textbf{E12.} (a) $E_{\mathrm{kin}}=21{,}2-4{,}3=\SI{16.9}{eV}$; dallo stato \SI{2}{eV} sotto, \SI{14.9}{eV}. (b) $K=\sqrt{E_{\mathrm{kin}}
+/3{,}81}=\SI{2.11}{\angstrom^{-1}}$; a \ang{30} $k_\parallel=\SI{1.05}{\angstrom^{-1}}=0{,}68\,(2\pi/a)$; $\sin\theta=1{,}551/2{,}107$, $\theta=\ang{47}$.
+(c) $\hbar\omega/\hbar c=21{,}2/1973=\SI{0.011}{\angstrom^{-1}}$, lo $0{,}7\,\%$ di $2\pi/a$: trascurabile.
+
+\smallskip\noindent\textbf{E13.} $n_{\mathrm{val}}$ per cella: Na 1, dispari: metallo per forza. Mg $2\cdot2=4$ e Ca 2: pari, ma metalli per la
+sovrapposizione delle bande, come il Be. Diamante $2\cdot4=8$ e NaCl $1+7=8$: pari e con un gap assoluto (\SI{5.5}{eV}, circa \SI{8.5}{eV}): isolanti.
+
+\smallskip\noindent\textbf{E14.} (a) $a_{\mathrm{CC}}=a/\sqrt3=\SI{1.42}{\angstrom}$; $|\vb_i|=4\pi/(\sqrt3a)=\SI{2.95}{\angstrom^{-1}}$;
+$|\Gamma M|=\SI{1.47}{\angstrom^{-1}}$, $|\Gamma K|=4\pi/3a=\SI{1.70}{\angstrom^{-1}}$. (b) $\vF=3ta_{\mathrm{CC}}/2\hbar=\SI{9.1e5}{m/s}$
+($\hbar\vF=\SI{5.96}{eV.\angstrom}$). (c) $n=\int_0^{\EF}g\,\dd E=\EF^2/(\pi\hbar^2\vF^2)=\SI{8.9e15}{m^{-2}}=\SI{8.9e11}{cm^{-2}}$. (d) $\tilde m=\hbar k/\vF=\EF/\vF^2=\SI{1.95e-32}{kg}=0{,}021\,m_0$.
+
+\smallskip\noindent\textbf{E15.} (a) $\RH=-1/(5n_{\mathrm{at}}e)=\SI{-4.4e-11}{m^3/C}$. (b) $\RH=(b_h-b_e)/[en(b_h+b_e)]$: per $b_e=2b_h$,
+$-1/(3en)=\SI{-6.9e-6}{m^3/C}$, $1{,}6\cdot10^5$ volte (a); per $b_e=b_h$, $\RH=0$. (c) $n_{\mathrm{at}}/n\approx\num{9e4}$.
+\endgroup
+
+\end{document}

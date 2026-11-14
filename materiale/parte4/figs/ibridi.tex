@@ -1,0 +1,21 @@
+% direzioni degli ibridi sp2 (nel piano, a 120 gradi) e sp3 (tetraedro)
+\begin{tikzpicture}[lobo/.style={fill=vB!55, draw=vB!70!black}, piccolo/.style={fill=vA!55, draw=vA!70!black}]
+\begin{scope}
+  \foreach \t/\n in {90/1,-30/2,210/3} {
+    \begin{scope}[rotate=\t]
+      \draw[lobo] (0,0) .. controls (0.35,0.42) and (1.25,0.38) .. (1.3,0) .. controls (1.25,-0.38) and (0.35,-0.42) .. (0,0);
+      \draw[piccolo] (0,0) .. controls (-0.15,0.18) and (-0.42,0.15) .. (-0.45,0) .. controls (-0.42,-0.15) and (-0.15,-0.18) .. (0,0);
+    \end{scope}
+    \node[font=\footnotesize] at (\t:1.65) {$|\mathrm{sp}^2_{\n}\rangle$}; }
+  \draw[densely dashed, black!50] (90:0.6) arc (90:-30:0.6); \node[font=\scriptsize] at (30:0.85) {\ang{120}};
+  \draw[->, >=Stealth] (-1.9,-1.3) -- (-1.4,-1.3) node[right, font=\scriptsize] {$x$};
+  \draw[->, >=Stealth] (-1.9,-1.3) -- (-1.9,-0.8) node[above, font=\scriptsize] {$y$};
+  \node[font=\footnotesize] at (0,-1.95) {(a) sp$^2$: tre ibridi nel piano};
+\end{scope}
+\begin{scope}[xshift=6cm]
+  \foreach \x/\y/\n in {0/1.25/1,1.15/-0.45/2,-0.3/-0.75/3,-1.0/-0.2/4} \draw[vec, color=vB] (0,0) -- (\x,\y) node[font=\scriptsize, black, pos=1.15] {\n};
+  \node[circle, fill=atomA!70, inner sep=2pt] at (0,0) {};
+  \node[font=\scriptsize] at (0.55,0.4) {\ang{109.5}};
+  \node[font=\footnotesize] at (0,-1.95) {(b) sp$^3$: verso i vertici di un tetraedro};
+\end{scope}
+\end{tikzpicture}

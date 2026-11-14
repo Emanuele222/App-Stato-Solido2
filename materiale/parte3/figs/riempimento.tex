@@ -1,0 +1,53 @@
+\begin{tikzpicture}[x=1cm,y=1cm,
+  bnd/.style={draw=black!60, minimum width=1.9cm},
+  lab/.style={font=\small\sffamily\bfseries, anchor=south}]
+\draw[-{Stealth[length=2mm]}, black!60] (-0.35,-0.1) -- (-0.35,4.0) node[above, font=\small] {$E$};
+% metallo: banda semipiena
+\begin{scope}
+\node[lab] at (1.0,4.0) {metallo};
+\fill[bandfull] (0,0.2) rectangle (2,1.2);
+\fill[bandpart!55] (0,1.2) rectangle (2,2.2);
+\draw[bnd] (0,0.2) rectangle (2,2.2);
+\node[font=\scriptsize, white] at (1,0.7) {piena};
+\node[font=\scriptsize] at (1,1.7) {vuota};
+\node[font=\scriptsize, align=center] at (1,-0.5) {banda parzialmente\\ piena};
+\end{scope}
+% metallo: bande sovrapposte
+\begin{scope}[xshift=3.1cm]
+\node[lab] at (1.0,4.0) {metallo};
+\fill[bandfull] (0,0.2) rectangle (2,1.9);
+\fill[bandempty] (0,1.55) rectangle (2,3.5);
+\fill[bandfull!70!bandempty] (0,1.55) rectangle (2,1.9);
+\draw[bnd] (0,0.2) rectangle (2,1.9);
+\draw[bnd] (0,1.55) rectangle (2,3.5);
+\node[font=\scriptsize, black, align=center] at (1,2.85) {banda di\\ conduzione};
+\node[font=\scriptsize, white, align=center] at (1,0.8) {banda di\\ valenza};
+\draw[<->, black!60] (2.3,1.55) -- (2.3,1.9) node[midway, right, font=\scriptsize] {sovrapp.};
+\node[font=\scriptsize, align=center] at (1,-0.5) {bande che\\ si sovrappongono};
+\end{scope}
+% isolante
+\begin{scope}[xshift=6.7cm]
+\node[lab] at (1.0,4.0) {isolante};
+\fill[bandfull] (0,0.2) rectangle (2,1.5);
+\fill[bandempty] (0,2.7) rectangle (2,3.7);
+\draw[bnd] (0,0.2) rectangle (2,1.5);
+\draw[bnd] (0,2.7) rectangle (2,3.7);
+\node[font=\scriptsize, white, align=center] at (1,0.85) {valenza\\ (piena)};
+\node[font=\scriptsize, align=center] at (1,3.2) {conduzione\\ (vuota)};
+\draw[<->, black!60] (2.3,1.5) -- (2.3,2.7) node[midway, right, font=\scriptsize] {$\Eg>4$ eV};
+\node[font=\scriptsize, align=center] at (1,-0.5) {gap largo};
+\end{scope}
+% semiconduttore
+\begin{scope}[xshift=10.3cm]
+\node[lab] at (1.0,4.0) {semiconduttore};
+\fill[bandfull] (0,0.2) rectangle (2,1.9);
+\fill[bandempty] (0,2.35) rectangle (2,3.5);
+\draw[bnd] (0,0.2) rectangle (2,1.9);
+\draw[bnd] (0,2.35) rectangle (2,3.5);
+\node[font=\scriptsize, white, align=center] at (1,1.05) {valenza\\ (piena)};
+\node[font=\scriptsize, align=center] at (1,2.9) {conduzione\\ (vuota)};
+\draw[<->, black!60] (2.3,1.9) -- (2.3,2.35);
+\node[font=\scriptsize, anchor=west] at (2.38,2.12) {$\Eg\sim1$--$2$ eV};
+\node[font=\scriptsize, align=center] at (1,-0.5) {gap stretto\\ (a $T=0$)};
+\end{scope}
+\end{tikzpicture}
