@@ -43,4 +43,44 @@ export const CHAPTERS: readonly NavChapter[] = [
 
 export const UPCOMING_CHAPTERS: readonly string[] = s.upcoming
 
-export const DEFAULT_SECTION_ID = 'nearly-free'
+export type ChapterStatus = 'active' | 'upcoming'
+
+export interface ChapterEntry {
+  readonly id: string
+  readonly title: string
+  readonly status: ChapterStatus
+  readonly sectionsCount?: number
+  readonly defaultSectionId?: string
+}
+
+export const ALL_CHAPTERS: readonly ChapterEntry[] = [
+  {
+    id: 'bands',
+    title: s.chapters.bands,
+    status: 'active',
+    sectionsCount: SECTIONS.filter((x) => x.chapterId === 'bands').length,
+    defaultSectionId: 'empty-lattice'
+  },
+  {
+    id: 'crystallography',
+    title: s.upcoming[0],
+    status: 'upcoming'
+  },
+  {
+    id: 'reciprocal-diffraction',
+    title: s.upcoming[1],
+    status: 'upcoming'
+  },
+  {
+    id: 'phonons',
+    title: s.upcoming[2],
+    status: 'upcoming'
+  },
+  {
+    id: 'semiconductors',
+    title: s.upcoming[3],
+    status: 'upcoming'
+  }
+]
+
+export const DEFAULT_SECTION_ID = 'empty-lattice'

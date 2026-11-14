@@ -28,6 +28,7 @@ export interface ShellLabels {
   readonly openNav: string
   readonly closeNav: string
   readonly footnote: string
+  readonly goHome?: string
 }
 
 interface ShellNav {
@@ -44,6 +45,7 @@ export function AppShell({
   upcoming,
   activeSectionId,
   onSelectSection,
+  onGoHome,
   children
 }: {
   labels: ShellLabels
@@ -51,6 +53,7 @@ export function AppShell({
   upcoming: readonly string[]
   activeSectionId: string
   onSelectSection: (id: string) => void
+  onGoHome?: () => void
   children: ReactNode
 }): JSX.Element {
   const [open, setOpen] = useState(false)
@@ -70,9 +73,38 @@ export function AppShell({
     <ShellNavContext.Provider value={{ open, toggle: () => setOpen((o) => !o), labels }}>
       <div className="shell">
         <nav ref={navRef} className="nav" aria-label={labels.navLabel} data-open={open || undefined}>
-          <div className="nav-brand">
-            {labels.appName}
-            <small>{labels.appNote}</small>
+          <div className="nav-header">
+            {onGoHome ? (
+              <button
+                type="button"
+                className="nav-brand nav-brand-btn"
+                onClick={() => {
+                  onGoHome()
+                  setOpen(false)
+                }}
+                aria-label={`${labels.appName} – ${labels.goHome ?? 'Torna alla schermata iniziale'}`}
+                title={labels.goHome ?? 'Torna alla schermata iniziale'}
+              >
+                <span className="nav-brand-title">{labels.appName}</span>
+                <small>{labels.appNote}</small>
+              </button>
+            ) : (
+              <div className="nav-brand">
+                <span className="nav-brand-title">{labels.appName}</span>
+                <small>{labels.appNote}</small>
+              </div>
+            )}
+            <button
+              type="button"
+              className="nav-close"
+              aria-label={labels.closeNav}
+              onClick={() => setOpen(false)}
+              title={labels.closeNav}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </button>
           </div>
           {chapters.map((chapter) => (
             <div key={chapter.id} className="nav-chapter">

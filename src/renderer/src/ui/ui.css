@@ -75,10 +75,39 @@ input {
   background: var(--bg);
 }
 
+.nav-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 4px 18px;
+}
+
 .nav-brand {
   font-weight: 600;
   font-size: 15px;
-  margin: 0 8px 18px;
+  margin: 0 4px;
+  text-align: left;
+}
+
+.nav-brand-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.nav-brand-btn:hover {
+  border-color: var(--lineStrong);
+  background: var(--raised);
+}
+
+.nav-brand-title {
+  display: block;
 }
 
 .nav-brand small {
@@ -86,6 +115,26 @@ input {
   font-weight: 400;
   font-size: 11px;
   color: var(--dim);
+}
+
+.nav-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  flex: none;
+  margin-top: 2px;
+}
+
+.nav-close:hover {
+  color: var(--text);
+  border-color: var(--dim);
 }
 
 .nav-chapter-title {
@@ -622,6 +671,10 @@ button.nav-item:hover {
   }
 
   .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-close {
     display: inline-flex;
   }
 }

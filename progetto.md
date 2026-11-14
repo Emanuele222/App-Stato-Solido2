@@ -18,7 +18,7 @@ Applicazione desktop locale per studenti universitari di fisica dello stato soli
 | Prima versione | Capitolo **Teoria delle bande** completo: 6 metodi + 3 strumenti trasversali |
 
 ## Struttura dell'app
-- **Home**: indice a schede, una per capitolo, con anteprima animata. Capitoli futuri marcati "in arrivo" (Cristallografia, Reticolo reciproco e diffrazione, Fononi, Semiconduttori).
+- **Schermata iniziale**: griglia regolare di cinque riquadri uguali, uno per capitolo; nessuna sezione elencata. «Teoria delle bande» è attivo: miniatura a bande disegnata dal codice che, con il cursore fermo sopra per 2 secondi, scorre i sei metodi con le bande vere ed elenca le sezioni; il clic porta alla prima sezione. Cristallografia, Reticolo reciproco e diffrazione, Fononi e Semiconduttori sono attenuati, con uno schizzo fermo e l'etichetta «in arrivo», non cliccabili. Dentro una sezione, il nome dell'app nella barra laterale riporta alla schermata iniziale. Incarico: `incarichi/gemini-08-schermata-iniziale.md`.
 - **Schermata di sezione** (layout base, adattabile):
   - sinistra: barra capitoli/sezioni
   - centro: scena 2D/3D; sotto, i parametri (slider + menu preset materiali)
@@ -126,11 +126,13 @@ Eccezione già avvenuta: `mockup-quasi-libero.html` è stato scritto da Fable pr
    - fatto: Antigravity legge le istruzioni di progetto da `AGENTS.md`, `GEMINI.md` o `.agents/rules/*.md` nella cartella di lavoro (documentazione ufficiale); useremo `AGENTS.md` nella radice;
    - fatto: dispense ricevute ed estratte in `materiale/parte3` e `materiale/parte4`; notazione e contenuti di tutte le sezioni fissati su quelle;
    - da fare: scegliere cartella di progetto e nome dell'app.
-1. **Scheletro + sezione pilota**: shell, design system, formula viva, `BandPlot`; sezione *Elettroni quasi liberi* completa come riferimento di qualità. Qui nascono gli agenti `revisore-fisica`, `fedelta-corso` e `critico-grafico` e il primo giro di revisione con Gemini; `studente` si aggiunge con la prima scheda teoria.
-2. **Metodi classici**: reticolo vuoto e schemi di zona, Kronig–Penney, legami forti 1D + i tre strumenti trasversali.
-3. **Vetrina 2D**: reticolo quadrato e grafene.
-4. **k·p e pseudopotenziale**.
-5. **Home, rifinitura, pacchetti** per i tre sistemi.
+1. **Scheletro + sezione pilota** — fatto (Opus): shell, design system, formula viva, `BandPlot`; sezione *Elettroni quasi liberi* come riferimento di qualità.
+2. **Metodi classici** — fatto (Gemini, incarichi 02–05): reticolo vuoto e schemi di zona, Kronig–Penney, legami forti 1D con catena biatomica, i tre strumenti trasversali.
+3. **Vetrina 2D** — da fare: reticolo quadrato e grafene; richiede una libreria 3D, quindi il permesso dell'utente per installarla.
+4. **k·p e pseudopotenziale** — fatto (Gemini, incarichi 06–07).
+5. **Revisione** — fatta: quattro rapporti in `reviews/gemini/revisione-A…D`. Nessun errore nelle equazioni di fondo; correzioni raccolte in due incarichi da eseguire uno dopo l'altro: 09 (fisica e contenuti) e 10 (grafica e componenti comuni).
+6. **Schermata iniziale** — incarico 08 pronto (comprende la correzione della barra a scomparsa). Ordine di lancio: 08, poi 09, poi 10; mai due autori insieme.
+7. **Rifinitura e pacchetti** per i tre sistemi — da fare; la finestra Electron con le sezioni non è ancora stata provata.
 
 Capitoli successivi (fuori dalla prima versione): Cristallografia, Reticolo reciproco e diffrazione, Fononi, Semiconduttori.
 

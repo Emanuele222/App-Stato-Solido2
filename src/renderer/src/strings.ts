@@ -8,7 +8,8 @@ export const shellStrings = {
   unavailableHint: 'Sezione non ancora disponibile',
   openNav: 'Apri l’indice delle sezioni',
   closeNav: 'Chiudi l’indice delle sezioni',
-  footnote: 'Prima versione: è attiva la sezione Elettroni quasi liberi.',
+  goHome: 'Torna alla schermata iniziale',
+  footnote: 'Capitolo 1: Teoria delle bande completo (6 sezioni disponibili).',
   chapters: {
     bands: 'Teoria delle bande'
   },
