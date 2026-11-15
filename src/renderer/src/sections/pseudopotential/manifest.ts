@@ -41,8 +41,10 @@ export interface AntisymmetricFactors {
   readonly v11a: number
 }
 
+export type EpmPresetId = 'si' | 'ge' | 'gaas'
+
 export interface EpmPreset {
-  readonly id: 'si' | 'gaas'
+  readonly id: EpmPresetId
   readonly name: string
   readonly params: EpmParamValues
   readonly antisymmetric: AntisymmetricFactors | null
@@ -51,12 +53,20 @@ export interface EpmPreset {
   /** Massa efficace misurata della conduzione in Γ (in unità di m₀), se disponibile (P4 §4, r. 1201). */
   readonly measuredGammaMass: number | null
   readonly kpEpEv: number | null
+  /**
+   * Origine dei fattori Vˢ: 'tabella-P4' (dispensa) oppure 'esterni' (non della tabella della
+   * dispensa: a schermo va dichiarato accanto al materiale).
+   */
+  readonly factorsSource: 'tabella-P4' | 'esterni'
 }
 
 /**
- * Preset esclusivamente da verifica_bande_reali.py (r. 140–141) e P4 §5.4 (r. 1484–1488).
- * Ge e gli altri materiali della tabella §4 restano fuori perché il passo reticolare
- * del Ge manca nelle dispense e gli altri composti mancano dei fattori antisimmetrici.
+ * Si e GaAs da verifica_bande_reali.py (r. 140–141) e P4 §5.4 (r. 1484–1488).
+ * Ge (incarico 11): a = 5,658 Å e fattori locali di Cohen–Bergstresser (Phys. Rev. 141, 789,
+ * 1966), V₃ˢ = −0,23, V₈ˢ = 0,01, V₁₁ˢ = 0,06 Ry. NON sono quelli della tabella P4 (r. 1109–1111),
+ * che con questo modello locale danno gap diretto in Γ (0,91 eV) invece che indiretto in L: i valori
+ * sono stati indicati dalla regia a memoria e non controllati sull'articolo originale.
+ * Gli altri composti della tabella §4 restano fuori: mancano i fattori antisimmetrici.
  */
 export const PRESETS: readonly EpmPreset[] = [
   {
@@ -67,7 +77,19 @@ export const PRESETS: readonly EpmPreset[] = [
     measuredGapEv: 1.12,
     measuredGapKind: 'indiretto',
     measuredGammaMass: null,
-    kpEpEv: null
+    kpEpEv: null,
+    factorsSource: 'tabella-P4'
+  },
+  {
+    id: 'ge',
+    name: 'Ge',
+    params: { a: 5.658, v3s: -0.23, v8s: 0.01, v11s: 0.06 },
+    antisymmetric: null,
+    measuredGapEv: 0.66,
+    measuredGapKind: 'indiretto',
+    measuredGammaMass: null,
+    kpEpEv: null,
+    factorsSource: 'esterni'
   },
   {
     id: 'gaas',
@@ -77,7 +99,8 @@ export const PRESETS: readonly EpmPreset[] = [
     measuredGapEv: 1.42,
     measuredGapKind: 'diretto',
     measuredGammaMass: 0.067,
-    kpEpEv: 20.0
+    kpEpEv: 20.0,
+    factorsSource: 'tabella-P4'
   }
 ]
 
@@ -107,7 +130,7 @@ export const NUMERICS = {
   fullGMaxSq: 21, // 113 onde piane
   fullPointsPerSegment: 40, // 201 punti lungo L–Γ–X–W–K–Γ
   fastGMaxSq: 11, // 51 onde piane (include gusci 3, 8, 11 per aggiornamento reattivo in trascinamento)
-  fastPointsPerSegment: 10, // 51 punti totali (~20–30 ms)
+  fastPointsPerSegment: 20, // 101 punti totali (~42–45 ms, divide 40 esattamente 2:1)
   numBands: 8,
   defaultPointIndex: 40, // Γ
   defaultBandIndex: 4, // fondo conduzione

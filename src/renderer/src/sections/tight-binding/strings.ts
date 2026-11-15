@@ -35,8 +35,8 @@ export const strings = {
     linkDistance: {
       toggle: 'Avvicina gli atomi',
       title: 'Lega t_s e |t_p| al passo reticolare a con una legge esponenziale indicativa',
-      badge: '$t(a) = t(a_0)\\,e^{-(a-a_0)/\\lambda}$ — modello indicativo',
-      linkedNote: (tSStr: string, tPStr: string) => `$\\htmlData{q=v}{t_s}(a) = ${tSStr}$ eV · $\\htmlData{q=v}{t_p}(a) = -${tPStr}$ eV`
+      badge: '$t(a) = t(a_0)\\,e^{-(a-a_0)/\\ell}$ ($a_0 = 3\\text{ Å}$, $\\ell = 0{,}8\\text{ Å}$) — modello indicativo',
+      linkedNote: (tSStr: string, tPStr: string) => `$\\htmlData{q=t}{t_s}(a) = ${tSStr}$ eV · $\\htmlData{q=t}{t_p}(a) = -${tPStr}$ eV`
     }
   },
   tools: {
@@ -108,21 +108,21 @@ export const strings = {
       {
         heading: 'Da atomi isolati a bande cristalline',
         paragraphs: [
-          'Nel modello a legami forti gli elettroni restano quasi localizzati intorno ai nuclei (orbitali atomici $\\varphi_n$); l’integrale di sovrapposizione $\\htmlData{q=v}{t}(R)$ fra primi vicini mescola gli orbitali con la fase di Bloch $e^{i\\htmlData{q=k}{k}R}$, allargando ogni livello $\\htmlData{q=Ek}{\\bar{E}_n}$ in una banda di larghezza $\\htmlData{q=v}{W} = 4|\\htmlData{q=v}{t}|$.',
+          'Nel modello a legami forti gli elettroni restano quasi localizzati intorno ai nuclei (orbitali atomici $\\varphi_n$); l’integrale di sovrapposizione $\\htmlData{q=t}{t}(R)$ fra primi vicini mescola gli orbitali con la fase di Bloch $e^{i\\htmlData{q=k}{k}R}$, allargando ogni livello $\\htmlData{q=Ek}{\\bar{E}_n}$ in una banda di larghezza $\\htmlData{q=t}{W} = 4|\\htmlData{q=t}{t}|$.',
           'Quando si avvicinano gli atomi riducendo il passo $\\htmlData{q=a}{a}$, la sovrapposizione cresce esponenzialmente e le bande si allargano fino a poter sovrapporsi in $\\htmlData{q=a}{\\pi/a}$ (gap negativo, metallo anche con 2 elettroni per atomo).'
         ]
       },
       {
         heading: 'Legante, antilegante e catena biatomica',
         paragraphs: [
-          'Il segno di $\\htmlData{q=v}{t}$ fissa la curvatura: per l’orbitale $s$ (simmetrico, $\\htmlData{q=v}{t_s} > 0$) la combinazione in fase in $\\htmlData{q=k}{k} = 0$ è legante (minimo), mentre quella a segni alterni in $\\pm\\pi/\\htmlData{q=a}{a}$ è antilegante (massimo). Per l’orbitale $p$ lungo la catena ($\\htmlData{q=v}{t_p} < 0$) i ruoli si invertono: legante al bordo $\\pm\\pi/\\htmlData{q=a}{a}$ e antilegante in $k = 0$.',
+          'Il segno di $\\htmlData{q=t}{t}$ fissa la curvatura: per l’orbitale $s$ (simmetrico, $\\htmlData{q=t}{t_s} > 0$) la combinazione in fase in $\\htmlData{q=k}{k} = 0$ è legante (minimo), mentre quella a segni alterni in $\\pm\\pi/\\htmlData{q=a}{a}$ è antilegante (massimo). Per l’orbitale $p$ lungo la catena ($\\htmlData{q=t}{t_p} < 0$) i ruoli si invertono: legante al bordo $\\pm\\pi/\\htmlData{q=a}{a}$ e antilegante in $k = 0$.',
           'Con due atomi diversi nella cella ($\\htmlData{q=Ek}{E_A} < \\htmlData{q=Ek}{E_B}$, distanti $\\htmlData{q=a}{a}/2$) l’accoppiamento contiene $\\cos(\\htmlData{q=k}{k}\\htmlData{q=a}{a}/2)$ e apre un gap $\\htmlData{q=VG}{E_g} = \\htmlData{q=Ek}{E_B} - \\htmlData{q=Ek}{E_A}$ in $\\pm\\pi/\\htmlData{q=a}{a}$: con 2 elettroni per cella si ha un semiconduttore 1D, mentre per $E_A = E_B$ il gap si chiude e si ritrova la catena monoatomica di passo $a/2$ ripiegata in $[-\\pi/a, \\pi/a]$.'
         ]
       },
       {
         heading: 'Legame con Kronig–Penney e quasi liberi',
         paragraphs: [
-          'È il limite opposto a quello degli elettroni quasi liberi, ma il quadro coincide: per buche profonde il modello di Kronig–Penney riproduce proprio la banda a coseno $E(k) \\simeq \\bar{E} \\mp 2t\\cos ka$, e al bordo di zona la combinazione simmetrica $\\htmlData{q=psi}{\\psi_c}$ corrisponde allo stato $s$ mentre l’antisimmetrica $\\htmlData{q=psi}{\\psi_s}$ corrisponde allo stato $p$.'
+          'È il limite opposto a quello degli elettroni quasi liberi, ma il quadro coincide: per buche profonde il modello di Kronig–Penney riproduce proprio la banda a coseno $E(k) \\simeq \\bar{E} \\mp 2\\htmlData{q=t}{t}\\cos ka$, e al bordo di zona la combinazione simmetrica $\\htmlData{q=psi}{\\psi_c}$ corrisponde allo stato $s$ mentre l’antisimmetrica $\\htmlData{q=psi}{\\psi_s}$ corrisponde allo stato $p$.'
         ]
       }
     ],

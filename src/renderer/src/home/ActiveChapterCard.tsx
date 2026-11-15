@@ -129,23 +129,27 @@ export function ActiveChapterCard({
     const numMethods = previewCurves.length
     if (numMethods === 0) return
 
-    let startTime = performance.now()
+    let startTime: number | null = null
 
     const step = (now: number): void => {
-      const elapsed = now - startTime
+      if (startTime === null) {
+        startTime = now
+      }
+      const elapsed = Math.max(0, now - startTime)
       const cycleIndex = Math.floor(elapsed / METHOD_DURATION_MS) % numMethods
+      const safeIndex = ((cycleIndex % numMethods) + numMethods) % numMethods
       const timeInMethod = elapsed % METHOD_DURATION_MS
       const steadyTime = METHOD_DURATION_MS - FADE_DURATION_MS
 
       if (timeInMethod < steadyTime) {
-        setActiveMethodIndex(cycleIndex)
+        setActiveMethodIndex(safeIndex)
         setNextMethodIndex(null)
         setFadeProgress(0)
       } else {
         const fadeElapsed = timeInMethod - steadyTime
         const progress = easeInOutCubic(Math.min(1, fadeElapsed / FADE_DURATION_MS))
-        setActiveMethodIndex(cycleIndex)
-        setNextMethodIndex((cycleIndex + 1) % numMethods)
+        setActiveMethodIndex(safeIndex)
+        setNextMethodIndex((safeIndex + 1) % numMethods)
         setFadeProgress(progress)
       }
 
@@ -178,12 +182,13 @@ export function ActiveChapterCard({
   const restingCurves = getRestingCurves()
   const previewCurves = previewActive && !reducedMotion ? getPreviewCurves() : null
 
-  const currentData: MethodPreviewData = previewCurves
-    ? previewCurves[activeMethodIndex]
-    : restingCurves
+  const currentData: MethodPreviewData =
+    (previewCurves && previewCurves[activeMethodIndex]) || restingCurves
 
   const nextData: MethodPreviewData | null =
-    previewCurves && nextMethodIndex !== null ? previewCurves[nextMethodIndex] : null
+    previewCurves && nextMethodIndex !== null && previewCurves[nextMethodIndex]
+      ? previewCurves[nextMethodIndex]
+      : null
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>): void => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -242,10 +247,6 @@ export function ActiveChapterCard({
                   <li
                     key={s.id}
                     className={`preview-section-item ${isCurrent ? 'is-current' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onSelect(s.id)
-                    }}
                   >
                     <span className="section-index">{idx + 1}.</span>
                     <span className="section-title">{s.title}</span>
@@ -261,7 +262,6 @@ export function ActiveChapterCard({
           </div>
         ) : (
           <div className="card-resting-info">
-            <p className="card-summary">{homeStrings.chapterDescriptions.bands}</p>
             <div className="card-hover-prompt">
               <span className="prompt-dot" aria-hidden="true" />
               <small>{homeStrings.restingHint}</small>

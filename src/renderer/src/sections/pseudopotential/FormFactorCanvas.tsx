@@ -9,7 +9,7 @@
 import { useRef, useState, type JSX, type PointerEvent } from 'react'
 import { formatNumber } from '../../ui/format'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, niceStep, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import { drawMathText, measureMathText, niceStep, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
 import type { EpmFormFactors, FormFactorCurve } from '../../physics'
 import { PARAMS, type FormFactorId } from './manifest'
 import { strings as s } from './strings'
@@ -107,7 +107,7 @@ export function FormFactorCanvas({
       ctx.fillStyle = TOKENS.muted
       ctx.fillText(String(g2), px, T + H + 4)
     }
-    drawMathText(ctx, '|q|² / (2π/a)²', L + W - 2, T + H + 26, {
+    drawMathText(ctx, '|q|^{2} / (2π/a)^{2}', L + W - 2, T + H + 26, {
       color: TOKENS.muted,
       size: 10.5,
       align: 'right',
@@ -143,15 +143,26 @@ export function FormFactorCanvas({
     ctx.stroke()
     ctx.restore()
 
-    // Punto limite metallico v(0) = −⅔ E_F (sopra il pallino per evitare la legenda a destra su schermi stretti)
+    // Punto limite metallico v(0) = −⅔ E_F: sotto-destra se possibile (evita la curva crescente)
     const yV0 = Y(Math.max(V_MIN, curve.v0Ry))
+    const badgeW = measureMathText(ctx, s.scene.v0Badge, 10.5)
+    const belowY = Math.min(T + H - 12, yV0 + 14)
+    const aboveY = Math.max(T + 14, yV0 - 11)
+    let curveHitsBelow = 0
+    for (let i = 0; i < curve.qSqDimless.length; i++) {
+      if (curve.qSqDimless[i] > 3.5) break
+      const cx = X(curve.qSqDimless[i])
+      const cy = Y(Math.max(V_MIN, Math.min(V_MAX, curve.vRy[i])))
+      if (cx >= X(0) + 4 && cx <= X(0) + 12 + badgeW && cy >= belowY - 12 && cy <= belowY + 4) curveHitsBelow++
+    }
+    const v0LabelY = curveHitsBelow === 0 ? belowY : aboveY
     ctx.save()
     ctx.globalAlpha = emEf
     ctx.fillStyle = quantityColor('EF')
     ctx.beginPath()
     ctx.arc(X(0), yV0, 4.2, 0, Math.PI * 2)
     ctx.fill()
-    drawMathText(ctx, s.scene.v0Badge, X(0) + 7, Math.max(T + 14, yV0 - 11), {
+    drawMathText(ctx, s.scene.v0Badge, X(0) + 8, v0LabelY, {
       color: quantityColor('EF'),
       size: 10.5,
       align: 'left',
@@ -160,13 +171,13 @@ export function FormFactorCanvas({
     ctx.restore()
 
     // Riferimenti antisimmetrici Vᵃ (diamanti) quando il toggle GaAs è attivo
+    const vaCol = quantityColor('V2G')
     if (antisymmetricOn) {
       const vaPoints = [
-        { gSq: 3, val: formFactors.v3a, label: 'V_{3}^{a}' },
-        { gSq: 4, val: formFactors.v4a, label: 'V_{4}^{a}' },
-        { gSq: 11, val: formFactors.v11a, label: 'V_{11}^{a}' }
+        { gSq: 3, val: formFactors.v3a, label: 'V_{3}^{a}', align: 'right' as const, dx: -7, dy: 4 },
+        { gSq: 4, val: formFactors.v4a, label: 'V_{4}^{a}', align: 'left' as const, dx: 7, dy: 4 },
+        { gSq: 11, val: formFactors.v11a, label: 'V_{11}^{a}', align: 'right' as const, dx: -7, dy: 4 }
       ]
-      const vaCol = quantityColor('V2G')
       ctx.save()
       ctx.globalAlpha = highlight === null || highlight === 'V2G' ? 0.92 : DIM
       for (const vp of vaPoints) {
@@ -183,6 +194,12 @@ export function FormFactorCanvas({
         ctx.closePath()
         ctx.fill()
         ctx.stroke()
+        drawMathText(ctx, vp.label, px + vp.dx, py + vp.dy, {
+          color: vaCol,
+          size: 10,
+          align: vp.align,
+          backdrop: TOKENS.bg
+        })
       }
       ctx.restore()
     }
@@ -231,14 +248,7 @@ export function FormFactorCanvas({
       ctx.restore()
     }
 
-    // Mini legenda nello spazio vuoto inferiore destro (v ≤ −0,35, lontano da V₈ˢ e V₁₁ˢ)
-    ctx.font = sansFont(10.5)
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'bottom'
-    ctx.fillStyle = withAlpha(TOKENS.textSoft, 0.85)
-    ctx.fillText(`-- ${s.scene.formCurveLegend}`, L + W - 4, T + H - 17)
-    ctx.fillStyle = vgCol
-    ctx.fillText(`● ${s.scene.formPointsLegend}`, L + W - 4, T + H - 4)
+    // (la legenda sta fuori dal grafico: riga HTML sotto il titolo della vista)
 
     return false
   })

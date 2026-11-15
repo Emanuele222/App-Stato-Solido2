@@ -690,3 +690,43 @@ function validateEpmParams(params: PseudopotentialParams): void {
     if (!Number.isFinite(val)) throw new RangeError(`fattore di forma non valido: ${val}`)
   }
 }
+
+/**
+ * Potenziale chimico per EPM lungo il cammino L–Γ–X–W–K–Γ:
+ * vale a metà gap quando esiste un gap assoluto (isolante/semiconduttore);
+ * se il gap è nullo le bande si sovrappongono (metallo) e μ non è determinabile dal solo cammino.
+ */
+export function pseudopotentialChemicalPotential(
+  summary: Pick<EpmBandSummary, 'gap' | 'vbmEnergy' | 'cbmEnergy'>
+): number | null {
+  if (!(summary.gap > 0)) return null
+  return 0.5 * (summary.vbmEnergy + summary.cbmEnergy)
+}
+
+/** Stima k·p a due bande per la massa efficace in Γ: m*_c/m₀ ≈ E_g(Γ)/E_P (P4 §4, §5.4). */
+export function kpGammaMassEstimate(egGammaEv: number, epEv: number): number {
+  if (!(epEv > 0)) throw new RangeError(`E_P non valido: ${epEv}`)
+  return egGammaEv / epEv
+}
+
+/**
+ * Etichetta del segmento del cammino L–Γ–X–W–K–Γ su cui è calcolata la derivata
+ * direzionale `epmDirectionalKinematics` in `pointIndex`.
+ */
+export function epmSegmentLabel(path: KPath, pointIndex: number): string {
+  const labels = path.labels
+  if (labels.length < 2) return ''
+  const idx = Math.max(0, Math.min(path.points.length - 1, pointIndex))
+  // Coerente con la scelta in avanti nei vertici (es. in Γ si segue Γ–X), tranne all'ultimo punto.
+  for (let i = 0; i < labels.length - 1; i++) {
+    const a = labels[i]
+    const b = labels[i + 1]
+    const isLastSeg = i === labels.length - 2
+    if (idx >= a.index && (isLastSeg ? idx <= b.index : idx < b.index)) {
+      return `${a.label}–${b.label}`
+    }
+  }
+  const last = labels[labels.length - 1]
+  const prev = labels[labels.length - 2]
+  return `${prev.label}–${last.label}`
+}

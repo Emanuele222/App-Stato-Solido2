@@ -583,3 +583,8 @@ function validateTwoBand(p: TwoBandParams): void {
   if (!(p.eg > 0) || !Number.isFinite(p.eg)) throw new RangeError(`E_g non valido: ${p.eg}`)
   if (!(p.ep >= 0) || !Number.isFinite(p.ep)) throw new RangeError(`E_P non valido: ${p.ep}`)
 }
+
+/** Livello intrinseco a metà gap nel modello k·p (zero alla cima della valenza in Γ). */
+export function intrinsicFermiLevel(eg: number): number {
+  return 0.5 * eg
+}

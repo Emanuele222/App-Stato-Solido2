@@ -51,7 +51,15 @@ export const QUANTITIES = {
   /** velocità di gruppo v */
   v: { color: '#5cd0b3', name: 'velocità di gruppo' },
   /** livello di Fermi E_F */
-  EF: { color: '#ff9f5a', name: 'livello di Fermi' }
+  EF: { color: '#ff9f5a', name: 'livello di Fermi' },
+  /** integrale di salto t / t_s / |t_p| e larghezza di banda W */
+  t: { color: '#75a4ff', name: 'integrale di salto e larghezza di banda' },
+  /** funzione trascendente di Kronig–Penney f(αa), L(E) e numeri d'onda α, β */
+  kp: { color: '#badc58', name: 'funzione di Kronig–Penney' },
+  /** separazione spin–orbita Δ e banda split-off (so) */
+  Delta: { color: '#eb82a6', name: 'separazione spin–orbita' },
+  /** energia caratteristica di Kane E_P e accoppiamento k·p P */
+  EP: { color: '#64b5f6', name: 'energia caratteristica di Kane' }
 } as const
 
 export type QuantityId = keyof typeof QUANTITIES
@@ -59,6 +67,90 @@ export type QuantityId = keyof typeof QUANTITIES
 export function quantityColor(id: QuantityId): string {
   return QUANTITIES[id].color
 }
+
+/**
+ * Toni derivati: sfumature (più chiare o più scure) di una grandezza già presente
+ * in QUANTITIES o di un neutro del tema. Non sono grandezze nuove: `from` dice da
+ * quale derivano, e i componenti li leggono solo da qui (mai come codici nel codice).
+ * Il CSS li riceve come --tone-<nome>.
+ */
+export const DERIVED_TONES = {
+  /** bande di conduzione dello pseudopotenziale: tinta chiara di E, per staccarle dalle bande di valenza */
+  conductionBands: { from: 'E', color: '#b4de9e', name: 'bande di conduzione (tinta chiara di E)' },
+  /** parte liscia ψᶠ, tratteggiata accanto alla ψ vera: tinta chiara di ψ */
+  smoothWavefunction: { from: 'psi', color: '#f0b3e7', name: 'parte liscia ψᶠ (tinta chiara di ψ)' },
+  /** Re ψ_k lungo la catena: neutro chiaro, per non confonderla con |ψ_k|² (colore ψ) */
+  realPartWave: { from: 'neutral', color: '#cad8ea', name: 'parte reale Re ψ_k (neutro chiaro)' },
+  /** orbitali atomici troppo piccoli per un lobo, famiglia A: tinta scura di a */
+  faintOrbitalA: { from: 'a', color: '#4f899c', name: 'orbitale debole, famiglia A (tinta scura di a)' },
+  /** orbitali atomici troppo piccoli per un lobo, famiglia B: tinta scura di E_F */
+  faintOrbitalB: { from: 'EF', color: '#9c6647', name: 'orbitale debole, famiglia B (tinta scura di E_F)' },
+  /** etichetta dell'estremo legante (tinta chiara di v) */
+  bondingText: { from: 'v', color: '#96e8d4', name: 'estremo legante (tinta chiara di v)' },
+  /** etichetta dell'estremo antilegante (tinta chiara di V_2G) */
+  antibondingText: { from: 'V2G', color: '#f7b6ad', name: 'estremo antilegante (tinta chiara di V_2G)' }
+} as const
+
+export type DerivedToneId = keyof typeof DERIVED_TONES
+
+export function toneColor(id: DerivedToneId): string {
+  return DERIVED_TONES[id].color
+}
+
+/** Lobi degli orbitali nella catena (segno + e −, zero): colore pieno con trasparenza (#rrggbbaa). */
+export interface LobePalette {
+  readonly posFill: string
+  readonly posStroke: string
+  readonly posText: string
+  readonly negFill: string
+  readonly negStroke: string
+  readonly negText: string
+  readonly zeroFill: string
+  readonly zeroStroke: string
+}
+
+/**
+ * Famiglia A: derivata da a (azzurro); famiglia B: derivata da E_F (arancio);
+ * monoatomica: neutri del tema (grigio chiaro). Riempimenti con trasparenza in coda (#rrggbbaa).
+ */
+export const LOBE_PALETTES: Record<'A' | 'B' | 'mono', LobePalette> = {
+  A: {
+    posFill: '#88e0f4e0',
+    posStroke: '#b9f0fc',
+    posText: '#0a1f28',
+    negFill: '#14303ce6',
+    negStroke: '#4c8ca2',
+    negText: '#9cd2e3',
+    zeroFill: '#48768659',
+    zeroStroke: '#66a1b5'
+  },
+  B: {
+    posFill: '#ffba8ae6',
+    posStroke: '#ffd7ba',
+    posText: '#2c1408',
+    negFill: '#422114eb',
+    negStroke: '#a86545',
+    negText: '#f0b896',
+    zeroFill: '#8a5c4259',
+    zeroStroke: '#b57b5c'
+  },
+  mono: {
+    posFill: '#eaeef4e0',
+    posStroke: '#ffffff',
+    posText: '#11151b',
+    negFill: '#1e242eeb',
+    negStroke: '#738096',
+    negText: '#c5ccd8',
+    zeroFill: '#626a7857',
+    zeroStroke: '#808a9a'
+  }
+}
+
+/** Pillole degli estremi di banda (legante: tinta di v; antilegante: tinta di V_2G). */
+export const EXTREMUM_PILLS = {
+  bonding: { fill: '#1c342ee6', stroke: '#5cd0b38c', text: DERIVED_TONES.bondingText.color },
+  antibonding: { fill: '#36222ae6', stroke: '#f79a8e8c', text: DERIVED_TONES.antibondingText.color }
+} as const
 
 export function isQuantityId(value: string | null | undefined): value is QuantityId {
   return value != null && Object.prototype.hasOwnProperty.call(QUANTITIES, value)
@@ -74,6 +166,9 @@ export function themeCss(): string {
   for (const [id, q] of Object.entries(QUANTITIES)) {
     vars.push(`--q-${id}:${q.color};`)
     rules.push(`[data-q="${id}"]{--q:var(--q-${id})}`)
+  }
+  for (const [id, tone] of Object.entries(DERIVED_TONES)) {
+    vars.push(`--tone-${kebab(id)}:${tone.color};`)
   }
   return `:root{${vars.join('')}}\n${rules.join('\n')}`
 }

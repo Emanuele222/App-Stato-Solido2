@@ -21,6 +21,8 @@ import {
 
 export type ToolId = 'fill' | 'mass' | 'compare'
 
+export type TightBindingHighlightTarget = 'tS' | 'absTP' | 'centerS' | 'centerP' | 'eA' | 'eB' | null
+
 export interface TightBindingState {
   readonly variant: TightBindingVariant
   readonly monoParams: MonoParams
@@ -35,6 +37,7 @@ export interface TightBindingState {
   readonly tools: Readonly<Record<ToolId, boolean>>
   readonly electrons: number
   readonly highlight: QuantityId | null
+  readonly highlightTarget: TightBindingHighlightTarget
   readonly pulse: QuantityPulse | null
 
   setVariant(variant: TightBindingVariant): void
@@ -45,7 +48,7 @@ export interface TightBindingState {
   nudge(dk: number, dBand: number): void
   toggleTool(id: ToolId): void
   setElectrons(n: number): void
-  setHighlight(q: QuantityId | null): void
+  setHighlight(q: QuantityId | null, target?: TightBindingHighlightTarget): void
 }
 
 const clamp = (x: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, x))
@@ -68,6 +71,7 @@ export const useTightBindingStore = create<TightBindingState>()((set, get) => ({
   tools: { fill: false, mass: false, compare: false },
   electrons: NUMERICS.electrons.initial,
   highlight: null,
+  highlightTarget: null,
   pulse: null,
 
   setVariant(variant) {
@@ -88,15 +92,15 @@ export const useTightBindingStore = create<TightBindingState>()((set, get) => ({
     if (cur.linkDistance && id === 'a') {
       next = {
         ...next,
-        tS: indicativeHoppingAtDistance(v, INDICATIVE_DISTANCE_LAW.a0, cur.tRefAtA0.tS, INDICATIVE_DISTANCE_LAW.lambda),
+        tS: indicativeHoppingAtDistance(v, INDICATIVE_DISTANCE_LAW.a0, cur.tRefAtA0.tS, INDICATIVE_DISTANCE_LAW.ell),
         absTP: indicativeHoppingAtDistance(
           v,
           INDICATIVE_DISTANCE_LAW.a0,
           cur.tRefAtA0.absTP,
-          INDICATIVE_DISTANCE_LAW.lambda
+          INDICATIVE_DISTANCE_LAW.ell
         )
       }
-      pulseQuantities.push('v')
+      pulseQuantities.push('t')
     }
 
     set({
@@ -123,13 +127,13 @@ export const useTightBindingStore = create<TightBindingState>()((set, get) => ({
   toggleLinkDistance() {
     const cur = get()
     const nextOn = !cur.linkDistance
-    const { a0, lambda } = INDICATIVE_DISTANCE_LAW
+    const { a0, ell } = INDICATIVE_DISTANCE_LAW
     if (nextOn) {
       set({
         linkDistance: true,
         tRefAtA0: {
-          tS: calibrateIndicativeHoppingAtA0(cur.monoParams.a, a0, cur.monoParams.tS, lambda),
-          absTP: calibrateIndicativeHoppingAtA0(cur.monoParams.a, a0, cur.monoParams.absTP, lambda)
+          tS: calibrateIndicativeHoppingAtA0(cur.monoParams.a, a0, cur.monoParams.tS, ell),
+          absTP: calibrateIndicativeHoppingAtA0(cur.monoParams.a, a0, cur.monoParams.absTP, ell)
         }
       })
     } else {
@@ -170,7 +174,7 @@ export const useTightBindingStore = create<TightBindingState>()((set, get) => ({
     set({ electrons: clamp(Math.round(n), NUMERICS.electrons.min, maxE) })
   },
 
-  setHighlight(highlight) {
-    set({ highlight })
+  setHighlight(highlight, highlightTarget = null) {
+    set({ highlight, highlightTarget })
   }
 }))

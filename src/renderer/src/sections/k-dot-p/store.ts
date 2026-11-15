@@ -71,7 +71,7 @@ export const useKpStore = create<KpState>((set, get) => ({
   transition: 'follow',
   k: NUMERICS.defaultK,
   role: 'c',
-  tools: { fill: false, mass: true, compare: false },
+  tools: { fill: false, mass: false, compare: false },
   highlight: null,
   pulse: null,
 
@@ -82,7 +82,7 @@ export const useKpStore = create<KpState>((set, get) => ({
       variant,
       role: resolveRole(variant, cur.role),
       transition: 'glide',
-      pulse: nextPulse(['E', 'psi', 'mstar'])
+      pulse: nextPulse(['E', 'Delta', 'mstar'])
     })
   },
 
@@ -109,7 +109,7 @@ export const useKpStore = create<KpState>((set, get) => ({
       params: { eg: preset.eg, delta: preset.delta, ep: preset.ep },
       presetId: preset.id,
       transition: 'glide',
-      pulse: nextPulse(['VG', 'psi', 'v', 'mstar'])
+      pulse: nextPulse(['VG', 'Delta', 'EP', 'mstar'])
     })
   },
 

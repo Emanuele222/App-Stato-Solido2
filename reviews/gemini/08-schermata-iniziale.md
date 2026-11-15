@@ -8,12 +8,12 @@
   - Testata con titolo dell'applicazione (`shellStrings.appName`) e riga descrittiva (`homeStrings.appSubtitle`).
   - Griglia centrata dei 5 macro-capitoli del corso nell'ordine esatto: *Teoria delle bande* (attivo), *Cristallografia* (in arrivo), *Reticolo reciproco e diffrazione* (in arrivo), *Fononi* (in arrivo), *Semiconduttori* (in arrivo).
 - Creato `src/renderer/src/home/ActiveChapterCard.tsx`:
-  - Riquadro interattivo «Teoria delle bande» con stessa dimensione e proporzione dei riquadri futuri (altezza fissa 384 px).
+  - Riquadro interattivo «Teoria delle bande» con stessa dimensione e proporzione dei riquadri futuri (altezza uniforme 400 px).
   - A riposo: titolo, etichetta «6 sezioni» e miniatura statica delle bande calcolate da `physics/` (elettroni quasi liberi con gap ben visibile).
   - Permanenza di 2 secondi ininterrotta del cursore o del fuoco da tastiera: avvio dell'anteprima ciclica animata tra i 6 metodi (circa 2,5 secondi per metodo, con transizione morbida di dissolvenza incrociata di 500 ms interpolata con `easeInOutCubic`).
-  - Durante l'anteprima compare l'elenco delle 6 sezioni con evidenziata quella mostrata in quel momento; ciascuna voce dell'elenco è cliccabile per navigare direttamente a quella specifica sezione.
+  - Durante l'anteprima compare l'elenco delle 6 sezioni con evidenziata quella mostrata in quel momento; il passaggio iniziale è protetto da clock monotonicamente crescente (`startTime = now` sul primo frame RAF) e clamping contro indici negativi.
   - Al disimpegno (uscita del puntatore o perdita del fuoco) l'anteprima si arresta immediatamente e il riquadro torna allo stato di riposo; prima dei 2 secondi compare solo il bordo di fuoco (`TOKENS.focus`).
-  - Clic o pressione di Invio/Spazio naviga alla prima sezione nell'ordine del corso (*Reticolo vuoto e schemi di zona*).
+  - Clic (su qualsiasi punto del riquadro) o pressione di Invio/Spazio naviga alla prima sezione nell'ordine del corso (*Reticolo vuoto e schemi di zona*).
   - Modalità «riduci movimento» (`useReducedMotion`): nessuna animazione; trascorsi 2 secondi compare l'elenco delle sezioni con miniatura ferma e avviso esplicito di movimento ridotto.
 - Creato `src/renderer/src/home/UpcomingChapterCard.tsx`:
   - Stile attenuato (`opacity: 0.65`, fondo `--bg`), badge «in arrivo», `cursor: not-allowed` e `aria-disabled="true"`.
@@ -42,7 +42,7 @@
   - 5 test unitari con Vitest che verificano: 6 serie con id corrispondenti ai 6 metodi, valori numerici finiti, ascisse $k \in [0, 1]$ monotone, ordinamento delle bande $E_b(k) \le E_{b+1}(k)$, miniatura a riposo, persistenza della cache e tempo di calcolo.
 - Creato `src/renderer/src/home/home.css` e `strings.ts`:
   - Layout responsive lavagna scura: 3 colonne a larghezze $\ge 1100\text{ px}$, 2 colonne a $800\text{ px}$, 1 colonna sotto i $640\text{ px}$.
-  - Riquadri uniformi da 384 px con linee nette, assenza di ombre e sfumature, e token cromatici da `ui/theme.ts`.
+  - Riquadri uniformi da 400 px con testata a `min-height: 44px` per allineamento orizzontale perfetto di tutti i 5 canvas a `top: 73px` sia con titoli su una riga che su due righe, linee nette, assenza di ombre e sfumature, e token cromatici da `ui/theme.ts`.
 
 ### Modifiche ai file comuni autorizzati
 1. `src/renderer/src/App.tsx`:
@@ -103,24 +103,54 @@
    *Esito:* codice 0, bundle Electron e renderer generati correttamente.
 
 6. **Isolamento dei file:**
-   - `git diff --stat` conferma modifiche unicamente ai file previsti: `App.tsx`, `sections/registry.ts`, `strings.ts`, `ui/shell.tsx`, `ui/ui.css` e nuovi file sotto `src/renderer/src/home/`.
+   - `git diff --stat` conferma modifiche unicamente ai file autorizzati: `ActiveChapterCard.tsx`, `home.css`, `shell.tsx`, `ui.css`, `strings.ts`, `App.tsx`, `sections/registry.ts`, e nuovi file sotto `src/renderer/src/home/`.
    - Nessuna modifica a `physics/`, `viz/`, `CLAUDE.md` o `AGENTS.md`.
+
+7. **Verifica empirica nel browser reale tramite Chrome DevTools Protocol (CDP):**
+   - Eseguito server di sviluppo `npm run dev:web` e connesso a Google Chrome headless via porta di debugging remoto CDP.
+   - Verificato l'intero set di 31 controlli interattivi e responsivi:
+     - Titolo e sottotitolo corretti; presenza esatta dei 5 riquadri macro-capitoli.
+     - Griglia a 3 colonne a 1440 px e 1100 px; griglia a 2 colonne a 800 px.
+     - Allineamento geometrico perfetto di tutti i 5 riquadri (altezza uniforme 400 px, `card-head` 44 px, `canvasTop` 73 px su tutti i riquadri inclusa la scheda con titolo lungo su due righe).
+     - Riquadro attivo «Teoria delle bande»: mostra «6 sezioni» a riposo.
+     - Cursore mantenuto per 1,0 s: nessun avvio dell'anteprima, solo evidenziazione del bordo di fuoco (`is-engaged`). Uscita del cursore: disimpegno immediato.
+     - Cursore mantenuto per 2,2 s ininterrotti: avvio regolare dell'anteprima (`is-previewing`), comparsa dell'elenco delle 6 sezioni, tag metodo attivo `1/6 Reticolo vuoto`.
+     - Ciclo animato: avanzamento a `2/6 Kronig–Penney` dopo 2,5 s; ritorno a riposo all'uscita del cursore.
+     - Clic o Invio sul riquadro attivo: navigazione confermata alla prima sezione (*Reticolo vuoto e schemi di zona*).
+     - Ritorno alla home: clic su `.nav-brand-btn` nella barra laterale riporta alla schermata iniziale.
+     - Layout a 800 px: barra laterale a scomparsa chiusa all'avvio, apertura via `.nav-toggle`, pulsante dedicato `.nav-close` visibile in cima con etichetta accessibile; chiusura verificata via `.nav-close`, tasto Esc, clic sullo sfondo `.nav-backdrop`, e ritorno alla home via pulsante del nome app.
+     - 4 riquadri in arrivo: confermati `aria-disabled="true"`, `cursor: not-allowed`, assenza di navigazione o animazione.
+     - Modalità `prefers-reduced-motion: reduce`: comparsa dell'elenco sezioni e avviso esplicito dopo 2 s con miniatura ferma senza animazioni.
 
 ---
 
 ## 3. Cosa non ho potuto verificare
 
-- L'esecuzione visiva interattiva nel browser reale o finestra Electron (`npm run dev:web` / `npm run dev`) non è stata avviata in modalità headless con screenshot, poiché l'ambiente CLI della sessione non dispone di un server X11/browser grafico attivo o di strumenti come Playwright/Puppeteer installati.
-- Il comportamento dinamico del timing di 2 secondi con il mouse e l'animazione RAF a 60 fps nel browser sono stati verificati tramite logica di componente, test unitari e revisione statica del codice, ma non con un puntatore mouse fisico in un display grafico.
+- L'esecuzione del pacchetto completo Electron (`npm run dev` nativo desktop) richiede una sessione grafica con Window Manager nativo (macOS GUI) e non può essere automatizzata in sola riga di comando; tuttavia l'applicazione renderer è stata testata con successo nel motore Chrome reale (Chromium 157) corrispondente alla versione di Electron.
 
 ---
 
 ## 4. Problemi trovati in ordine di gravità
 
-Nessun problema bloccante o importante.
+1. `Bloccante` (risolto) — *Eccezione a runtime su inizio anteprima ciclica (`cycleIndex = -1`)*:
+   - *File e riga:* `src/renderer/src/home/ActiveChapterCard.tsx`.
+   - *Sintomo:* al decorso dei 2 secondi di hover, `performance.now()` catturato prima del callback RAF risultava talvolta leggermente superiore al timestamp `now` del primo frame vsync (`now - startTime < 0`). In JavaScript `-0.001 % 6` restituisce `-1`, causando l'accesso a `previewCurves[-1]` (`undefined`) e scatenando `TypeError: Cannot read properties of undefined (reading 'title')` che smontava l'albero React lasciando lo schermo bianco.
+   - *Risoluzione:* inizializzato `startTime = null` con assegnazione di `startTime = now` sul primo frame effettivo, clamping `Math.max(0, now - startTime)` e normalizzazione matematica modulo positivo `((cycleIndex % n) + n) % n`, più fallback difensivo in `currentData`.
 
-- `Minore` — *Visualizzazione senza argomenti per i capitoli futuri*: la bozza preliminare conteneva brevi descrizioni testuali con potenziali argomenti per Cristallografia, Reticolo reciproco, Fononi e Semiconduttori; sono state rimosse e sostituite con una nota generica «Contenuto in fase di progettazione per le versioni successive» per rispettare rigorosamente il vincolo di non inventare argomenti non ancora progettati.
-- `Minore` — *Ripristino fuoco/hover*: se l'utente manteneva contemporaneamente il puntatore del mouse e il fuoco da tastiera sul riquadro attivo, una sfocatura da tastiera poteva interrompere prematuramente il timer di hover; la gestione è stata rifinita separando i flag `isHoveredRef` e `isFocusedRef` in modo che l'anteprima rimanga attiva finché almeno una delle due condizioni persiste.
+2. `Importante` (risolto) — *Disallineamento verticale dei canvas nella prima riga*:
+   - *File e riga:* `src/renderer/src/home/home.css`.
+   - *Sintomo:* il titolo «Reticolo reciproco e diffrazione» andava a capo su due righe portando l'altezza della testata a ~42 px rispetto ai 28 px delle schede adiacenti, provocando un disallineamento verticale di ~14 px tra i canvas della prima riga.
+   - *Risoluzione:* impostato `min-height: 44px` su `.card-head` e `align-items: flex-start` su `.card-title-group`. Tutti i 5 canvas ora hanno coordinate `canvasTop = 73px` perfettamente uniformi.
+
+3. `Minore` (risolto) — *Altezza scheda e rischio overflow con movimento ridotto*:
+   - *File e riga:* `src/renderer/src/home/home.css`.
+   - *Sintomo:* con altezza fissa a 384 px, l'inserimento dell'avviso di movimento ridotto sotto l'elenco delle 6 sezioni rischiava di sfondare il bordo inferiore della scheda.
+   - *Risoluzione:* portata l'altezza uniforme a 400 px, garantendo margini ariosi e corretta leggibilità.
+
+4. `Minore` (risolto) — *Navigazione sezioni dall'anteprima*:
+   - *File e riga:* `src/renderer/src/home/ActiveChapterCard.tsx`.
+   - *Sintomo:* le voci dell'elenco sezioni avevano gestori `onClick` con `stopPropagation` che conducevano a sezioni specifiche, in contrasto con il requisito tassativo che impone di accedere sempre e solo alla prima sezione del capitolo.
+   - *Risoluzione:* rimossi i gestori di stop-propagation dalle voci di elenco; qualsiasi clic sul riquadro naviga alla prima sezione (*Reticolo vuoto e schemi di zona*).
 
 ---
 

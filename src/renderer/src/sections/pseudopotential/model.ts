@@ -1,6 +1,6 @@
 /**
  * Modello della sezione «Pseudopotenziale»:
- * - anteprima reattiva immediata (51 onde piane × 51 punti, ricampionata sui 201 punti del cammino);
+ * - anteprima reattiva immediata (51 onde piane × 101 punti, ricampionata sui 201 punti del cammino);
  * - calcolo esatto completo in Web Worker (113 onde piane × 201 punti) con cache LRU e stato «in affinamento…»;
  * - curve di modello dello spazio reale, fattore di forma v(q) di Ashcroft+TF e confronto ione nudo vs V^s.
  * Tutta la fisica viene da ../../physics.
@@ -13,10 +13,13 @@ import {
   epmBrillouinPath,
   epmDirectionalKinematics,
   epmSegmentDirection,
+  epmSegmentLabel,
   fccReciprocalVectors,
+  kpGammaMassEstimate,
   pseudopotentialBands,
+  pseudopotentialChemicalPotential,
   pseudopotentialStateAt,
-  RYDBERG_EV,
+  rydbergToEv,
   type BandStructure,
   type EpmBandSummary,
   type EpmFormFactors,
@@ -63,10 +66,12 @@ export interface GaasGammaComparison {
 export interface PseudopotentialModel {
   readonly a: number
   readonly formFactors: EpmFormFactors
+  readonly formFactorsEv: EpmFormFactors
   readonly path: KPath
   readonly bands: BandStructure
   readonly summary: EpmBandSummary
   readonly isFullResolution: boolean
+  readonly isProvisional: boolean
   readonly refining: boolean
   readonly lastWorkerMs: number | null
   readonly eRange: readonly [number, number]
@@ -75,6 +80,7 @@ export interface PseudopotentialModel {
   readonly stateBreakdown: EpmStateBreakdown
   readonly selectedEnergy: number
   readonly segmentDirection: readonly [number, number, number]
+  readonly segmentLabel: string
   readonly massProbe: EpmLocalKinematics | null
   readonly gaasGammaCompare: GaasGammaComparison | null
   readonly emptyLatticeAligned: BandStructure | null
@@ -158,13 +164,13 @@ function clampParams(raw: EpmParamValues): EpmParamValues {
   }
 }
 
-/** Ricampiona le bande ridotte (10 passi/tratto = 51 punti) sul cammino canonico a 201 punti (40/tratto). */
+/** Ricampiona le bande ridotte (20 passi/tratto = 101 punti) sul cammino canonico a 201 punti (40/tratto). */
 function upsampleSegmentBands(
   rawEnergies: readonly Float64Array[],
   fastPerSeg: number,
   fullPerSeg: number
 ): readonly Float64Array[] {
-  const ratio = fullPerSeg / fastPerSeg // 4
+  const ratio = fullPerSeg / fastPerSeg // 2
   const fullLen = fullPerSeg * 5 + 1 // 201
   return rawEnergies.map((fastBand) => {
     const out = new Float64Array(fullLen)
@@ -402,6 +408,21 @@ export function usePseudopotentialModel(
     () => epmSegmentDirection(activePath, safePointIndex),
     [activePath, safePointIndex]
   )
+  const segmentLabel = useMemo(
+    () => epmSegmentLabel(activePath, safePointIndex),
+    [activePath, safePointIndex]
+  )
+  const formFactorsEv = useMemo<EpmFormFactors>(
+    () => ({
+      v3s: rydbergToEv(activeFf.v3s),
+      v8s: rydbergToEv(activeFf.v8s),
+      v11s: rydbergToEv(activeFf.v11s),
+      v3a: rydbergToEv(activeFf.v3a),
+      v4a: rydbergToEv(activeFf.v4a),
+      v11a: rydbergToEv(activeFf.v11a)
+    }),
+    [activeFf]
+  )
 
   const massProbe = useMemo(() => {
     if (!tools.mass) return null
@@ -429,7 +450,7 @@ export function usePseudopotentialModel(
     return {
       calculatedMassRatio: kin.effectiveMassRatio,
       measuredMassRatio: activePreset.measuredGammaMass,
-      kpEstimateRatio: egGammaEv / activePreset.kpEpEv,
+      kpEstimateRatio: kpGammaMassEstimate(egGammaEv, activePreset.kpEpEv),
       egGammaEv
     }
   }, [tools.mass, activePreset, antisymmetricOn, activeA, activeFf, activeGMaxSq, activeSummary.ecGamma])
@@ -439,9 +460,9 @@ export function usePseudopotentialModel(
 
   const bareIonRows = useMemo<readonly BareIonRow[]>(() => {
     const siV: Record<number, number> = {
-      3: -0.21 * RYDBERG_EV,
-      8: 0.04 * RYDBERG_EV,
-      11: 0.08 * RYDBERG_EV
+      3: rydbergToEv(-0.211),
+      8: rydbergToEv(0.04),
+      11: rydbergToEv(0.08)
     }
     return [3, 8, 11].map((gSq) => ({
       gSq,
@@ -450,19 +471,17 @@ export function usePseudopotentialModel(
     }))
   }, [])
 
-  const chemicalPotential = tools.fill
-    ? activeSummary.gap > 0
-      ? 0.5 * (activeSummary.vbmEnergy + activeSummary.cbmEnergy)
-      : activeSummary.vbmEnergy
-    : null
+  const chemicalPotential = tools.fill ? pseudopotentialChemicalPotential(activeSummary) : null
 
   return {
     a: activeA,
     formFactors: activeFf,
+    formFactorsEv,
     path: activePath,
     bands: activeBands,
     summary: activeSummary,
     isFullResolution,
+    isProvisional: refining,
     refining,
     lastWorkerMs: cachedFull?.elapsedMs ?? null,
     eRange,
@@ -471,6 +490,7 @@ export function usePseudopotentialModel(
     stateBreakdown,
     selectedEnergy: activeBands.energies[safeBandIndex][safePointIndex],
     segmentDirection,
+    segmentLabel,
     massProbe,
     gaasGammaCompare,
     emptyLatticeAligned,

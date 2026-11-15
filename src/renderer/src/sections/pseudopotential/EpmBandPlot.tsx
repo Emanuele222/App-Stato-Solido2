@@ -6,16 +6,32 @@
  *    osculatrice direzionale lungo il tratto corrente), Confronto (reticolo vuoto fcc
  *    allineato al fondo della valenza).
  *  - Selezione interattiva (click/trascinamento/frecce) + indicatore «in affinamento…».
+ *  - Legenda in HTML sopra il grafico (fuori dall'area di disegno); le etichette «gap diretto/indiretto»
+ *    e quella della massa efficace cercano una posizione libera tra le curve (fondo opaco, trattino di richiamo).
  */
 import { useRef, type JSX, type KeyboardEvent, type PointerEvent } from 'react'
-import { formatNumber } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { Smoothed, useReducedMotion } from '../../ui/motion'
-import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, niceStep, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import { quantityColor, toneColor, TOKENS, type QuantityId } from '../../ui/theme'
+import { ChartLegend, type LegendEntry } from '../../viz/ChartLegend'
+import {
+  buildObstacleMap,
+  drawMathText,
+  drawSegmentedHorizontalLine,
+  measureMathText,
+  niceStep,
+  placeFreeLabel,
+  sansFont,
+  useCanvasDraw,
+  withAlpha,
+  type PolylinePoint,
+  type RectBox,
+  type XSpan
+} from '../../viz/canvas'
 import type { PseudopotentialModel } from './model'
 import { strings as s } from './strings'
 
-const MARGIN = { left: 48, right: 16, top: 18, bottom: 28 }
+const MARGIN = { left: 52, right: 16, top: 10, bottom: 28 }
 const DIM = 0.25
 
 export function EpmBandPlot({
@@ -41,7 +57,8 @@ export function EpmBandPlot({
     compare: new Smoothed(showCompare ? 1 : 0, 0.14),
     filling: new Smoothed(model.chemicalPotential !== null ? 1 : 0, 0.14),
     mu: new Smoothed(model.chemicalPotential ?? 0.5, 0.12),
-    probe: new Smoothed(showProbe ? 1 : 0, 0.14)
+    probe: new Smoothed(showProbe ? 1 : 0, 0.14),
+    provisional: new Smoothed(model.isProvisional ? 1 : 0, 0.08)
   }).current
 
   const canvasRef = useCanvasDraw((ctx, { w, h }, dt) => {
@@ -51,9 +68,10 @@ export function EpmBandPlot({
     anim.filling.set(model.chemicalPotential !== null ? 1 : 0)
     if (model.chemicalPotential !== null) anim.mu.set(model.chemicalPotential, anim.filling.value < 0.02)
     anim.probe.set(showProbe ? 1 : 0)
+    anim.provisional.set(model.isProvisional ? 1 : 0)
 
     let moving = false
-    for (const sm of [anim.eMin, anim.eMax, anim.compare, anim.filling, anim.mu, anim.probe]) {
+    for (const sm of [anim.eMin, anim.eMax, anim.compare, anim.filling, anim.mu, anim.probe, anim.provisional]) {
       moving = sm.step(dt, reduced) || moving
     }
 
@@ -89,12 +107,16 @@ export function EpmBandPlot({
       ctx.fillText(formatNumber(E, eStep < 1 ? 1 : 0), L - 7, y)
     }
 
-    drawMathText(ctx, 'E (eV)', L - 8, T - 5, {
-      color: quantityColor('E'),
-      size: 11,
-      align: 'right',
-      italic: false
-    })
+    ctx.save()
+    ctx.translate(14, T + H / 2)
+    ctx.rotate(-Math.PI / 2)
+    ctx.globalAlpha = emE
+    ctx.font = sansFont(11.5)
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = quantityColor('E')
+    ctx.fillText('E (eV)', 0, 0)
+    ctx.restore()
 
     // Linee verticali ed etichette L–Γ–X–W–K–Γ
     ctx.font = sansFont(12, 600)
@@ -123,7 +145,7 @@ export function EpmBandPlot({
     if (summary.gap > 0.02) {
       const yTop = Y(summary.cbmEnergy)
       const yBot = Y(summary.vbmEnergy)
-      ctx.fillStyle = withAlpha(TOKENS.focus, 0.09)
+      ctx.fillStyle = withAlpha(quantityColor('VG'), 0.08)
       ctx.fillRect(L, yTop, W, Math.max(1, yBot - yTop))
     }
 
@@ -148,16 +170,17 @@ export function EpmBandPlot({
       ctx.restore()
     }
 
-    // 4 bande di valenza (0..3) e 4 di conduzione (4..7)
+    // 4 bande di valenza (0..3) e 4 di conduzione (4..7) con dissolvenza fluida dopo isProvisional
     const valCol = quantityColor('E')
-    const condCol = TOKENS.focus
+    const condCol = toneColor('conductionBands')
+    const provFade = 1 - 0.35 * anim.provisional.value
     for (let b = 0; b < model.bands.energies.length; b++) {
       const band = model.bands.energies[b]
       const isVal = b < 4
       const isSel = b === model.bandIndex
       const fillBoost = anim.filling.value > 0.02 && isVal ? 0.5 : 0
       ctx.save()
-      ctx.globalAlpha = emE * (isSel ? 1 : isVal ? 0.92 : 0.86)
+      ctx.globalAlpha = emE * provFade * (isSel ? 1 : isVal ? 0.92 : 0.86)
       ctx.strokeStyle = isVal ? valCol : condCol
       ctx.lineWidth = (isSel ? 2.8 : 1.9) + fillBoost
       ctx.beginPath()
@@ -171,31 +194,34 @@ export function EpmBandPlot({
       ctx.restore()
     }
 
-    // Riempimento: livello chimico μ nel gap
-    if (anim.filling.value > 0.02) {
-      const yMu = Y(anim.mu.value)
-      const muCol = quantityColor('EF')
-      ctx.save()
-      ctx.globalAlpha = anim.filling.value * (highlight === null || highlight === 'EF' ? 0.95 : DIM)
-      ctx.setLineDash([6, 4])
-      ctx.strokeStyle = muCol
-      ctx.lineWidth = highlight === 'EF' ? 2.4 : 1.7
-      ctx.beginPath()
-      ctx.moveTo(L, yMu)
-      ctx.lineTo(L + W, yMu)
-      ctx.stroke()
-      ctx.setLineDash([])
-      drawMathText(ctx, s.scene.chemicalPotential, L + W - 8, yMu - 7, {
-        color: muCol,
-        size: 12,
-        align: 'right',
-        backdrop: TOKENS.bg
-      })
-      ctx.restore()
+    const occupied: RectBox[] = []
+    const muSkips: XSpan[] = []
+    const labelRegion: RectBox = { x0: L + 4, y0: T + 4, x1: L + W - 4, y1: T + H - 4 }
+
+    // Curve in pixel (bande, confronto): ingombri per le etichette
+    const bandPolylines: PolylinePoint[][] = model.bands.energies.map((band) =>
+      Array.from(band, (E, i) => ({ x: X(dist[i]), y: Y(E) }))
+    )
+    if (anim.compare.value > 0.02 && model.emptyLatticeAligned) {
+      for (const band of model.emptyLatticeAligned.energies) {
+        bandPolylines.push(Array.from(band, (E, i) => ({ x: X(dist[i]), y: Y(E) })))
+      }
+    }
+    const xSelPx = X(dist[model.pointIndex])
+    const ySelPx = Y(model.selectedEnergy)
+    const selectionBox: RectBox = { x0: xSelPx - 11, y0: ySelPx - 11, x1: xSelPx + 11, y1: ySelPx + 11 }
+
+    const yMuActive = anim.filling.value > 0.02 && model.chemicalPotential !== null ? Y(anim.mu.value) : null
+
+    // Etichetta di μ (se il riempimento è acceso): prenotata prima delle altre
+    if (yMuActive !== null) {
+      const muW = measureMathText(ctx, s.scene.chemicalPotential, 12)
+      const muBox: RectBox = { x0: L + W - 12 - muW, y0: yMuActive - 19, x1: L + W - 4, y1: yMuActive - 2 }
+      occupied.push(muBox)
+      muSkips.push({ x0: muBox.x0, x1: muBox.x1 })
     }
 
     // VBM, CBM e freccia del gap assoluto
-    let gapBox: { readonly x: number; readonly y: number; readonly w: number; readonly h: number } | null = null
     if (summary.gap > 0.02) {
       const xVbm = X(dist[summary.vbmIndex])
       const yVbm = Y(summary.vbmEnergy)
@@ -203,7 +229,7 @@ export function EpmBandPlot({
       const yCbm = Y(summary.cbmEnergy)
 
       ctx.save()
-      ctx.globalAlpha = emE
+      ctx.globalAlpha = emE * provFade
       ctx.strokeStyle = TOKENS.textSoft
       ctx.lineWidth = 1.4
       ctx.beginPath()
@@ -233,26 +259,72 @@ export function EpmBandPlot({
       ctx.arc(xCbm, yCbm, 4.2, 0, Math.PI * 2)
       ctx.fill()
 
-      // Etichetta gap diretto / indiretto
-      const gapTag = `${summary.isDirect ? s.scene.directGap : s.scene.indirectGap} ${formatNumber(summary.gap, 2)} eV`
-      const midX = 0.5 * (xVbm + xCbm) + 10
-      const midY = 0.5 * (yVbm + yCbm)
-      ctx.font = sansFont(11, 600)
-      const tw = ctx.measureText(gapTag).width
-      const tx = Math.min(L + W - tw - 6, midX)
-      gapBox = { x: tx - 4, y: midY - 8, w: tw + 8, h: 16 }
-      ctx.fillStyle = withAlpha(TOKENS.bg, 0.88)
-      ctx.fillRect(gapBox.x, gapBox.y, gapBox.w, gapBox.h)
-      ctx.fillStyle = TOKENS.text
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'middle'
-      ctx.fillText(gapTag, tx, midY)
+      const gapTag = model.isProvisional
+        ? `gap ≈ ${formatNumber(summary.gap, 2)} eV`
+        : `${summary.isDirect ? s.scene.directGap : s.scene.indirectGap} ${formatNumber(summary.gap, 2)} eV`
+      const anchor = { x: 0.5 * (xVbm + xCbm), y: 0.5 * (yVbm + yCbm) }
+      const gapObstacles = buildObstacleMap(
+        labelRegion,
+        [
+          ...bandPolylines,
+          [
+            { x: xVbm, y: yVbm },
+            { x: xCbm, y: yCbm }
+          ],
+          ...(yMuActive !== null
+            ? [
+                [
+                  { x: L, y: yMuActive },
+                  { x: L + W, y: yMuActive }
+                ]
+              ]
+            : [])
+        ],
+        [...occupied, selectionBox]
+      )
+      ctx.globalAlpha = emE
+      const gapBox = placeFreeLabel(ctx, {
+        text: gapTag,
+        rich: true,
+        size: 11,
+        color: TOKENS.text,
+        backdrop: TOKENS.bg,
+        anchor,
+        obstacles: gapObstacles,
+        region: labelRegion,
+        occupied,
+        leaderColor: TOKENS.textSoft
+      })
+      if (yMuActive !== null && yMuActive >= gapBox.y0 - 4 && yMuActive <= gapBox.y1 + 4) {
+        muSkips.push({ x0: gapBox.x0, x1: gapBox.x1 })
+      }
+      ctx.restore()
+    }
+
+    // Riempimento: livello chimico μ nel gap (omesso se gap ≤ 0), spezzato sulle etichette
+    if (yMuActive !== null) {
+      const yMu = yMuActive
+      const muCol = quantityColor('EF')
+      ctx.save()
+      ctx.globalAlpha = anim.filling.value * (highlight === null || highlight === 'EF' ? 0.95 : DIM)
+
+      ctx.setLineDash([6, 4])
+      ctx.strokeStyle = muCol
+      ctx.lineWidth = highlight === 'EF' ? 2.4 : 1.7
+      drawSegmentedHorizontalLine(ctx, L, L + W, yMu, muSkips, 5)
+      ctx.setLineDash([])
+      drawMathText(ctx, s.scene.chemicalPotential, L + W - 8, yMu - 7, {
+        color: muCol,
+        size: 12,
+        align: 'right',
+        backdrop: TOKENS.bg
+      })
       ctx.restore()
     }
 
     // Sonda massa efficace: parabola osculatrice direzionale lungo il segmento corrente
-    const xSel = X(dist[model.pointIndex])
-    const ySel = Y(model.selectedEnergy)
+    const xSel = xSelPx
+    const ySel = ySelPx
 
     if (anim.probe.value > 0.02 && model.massProbe) {
       const mCol = quantityColor('mstar')
@@ -260,7 +332,11 @@ export function EpmBandPlot({
       let segD0 = dist[0]
       let segD1 = dMax
       for (let seg = 0; seg < labels.length - 1; seg++) {
-        if (model.pointIndex >= labels[seg].index && model.pointIndex <= labels[seg + 1].index) {
+        const isLast = seg === labels.length - 2
+        if (
+          model.pointIndex >= labels[seg].index &&
+          (isLast ? model.pointIndex <= labels[seg + 1].index : model.pointIndex < labels[seg + 1].index)
+        ) {
           segD0 = dist[labels[seg].index]
           segD1 = dist[labels[seg + 1].index]
           break
@@ -276,6 +352,7 @@ export function EpmBandPlot({
       ctx.globalAlpha = anim.probe.value * (highlight === null || highlight === 'mstar' ? 0.96 : DIM)
       ctx.strokeStyle = mCol
       ctx.lineWidth = highlight === 'mstar' ? 3.2 : 2.3
+      const parabola: PolylinePoint[] = []
       ctx.beginPath()
       const steps = 28
       for (let i = 0; i <= steps; i++) {
@@ -285,36 +362,24 @@ export function EpmBandPlot({
         const py = Y(ePar)
         if (i === 0) ctx.moveTo(px, py)
         else ctx.lineTo(px, py)
+        parabola.push({ x: px, y: py })
       }
       ctx.stroke()
 
-      const mLabel = Number.isFinite(effectiveMassRatio)
-        ? `m*/m₀ = ${formatNumber(effectiveMassRatio, 3)}`
-        : 'm*/m₀ = ∞'
-      ctx.font = sansFont(11, 600)
-      const mw = ctx.measureText(mLabel).width
-      let mx = Math.min(L + W - mw - 8, Math.max(L + 6, xSel + 10))
-      let my = ySel > T + 34 ? ySel - 18 : Math.min(T + H - 16, ySel + 18)
-      // Evita qualsiasi sovrapposizione con il riquadro del gap
-      if (
-        gapBox &&
-        mx - 4 < gapBox.x + gapBox.w + 2 &&
-        mx + mw + 4 > gapBox.x - 2 &&
-        my - 8 < gapBox.y + gapBox.h + 2 &&
-        my + 8 > gapBox.y - 2
-      ) {
-        if (gapBox.y - 12 >= T + 10) {
-          my = gapBox.y - 11
-        } else {
-          mx = Math.max(L + 6, gapBox.x - mw - 12)
-        }
-      }
-      ctx.fillStyle = withAlpha(TOKENS.bg, 0.9)
-      ctx.fillRect(mx - 4, my - 8, mw + 8, 16)
-      ctx.fillStyle = mCol
-      ctx.textAlign = 'left'
-      ctx.textBaseline = 'middle'
-      ctx.fillText(mLabel, mx, my)
+      const mLabel = `$m^*/m_0$ ${formatEffectiveMassRatio(effectiveMassRatio, { digits: 3, withEquals: true })}`
+      const probeObstacles = buildObstacleMap(labelRegion, [...bandPolylines, parabola], [...occupied, selectionBox])
+      placeFreeLabel(ctx, {
+        text: mLabel,
+        rich: true,
+        size: 11,
+        color: mCol,
+        backdrop: TOKENS.bg,
+        anchor: { x: xSel, y: ySel },
+        obstacles: probeObstacles,
+        region: labelRegion,
+        occupied,
+        leaderColor: mCol
+      })
       ctx.restore()
     }
 
@@ -343,21 +408,6 @@ export function EpmBandPlot({
     ctx.restore()
 
     ctx.restore() // fine clip
-
-    // Legenda compatta in basso a sinistra sopra X-axis (o in alto a sinistra)
-    ctx.font = sansFont(10.5)
-    ctx.textAlign = 'left'
-    ctx.textBaseline = 'top'
-    ctx.fillStyle = valCol
-    ctx.fillText(`— ${s.scene.valenceLegend}`, L + 6, T + 3)
-    const valW = ctx.measureText(`— ${s.scene.valenceLegend}`).width
-    ctx.fillStyle = condCol
-    ctx.fillText(`— ${s.scene.conductionLegend}`, L + 16 + valW, T + 3)
-    if (showCompare) {
-      const condW = ctx.measureText(`— ${s.scene.conductionLegend}`).width
-      ctx.fillStyle = quantityColor('Ek')
-      ctx.fillText(`-- ${s.scene.emptyLegend}`, L + 26 + valW + condW, T + 3)
-    }
 
     return moving
   })
@@ -434,27 +484,40 @@ export function EpmBandPlot({
     }
   }
 
+  const legend: LegendEntry[] = [
+    { id: 'val', keyKind: 'solid', color: 'var(--q-E)', label: s.scene.valenceLegend },
+    { id: 'cond', keyKind: 'solid', color: 'var(--tone-conduction-bands)', label: s.scene.conductionLegend },
+    ...(showCompare
+      ? [{ id: 'empty', keyKind: 'dashed' as const, color: 'var(--q-Ek)', label: s.scene.emptyLegend }]
+      : [])
+  ]
+
   return (
     <div className="pseudo-bandplot-box">
-      <canvas
-        ref={canvasRef}
-        className="pseudo-bands-canvas"
-        tabIndex={0}
-        role="img"
-        aria-label={s.scene.bandsAria}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onKeyDown={onKeyDown}
-      />
-      <span
-        className={'pseudo-refine-pill' + (model.refining ? ' is-refining' : '')}
-        title={model.lastWorkerMs !== null ? `${Math.round(model.lastWorkerMs)} ms` : undefined}
-        aria-live="polite"
-      >
-        {model.refining ? s.scene.refining : `${model.summary.planeWaves} onde piane`}
-      </span>
+      <div className="pseudo-legend-row">
+        <ChartLegend entries={legend} ariaLabel={s.scene.bandsLegendAria} />
+        <span
+          className={'pseudo-refine-pill' + (model.refining ? ' is-refining' : '')}
+          title={model.lastWorkerMs !== null ? `${Math.round(model.lastWorkerMs)} ms` : undefined}
+          aria-live="polite"
+        >
+          {model.refining ? s.scene.refining : `${model.summary.planeWaves} onde piane`}
+        </span>
+      </div>
+      <div className="pseudo-canvas-box">
+        <canvas
+          ref={canvasRef}
+          className="pseudo-bands-canvas"
+          tabIndex={0}
+          role="img"
+          aria-label={s.scene.bandsAria}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onKeyDown={onKeyDown}
+        />
+      </div>
     </div>
   )
 }

@@ -5,12 +5,12 @@
  *  - sotto: funzione d’onda vera ψ(r) oscillante nel core (|r| < r_c) contro parte liscia ψᶠ(r).
  */
 import type { JSX } from 'react'
-import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import { quantityColor, toneColor, TOKENS, type QuantityId } from '../../ui/theme'
+import { drawMathText, useCanvasDraw, withAlpha } from '../../viz/canvas'
 import type { RealSpaceModelCurves } from '../../physics'
 import { strings as s } from './strings'
 
-const MARGIN = { left: 42, right: 16, top: 14, bottom: 14 }
+const MARGIN = { left: 46, right: 14, top: 12, bottom: 12 }
 const DIM = 0.25
 
 export function RealSpacePseudoCanvas({
@@ -33,7 +33,7 @@ export function RealSpacePseudoCanvas({
     const rMax = r[r.length - 1]
     const X = (x: number): number => L + ((x + rMax) / (2 * rMax)) * W
 
-    const emPot = highlight === null || highlight === 'VG' || highlight === 'V2G' ? 1 : DIM
+    const emPot = highlight === null || highlight === 'VG' ? 1 : DIM
     const emPsi = highlight === null || highlight === 'psi' ? 1 : DIM
 
     // Fascia del raggio di core |r| < r_c su entrambi i riquadri
@@ -108,12 +108,12 @@ export function RealSpacePseudoCanvas({
     ctx.stroke()
     ctx.restore()
 
-    // 2. Hard core (puntinato)
+    // 2. Hard core (puntinato, stesso colore di V_ps)
     ctx.save()
-    ctx.globalAlpha = emPot * 0.9
+    ctx.globalAlpha = emPot * 0.85
     ctx.setLineDash([2, 3])
-    ctx.strokeStyle = quantityColor('V2G')
-    ctx.lineWidth = 1.8
+    ctx.strokeStyle = quantityColor('VG')
+    ctx.lineWidth = highlight === 'VG' ? 2.4 : 1.8
     ctx.beginPath()
     for (let i = 0; i < r.length; i++) {
       const px = X(r[i])
@@ -140,18 +140,7 @@ export function RealSpacePseudoCanvas({
     ctx.restore()
     ctx.restore()
 
-    // Mini legenda potenziale nello spazio vuoto inferiore destro (sotto −1,2, fuori da r_c)
-    const legX = L + W - 4
-    const legY0 = MARGIN.top + topH - 30
-    ctx.font = sansFont(10.5)
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = withAlpha(TOKENS.textSoft, emPot * 0.85)
-    ctx.fillText(`-- ${s.scene.bareIonLegend}`, legX, legY0)
-    ctx.fillStyle = withAlpha(quantityColor('VG'), emPot)
-    ctx.fillText(`— ${s.scene.softCoreLegend}`, legX, legY0 + 12)
-    ctx.fillStyle = withAlpha(quantityColor('V2G'), emPot)
-    ctx.fillText(`·· ${s.scene.hardCoreLegend}`, legX, legY0 + 24)
+    // (la legenda sta fuori dal grafico: riga HTML sotto il titolo della vista)
 
     // --- Pannello inferiore: Funzioni d'onda ψ(r) vs ψᶠ(r) ---
     const psiMin = -1.3
@@ -191,11 +180,12 @@ export function RealSpacePseudoCanvas({
     ctx.stroke()
     ctx.restore()
 
-    // ψᶠ parte liscia (tratteggiata)
+    // ψᶠ parte liscia (tratteggiata, tinta chiara di ψ)
+    const smoothPsiColor = toneColor('smoothWavefunction')
     ctx.save()
     ctx.globalAlpha = emPsi
     ctx.setLineDash([6, 4])
-    ctx.strokeStyle = TOKENS.focus
+    ctx.strokeStyle = smoothPsiColor
     ctx.lineWidth = 2.0
     ctx.beginPath()
     for (let i = 0; i < r.length; i++) {
@@ -207,16 +197,6 @@ export function RealSpacePseudoCanvas({
     ctx.stroke()
     ctx.restore()
     ctx.restore()
-
-    // Mini legenda ψ in basso a destra (sotto ψ=0, fuori dal core)
-    const legPsiY = botTop + botH - 18
-    ctx.font = sansFont(10.5)
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = withAlpha(quantityColor('psi'), emPsi)
-    ctx.fillText(`— ${s.scene.truePsiLegend}`, legX, legPsiY)
-    ctx.fillStyle = withAlpha(TOKENS.focus, emPsi)
-    ctx.fillText(`-- ${s.scene.smoothPsiLegend}`, legX, legPsiY + 12)
 
     return false
   })

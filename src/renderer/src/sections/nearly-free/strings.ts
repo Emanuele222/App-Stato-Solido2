@@ -65,16 +65,19 @@ export const strings = {
 
   formula: {
     title: 'Formula viva',
-    aria: 'E più o meno di k uguale a un mezzo di E k più E k primo, più o meno la radice di un quarto di E k primo meno E k al quadrato più V G al quadrato',
-    valuesTitle: 'Valori'
+    aria: 'E più o meno di k uguale a un mezzo di E k più E k primo, più o meno la radice di un quarto di E k primo meno E k al quadrato più V G al quadrato'
   },
 
   values: {
     e0: 'energia al bordo',
     gapEdge: 'gap in ±π/a',
     gapCenter: 'gap in k = 0',
-    computed: 'calcolato',
+    twoWaveFormula: 'formula a due onde',
+    computedExact: (pw: number) => `calcolo completo (${pw} onde piane):`,
+    secondOrderNotVisible: 'secondo ordine, non visibile a questa scala',
+    secondOrderInsulatorNote: 'il gap del secondo ordine in $k=0$ ($\\simeq V_G^2/2E_0$) è molto piccolo e non visibile a questa scala',
     state: 'stato scelto',
+    planeWaveWeights: 'onde piane dominanti',
     band: 'banda',
     standing: 'al bordo',
     standingCos: '$\\htmlData{q=psi}{\\psi_c}$, carica sugli ioni',
@@ -83,7 +86,6 @@ export const strings = {
     fermi: 'livello di Fermi',
     electrons: (n: number) => `${n} el./cella`,
     mass: 'massa efficace',
-    massZero: '→ 0 (bande che si incrociano)',
     massNegative: 'negativa: cima di banda (lacuna con $m_h=-m^*$)',
     velocity: 'velocità di gruppo',
     strong: (ratio: string) =>
@@ -95,9 +97,10 @@ export const strings = {
     blocks: [
       {
         heading: 'L’idea',
-        // P3 §11.1 (modello) e §11.4
+        // P3 §11.1 (modello) e §11.2–11.4 (equazione centrale e approssimazione perturbativa)
         paragraphs: [
-          'Il potenziale periodico $V(x)=\\sum_G \\htmlData{q=VG}{V_G}\\,e^{iGx}$ è debole: lontano dai bordi di zona l’elettrone resta quasi libero, $\\htmlData{q=E}{E(k)}\\simeq \\htmlData{q=Ek}{E_k}=\\hbar^2k^2/2m_0$. Solo dove due onde piane, $e^{ikx}$ ed $e^{i(k-G)x}$, hanno la stessa energia cinetica il potenziale le mescola davvero: al bordo di zona, $k=\\pm\\pi/\\htmlData{q=a}{a}$.'
+          'Il potenziale periodico $V(x)=\\sum_G \\htmlData{q=VG}{V_G}\\,e^{iGx}$ accoppia le onde piane $e^{i(\\htmlData{q=k}{k}+G)x}$ tramite l’equazione centrale $\\bigl(\\htmlData{q=Ek}{E_{k+G}}-\\htmlData{q=E}{E}\\bigr)\\htmlData{q=psi}{c_{k+G}} + \\sum_{G\'} \\htmlData{q=VG}{V_{G-G\'}}\\,\\htmlData{q=psi}{c_{k+G\'}} = 0$.',
+          'Lontano dai bordi di zona la correzione perturbativa $\\htmlData{q=psi}{c_{k-nG}} \\simeq \\htmlData{q=VG}{V_{nG}}/(\\htmlData{q=Ek}{E_k}-\\htmlData{q=Ek}{E_{k-nG}})$ è trascurabile e l’elettrone resta quasi libero, $\\htmlData{q=E}{E(k)}\\simeq \\htmlData{q=Ek}{E_k}=\\hbar^2k^2/2m_0$. Solo dove due onde piane hanno la stessa energia cinetica il denominatore si annulla e il potenziale le mescola davvero: al bordo di zona, $k=\\pm\\pi/\\htmlData{q=a}{a}$.'
         ]
       },
       {
@@ -122,6 +125,6 @@ export const strings = {
         ]
       }
     ],
-    foot: 'Fonte: dispensa Parte 3, §11. Con $V_G$ grande anche in $k=0$ compare un piccolo gap al secondo ordine, $\\simeq V_G^2/2E_0$. I preset dei materiali sono indicativi: in un modello 1D si usano solo il passo reticolare e il gap reali.'
+    foot: 'Fonte: dispensa Parte 3, §11. Nota oltre il modello a due onde: con $V_G$ grande anche in $k=0$ compare un piccolo gap al secondo ordine, $\\simeq V_G^2/2E_0$. I preset dei materiali sono indicativi: in un modello 1D si usano solo il passo reticolare e il gap reali.'
   }
 } as const

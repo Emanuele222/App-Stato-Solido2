@@ -244,7 +244,7 @@ export function useTightBindingModel(
       tSAtA0: options.tRefAtA0.tS,
       absTPAtA0: options.tRefAtA0.absTP,
       a0: INDICATIVE_DISTANCE_LAW.a0,
-      lambda: INDICATIVE_DISTANCE_LAW.lambda
+      ell: INDICATIVE_DISTANCE_LAW.ell
     })
   }, [options.linkDistance, monoPhysics.centerS, monoPhysics.centerP, options.tRefAtA0.tS, options.tRefAtA0.absTP])
 

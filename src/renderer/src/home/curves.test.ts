@@ -68,7 +68,7 @@ describe('home/curves: preparazione curve anteprima e miniatura', () => {
 
   it('la curva a riposo ha valori finiti ed energie ordinate con gap', () => {
     const resting = computeRestingCurves()
-    expect(resting.bands.length).toBe(4)
+    expect(resting.bands.length).toBe(2)
     expect(Number.isFinite(resting.eMin)).toBe(true)
     expect(Number.isFinite(resting.eMax)).toBe(true)
     expect(resting.eMin).toBeLessThan(resting.eMax)

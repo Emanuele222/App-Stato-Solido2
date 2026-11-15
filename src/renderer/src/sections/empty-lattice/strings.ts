@@ -14,7 +14,8 @@ export const strings = {
     mass: 'Massa efficace',
     massTitle: 'Sonda di massa efficace: m* = m₀ ovunque sulla parabola libera',
     compare: 'Confronto: quasi liberi',
-    compareTitle: 'Confronto con gli elettroni quasi liberi (V_G = −0,5 eV): i gap si aprono agli incroci'
+    compareTitle:
+      'Confronto con i quasi liberi (V_G = −2,2 eV, V_{2G} = −1,4 eV — valori indicativi, scelti per rendere visibili i gap)'
   },
 
   params: {
@@ -53,7 +54,7 @@ export const strings = {
     energyAxis: 'E (eV)',
     kAxis: 'k (Å⁻¹)',
     bandsLegend: 'reticolo vuoto (V = 0)',
-    compareLegend: 'quasi liberi (V_{G} = −0,5 eV)',
+    compareLegend: 'quasi liberi (valori indicativi: V_{G} = −2,2 eV, V_{2G} = −1,4 eV)',
     gapG: '2|V_{G}|',
     e0: 'E_{0}',
     probe: 'm* = m_{0}',
@@ -62,8 +63,7 @@ export const strings = {
 
   formula: {
     title: 'Formula viva',
-    aria: 'E di k uguale a h tagliato al quadrato per k più G al quadrato su due m zero, con G uguale a due pi greco n su a',
-    valuesTitle: 'Valori'
+    aria: 'E di k primo uguale a h tagliato al quadrato per k primo più G al quadrato su due m zero, con G uguale a due pi greco n su a'
   },
 
   values: {
@@ -80,7 +80,7 @@ export const strings = {
     crossCenter: 'in k = 0',
     fermi: 'livello di Fermi',
     electrons: (n: number) => `${n} el./cella`,
-    fermiTwoNote: '$E_F = E_0$ per 2 elettroni/cella (metallo senza gap)',
+    fermiTwoNote: '$E_F = E_0$ (assenza di gap)',
     mass: 'massa efficace',
     massFreeNote: 'sempre uguale a $m_0$ (parabola libera)',
     velocity: 'velocità di gruppo'

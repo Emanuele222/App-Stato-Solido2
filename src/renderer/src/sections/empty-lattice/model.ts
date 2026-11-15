@@ -91,7 +91,7 @@ export function useEmptyLatticeModel(
 
   const compareData = useMemo(() => {
     if (!options.compare) return { bands: null, edgeGap: null }
-    const pot = { a, fourier: [NUMERICS.compareVG] }
+    const pot = { a, fourier: [NUMERICS.compareVG, NUMERICS.compareV2G] }
     return {
       bands: nearlyFreeBands(pot, path, {
         planeWaves: NUMERICS.comparePlaneWaves,
@@ -100,20 +100,6 @@ export function useEmptyLatticeModel(
       edgeGap: directGap1D(pot, zoneEdge, 0, { planeWaves: NUMERICS.comparePlaneWaves })
     }
   }, [options.compare, a, path, zoneEdge])
-
-  const derived = useMemo(() => {
-    const E0 = zoneBoundaryEnergy(a)
-    // finestra adattiva (manifest): segue a interpolato, 9E₀ e ±3π/a restano dentro
-    const eMax = NUMERICS.eMaxOverE0 * E0
-    const kMax = NUMERICS.kWindowRef * Math.sqrt(NUMERICS.aWindowRef / a)
-    return {
-      E0,
-      crossings: emptyLatticeCrossings1D(a, 3),
-      segments: zoneFoldingSegments1D(a, NUMERICS.maxZones),
-      eRange: [-NUMERICS.eMinFrac * eMax, eMax] as const,
-      kRange: [-kMax, kMax] as const
-    }
-  }, [a])
 
   const selectionData = useMemo(() => {
     const kRed = kFracReduced * zoneEdge
@@ -130,6 +116,20 @@ export function useEmptyLatticeModel(
       ionPhaseAngle
     }
   }, [kFracReduced, branchN, a, zoneEdge])
+
+  const derived = useMemo(() => {
+    const E0 = zoneBoundaryEnergy(a)
+    // finestra adattiva (manifest): segue a e lo stato scelto (es. ramo n = −2) così non esce mai di scala
+    const eMax = Math.max(NUMERICS.eMaxOverE0 * E0, selectionData.selection.energy * 1.1)
+    const kMax = NUMERICS.kWindowRef * Math.sqrt(NUMERICS.aWindowRef / a)
+    return {
+      E0,
+      crossings: emptyLatticeCrossings1D(a, 3),
+      segments: zoneFoldingSegments1D(a, NUMERICS.maxZones),
+      eRange: [-NUMERICS.eMinFrac * eMax, eMax] as const,
+      kRange: [-kMax, kMax] as const
+    }
+  }, [a, selectionData.selection.energy])
 
   const filling = useMemo(
     () => (options.fill ? fillBands(reducedBands, options.electrons) : null),

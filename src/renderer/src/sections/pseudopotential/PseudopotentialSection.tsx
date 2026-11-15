@@ -10,13 +10,15 @@
  *  - Formula viva con termini V₃ˢ, V₈ˢ, V₁₁ˢ collegati a curva e slider, confronto ione nudo
  *    vs fattori di forma nel Si e scheda teoria con chiarimento su ψ_c.
  */
-import { useCallback, type JSX } from 'react'
-import { RYDBERG_EV, type KPath } from '../../physics'
+import { useCallback, type JSX, type PointerEvent } from 'react'
+import { type KPath } from '../../physics'
 import { ParamSlider, Panel, PresetMenu, ToolToggle } from '../../ui/controls'
-import { formatNumber } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { FOLLOW, GLIDE, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
+import { isQuantityId, type QuantityId } from '../../ui/theme'
+import { ChartLegend, type LegendEntry } from '../../viz/ChartLegend'
 import { LiveFormula } from '../../viz/LiveFormula'
 import { EpmBandPlot } from './EpmBandPlot'
 import { FormFactorCanvas } from './FormFactorCanvas'
@@ -39,6 +41,15 @@ const FACTOR_CHIPS: readonly { readonly id: FormFactorId; readonly tex: string }
   { id: 'v8s', tex: 'V_8^s' },
   { id: 'v11s', tex: 'V_{11}^s' }
 ]
+
+/** Suggerimento della vista su una riga sola (troncata con puntini); il testo intero è nel title. */
+function HintLine({ text }: { readonly text: string }): JSX.Element {
+  return (
+    <span className="pseudo-hint" title={text}>
+      {text}
+    </span>
+  )
+}
 
 function isFormFactorId(id: EpmParamId): id is FormFactorId {
   return id === 'v3s' || id === 'v8s' || id === 'v11s'
@@ -67,6 +78,16 @@ export function PseudopotentialSection(): JSX.Element {
   const setHighlight = st.setHighlight
   const setActiveFactor = st.setActiveFactor
 
+  const over = useCallback(
+    (e: PointerEvent<HTMLElement>) => {
+      const t = (e.target as Element).closest?.('[data-q]')
+      const q = t ? t.getAttribute('data-q') : null
+      setHighlight(isQuantityId(q) ? q : null)
+    },
+    [setHighlight]
+  )
+  const leave = useCallback(() => setHighlight(null), [setHighlight])
+
   const onPickState = useCallback(
     (pointIndex: number, bandIndex: number) => usePseudopotentialStore.getState().selectState(pointIndex, bandIndex),
     []
@@ -94,26 +115,54 @@ export function PseudopotentialSection(): JSX.Element {
     </>
   )
 
+  const showVa = st.antisymmetricOn && st.antisymmetric !== null
+
+  // Legende in HTML sotto il titolo delle viste: fuori dall'area dei grafici
+  const realLegend: LegendEntry[] = [
+    { id: 'bare', keyKind: 'dashed', color: 'var(--text-soft)', label: s.scene.bareIonLegend },
+    { id: 'soft', keyKind: 'solid', color: 'var(--q-VG)', label: s.scene.softCoreLegend },
+    { id: 'hard', keyKind: 'dotted', color: 'var(--q-VG)', label: s.scene.hardCoreLegend },
+    { id: 'psi', keyKind: 'solid', color: 'var(--q-psi)', label: s.scene.truePsiLegend },
+    { id: 'psif', keyKind: 'dashed', color: 'var(--tone-smooth-wavefunction)', label: s.scene.smoothPsiLegend }
+  ]
+  const formLegend: LegendEntry[] = [
+    { id: 'curve', keyKind: 'dashed', color: 'var(--text-soft)', label: s.scene.formCurveLegend },
+    { id: 'points', keyKind: 'dot', color: 'var(--q-VG)', label: <RichText text={s.scene.formPointsLegend} /> },
+    ...(showVa
+      ? [{ id: 'va', keyKind: 'diamond' as const, color: 'var(--q-V2G)', label: <RichText text={s.scene.formVaLegend} /> }]
+      : [])
+  ]
+
   const scene = (
     <>
       <div className="pseudo-top-row">
-        <SceneView tag={s.scene.realTag} hint={s.scene.realHint}>
-          <RealSpacePseudoCanvas curves={model.realSpace} highlight={st.highlight} />
+        <SceneView className="pseudo-top-view" tag={s.scene.realTag} hint={<HintLine text={s.scene.realHint} />}>
+          <div className="pseudo-view-col">
+            <ChartLegend entries={realLegend} ariaLabel={s.scene.realLegendAria} />
+            <div className="pseudo-canvas-box">
+              <RealSpacePseudoCanvas curves={model.realSpace} highlight={st.highlight} />
+            </div>
+          </div>
         </SceneView>
-        <SceneView tag={s.scene.formTag} hint={s.scene.formHint}>
-          <FormFactorCanvas
-            curve={model.formFactorCurve}
-            formFactors={model.formFactors}
-            antisymmetricOn={st.antisymmetricOn && st.antisymmetric !== null}
-            highlight={st.highlight}
-            activeFactor={st.activeFactor}
-            onDragParam={onDragFormFactor}
-            onActiveFactor={setActiveFactor}
-          />
+        <SceneView className="pseudo-top-view" tag={s.scene.formTag} hint={<HintLine text={s.scene.formHint} />}>
+          <div className="pseudo-view-col">
+            <ChartLegend entries={formLegend} ariaLabel={s.scene.formLegendAria} />
+            <div className="pseudo-canvas-box">
+              <FormFactorCanvas
+                curve={model.formFactorCurve}
+                formFactors={model.formFactors}
+                antisymmetricOn={showVa}
+                highlight={st.highlight}
+                activeFactor={st.activeFactor}
+                onDragParam={onDragFormFactor}
+                onActiveFactor={setActiveFactor}
+              />
+            </div>
+          </div>
         </SceneView>
       </div>
 
-      <SceneView className="pseudo-bands-view" tag={s.scene.bandsTag} hint={s.scene.bandsHint}>
+      <SceneView className="pseudo-bands-view" tag={s.scene.bandsTag} hint={<HintLine text={s.scene.bandsHint} />}>
         <div className="pseudo-bands-wrap">
           <EpmBandPlot
             model={model}
@@ -129,70 +178,80 @@ export function PseudopotentialSection(): JSX.Element {
     </>
   )
 
+  // Barra dei comandi: due righe di tre celle (materiale e termine Vᵃ o nota; a e V₃ˢ; V₈ˢ e V₁₁ˢ).
+  // Le note lunghe stanno nella scheda teoria; qui restano suggerimenti sui comandi (title).
+  const litBy = (quantity: QuantityId, factorId: FormFactorId | null): boolean =>
+    st.activeFactor !== null ? factorId === st.activeFactor : st.highlight === quantity
+
   const params = (
-    <>
-      <div className="preset-row pseudo-preset-bar">
+    <div className="pseudo-params-grid" role="group" aria-label={s.params.group}>
+      <div className="pseudo-params-cell">
         <PresetMenu
           label={s.presets.label}
           freeLabel={s.presets.free}
           options={PRESET_OPTIONS}
           value={st.presetId}
           onSelect={st.applyPreset}
-          note={s.presets.note}
         />
+      </div>
 
-        {st.antisymmetric !== null && (
-          <div className="pseudo-antisym-wrap">
-            <button
-              type="button"
-              className="pseudo-antisym-btn"
-              aria-pressed={st.antisymmetricOn}
-              onClick={st.toggleAntisymmetric}
-            >
-              <span className="pseudo-antisym-swatch" aria-hidden="true" />
-              <span>{s.antisymmetric.label}</span>
-            </button>
-            <span className="pseudo-antisym-note num">
-              {st.antisymmetricOn
-                ? s.antisymmetric.activeValues(
+      <div className="pseudo-params-cell">
+        {st.antisymmetric !== null ? (
+          <button
+            type="button"
+            className={'pseudo-antisym-btn' + (st.highlight === 'V2G' ? ' is-active' : '')}
+            data-q="V2G"
+            aria-pressed={st.antisymmetricOn}
+            title={
+              st.antisymmetricOn
+                ? `${s.antisymmetric.label} · ${s.antisymmetric.activeValues(
                     formatNumber(st.antisymmetric.v3a, 3),
                     formatNumber(st.antisymmetric.v4a, 3),
                     formatNumber(st.antisymmetric.v11a, 3)
-                  )
-                : s.antisymmetric.diamondHint}
-            </span>
-          </div>
-        )}
+                  )}`
+                : `${s.antisymmetric.label} · ${s.antisymmetric.diamondHint}`
+            }
+            onClick={st.toggleAntisymmetric}
+            onPointerEnter={() => setHighlight('V2G')}
+            onPointerLeave={() => setHighlight(null)}
+          >
+            <span className="pseudo-antisym-swatch" aria-hidden="true" />
+            <span>{s.antisymmetric.shortLabel}</span>
+          </button>
+        ) : activePreset?.factorsSource === 'esterni' ? (
+          <span className="pseudo-preset-source" title={s.presets.geNote}>
+            {s.presets.geShortNote}
+          </span>
+        ) : null}
       </div>
 
-      <div className="pseudo-sliders-row" role="group" aria-label={s.params.group}>
-        {PARAMS.map((p) => {
-          const factorId = isFormFactorId(p.id) ? p.id : null
-          return (
-            <div
-              key={p.id}
-              onMouseEnter={factorId ? () => setActiveFactor(factorId) : undefined}
-              onMouseLeave={factorId ? () => setActiveFactor(null) : undefined}
-            >
-              <ParamSlider
-                quantity={p.quantity}
-                symbol={p.symbol}
-                label={s.params[p.id]}
-                value={sliderValues[p.id]}
-                min={p.min}
-                max={p.max}
-                step={p.step}
-                unit={p.unit}
-                digits={p.digits}
-                active={factorId !== null && st.activeFactor === factorId}
-                onChange={(v) => st.setParam(p.id, v)}
-                onHighlight={setHighlight}
-              />
-            </div>
-          )
-        })}
-      </div>
-    </>
+      {PARAMS.map((p) => {
+        const factorId = isFormFactorId(p.id) ? p.id : null
+        return (
+          <div
+            key={p.id}
+            className="pseudo-params-cell"
+            onMouseEnter={factorId ? () => setActiveFactor(factorId) : undefined}
+            onMouseLeave={factorId ? () => setActiveFactor(null) : undefined}
+          >
+            <ParamSlider
+              quantity={p.quantity}
+              symbol={p.symbol}
+              label={s.params[p.id]}
+              value={sliderValues[p.id]}
+              min={p.min}
+              max={p.max}
+              step={p.step}
+              unit={p.unit}
+              digits={p.digits}
+              active={litBy(p.quantity, factorId)}
+              onChange={(v) => st.setParam(p.id, v)}
+              onHighlight={(q) => setHighlight(q ?? (factorId && st.activeFactor === factorId ? 'VG' : null))}
+            />
+          </div>
+        )
+      })}
+    </div>
   )
 
   const aside = (
@@ -255,32 +314,52 @@ export function PseudopotentialSection(): JSX.Element {
           activePreset={activePreset}
           antisymmetricOn={st.antisymmetricOn && st.antisymmetric !== null}
           showMass={st.tools.mass}
+          onHighlight={setHighlight}
         />
 
+        {activePreset?.factorsSource === 'esterni' && (
+          <p className="pseudo-callout pseudo-callout-source">
+            <RichText text={s.presets.geNote} />
+          </p>
+        )}
+
         {st.tools.fill && (
-          <p className="pseudo-callout">
-            <RichText text={s.values.fillNote} />
+          <p className="pseudo-callout" onPointerOver={over} onPointerLeave={leave}>
+            <RichText text={model.chemicalPotential !== null ? s.values.fillNote : s.values.metalNoMuNote} />
           </p>
         )}
 
         {st.tools.compare && (
-          <p className="pseudo-callout">
+          <p className="pseudo-callout" onPointerOver={over} onPointerLeave={leave}>
             <RichText text={s.values.compareNote} />
           </p>
         )}
-
-        <BareIonCard rows={model.bareIonRows} />
       </Panel>
 
       <Panel title={s.theory.title} className="theory">
-        {s.theory.sections.map((sec) => (
-          <div key={sec.heading}>
-            <h3>{sec.heading}</h3>
-            <p>
-              <RichText text={sec.body} />
-            </p>
-          </div>
-        ))}
+        <div onPointerOver={over} onPointerLeave={leave}>
+          {s.theory.sections.map((sec) => (
+            <div key={sec.heading}>
+              <h3>{sec.heading}</h3>
+              <p>
+                <RichText text={sec.body} />
+              </p>
+            </div>
+          ))}
+          <h3>{s.presets.controlsHeading}</h3>
+          <p>{s.presets.note}</p>
+          <p>{s.presets.geNote}</p>
+          <p>
+            <RichText text={s.antisymmetric.basisNote} />
+          </p>
+          <p>
+            <RichText text={s.params.shellsNote} />
+          </p>
+          <details className="panel-details">
+            <summary>{s.values.bareIonTitle}</summary>
+            <BareIonCard rows={model.bareIonRows} />
+          </details>
+        </div>
       </Panel>
     </>
   )
@@ -303,14 +382,16 @@ function PseudopotentialValues({
   model,
   activePreset,
   antisymmetricOn,
-  showMass
+  showMass,
+  onHighlight
 }: {
   readonly model: PseudopotentialModel
   readonly activePreset: (typeof PRESETS)[number] | null
   readonly antisymmetricOn: boolean
   readonly showMass: boolean
+  readonly onHighlight: (q: QuantityId | null) => void
 }): JSX.Element {
-  const { summary, formFactors, stateBreakdown } = model
+  const { summary, formFactors, formFactorsEv, stateBreakdown } = model
   const topShells = [...stateBreakdown.shellWeights]
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 2)
@@ -325,8 +406,14 @@ function PseudopotentialValues({
       ? `${formatNumber(summary.cbmSegmentFraction, 2)} ΓX`
       : summary.cbmDescription
 
+  const over = (e: PointerEvent<HTMLElement>): void => {
+    const t = (e.target as Element).closest?.('[data-q]')
+    const q = t ? t.getAttribute('data-q') : null
+    onHighlight(isQuantityId(q) ? q : null)
+  }
+
   return (
-    <dl className="values pseudo-values">
+    <dl className="values pseudo-values" onPointerOver={over} onPointerLeave={() => onHighlight(null)}>
       <dt>{s.values.aLabel}</dt>
       <dd className="num">
         <Tex tex="\htmlData{q=a}{a}" /> = {formatNumber(model.a, 2)} Å
@@ -345,11 +432,12 @@ function PseudopotentialValues({
       <dt>{s.values.formFactorsLabel}</dt>
       <dd className="num">
         <span>
-          {formatNumber(formFactors.v3s, 3)} / {formatNumber(formFactors.v8s, 3)} / {formatNumber(formFactors.v11s, 3)} Ry
+          <Tex tex="\htmlData{q=VG}{V^s}" /> = {formatNumber(formFactors.v3s, 3)} / {formatNumber(formFactors.v8s, 3)} /{' '}
+          {formatNumber(formFactors.v11s, 3)} Ry
         </span>
         <span className="note sub">
-          ({formatNumber(formFactors.v3s * RYDBERG_EV, 2)} / {formatNumber(formFactors.v8s * RYDBERG_EV, 2)} /{' '}
-          {formatNumber(formFactors.v11s * RYDBERG_EV, 2)} eV)
+          ({formatNumber(formFactorsEv.v3s, 2)} / {formatNumber(formFactorsEv.v8s, 2)} /{' '}
+          {formatNumber(formFactorsEv.v11s, 2)} eV)
         </span>
       </dd>
 
@@ -357,15 +445,25 @@ function PseudopotentialValues({
         <>
           <dt>{s.values.antisymLabel}</dt>
           <dd className="num">
-            {formatNumber(formFactors.v3a, 3)} / {formatNumber(formFactors.v4a, 3)} / {formatNumber(formFactors.v11a, 3)} Ry
+            <Tex tex="\htmlData{q=V2G}{V^a}" /> = {formatNumber(formFactors.v3a, 3)} / {formatNumber(formFactors.v4a, 3)} /{' '}
+            {formatNumber(formFactors.v11a, 3)} Ry
           </dd>
         </>
       )}
 
       <dt>{s.values.gapLabel}</dt>
       <dd>
-        <span className="num">{formatNumber(summary.gap, 2)} eV</span> ·{' '}
-        <span className="sub">{summary.isDirect ? s.scene.directGap : s.scene.indirectGap}</span>
+        {model.isProvisional ? (
+          <>
+            <Tex tex="\htmlData{q=VG}{E_g}" /> <span className="num">≈ {formatNumber(summary.gap, 2)} eV</span>{' '}
+            <span className="sub">({s.scene.refining})</span>
+          </>
+        ) : (
+          <>
+            <Tex tex="\htmlData{q=VG}{E_g}" /> = <span className="num">{formatNumber(summary.gap, 2)} eV</span> ·{' '}
+            <span className="sub">{summary.isDirect ? s.scene.directGap : s.scene.indirectGap}</span>
+          </>
+        )}
         <span className="note sub">
           {activePreset && antisymmetricOn === (activePreset.antisymmetric !== null)
             ? s.values.gapIndicative(formatNumber(activePreset.measuredGapEv, 2), activePreset.measuredGapKind)
@@ -374,7 +472,9 @@ function PseudopotentialValues({
       </dd>
 
       <dt>{s.values.cbmPosLabel}</dt>
-      <dd className="num">{cbmText}</dd>
+      <dd className={model.isProvisional ? 'sub' : 'num'}>
+        {model.isProvisional ? s.scene.refining : cbmText}
+      </dd>
 
       <dt>{s.values.ecPointsLabel}</dt>
       <dd className="num">
@@ -402,18 +502,20 @@ function PseudopotentialValues({
         <>
           <dt>{s.values.massToolLabel}</dt>
           <dd>
-            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> ={' '}
+            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
             <span className="num">
-              {Number.isFinite(model.massProbe.effectiveMassRatio) ? formatNumber(model.massProbe.effectiveMassRatio, 3) : '∞'}
+              {formatEffectiveMassRatio(model.massProbe.effectiveMassRatio, { digits: 3, withEquals: true })}
             </span>
-            <span className="note sub">{s.values.massDirectionNote}</span>
+            <span className="note sub">{s.values.massDirection(model.segmentLabel)}</span>
             {model.gaasGammaCompare && (
               <span className="note sub num">
-                {s.values.massGaAsCompare(
-                  formatNumber(model.gaasGammaCompare.calculatedMassRatio, 3),
-                  formatNumber(model.gaasGammaCompare.measuredMassRatio, 3),
-                  formatNumber(model.gaasGammaCompare.kpEstimateRatio, 3)
-                )}
+                <RichText
+                  text={s.values.massGaAsCompare(
+                    formatNumber(model.gaasGammaCompare.calculatedMassRatio, 3),
+                    formatNumber(model.gaasGammaCompare.measuredMassRatio, 3),
+                    formatNumber(model.gaasGammaCompare.kpEstimateRatio, 3)
+                  )}
+                />
               </span>
             )}
           </dd>
@@ -426,17 +528,22 @@ function PseudopotentialValues({
 function BareIonCard({ rows }: { readonly rows: readonly BareIonRow[] }): JSX.Element {
   return (
     <div className="pseudo-verify-card">
-      <div className="pseudo-verify-title">{s.values.bareIonTitle}</div>
-      <div className="pseudo-verify-sub">{s.values.bareIonSub}</div>
+      <div className="pseudo-verify-sub">
+        <RichText text={s.values.bareIonSub} />
+      </div>
       <dl className="values">
         {rows.map((r) => (
           <div key={r.gSq} style={{ display: 'contents' }}>
-            <dt className="num">{s.values.bareIonRow(r.gSq)}</dt>
+            <dt className="num">
+              <RichText text={s.values.bareIonRow(r.gSq)} />
+            </dt>
             <dd className="num">
-              {s.values.bareIonValue(
-                formatNumber(r.bareEv, 2),
-                r.siPseudoEv !== null ? formatNumber(r.siPseudoEv, 2) : undefined
-              )}
+              <RichText
+                text={s.values.bareIonValue(
+                  formatNumber(r.bareEv, 2),
+                  r.siPseudoEv !== null ? formatNumber(r.siPseudoEv, 2) : undefined
+                )}
+              />
             </dd>
           </div>
         ))}

@@ -234,3 +234,47 @@ function fixPhases(vectors: EigenVectors): void {
     }
   }
 }
+
+/** Gap al primo ordine nella formula a due onde: ΔE = 2|V_G| (o 2|V_{2G}| in k = 0). */
+export function twoWaveGap(fourierAmplitude: number): number {
+  return 2 * Math.abs(fourierAmplitude)
+}
+
+/** Rapporto adimensionale |V_G| / E₀ che misura la forza del potenziale rispetto all'energia di bordo. */
+export function weakPotentialRatio(vG: number, e0: number): number {
+  return e0 > 0 ? Math.abs(vG) / e0 : Infinity
+}
+
+/** Massa efficace al bordo di zona (±π/a) nella formula a due onde: m₀/m*_± = 1 ± 2E₀/|V_G|. */
+export function twoWaveEdgeMassRatio(vG: number, e0: number, branch: -1 | 1): number {
+  const absV = Math.abs(vG)
+  if (absV === 0) return branch === 1 ? 0 : -0
+  const inv = 1 + branch * ((2 * e0) / absV)
+  return Math.abs(inv) < 1e-12 ? Infinity : 1 / inv
+}
+
+export interface PlaneWaveWeight {
+  /** Multiplo intero m di G = 2π/a nella componente e^{i(k+mG)x}. */
+  readonly gMultiple: number
+  /** Peso |c_{k+mG}|² normalizzato rispetto alla norma della soluzione. */
+  readonly weight: number
+}
+
+/** Componenti in onde piane dominanti dello stato scelto, ordinate per peso |c_G|² decrescente. */
+export function dominantPlaneWaves1D(
+  solution: CentralSolution1D,
+  band: number,
+  limit = 3
+): readonly PlaneWaveWeight[] {
+  const c = blochCoefficients(solution, band)
+  const items: PlaneWaveWeight[] = []
+  for (let i = 0; i < solution.g.length; i++) {
+    const im = c.im ? c.im[i] : 0
+    items.push({
+      gMultiple: solution.g[i],
+      weight: c.re[i] * c.re[i] + im * im
+    })
+  }
+  items.sort((a, b) => b.weight - a.weight || Math.abs(a.gMultiple) - Math.abs(b.gMultiple) || a.gMultiple - b.gMultiple)
+  return items.slice(0, Math.max(0, limit))
+}

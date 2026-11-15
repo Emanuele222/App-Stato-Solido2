@@ -8,6 +8,7 @@ import {
   deltaPotentialScaleV0,
   finiteWellLevels1D,
   kronigBarrierStrength,
+  kronigEffectiveP,
   kronigPenneyBandEdges,
   kronigPenneyBandFunction,
   kronigPenneyBands,
@@ -256,5 +257,46 @@ describe('Kronig–Penney a barriere rettangolari, limiti e funzione d’onda', 
 
     const midGap = 0.5 * (edges[0].upper + edges[1].lower)
     expect(kronigPenneyStateFromEnergy(spec, midGap, edges)).toBeNull()
+  })
+})
+
+describe('test aggiuntivi Kronig–Penney (incarico 09 punto 7)', () => {
+  it('kronigEffectiveP e kronigBarrierStrength per caso a delta e rettangolare', () => {
+    const deltaSpec: KronigPenneySpec = { variant: 'delta', a: 3.5, P: 2.5 }
+    expect(kronigEffectiveP(deltaSpec)).toBeCloseTo(2.5, 12)
+    expect(kronigBarrierStrength(deltaSpec)).toBeCloseTo(2 * 2.5 * HBAR2_OVER_2M0 / 3.5, 12)
+
+    const rectSpec: KronigPenneySpec = { variant: 'rectangular', b: 2.8, c: 0.7, v0: 8.0 }
+    const aRect = 2.8 + 0.7
+    expect(kronigEffectiveP(rectSpec)).toBeCloseTo((aRect * rectSpec.v0 * rectSpec.c) / (2 * HBAR2_OVER_2M0), 12)
+    expect(kronigBarrierStrength(rectSpec)).toBeCloseTo(rectSpec.v0 * rectSpec.c, 12)
+  })
+
+  it('continuità di kronigPenneyRectangularL in E = V₀ ± ε', () => {
+    const b = 2.5
+    const c = 0.8
+    const v0 = 10.0
+    const lAt = kronigPenneyRectangularL(v0, b, c, v0)
+    const lBelow = kronigPenneyRectangularL(v0 - 1e-6, b, c, v0)
+    const lAbove = kronigPenneyRectangularL(v0 + 1e-6, b, c, v0)
+    expect(lBelow).toBeCloseTo(lAt, 5)
+    expect(lAbove).toBeCloseTo(lAt, 5)
+  })
+
+  it('normalizzazione di kronigPenneyDensity1D su una cella con tolleranza 1e-4 (delta e rettangolare)', () => {
+    const nCell = 1000
+    const deltaSpec: KronigPenneySpec = { variant: 'delta', a: 3.0, P: 2.0 }
+    const aDelta = 3.0
+    const xsDelta = Float64Array.from({ length: nCell }, (_, i) => ((i + 0.5) * aDelta) / nCell)
+    const densDelta = kronigPenneyDensity1D(deltaSpec, Math.PI / (3 * aDelta), 0, xsDelta)
+    const meanDelta = densDelta.reduce((s, v) => s + v, 0) / nCell
+    expect(Math.abs(meanDelta - 1)).toBeLessThan(1e-4)
+
+    const rectSpec: KronigPenneySpec = { variant: 'rectangular', b: 2.4, c: 0.6, v0: 12.0 }
+    const aRect = 3.0
+    const xsRect = Float64Array.from({ length: nCell }, (_, i) => ((i + 0.5) * aRect) / nCell)
+    const densRect = kronigPenneyDensity1D(rectSpec, Math.PI / (2 * aRect), 1, xsRect)
+    const meanRect = densRect.reduce((s, v) => s + v, 0) / nCell
+    expect(Math.abs(meanRect - 1)).toBeLessThan(1e-4)
   })
 })

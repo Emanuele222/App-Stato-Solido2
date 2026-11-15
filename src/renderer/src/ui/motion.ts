@@ -65,7 +65,7 @@ export function useTweened<T extends NumberRecord>(target: T, transition: Transi
     }
     const t0 = performance.now()
     const step = (now: number): void => {
-      const u = Math.min(1, (now - t0) / transition.duration)
+      const u = Math.max(0, Math.min(1, (now - t0) / transition.duration))
       const e = transition.easing(u)
       const next = {} as Record<string, number>
       for (const key of Object.keys(target)) next[key] = from[key] + (target[key] - from[key]) * e

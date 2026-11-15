@@ -75,10 +75,10 @@ export const useNearlyFreeStore = create<NearlyFreeState>()((set, get) => ({
     if (!preset) return
     const seq = (get().pulse?.seq ?? 0) + 1
     set({
-      params: { ...get().params, a: preset.a, vG: -preset.gap / 2 },
+      params: { ...get().params, a: preset.a, vG: -preset.gap / 2, v2G: 0 },
       transition: 'glide',
       presetId: id,
-      pulse: { quantities: ['a', 'VG'], seq }
+      pulse: { quantities: ['a', 'VG', 'V2G'], seq }
     })
   },
 

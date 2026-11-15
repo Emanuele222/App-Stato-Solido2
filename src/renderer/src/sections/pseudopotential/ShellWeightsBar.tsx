@@ -1,16 +1,18 @@
 /**
  * Istogramma compatto dei pesi in onde piane ∑_{|G|²=s} |c_G|² raggruppati per guscio di |G|²
- * nello stato (k, banda) scelto. Racchiuso in `.pseudo-shells-box` con `position: relative`
- * perché `.view-body canvas` in ui.css è `position: absolute; inset: 0`.
+ * nello stato (k, banda) scelto. Racchiuso in `.pseudo-shells-box` (position: relative), che
+ * dà al canvas la sua area (vedi pseudopotential.css).
+ * In alto una riga per il titolo e una fascia riservata alle percentuali: la barra più alta
+ * non tocca mai il testo.
  */
 import type { JSX } from 'react'
 import { formatNumber } from '../../ui/format'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import { drawMathText, drawRichText, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
 import type { ShellWeight } from '../../physics'
 import { strings as s } from './strings'
 
-const MARGIN = { left: 48, right: 16, top: 26, bottom: 18 }
+const MARGIN = { left: 48, right: 16, top: 27, bottom: 17 }
 const DIM = 0.25
 
 export function ShellWeightsBar({
@@ -24,16 +26,16 @@ export function ShellWeightsBar({
     const L = MARGIN.left
     const T = MARGIN.top
     const W = Math.max(40, w - MARGIN.left - MARGIN.right)
-    const H = Math.max(18, h - MARGIN.top - MARGIN.bottom)
+    const H = Math.max(14, h - MARGIN.top - MARGIN.bottom)
 
     const emPsi = highlight === null || highlight === 'psi' ? 1 : DIM
     const psiCol = quantityColor('psi')
 
-    ctx.font = sansFont(11, 500)
-    ctx.textAlign = 'left'
-    ctx.textBaseline = 'top'
-    ctx.fillStyle = TOKENS.muted
-    ctx.fillText(s.scene.shellsTitle, L, 2)
+    drawRichText(ctx, s.scene.shellsTitle, L, 10, {
+      size: 11,
+      color: TOKENS.muted,
+      weight: 500
+    })
 
     ctx.strokeStyle = TOKENS.line
     ctx.lineWidth = 1
@@ -51,7 +53,7 @@ export function ShellWeightsBar({
 
     shellWeights.forEach((sw, i) => {
       const cx = L + (i + 0.5) * slotW
-      const bh = Math.max(1.5, (sw.weight / maxWeight) * (H - 6))
+      const bh = Math.max(1.5, (sw.weight / maxWeight) * H)
       const bx = cx - barW / 2
       const by = T + H - bh
 
@@ -70,21 +72,22 @@ export function ShellWeightsBar({
         ctx.textAlign = 'center'
         ctx.textBaseline = 'bottom'
         ctx.fillStyle = withAlpha(TOKENS.textSoft, emPsi)
-        ctx.fillText(`${formatNumber(pct, pct >= 10 ? 0 : 1)}%`, cx, Math.max(T + 10, by - 1))
+        ctx.fillText(`${formatNumber(pct, pct >= 10 ? 0 : 1)}%`, cx, by - 2)
       }
 
       ctx.font = sansFont(10.5)
       ctx.textAlign = 'center'
       ctx.textBaseline = 'top'
       ctx.fillStyle = TOKENS.muted
-      ctx.fillText(String(sw.gSq), cx, T + H + 3)
+      ctx.fillText(String(sw.gSq), cx, T + H + 2)
     })
 
-    ctx.font = sansFont(10.5)
-    ctx.textAlign = 'right'
-    ctx.textBaseline = 'top'
-    ctx.fillStyle = TOKENS.dim
-    ctx.fillText('|G|²', L - 8, T + H + 3)
+    drawMathText(ctx, '|G|^{2}', L - 8, T + H + 11, {
+      color: TOKENS.dim,
+      size: 10.5,
+      align: 'right',
+      italic: false
+    })
 
     return false
   })

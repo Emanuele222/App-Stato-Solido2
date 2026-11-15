@@ -6,6 +6,7 @@
  */
 import { memo, useRef, type JSX } from 'react'
 import { Smoothed, useReducedMotion } from '../../ui/motion'
+import { EXTREMUM_PILLS } from '../../ui/theme'
 import { sansFont, useCanvasDraw } from '../../viz/canvas'
 import type { ExtBadge } from './model'
 
@@ -77,6 +78,10 @@ export const BandExtremumOverlay = memo(function BandExtremumOverlay({
     const kb = zoneEdge
 
     const occupied: Rect[] = []
+
+    // 0. Riserva i bordi di zona verticali ±π/a così le pillole non toccano i tratteggi
+    occupied.push({ x0: X(-kb) - 4, y0: T, x1: X(-kb) + 4, y1: T + H })
+    occupied.push({ x0: X(kb) - 4, y0: T, x1: X(kb) + 4, y1: T + H })
 
     // 1. Legenda confronto in alto a destra
     if (compareVisible) {
@@ -159,10 +164,10 @@ export const BandExtremumOverlay = memo(function BandExtremumOverlay({
       const candidates: readonly { readonly x: number; readonly y: number }[] =
         b.k < 0
           ? [
-              { x: px + 6, y: py + dir * 15 },
-              { x: px + 14, y: py + dir * 24 },
-              { x: px - pillW - 6, y: py + dir * 15 },
-              { x: px + 6, y: py + dir * 26 }
+              { x: px + 10, y: py + dir * 15 },
+              { x: px + 18, y: py + dir * 24 },
+              { x: px + 10, y: py + dir * 26 },
+              { x: px - pillW - 10, y: py + dir * 15 }
             ]
           : [
               { x: px - pillW / 2, y: py + dir * 15 },
@@ -186,15 +191,16 @@ export const BandExtremumOverlay = memo(function BandExtremumOverlay({
       if (!chosen) continue
       occupied.push(chosen)
 
-      ctx.fillStyle = b.kind === 'bonding' ? 'rgba(28, 52, 46, 0.9)' : 'rgba(54, 34, 42, 0.9)'
-      ctx.strokeStyle = b.kind === 'bonding' ? 'rgba(92, 208, 179, 0.55)' : 'rgba(247, 154, 142, 0.55)'
+      const pill = b.kind === 'bonding' ? EXTREMUM_PILLS.bonding : EXTREMUM_PILLS.antibonding
+      ctx.fillStyle = pill.fill
+      ctx.strokeStyle = pill.stroke
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.roundRect(chosen.x0, chosen.y0, pillW, pillH, 4)
       ctx.fill()
       ctx.stroke()
 
-      ctx.fillStyle = b.kind === 'bonding' ? '#96e8d4' : '#f7b6ad'
+      ctx.fillStyle = pill.text
       ctx.textAlign = 'center'
       ctx.fillText(b.label, chosen.x0 + pillW / 2, chosen.y0 + pillH / 2 + 0.5)
     }

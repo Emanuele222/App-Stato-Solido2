@@ -51,8 +51,8 @@ export const strings = {
     potentialDelta: 'V(x)',
     potentialRect: 'V(x)',
     bandsTag: 'Condizione di banda e diagramma E(k)',
-    bandsHint: 'clicca o trascina su una banda (o sulla curva L) per scegliere lo stato · frecce da tastiera',
-    bandsAria: 'Condizione cos ka = L(E) affiancata al diagramma E(k) con lo stesso asse dell’energia',
+    bandsHint: 'clicca o trascina su una banda (o sulla curva L / f) per scegliere lo stato · frecce da tastiera',
+    bandsAria: 'Condizione cos ka = L(E) (f(αa) nel caso a delta) affiancata al diagramma E(k) con lo stesso asse dell’energia',
     energyAxis: 'E (eV)',
     kAxis: 'k (Å⁻¹)',
     lAxisDelta: 'f(αa)',
@@ -70,13 +70,14 @@ export const strings = {
 
   formula: {
     title: 'Formula viva',
-    ariaDelta: 'cos ka uguale cos alfa a più P sin alfa a su alfa a',
+    ariaDelta: 'cos ka uguale f di alfa a uguale cos alfa a più P sin alfa a su alfa a',
     ariaRect: 'L uguale cos alfa b cosh beta c più rapporto su sin alfa b sinh beta c uguale cos ka'
   },
 
   values: {
     period: 'periodo',
     opacity: 'opacità delta',
+    deltaAreaNote: 'area della barriera δ (aV₀); V₀ è il potenziale medio equivalente su una cella',
     strength: 'barriera',
     bandRow: (n: number) => `banda ${n}`,
     gapRow: 'primo gap',
@@ -100,20 +101,20 @@ export const strings = {
         heading: 'Un potenziale periodico risolto esattamente',
         paragraphs: [
           'Il modello di Kronig–Penney risolve esattamente l’equazione di Schrödinger per un reticolo periodico di buche larghe $\\htmlData{q=a}{b}$ ($V=0$, centrate sugli ioni) separate da barriere larghe $\\htmlData{q=a}{c}$ e alte $\\htmlData{q=VG}{V_0}$, di periodo $\\htmlData{q=a}{a}=\\htmlData{q=a}{b}+\\htmlData{q=a}{c}$.',
-          'Imponendo la condizione di Bloch $\\psi(x+a)=e^{i\\htmlData{q=k}{k}\\htmlData{q=a}{a}}\\psi(x)$ e la continuità di $\\psi$ e $\\psi’$ ai bordi si ottiene l’equazione trascendente $\\cos(\\htmlData{q=k}{k}\\htmlData{q=a}{a})=\\htmlData{q=E}{L(E)}$.'
+          'Imponendo la condizione di Bloch $\\psi(x+a)=e^{i\\htmlData{q=k}{k}\\htmlData{q=a}{a}}\\psi(x)$ e la continuità di $\\psi$ e $\\psi’$ ai bordi si ottiene l’equazione trascendente $\\cos(\\htmlData{q=k}{k}\\htmlData{q=a}{a})=\\htmlData{q=kp}{L(E)}$ (nel caso a delta si indica con $\\htmlData{q=kp}{f(\\alpha a)}=\\htmlData{q=kp}{L(E)}$).'
         ]
       },
       {
         heading: 'Perché si formano bande e gap',
         paragraphs: [
-          'Per un vettore di Bloch reale $-1\\le\\cos(\\htmlData{q=k}{k}\\htmlData{q=a}{a})\\le 1$: gli intervalli di $\\htmlData{q=E}{E}$ in cui $|\\htmlData{q=E}{L(E)}|\\le 1$ sono le bande permesse; dove $|\\htmlData{q=E}{L(E)}|>1$ non esiste $k$ reale e si apre un gap (soluzioni evanescenti).'
+          'Per un vettore di Bloch reale $-1\\le\\cos(\\htmlData{q=k}{k}\\htmlData{q=a}{a})\\le 1$: gli intervalli di $\\htmlData{q=E}{E}$ in cui $|\\htmlData{q=kp}{L(E)}|\\le 1$ sono le bande permesse; dove $|\\htmlData{q=kp}{L(E)}|>1$ non esiste $k$ reale e si apre un gap (soluzioni evanescenti).'
         ]
       },
       {
         heading: 'Livelli genitori, tunnel e bande a coseno',
         paragraphs: [
-          'In ogni banda delle barriere rettangolari cade un livello discreto della buca finita isolata (livello «genitore»). All’aumentare dello spessore $\\htmlData{q=a}{c}$ o dell’altezza $\\htmlData{q=VG}{V_0}$, le code $e^{-\\beta c}$ si riducono e la larghezza $W$ decresce come $e^{-\\beta c}$.',
-          'Linearizzando $\\htmlData{q=E}{L(E)}$ in una banda si ottiene $\\htmlData{q=E}{E}(k)\\approx\\bar E\\mp 2t\\cos \\htmlData{q=k}{k}\\htmlData{q=a}{a}$ con $W=4t$, che coincide con i Legami forti. Nota: qui $\\htmlData{q=VG}{P}=m_0 a^2 V_0/\\hbar^2$ è l’opacità della delta (non il parametro di Kane $k\\cdot p$).'
+          'In ogni banda delle barriere rettangolari cade un livello discreto della buca finita isolata (livello «genitore»). All’aumentare dello spessore $\\htmlData{q=a}{c}$ o dell’altezza $\\htmlData{q=VG}{V_0}$, le code $e^{-\\htmlData{q=kp}{\\beta}\\htmlData{q=a}{c}}$ si riducono e la larghezza $\\htmlData{q=t}{W}$ decresce come $e^{-\\htmlData{q=kp}{\\beta}\\htmlData{q=a}{c}}$.',
+          'Linearizzando $\\htmlData{q=kp}{L(E)}$ in una banda si ottiene $\\htmlData{q=E}{E}(k)\\approx\\bar E\\mp 2\\htmlData{q=t}{t}\\cos \\htmlData{q=k}{k}\\htmlData{q=a}{a}$ (− per le bande dispari, + per le pari) con $\\htmlData{q=t}{W}=4\\htmlData{q=t}{t}$, che coincide con i Legami forti. Nota: $a\\htmlData{q=VG}{V_0}$ è l’area della barriera delta ($\\htmlData{q=VG}{V_0}$ è il potenziale medio su una cella), e nel caso rettangolare $P_{\\mathrm{eff}}=m_0 a V_0 c/\\hbar^2$ svolge il ruolo dell’opacità $\\htmlData{q=VG}{P}$ (non è il parametro $P$ di $k\\cdot p$).'
         ]
       },
       {

@@ -5,7 +5,7 @@
 import { useRef, type JSX, type PointerEvent } from 'react'
 import { useReducedMotion, Smoothed } from '../../ui/motion'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, sansFont, useCanvasDraw } from '../../viz/canvas'
+import { drawMathText, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
 import type { KpModel } from './model'
 import type { KpBandRole } from './store'
 import { strings as s } from './strings'
@@ -16,6 +16,15 @@ interface HitBox {
   readonly y0: number
   readonly x1: number
   readonly y1: number
+}
+
+/** Accorcia un testo con i puntini finché sta nella larghezza data (il carattere va già impostato sul contesto). */
+function ellipsize(ctx: CanvasRenderingContext2D, text: string, maxW: number): string {
+  if (maxW <= 12) return ''
+  if (ctx.measureText(text).width <= maxW) return text
+  let out = text
+  while (out.length > 1 && ctx.measureText(out + '…').width > maxW) out = out.slice(0, -1)
+  return out.length > 1 ? out.trimEnd() + '…' : ''
 }
 
 export function GammaLevelsCanvas({
@@ -90,14 +99,16 @@ export function GammaLevelsCanvas({
 
     const yC = Y(eg)
     const yVbm = Y(0)
+    // E_g piccolo (es. InSb, 0,18 eV): c e hh/lh sono a pochi pixel; i testi si spostano, le linee restano in scala
+    const closeLevels = yVbm - yC < 42
     const yBary = Y(-delta / 3)
     const ySo = Y(-delta)
 
     // Raccordo sottile del baricentro p senza spin–orbita
     if (delta > 0.015) {
       ctx.save()
-      ctx.globalAlpha = 0.3 * em('psi')
-      ctx.strokeStyle = quantityColor('psi')
+      ctx.globalAlpha = 0.3 * em('Delta')
+      ctx.strokeStyle = quantityColor('Delta')
       ctx.lineWidth = 1
       ctx.setLineDash([3, 3])
       ctx.beginPath()
@@ -120,14 +131,14 @@ export function GammaLevelsCanvas({
     ctx.stroke()
 
     // p → J=3/2 (hh, lh) e J=1/2 (so)
-    ctx.globalAlpha = 0.6 * em('psi')
-    ctx.strokeStyle = quantityColor('psi')
+    ctx.globalAlpha = 0.6 * em('Delta')
+    ctx.strokeStyle = quantityColor('Delta')
     ctx.beginPath()
     ctx.moveTo(leftX1 + 2, yBary)
     ctx.lineTo(hhX0 - 4, yVbm)
     ctx.stroke()
     if (1 - mix > 0.02) {
-      ctx.globalAlpha = (1 - mix) * 0.6 * em('psi')
+      ctx.globalAlpha = (1 - mix) * 0.6 * em('Delta')
       ctx.beginPath()
       ctx.moveTo(leftX1 + 2, yBary)
       ctx.lineTo(hhX0 - 4, ySo)
@@ -135,11 +146,11 @@ export function GammaLevelsCanvas({
     }
     ctx.restore()
 
-    // Frecce di accoppiamento k·p̂ evidenziate su hover di E_P ('v') o di default tenui
-    const kpHighlight = highlight === 'v'
+    // Frecce di accoppiamento k·p̂ evidenziate su hover di E_P ('EP') o di default tenui
+    const kpHighlight = highlight === 'EP'
     ctx.save()
-    ctx.globalAlpha = kpHighlight ? 0.95 : 0.28 * em('v')
-    ctx.strokeStyle = quantityColor('v')
+    ctx.globalAlpha = kpHighlight ? 0.95 : 0.28 * em('EP')
+    ctx.strokeStyle = quantityColor('EP')
     ctx.lineWidth = kpHighlight ? 1.8 : 1.1
     ctx.setLineDash([4, 3])
     const midLhX = 0.5 * (lhX0 + lhX1)
@@ -157,15 +168,19 @@ export function GammaLevelsCanvas({
     ctx.setLineDash([])
     if (kpHighlight) {
       drawMathText(ctx, 'k·p', midLhX + 8, 0.5 * (yC + yVbm) + 4, {
-        color: quantityColor('v'),
+        color: quantityColor('EP'),
         size: 12,
         backdrop: TOKENS.bg
       })
     }
     ctx.restore()
 
-    // Helper per barra di livello energetico + etichetta
+    // Helper per barra di livello energetico + etichetta.
+    // layout 'normal': nome sopra la barra, nota sotto; 'meta-below': nota sotto come testo in alto (hh, lh);
+    // con i livelli vicini (E_g piccolo, es. InSb) le linee restano in scala e si spostano solo i testi:
+    // 'above' = nome e nota su una riga sopra la barra, 'below' = nome e nota sotto la barra, con un trattino di richiamo.
     const boxes: HitBox[] = []
+    type LevelLayout = 'normal' | 'meta-below' | 'above' | 'below'
     const drawLevelBar = (
       x0: number,
       x1: number,
@@ -176,14 +191,16 @@ export function GammaLevelsCanvas({
       isSelected: boolean,
       role?: KpBandRole,
       alphaMul: number = 1,
-      metaBelow: boolean = false
+      layout: LevelLayout = 'normal'
     ): void => {
       ctx.save()
       ctx.globalAlpha = alphaMul
       if (isSelected) {
         ctx.fillStyle = color
         ctx.globalAlpha = alphaMul * 0.14
-        ctx.fillRect(x0 - 4, y - 16, x1 - x0 + 8, 32)
+        if (layout === 'above') ctx.fillRect(x0 - 4, y - 16, x1 - x0 + 8, 20)
+        else if (layout === 'below') ctx.fillRect(x0 - 4, y - 4, x1 - x0 + 8, 32)
+        else ctx.fillRect(x0 - 4, y - 16, x1 - x0 + 8, 32)
         ctx.globalAlpha = alphaMul
       }
       ctx.strokeStyle = isSelected ? TOKENS.text : color
@@ -201,21 +218,50 @@ export function GammaLevelsCanvas({
       }
 
       const textX = isSelected ? x0 + 13 : x0 + 2
-      drawMathText(ctx, mainLabel, textX, y - 6, {
-        color: isSelected ? TOKENS.text : color,
-        size: compact ? 11.5 : 12.5,
-        backdrop: TOKENS.bg
-      })
-
-      ctx.font = sansFont(compact ? 9.5 : 10.5)
+      const mainSize = compact ? 11.5 : 12.5
+      const mainColor = isSelected ? TOKENS.text : color
+      const metaSize = compact ? 9.5 : 10.5
+      ctx.font = sansFont(metaSize)
       ctx.fillStyle = isSelected ? TOKENS.textSoft : TOKENS.muted
       ctx.textAlign = 'left'
-      ctx.textBaseline = metaBelow ? 'top' : 'alphabetic'
-      ctx.fillText(metaLabel, x0 + 2, metaBelow ? y + 4 : y + 13)
+
+      if (layout === 'above') {
+        // una riga sola sopra la barra: nome, poi la nota in carattere più piccolo
+        const wMain = drawMathText(ctx, mainLabel, textX, y - 6, { color: mainColor, size: mainSize, backdrop: TOKENS.bg })
+        ctx.textBaseline = 'alphabetic'
+        ctx.font = sansFont(metaSize)
+        const room = x1 - (textX + wMain + 10)
+        const metaText = ellipsize(ctx, metaLabel, room)
+        if (metaText) {
+          ctx.fillStyle = isSelected ? TOKENS.textSoft : TOKENS.muted
+          ctx.fillText(metaText, textX + wMain + 8, y - 6)
+        }
+      } else if (layout === 'below') {
+        // trattino di richiamo dalla barra al testo spostato sotto
+        ctx.strokeStyle = withAlpha(color, 0.7)
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(x0 + 1.5, y + 2)
+        ctx.lineTo(x0 + 1.5, y + 9)
+        ctx.stroke()
+        drawMathText(ctx, mainLabel, textX, y + 17, { color: mainColor, size: mainSize, backdrop: TOKENS.bg })
+        ctx.font = sansFont(metaSize)
+        ctx.fillStyle = isSelected ? TOKENS.textSoft : TOKENS.muted
+        ctx.textBaseline = 'alphabetic'
+        ctx.fillText(metaLabel, x0 + 2, y + 29)
+      } else {
+        drawMathText(ctx, mainLabel, textX, y - 6, { color: mainColor, size: mainSize, backdrop: TOKENS.bg })
+        ctx.font = sansFont(metaSize)
+        ctx.fillStyle = isSelected ? TOKENS.textSoft : TOKENS.muted
+        ctx.textBaseline = layout === 'meta-below' ? 'top' : 'alphabetic'
+        ctx.fillText(metaLabel, x0 + 2, layout === 'meta-below' ? y + 4 : y + 13)
+      }
       ctx.restore()
 
       if (role) {
-        boxes.push({ role, x0: x0 - 4, y0: y - 18, x1: x1 + 4, y1: y + 18 })
+        const y0 = layout === 'above' ? y - 18 : layout === 'below' ? y - 4 : y - 18
+        const y1 = layout === 'above' ? y + 4 : layout === 'below' ? y + 32 : y + 18
+        boxes.push({ role, x0: x0 - 4, y0, x1: x1 + 4, y1 })
       }
     }
 
@@ -249,11 +295,12 @@ export function GammaLevelsCanvas({
       cRightX1,
       yC,
       mix > 0.5 ? 'c  (|S⟩)' : 'c  (s, J = ½)',
-      mix > 0.5 ? 'm_J = ±½ · 2 stati · accoppiato a |Z⟩' : 'm_J = ±½ · 2 stati · non separata',
-      selectedRole === 'c' ? quantityColor('E') : quantityColor('E'),
+      mix > 0.5 ? '2 stati · accoppiato a |Z⟩' : 'm_J = ±½ · 2 stati · non separata',
+      quantityColor('E'),
       selectedRole === 'c',
       'c',
-      em(highlight === 'v' ? 'v' : 'E')
+      em(highlight === 'EP' ? 'EP' : 'E'),
+      closeLevels ? 'above' : 'normal'
     )
 
     // Colonna destra: J = 3/2 (hh e lh affiancate allo stesso E = 0)
@@ -274,8 +321,8 @@ export function GammaLevelsCanvas({
       quantityColor('E'),
       selectedRole === 'hh',
       'hh',
-      em('E') * (highlight === 'v' ? 0.35 : 1),
-      true
+      em('E') * (highlight === 'EP' ? 0.35 : 1),
+      closeLevels ? 'below' : 'meta-below'
     )
 
     drawLevelBar(
@@ -287,8 +334,8 @@ export function GammaLevelsCanvas({
       quantityColor('E'),
       selectedRole === 'lh',
       'lh',
-      em(highlight === 'v' ? 'v' : 'E'),
-      true
+      em(highlight === 'EP' ? 'EP' : 'E'),
+      closeLevels ? 'below' : 'meta-below'
     )
 
     // Colonna destra: J = 1/2 split-off (in E = -Δ)
@@ -301,11 +348,11 @@ export function GammaLevelsCanvas({
         ySo,
         'so  (p, J = ½)',
         soClose || compact ? 'm_J = ±½ (2 st.)' : 'm_J = ±½ · 2 stati (split-off)',
-        quantityColor('psi'),
+        quantityColor('Delta'),
         selectedRole === 'so',
         'so',
-        (1 - mix) * em(highlight === 'v' ? 'v' : 'psi'),
-        false
+        (1 - mix) * em(highlight === 'EP' ? 'EP' : 'Delta'),
+        'normal'
       )
     }
 
@@ -334,9 +381,9 @@ export function GammaLevelsCanvas({
     if (delta > 0.02 && 1 - mix > 0.05) {
       const xDel = rightX0 + rightW + 10
       ctx.save()
-      ctx.globalAlpha = (1 - mix) * em('psi')
-      ctx.strokeStyle = quantityColor('psi')
-      ctx.lineWidth = highlight === 'psi' ? 2.4 : 1.5
+      ctx.globalAlpha = (1 - mix) * em('Delta')
+      ctx.strokeStyle = quantityColor('Delta')
+      ctx.lineWidth = highlight === 'Delta' ? 2.4 : 1.5
       ctx.beginPath()
       ctx.moveTo(xDel, yVbm)
       ctx.lineTo(xDel, ySo)
@@ -346,7 +393,7 @@ export function GammaLevelsCanvas({
       ctx.lineTo(xDel + 4, ySo)
       ctx.stroke()
       drawMathText(ctx, 'Δ', xDel + 6, 0.5 * (yVbm + ySo) + 4, {
-        color: quantityColor('psi'),
+        color: quantityColor('Delta'),
         size: 13,
         backdrop: TOKENS.bg
       })

@@ -12,6 +12,7 @@ import {
   type AntisymmetricFactors,
   type EpmParamId,
   type EpmParamValues,
+  type EpmPresetId,
   type FormFactorId
 } from './manifest'
 
@@ -22,7 +23,7 @@ export interface PseudopotentialTools {
 }
 
 export interface PseudopotentialState {
-  readonly presetId: 'si' | 'gaas' | null
+  readonly presetId: EpmPresetId | null
   readonly params: EpmParamValues
   /** Fattori antisimmetrici correnti (presenti su GaAs; restano memorizzati se si spegne il toggle). */
   readonly antisymmetric: AntisymmetricFactors | null
@@ -66,7 +67,7 @@ export const usePseudopotentialStore = create<PseudopotentialState>((set, get) =
   transition: 'follow',
   pointIndex: NUMERICS.defaultPointIndex,
   bandIndex: NUMERICS.defaultBandIndex,
-  tools: { fill: false, mass: true, compare: false },
+  tools: { fill: false, mass: false, compare: false },
   highlight: null,
   activeFactor: null,
   pulse: null,

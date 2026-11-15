@@ -4,10 +4,9 @@
  * L'interfaccia pubblica (`eigh`) accetta già sia matrici reali simmetriche sia
  * hermitiane complesse, e restituisce autovettori con parte reale e immaginaria:
  * chi la usa (equazione centrale, densità) lavora sempre con coefficienti
- * complessi, con `im === null` nel caso reale. Oggi è implementato solo il caso
- * reale simmetrico (Householder + QL implicito, come JAMA/EISPACK tred2+tql2);
- * il caso hermitiano complesso (servirà per il GaAs con fattori antisimmetrici)
- * si aggiunge dentro `eigh` senza toccare i chiamanti.
+ * complessi, con `im === null` nel caso reale. Sono implementati sia il caso
+ * reale simmetrico (Householder + QL implicito, come JAMA/EISPACK tred2+tql2)
+ * sia il caso hermitiano complesso (`eighComplexHermitian`, Householder unitario + QL implicito).
  */
 
 /** Matrice reale simmetrica n×n, memorizzata per righe (data[i·n + j]). */

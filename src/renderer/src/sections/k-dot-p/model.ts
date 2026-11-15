@@ -6,7 +6,10 @@ import { useMemo } from 'react'
 import {
   bandCurvature,
   bandSlope,
+  curvatureFromInverseMassRatio,
   effectiveMassRatio,
+  intrinsicFermiLevel,
+  isEffectiveMassDivergent,
   kDotPPath1D,
   kaneBands,
   kaneConductionFreeParabola,
@@ -28,7 +31,7 @@ import {
   type NearlyFreeKpSummary,
   type SpinOrbitGammaSummary
 } from '../../physics'
-import { NUMERICS, PARAMS, PRESETS, type KpMeasuredMasses, type KpParamValues } from './manifest'
+import { NUMERICS, PRESETS, type KpMeasuredMasses, type KpParamValues } from './manifest'
 import type { KpBandRole, KpTools } from './store'
 
 export interface KpCurveEntry {
@@ -66,6 +69,7 @@ export interface KpModel {
   readonly curves: readonly KpCurveEntry[]
   readonly compareBands: BandStructure | null
   readonly kaneMasses: KaneMasses
+  readonly twoBandGammaMasses: { readonly mc: number; readonly mlh: number }
   readonly gammaLevels: SpinOrbitGammaSummary
   readonly breakdown: MassBreakdown
   readonly selection: KpSelectionInfo
@@ -76,7 +80,7 @@ export interface KpModel {
 }
 
 export function useKpModel(
-  rawParams: KpParamValues,
+  params: KpParamValues,
   variant: KpVariant,
   variantMix: number,
   k: number,
@@ -84,19 +88,6 @@ export function useKpModel(
   tools: KpTools,
   presetId: string | null
 ): KpModel {
-  // Clamp ai limiti del registro: previene micro-overshoot negativi durante i tween da Δ = 0 o E_P = 0
-  const params = useMemo<KpParamValues>(() => {
-    const bound = (id: keyof KpParamValues, v: number): number => {
-      const spec = PARAMS.find((p) => p.id === id)
-      return spec ? Math.max(spec.min, Math.min(spec.max, v)) : v
-    }
-    return {
-      eg: bound('eg', rawParams.eg),
-      delta: bound('delta', rawParams.delta),
-      ep: bound('ep', rawParams.ep)
-    }
-  }, [rawParams.eg, rawParams.delta, rawParams.ep])
-
   const mix = Math.min(1, Math.max(0, variantMix))
   const effectiveVariant: KpVariant = mix < 0.5 ? 'kane' : 'two-band'
   const activeRole: KpBandRole = effectiveVariant === 'two-band' && role === 'so' ? 'lh' : role
@@ -161,6 +152,13 @@ export function useKpModel(
   }, [effectiveVariant, kaneBS, twoBandBS, kValues.length, params.eg, params.delta])
 
   const kaneMasses = useMemo(() => kaneEffectiveMasses(kaneParams), [kaneParams])
+  const twoBandGammaMasses = useMemo(
+    () => ({
+      mc: twoBandMassBreakdown(twoBandParams, 'c', 0).effectiveMassRatio,
+      mlh: twoBandMassBreakdown(twoBandParams, 'lh', 0).effectiveMassRatio
+    }),
+    [twoBandParams]
+  )
 
   // Livelli in Γ con separazione spin–orbita modulata continuamente in Δ·(1 − mix)
   const gammaLevels = useMemo(
@@ -187,8 +185,17 @@ export function useKpModel(
     }
     const energy = evalBand(k)
     const slope = bandSlope(evalBand, k)
-    const curvature = bandCurvature(evalBand, k)
-    const numericalMassRatio = effectiveMassRatio(evalBand, k)
+    const rawNumMass = effectiveMassRatio(evalBand, k)
+    const rawNumCurv = bandCurvature(evalBand, k)
+    const useExactTwoBand = mix >= 1 - 1e-4
+    const numericalMassRatio = useExactTwoBand ? breakdown.effectiveMassRatio : rawNumMass
+    const curvature = useExactTwoBand
+      ? isEffectiveMassDivergent(breakdown.effectiveMassRatio)
+        ? 0
+        : curvatureFromInverseMassRatio(breakdown.totalInvMass)
+      : isEffectiveMassDivergent(rawNumMass)
+        ? 0
+        : rawNumCurv
     const twoSt = twoBandStateAt(twoBandParams, k)
     return {
       k,
@@ -201,7 +208,7 @@ export function useKpModel(
       pkOverHalfEg: twoSt.pkOverHalfEg,
       withinValidity: twoSt.withinValidity
     }
-  }, [activeRole, mix, kaneParams, twoBandParams, k, breakdown.effectiveMassRatio])
+  }, [activeRole, mix, kaneParams, twoBandParams, k, breakdown])
 
   const validityLimitK = useMemo(
     () => (effectiveVariant === 'two-band' ? twoBandValidityLimitK(params.eg, params.ep) : null),
@@ -232,10 +239,11 @@ export function useKpModel(
     curves,
     compareBands,
     kaneMasses,
+    twoBandGammaMasses,
     gammaLevels,
     breakdown,
     selection,
-    fermiLevel: tools.fill ? 0.5 * params.eg : null,
+    fermiLevel: tools.fill ? intrinsicFermiLevel(params.eg) : null,
     validityLimitK,
     presetMeasured,
     nearlyFreeCheck

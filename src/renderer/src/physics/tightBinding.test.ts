@@ -108,7 +108,7 @@ describe('legami forti — catena monoatomica s e p', () => {
       tSAtA0: 0.9,
       absTPAtA0: 1.0,
       a0: 3.0,
-      lambda: 0.8
+      ell: 0.8
     })
     expect(curve[2].sMax - curve[2].sMin).toBeLessThan(curve[1].sMax - curve[1].sMin)
     expect(curve[0].sMax - curve[0].sMin).toBeGreaterThan(curve[1].sMax - curve[1].sMin)

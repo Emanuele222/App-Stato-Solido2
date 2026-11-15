@@ -62,6 +62,63 @@
   }
 }
 
+/* legenda in HTML sotto il titolo di una vista (fuori dall'area del grafico) */
+.chart-legend {
+  list-style: none;
+  margin: 0;
+  padding: 3px 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px 12px;
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--text-soft);
+}
+
+.chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.chart-legend-key {
+  flex: none;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--lg);
+}
+
+.chart-legend-key.is-dashed {
+  border-top-style: dashed;
+}
+
+.chart-legend-key.is-dotted {
+  border-top-style: dotted;
+}
+
+.chart-legend-key.is-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--lg);
+}
+
+.chart-legend-key.is-diamond {
+  width: 7px;
+  height: 7px;
+  margin: 0 5px;
+  border: 1.5px solid var(--lg);
+  background: var(--bg);
+  transform: rotate(45deg);
+}
+
+.chart-legend .katex {
+  font-size: 1em;
+}
+
 .band-canvas {
   cursor: crosshair;
   touch-action: none;

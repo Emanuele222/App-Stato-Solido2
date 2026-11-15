@@ -41,29 +41,127 @@
   box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 
-/* Tre viste sovrapposte nella scena (Livelli in Γ, Contributi a m₀/m*, Diagramma E(k)) */
+/*
+ * Tre viste sovrapposte nella scena (Livelli in Γ, Contributi a m₀/m*, Diagramma E(k)).
+ * Titolo di una riga (26 px) più grafico: altezze minime dei grafici 120, 70 e 240 px,
+ * senza scorrimento da 1100×800 in su; da 800×700 la colonna centrale scorre.
+ */
 .stage:has(.kdotp-bands-wrap) {
-  overflow-y: auto;
-  grid-template-rows: auto minmax(474px, 1fr) auto;
+  --kdotp-levels-min: 148px;
+  --kdotp-contrib-min: 98px;
+  --kdotp-bands-min: 290px;
 }
 
 .scene:has(.kdotp-bands-wrap) {
-  grid-template-rows: minmax(162px, 27fr) minmax(94px, 15fr) minmax(218px, 58fr);
-  min-height: 474px;
+  grid-template-rows:
+    minmax(var(--kdotp-levels-min), 26fr)
+    minmax(var(--kdotp-contrib-min), 18fr)
+    minmax(var(--kdotp-bands-min), 56fr);
+}
+
+@media (max-height: 740px) {
+  .stage:has(.kdotp-bands-wrap) {
+    grid-template-rows: auto minmax(calc(var(--kdotp-levels-min) + var(--kdotp-contrib-min) + var(--kdotp-bands-min)), 1fr) auto;
+  }
+}
+
+.kdotp-view .view-head {
+  padding-top: 6px;
+  flex-wrap: nowrap;
+}
+
+.kdotp-view .view-tag {
+  flex: none;
+  white-space: nowrap;
+}
+
+.kdotp-view .view-hint {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.kdotp-hint {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* barra dei comandi: tre righe su due colonne */
+.stage:has(.kdotp-params-grid) .params {
+  padding: 6px 14px;
+}
+
+.kdotp-params-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 16px;
+  width: 100%;
+  align-items: center;
+}
+
+.kdotp-params-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.kdotp-params-cell-wide {
+  grid-column: 1 / -1;
+}
+
+.kdotp-params-cell > .param {
+  flex: 1 1 auto;
+  max-width: none;
+}
+
+.kdotp-params-cell > .preset {
+  flex: 1 1 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+  padding: 0 8px;
+}
+
+.kdotp-params-cell > .preset select {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+}
+
+@media (max-width: 560px) {
+  .kdotp-params-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .kdotp-bands-wrap {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.kdotp-levels-canvas,
-.kdotp-contrib-canvas {
+.kdotp-canvas-box {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* canvas annidato: riempie il proprio contenitore (la regola generale di ui.css vale solo per il figlio diretto) */
+.kdotp-canvas-box > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.kp-contrib-canvas {
   cursor: default;
 }
 
-.kdotp-levels-canvas {
+.kp-levels-canvas {
   cursor: pointer;
 }
 
@@ -114,18 +212,7 @@
 }
 
 .kdotp-verify-card {
-  margin-top: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--panel);
-}
-
-.kdotp-verify-title {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 2px;
+  padding: 2px 0 0;
 }
 
 .kdotp-verify-sub {

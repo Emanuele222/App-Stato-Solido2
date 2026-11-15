@@ -23,7 +23,7 @@ export const PARAMS: readonly KpParamSpec[] = [
   { id: 'eg', quantity: 'VG', symbol: 'E_{g}', min: 0.1, max: 2.5, step: 0.01, digits: 2, unit: 'eV', default: 1.43 },
   {
     id: 'delta',
-    quantity: 'psi',
+    quantity: 'Delta',
     symbol: '\\Delta',
     min: 0.0,
     max: 1.2,
@@ -33,7 +33,7 @@ export const PARAMS: readonly KpParamSpec[] = [
     default: 0.34,
     kaneOnly: true
   },
-  { id: 'ep', quantity: 'v', symbol: 'E_{P}', min: 0.0, max: 30.0, step: 0.5, digits: 1, unit: 'eV', default: 20.0 }
+  { id: 'ep', quantity: 'EP', symbol: 'E_{P}', min: 0.0, max: 30.0, step: 0.5, digits: 1, unit: 'eV', default: 20.0 }
 ]
 
 export type KpParamValues = Record<KpParamId, number>

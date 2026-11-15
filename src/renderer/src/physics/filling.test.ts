@@ -3,6 +3,7 @@ import { kPathFromVertices, zonePath1D } from './bandStructure'
 import { nearlyFreeBands } from './centralEquation1d'
 import { fillBands } from './filling'
 import { zoneBoundaryEnergy } from './freeElectron'
+import { tightBindingMonoatomicBands } from './tightBinding'
 
 const a = 3
 const path = zonePath1D(a, 401)
@@ -58,5 +59,23 @@ describe('riempimento in 1D: 2 elettroni per banda per cella (P4 §5.6)', () => 
     expect(() => fillBands(bsOpen, 1)).toThrow(/pesi/)
     expect(() => fillBands(bands(-0.5), 8)).toThrow()
     expect(() => fillBands(bands(-0.5), 1.5)).toThrow()
+  })
+})
+
+describe('riempimento con bande separate ma in ordine inverso (incarico 09 punto 1)', () => {
+  it('catena monoatomica con Ē_s = −2, Ē_p = −6, t_s = |t_p| = 0,4, a = 3,5, N = 2 → isolante, gap 2,4 eV, E_F = −4,0 eV', () => {
+    const monoPath = zonePath1D(3.5, 201)
+    const tb = tightBindingMonoatomicBands(
+      { a: 3.5, centerS: -2.0, centerP: -6.0, tS: 0.4, absTP: 0.4 },
+      monoPath
+    )
+    const f = fillBands(tb, 2)
+    expect(f.kind).toBe('insulator')
+    expect(f.gap).toBeCloseTo(2.4, 12)
+    expect(f.fermiLevel).toBeCloseTo(-4.0, 12)
+    expect(f.highestOccupied).toBeCloseTo(-5.2, 12)
+    expect(f.lowestUnoccupied).toBeCloseTo(-2.8, 12)
+    // Banda 0 è la banda s (alta, vuota); banda 1 è la banda p (bassa, piena)
+    expect(Array.from(f.occupations)).toEqual([0, 1])
   })
 })

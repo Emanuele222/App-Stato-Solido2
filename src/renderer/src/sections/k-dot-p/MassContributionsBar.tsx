@@ -5,7 +5,7 @@
  */
 import { useRef, type JSX } from 'react'
 import type { MassTermSource } from '../../physics'
-import { formatNumber } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { Smoothed, useReducedMotion } from '../../ui/motion'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
 import { drawMathText, sansFont, useCanvasDraw } from '../../viz/canvas'
@@ -21,7 +21,7 @@ function termQuantity(src: MassTermSource): QuantityId {
     case 'lh':
       return 'E'
     case 'so':
-      return 'psi'
+      return 'Delta'
     case 'hh':
       return 'Ek'
   }
@@ -74,11 +74,11 @@ export function MassContributionsBar({
       return `${signStr}${absStr} (${t.source === 'free' ? 'libero' : t.source})`
     })
     const sumAbs = formatNumber(bd.totalInvMass, 2)
-    const mStr = Number.isFinite(bd.effectiveMassRatio) ? formatNumber(bd.effectiveMassRatio, 4) : '∞'
+    const mStr = formatEffectiveMassRatio(bd.effectiveMassRatio, { digits: 4, withEquals: true })
     const topLine =
       bd.terms.length === 1 && model.selection.role === 'hh'
         ? `m₀/m* = ${sumAbs}   ·   ${s.scene.contribNoCoupling}`
-        : `m₀/m* = ${pieces.join(' ')} = ${sumAbs}   ⇒   m*/m₀ = ${mStr}`
+        : `m₀/m* = ${pieces.join(' ')} = ${sumAbs}   ⇒   m*/m₀ ${mStr}`
 
     ctx.font = sansFont(w < 540 ? 10.5 : 11.5)
     ctx.fillStyle = TOKENS.textSoft
@@ -96,8 +96,8 @@ export function MassContributionsBar({
     const emTerm = (q: QuantityId, src: MassTermSource): number => {
       if (highlight === null) return 0.92
       if (highlight === q) return 1
-      // Hover su E_P ('v') illumina tutte le bande accoppiate (non il termine libero ±1)
-      if (highlight === 'v' && src !== 'free') return 1
+      // Hover su E_P ('EP') illumina tutte le bande accoppiate (non il termine libero ±1)
+      if (highlight === 'EP' && src !== 'free') return 1
       return 0.25
     }
 

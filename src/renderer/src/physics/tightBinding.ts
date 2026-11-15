@@ -1,7 +1,7 @@
 /**
  * Modello a legami forti (tight binding) in 1D (dispense P3 §12, P4 §§1.4–2):
  *  - catena monoatomica con bande indipendenti s (t_s > 0) e p (t_p < 0);
- *  - legge esponenziale indicativa t(a) = t(a₀)·e^{-(a−a₀)/λ} (non ricavata dalle
+ *  - legge esponenziale indicativa t(a) = t(a₀)·e^{-(a−a₀)/ℓ} (non ricavata dalle
  *    dispense, solo modello qualitativo di §12.1);
  *  - catena biatomica A–B di passo a (A in n·a, B in (n+½)·a, E_A ≤ E_B, t > 0),
  *    con autovalori E±(k), pesi |b_A|², |b_B|² e masse efficaci al gap;
@@ -77,20 +77,20 @@ export function tightBindingBandwidth(t: number): number {
   return 4 * Math.abs(t)
 }
 
-/** Legge esponenziale indicativa t(a) = t(a₀)·exp(−(a − a₀)/λ). */
-export function indicativeHoppingAtDistance(a: number, a0: number, tAtA0: number, lambda: number): number {
-  if (!(a > 0) || !(a0 > 0) || !(lambda > 0) || !Number.isFinite(tAtA0)) {
+/** Legge esponenziale indicativa t(a) = t(a₀)·exp(−(a − a₀)/ℓ). */
+export function indicativeHoppingAtDistance(a: number, a0: number, tAtA0: number, ell: number): number {
+  if (!(a > 0) || !(a0 > 0) || !(ell > 0) || !Number.isFinite(tAtA0)) {
     throw new RangeError('parametri non validi per indicativeHoppingAtDistance')
   }
-  return tAtA0 * Math.exp(-(a - a0) / lambda)
+  return tAtA0 * Math.exp(-(a - a0) / ell)
 }
 
 /** Inversa della legge indicativa: ricava t(a₀) dal valore corrente t(a) al passo a. */
-export function calibrateIndicativeHoppingAtA0(a: number, a0: number, tAtA: number, lambda: number): number {
-  if (!(a > 0) || !(a0 > 0) || !(lambda > 0) || !Number.isFinite(tAtA)) {
+export function calibrateIndicativeHoppingAtA0(a: number, a0: number, tAtA: number, ell: number): number {
+  if (!(a > 0) || !(a0 > 0) || !(ell > 0) || !Number.isFinite(tAtA)) {
     throw new RangeError('parametri non validi per calibrateIndicativeHoppingAtA0')
   }
-  return tAtA * Math.exp((a - a0) / lambda)
+  return tAtA * Math.exp((a - a0) / ell)
 }
 
 /** Parte reale dell'ampiezza di Bloch su un sito x: Re(c · e^{ikx}) = c · cos(kx). */
@@ -213,12 +213,12 @@ export function monoatomicEdgesVsDistance(
     readonly tSAtA0: number
     readonly absTPAtA0: number
     readonly a0: number
-    readonly lambda: number
+    readonly ell: number
   }
 ): TightBindingEdgePoint[] {
   return aValues.map((a) => {
-    const tS = indicativeHoppingAtDistance(a, config.a0, config.tSAtA0, config.lambda)
-    const absTP = indicativeHoppingAtDistance(a, config.a0, config.absTPAtA0, config.lambda)
+    const tS = indicativeHoppingAtDistance(a, config.a0, config.tSAtA0, config.ell)
+    const absTP = indicativeHoppingAtDistance(a, config.a0, config.absTPAtA0, config.ell)
     return {
       a,
       sMin: config.centerS - 2 * tS,

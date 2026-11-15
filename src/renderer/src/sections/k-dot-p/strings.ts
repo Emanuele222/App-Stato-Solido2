@@ -14,7 +14,7 @@ export const strings = {
     label: 'Modello',
     kane: 'Quattro bande (Kane)',
     twoBand: 'Due bande, esatto',
-    kaneTitle: 'Modello di Kane a quattro bande con spin–orbita in Γ (P4 §3, slide 41)',
+    kaneTitle: 'Modello di Kane a quattro bande con spin–orbita in Γ (P4 §3)',
     twoBandTitle: 'Modello esatto 2×2 senza spin–orbita tra |S⟩ e |Z⟩ più valenze non accoppiate'
   },
 
@@ -35,13 +35,14 @@ export const strings = {
 
   tools: {
     fill: 'Riempimento',
-    fillTitle: 'Semiconduttore intrinseco a T = 0: bande di valenza piene, conduzione vuota, E_F nel gap',
+    fillTitle:
+      'Semiconduttore intrinseco a T = 0: le bande di valenza (hh, lh, so) sono esattamente piene e la conduzione vuota, quindi non serve un selettore elettroni/cella e E_F sta al centro del gap',
     mass: 'Massa efficace',
     massTitle: 'Parabola osculatrice sullo stato scelto e confronto con le masse della formula k·p',
     compareKane: 'Confronto: elettrone libero',
     compareTwoBand: 'Confronto: parabole m*',
     compareKaneTitle: 'Sovrappone la parabola dell’elettrone libero dal fondo della conduzione E_g + ħ²k²/2m₀',
-    compareTwoBandTitle: 'Sovrappone le parabole di massa efficace E_g + ħ²k²/2m₀ ± P²k²/E_g'
+    compareTwoBandTitle: 'Sovrappone le parabole di massa efficace E_c ≃ E_g + ħ²k²/2m₀ + P²k²/E_g e E_lh ≃ ħ²k²/2m₀ − P²k²/E_g'
   },
 
   scene: {
@@ -57,7 +58,7 @@ export const strings = {
     twoBandRightTitle: 'base |S⟩, |X⟩, |Y⟩, |Z⟩',
 
     contribTag: 'Contributi a m₀/m*',
-    contribHint: 'somma 1 + contributi delle bande accoppiate (segno della curvatura d²E/dk²)',
+    contribHint: 'nello stato scelto: somma 1 + contributi delle bande accoppiate (segno della curvatura d²E/dk²)',
     contribAria: 'Scomposizione grafica a barra di m₀/m* nel termine libero ±1 e nei contributi delle bande accoppiate.',
     contribNoCoupling: 'nessun contributo di accoppiamento (valenze pesanti non accoppiate a s)',
     contribAtK: (kStr: string, factorStr: string) =>
@@ -65,7 +66,7 @@ export const strings = {
     contribSource: (src: MassTermSource, kittelFlip: boolean): string => {
       switch (src) {
         case 'free':
-          return kittelFlip ? '−1 libero (slide 41)' : '+1 elettrone libero'
+          return kittelFlip ? '−1 libero (convenzione Kittel)' : '+1 elettrone libero'
         case 'c':
           return 'da conduzione c'
         case 'lh':
@@ -88,6 +89,7 @@ export const strings = {
     nearGammaBadge: 'vicino a Γ',
     fillingLabel: 'semicond. intrinseco (T = 0)',
     probeLabel: 'm*',
+    bandsLegendAria: 'Legenda del diagramma E(k)',
     legendKaneBands: 'Kane (c, hh, lh, so)',
     legendTwoBandBands: 'Due bande esatto (E±, hh)',
     legendCompareKane: 'libero E_g + ħ²k²/2m₀',
@@ -103,7 +105,7 @@ export const strings = {
   formula: {
     title: 'Formula viva',
     generalTitle: 'Perturbazione al 2° ordine',
-    kaneTitle: 'Bande e masse di Kane (slide 41)',
+    kaneTitle: 'Bande e masse di Kane',
     twoBandTitle: 'Matrice 2×2 ed esattezza locale',
     generalAria: 'Energia al secondo ordine E_n(k) e formula della massa efficace k·p',
     kaneAria: 'Bande c, hh, lh, so e formule di Kane per le masse efficaci',
@@ -123,12 +125,14 @@ export const strings = {
     massHH: 'lacune pesanti $m_{hh}/m_0$',
     massLH: 'lacune leggere $m_{lh}/m_0$',
     massSO: 'split-off $m_{so}/m_0$',
-    hhOrderNote: 'ordine di grandezza (slide 41)',
+    hhOrderNote: 'ordine di grandezza (P4 §3)',
+    twoBandXYLabel: 'stati $|X\\rangle, |Y\\rangle$',
+    twoBandXYNote: 'non accoppiati a $|S\\rangle$: dispersione libera $\\hbar^2 k^2/2m_0$ verso l’alto (vedi scheda teoria)',
     geNoGammaMassNote: 'non in tab. §3 ($m_c$ in $\\Gamma$ e $m_{so}$ assenti)',
     selectedState: 'stato scelto',
     energyAtSel: 'energia',
     localMass: 'massa locale',
-    analyticMass: 'massa formula',
+    analyticMass: 'dalla formula',
     validityRatio: 'criterio $|P\\cdot k|/(E_g/2)$',
     validityInside: 'entro zona parabolica ($< 1$)',
     validityOutside: 'oltre $E_g/2$: distacco visibile',
@@ -142,12 +146,12 @@ export const strings = {
 
   verification: {
     title: 'Verifica sui quasi liberi (P4 §3)',
-    subtitle: 'Bordo $\\pi/a$, $a = 3{,}00$ Å, $V_G = -0{,}50$ eV ($41$ onde piane)',
-    exactLabel: 'curvatura numerica $m_0/m^*_+$',
+    intro: 'Controllo numerico su un potenziale 1D a 41 onde piane: la somma $\\mathbf{k}\\cdot\\mathbf{p}$ su tutte le bande riproduce esattamente la curvatura al bordo di zona.',
+    subtitle: 'Bordo $\\pi/\\htmlData{q=a}{a}$, $\\htmlData{q=a}{a} = 3{,}00$ Å, $\\htmlData{q=VG}{V_G} = -0{,}50$ eV ($41$ onde piane)',
+    exactLabel: 'curvatura numerica $\\htmlData{q=Ek}{m_0}/\\htmlData{q=mstar}{m^*_+}$',
     sumLabel: 'somma $\\mathbf{k}\\cdot\\mathbf{p}$ su $41$ bande',
-    twoBandLabel: 'due bande $1 + 4E_0/E_g$',
-    minusLabel: 'banda inferiore $E_-$ (somma / 2 bande)',
-    momentumLabel: 'elemento $|\\langle \\psi_c | \\hat p | \\psi_s \\rangle|/\\hbar$ vs $\\pi/a$'
+    twoBandLabel: 'due bande $1 + 4\\htmlData{q=E}{E_0}/\\htmlData{q=VG}{E_g}$',
+    momentumLabel: 'elemento $|\\langle \\psi_c | \\hat p | \\psi_s \\rangle|/\\hbar$ vs $\\pi/\\htmlData{q=a}{a}$'
   },
 
   theory: {
@@ -156,21 +160,21 @@ export const strings = {
       {
         heading: 'A che cosa serve il metodo k·p',
         paragraphs: [
-          'Inserendo la forma di Bloch $\\psi_{n\\mathbf{k}} = e^{i\\mathbf{k}\\cdot\\mathbf{r}} u_{n\\mathbf{k}}$ nell’equazione di Schrödinger si ottiene per $u_{n\\mathbf{k}}$ la perturbazione $\\htmlData{q=k}{H\'_{\\mathbf{k}}} = \\frac{\\hbar\\htmlData{q=k}{\\mathbf{k}}\\cdot\\hat{\\mathbf{p}}}{m_0} + \\frac{\\hbar^2\\htmlData{q=k}{k}^2}{2m_0}$ attorno a $\\Gamma$. Non serve conoscere tutto $V(\\mathbf{r})$: bastano pochi parametri in $\\Gamma$ ($\\htmlData{q=VG}{E_g}$, $\\htmlData{q=psi}{\\Delta}$, $\\htmlData{q=v}{P}$) per calcolare masse efficaci accurate e bande locali vicino ai punti di simmetria.'
+          'Inserendo la forma di Bloch $\\psi_{n\\mathbf{k}} = e^{i\\mathbf{k}\\cdot\\mathbf{r}} u_{n\\mathbf{k}}$ nell’equazione di Schrödinger si ottiene per $u_{n\\mathbf{k}}$ la perturbazione $\\htmlData{q=k}{H\'_{\\mathbf{k}}} = \\frac{\\hbar\\htmlData{q=k}{\\mathbf{k}}\\cdot\\hat{\\mathbf{p}}}{m_0} + \\frac{\\hbar^2\\htmlData{q=k}{k}^2}{2m_0}$ attorno a $\\Gamma$. Non serve conoscere tutto $V(\\mathbf{r})$: bastano pochi parametri in $\\Gamma$ ($\\htmlData{q=VG}{E_g}$, $\\htmlData{q=Delta}{\\Delta}$, $\\htmlData{q=EP}{P}$) per calcolare masse efficaci accurate e bande locali vicino ai punti di simmetria.'
         ]
       },
       {
         heading: 'Contributi a 1/m* e il parametro P di Kane',
         paragraphs: [
-          'Al secondo ordine, una banda vicina sopra $n$ dà un contributo negativo a $1/\\htmlData{q=mstar}{m^*}$ (tende a curvare $n$ verso il basso) e una banda sotto un contributo positivo (la rende più leggera verso l’alto). Con $\\htmlData{q=v}{E_P} = 2m_0\\htmlData{q=v}{P}^2/\\hbar^2 \\approx 20\\text{ eV}$, quasi uguale nei semiconduttori III–V, si ottiene $m_c \\simeq m_0 \\htmlData{q=VG}{E_g}/\\htmlData{q=v}{E_P}$: gap piccolo, massa piccola (da GaAs a InSb).',
-          'Nota di notazione: questo $\\htmlData{q=v}{P}$ è il parametro ottico di Kane (in $\\text{eV}\\cdot\\text{Å}$, legato a $|\\langle S|\\hat p_x|X\\rangle|$), da non confondere con il parametro adimensionale $P$ del modello di Kronig–Penney.'
+          'Al secondo ordine, una banda vicina sopra $n$ dà un contributo negativo a $1/\\htmlData{q=mstar}{m^*}$ (tende a curvare $n$ verso il basso) e una banda sotto un contributo positivo (la rende più leggera verso l’alto). Con $\\htmlData{q=EP}{E_P} = 2m_0\\htmlData{q=EP}{P}^2/\\hbar^2 \\approx 20\\text{ eV}$, quasi uguale nei semiconduttori III–V, si ottiene $m_c \\simeq m_0 \\htmlData{q=VG}{E_g}/\\htmlData{q=EP}{E_P}$: gap piccolo, massa piccola (da GaAs a InSb).',
+          'Nota di notazione: questo $\\htmlData{q=EP}{P}$ è il parametro ottico di Kane (in $\\text{eV}\\cdot\\text{Å}$, legato a $|\\langle S|\\hat p_x|X\\rangle|$), da non confondere con il parametro adimensionale $P$ del modello di Kronig–Penney.'
         ]
       },
       {
         heading: 'Spin–orbita e avvertenze sui segni',
         paragraphs: [
-          'Alla cima della valenza ($p$, $L=1$, $6$ stati) lo spin–orbita $H_{\\mathrm{so}} = \\lambda\\mathbf{L}\\cdot\\mathbf{S}$ separa il quadrupletto $J=\\frac{3}{2}$ ($hh$ con $m_J=\\pm\\frac{3}{2}$, $lh$ con $m_J=\\pm\\frac{1}{2}$, spostati di $+\\frac{1}{2}\\lambda\\hbar^2$) dal doppietto split-off $J=\\frac{1}{2}$ ($so$, più in basso di $\\htmlData{q=psi}{\\Delta} = \\frac{3}{2}\\lambda\\hbar^2$, spostato di $-\\lambda\\hbar^2$), lasciando invariato il baricentro; la conduzione $s$ ($L=0$) non si separa. Le lacune pesanti $hh$ non si accoppiano alla conduzione.',
-          'Due note dalle dispense (slide 41 e approfondimento 2×2): nelle formule di Kane dal Kittel le tre bande di valenza portano il termine libero $-\\hbar^2 k^2/2m_0$ (con $m_{hh}=m_0$ solo come ordine di grandezza rispetto ai valori misurati $0{,}3$–$0{,}5\\,m_0$) e $E_{lh}$ ha il segno meno davanti a entrambi i termini; nel modello esatto a due bande le valenze non accoppiate hanno invece $+\\hbar^2 k^2/2m_0$ e la parabola vale solo finché $|\\htmlData{q=v}{P}\\cdot\\htmlData{q=k}{k}| \\ll \\htmlData{q=VG}{E_g}$.'
+          'Alla cima della valenza ($p$, $L=1$, $6$ stati) lo spin–orbita $H_{\\mathrm{so}} = \\lambda\\mathbf{L}\\cdot\\mathbf{S}$ separa il quadrupletto $J=\\frac{3}{2}$ ($hh$ con $m_J=\\pm\\frac{3}{2}$, $lh$ con $m_J=\\pm\\frac{1}{2}$, spostati di $+\\frac{1}{2}\\lambda\\hbar^2$) dal doppietto split-off $J=\\frac{1}{2}$ ($so$, più in basso di $\\htmlData{q=Delta}{\\Delta} = \\frac{3}{2}\\lambda\\hbar^2$, spostato di $-\\lambda\\hbar^2$), lasciando invariato il baricentro; la conduzione $s$ ($L=0$) non si separa. Le lacune pesanti $hh$ non si accoppiano alla conduzione.',
+          'Due note dalle dispense (P4 §3 e modello 2×2): nelle formule di Kane dal Kittel le tre bande di valenza portano il termine libero $-\\hbar^2 k^2/2m_0$ (con $m_{hh}=m_0$ solo come ordine di grandezza rispetto ai valori misurati $0{,}3$–$0{,}5\\,m_0$) e $E_{lh}$ ha il segno meno davanti a entrambi i termini; nel modello esatto a due bande le valenze non accoppiate $|X\\rangle,|Y\\rangle$ hanno invece $+\\hbar^2 k^2/2m_0$ (salgono verso il gap per il termine cinetico libero) e la parabola vale solo finché $|\\htmlData{q=EP}{P}\\cdot\\htmlData{q=k}{k}| \\ll \\htmlData{q=VG}{E_g}$.'
         ]
       }
     ],

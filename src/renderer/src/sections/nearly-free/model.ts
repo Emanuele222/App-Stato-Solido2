@@ -16,6 +16,7 @@ import {
   blochDensity1D,
   centralEquationBand,
   directGap1D,
+  dominantPlaneWaves1D,
   effectiveMassRatio,
   emptyLatticeBands,
   fillBands,
@@ -23,13 +24,17 @@ import {
   nearlyFreeBands,
   potentialAt,
   solveCentralEquation1D,
+  twoWaveGap,
+  weakPotentialRatio,
   zoneBoundaryEnergy,
+  zoneEdge1D,
   zoneEdgeStandingWave,
   zonePath1D,
   type BandFilling,
   type BandStructure,
   type DirectGap,
   type PeriodicPotential1D,
+  type PlaneWaveWeight,
   type StandingWave
 } from '../../physics'
 import { NUMERICS, type Params } from './manifest'
@@ -51,6 +56,9 @@ export interface NearlyFreeModel {
   readonly emptyLattice: BandStructure
   readonly edgeGap: DirectGap
   readonly centerGap: DirectGap
+  readonly twoWaveEdgeGap: number
+  readonly twoWaveCenterGap: number
+  readonly weakPotentialRatio: number
   readonly eRange: readonly [number, number]
   readonly selection: {
     readonly kFrac: number
@@ -59,6 +67,7 @@ export interface NearlyFreeModel {
     readonly energy: number
     readonly standingWave: StandingWave | null
     readonly atEdge: boolean
+    readonly dominantWeights: readonly PlaneWaveWeight[]
   }
   readonly xs: Float64Array
   readonly potentialSamples: Float64Array
@@ -88,7 +97,7 @@ export function useNearlyFreeModel(
     [potential, path, pw]
   )
   const emptyLattice = useMemo(() => emptyLatticeBands(a, path, NUMERICS.bands), [a, path])
-  const zoneEdge = Math.PI / a
+  const zoneEdge = zoneEdge1D(a)
 
   const derived = useMemo(() => {
     const E0 = zoneBoundaryEnergy(a)
@@ -97,8 +106,16 @@ export function useNearlyFreeModel(
     let lowest = Infinity
     for (const e of bands.energies[0]) lowest = Math.min(lowest, e)
     const eRange: [number, number] = [Math.min(-2, Math.floor(lowest - 1)), NUMERICS.eMax]
-    return { E0, edgeGap, centerGap, eRange }
-  }, [a, potential, zoneEdge, bands, pw])
+    return {
+      E0,
+      edgeGap,
+      centerGap,
+      twoWaveEdgeGap: twoWaveGap(vG),
+      twoWaveCenterGap: twoWaveGap(v2G),
+      weakRatio: weakPotentialRatio(vG, E0),
+      eRange
+    }
+  }, [a, vG, v2G, potential, zoneEdge, bands, pw])
 
   const state = useMemo(() => {
     const k = kFrac * zoneEdge
@@ -108,6 +125,7 @@ export function useNearlyFreeModel(
     while (band > 0 && solution.energies[band] > NUMERICS.eMax) band--
     const density = blochDensity1D(solution, band, XS)
     const atEdge = Math.abs(kFrac) === 1
+    const dominantWeights = dominantPlaneWaves1D(solution, band, 3)
     return {
       kFrac,
       k,
@@ -115,6 +133,7 @@ export function useNearlyFreeModel(
       energy: solution.energies[band],
       standingWave: atEdge ? zoneEdgeStandingWave(solution, band) : null,
       atEdge,
+      dominantWeights,
       density
     }
   }, [kFrac, zoneEdge, potential, pw, requestedBand])
@@ -147,6 +166,9 @@ export function useNearlyFreeModel(
     emptyLattice,
     edgeGap: derived.edgeGap,
     centerGap: derived.centerGap,
+    twoWaveEdgeGap: derived.twoWaveEdgeGap,
+    twoWaveCenterGap: derived.twoWaveCenterGap,
+    weakPotentialRatio: derived.weakRatio,
     eRange: derived.eRange,
     selection,
     xs: XS,

@@ -15,7 +15,21 @@ import type { BandStructure } from '../physics'
 import { Smoothed, useReducedMotion } from '../ui/motion'
 import { formatNumber } from '../ui/format'
 import { quantityColor, TOKENS, type QuantityId } from '../ui/theme'
-import { drawMathText, niceStep, sansFont, useCanvasDraw } from './canvas'
+import {
+  drawMathText,
+  drawRichText,
+  drawSegmentedHorizontalLine,
+  measureMathText,
+  measureRichText,
+  niceStep,
+  placeGapLabelBox,
+  placeProbeLabel,
+  sansFont,
+  useCanvasDraw,
+  withAlpha,
+  type RectBox,
+  type XSpan
+} from './canvas'
 import './viz.css'
 
 export interface GapMarker {
@@ -148,7 +162,7 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
     ctx.restore()
 
     // --- fuori dalla prima zona ---
-    ctx.fillStyle = 'rgba(255,255,255,0.025)'
+    ctx.fillStyle = withAlpha(TOKENS.text, 0.025)
     ctx.fillRect(L, T, Math.max(0, X(-kb) - L), H)
     ctx.fillRect(X(kb), T, Math.max(0, L + W - X(kb)), H)
     ctx.strokeStyle = TOKENS.dim
@@ -223,6 +237,28 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
       return out
     }
 
+    const occupied: RectBox[] = []
+    const fermiSkips: XSpan[] = []
+    const fill = anim.filling.value
+    const fermiY = Y(anim.fermi.value)
+    const activeFermiY = p.filling && fill > 0.01 ? fermiY : null
+
+    // riserva ingombro della legenda (in alto a destra) prima di collocare etichette dinamiche
+    let legendSpec: { items: { text: string; color: string; dash: number[] }[]; bx: number; by: number; boxW: number; boxH: number } | null = null
+    if (p.compare && anim.compare.value > 0.01) {
+      const items: { text: string; color: string; dash: number[] }[] = [
+        { text: p.labels.bandsLegend, color: quantityColor('E'), dash: [] },
+        { text: p.compare.label, color: quantityColor(p.compare.quantity), dash: [4, 4] }
+      ]
+      const widths = items.map((it) => measureRichText(ctx, it.text, { size: 12 }))
+      const boxW = Math.max(...widths) + 40
+      const boxH = items.length * 18 + 8
+      const bx = L + W - boxW - 6
+      const by = T + 6
+      legendSpec = { items, bx, by, boxW, boxH }
+      occupied.push({ x0: bx, y0: by, x1: bx + boxW, y1: by + boxH })
+    }
+
     // livelli di riferimento (E₀)
     for (const lv of p.levels ?? []) {
       const y = Y(lv.energy)
@@ -240,7 +276,13 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
       }
       ctx.setLineDash([])
       // etichetta sul segmento di sinistra (−k), dentro la zona: a destra c'è l'indicatore del gap
-      drawMathText(ctx, lv.label, X(-lv.k) + half + 4, y + 5, { color: c, size: 14, backdrop: TOKENS.bg })
+      const lx = X(-lv.k) + half + 4
+      const lwPx = drawMathText(ctx, lv.label, lx, y + 5, { color: c, size: 14, backdrop: TOKENS.bg })
+      const lBox: RectBox = { x0: lx - 3, y0: y + 5 - 12, x1: lx + lwPx + 3, y1: y + 5 + 5 }
+      occupied.push(lBox)
+      if (activeFermiY != null && activeFermiY >= lBox.y0 - 4 && activeFermiY <= lBox.y1 + 4) {
+        fermiSkips.push({ x0: lBox.x0, x1: lBox.x1 })
+      }
     }
     ctx.globalAlpha = 1
 
@@ -260,8 +302,6 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
     }
 
     // bande
-    const fill = anim.filling.value
-    const fermiY = Y(anim.fermi.value)
     const shown = visibleBands(p.bands)
     ctx.strokeStyle = quantityColor('E')
     ctx.lineJoin = 'round'
@@ -308,11 +348,21 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
       ctx.stroke()
       if (yLo - yHi > 3) {
         const right = L + W - x > 52
-        drawMathText(ctx, g.label, right ? x + 8 : x - 8, (yLo + yHi) / 2 + 5, {
-          color: c,
-          align: right ? 'left' : 'right',
+        const labelW = measureMathText(ctx, g.label, 14)
+        placeGapLabelBox(ctx, {
+          text: g.label,
           size: 14,
-          backdrop: TOKENS.bg
+          color: c,
+          backdrop: TOKENS.bg,
+          centerX: right ? x + 8 + labelW / 2 : x - 8 - labelW / 2,
+          preferredY: (yLo + yHi) / 2,
+          minX: L,
+          maxX: L + W,
+          minY: T,
+          maxY: T + H,
+          fermiY: activeFermiY,
+          occupied,
+          fermiSkips
         })
       }
     }
@@ -325,21 +375,25 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
       ctx.strokeStyle = c
       ctx.lineWidth = lw('EF', 1.5)
       ctx.setLineDash([8, 4])
-      ctx.beginPath()
-      ctx.moveTo(L, fermiY)
-      ctx.lineTo(L + W, fermiY)
-      ctx.stroke()
+      drawSegmentedHorizontalLine(ctx, L, L + W, fermiY, fermiSkips, 6)
       ctx.setLineDash([])
-      const wF = drawMathText(ctx, 'E_{F}', L + 8, fermiY - 6, { color: c, size: 15, backdrop: TOKENS.bg })
+      const labelY = Math.max(T + 18, fermiY - 6)
+      const wF = drawMathText(ctx, 'E_{F}', L + 8, labelY, { color: c, size: 15, backdrop: TOKENS.bg })
       ctx.font = sansFont(12)
       const label = p.filling.label
       const lwid = ctx.measureText(label).width
       ctx.fillStyle = TOKENS.bg
-      ctx.fillRect(L + 16 + wF, fermiY - 19, lwid + 8, 17)
+      ctx.fillRect(L + 16 + wF, labelY - 13, lwid + 8, 17)
       ctx.fillStyle = c
       ctx.textAlign = 'left'
       ctx.textBaseline = 'alphabetic'
-      ctx.fillText(label, L + 20 + wF, fermiY - 6)
+      ctx.fillText(label, L + 20 + wF, labelY)
+      occupied.push({
+        x0: L + 5,
+        y0: labelY - 14,
+        x1: L + 24 + wF + lwid,
+        y1: labelY + 5
+      })
       ctx.globalAlpha = 1
     }
 
@@ -355,21 +409,43 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
       // tratto limitato: al più 0,4·π/a e al più ±¼ della finestra in energia
       const bend = Math.abs(0.5 * pr.curvature)
       const span = Math.min(0.4 * kb, bend > 0 ? Math.sqrt((0.25 * (e1 - e0)) / bend) : Infinity)
+      const curvePts: { x: number; y: number }[] = []
       for (let i = 0; i <= 60; i++) {
         const dk = -span + (2 * span * i) / 60
-        const y = Y(pr.energy + pr.slope * dk + 0.5 * pr.curvature * dk * dk)
-        if (i === 0) ctx.moveTo(X(pr.k + dk), y)
-        else ctx.lineTo(X(pr.k + dk), y)
+        const px = X(pr.k + dk)
+        const py = Y(pr.energy + pr.slope * dk + 0.5 * pr.curvature * dk * dk)
+        curvePts.push({ x: px, y: py })
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
       }
       ctx.stroke()
       ctx.setLineDash([])
-      // etichetta all'estremo rivolto verso il centro della zona (al bordo c'è l'indicatore del gap)
+      for (const n of shown) {
+        const pts = p.bands.path.points
+        const en = p.bands.energies[n]
+        for (let i = 0; i < pts.length; i += 4) {
+          curvePts.push({ x: X(pts[i][0]), y: Y(en[i]) })
+        }
+      }
+      // etichetta all'estremo rivolto verso il centro della zona, evitando curve ed etichette
       const side = pr.k > 0 ? -1 : 1
       const dkTip = side * span
+      const tipX = X(pr.k + dkTip)
       const tipY = Y(pr.energy + pr.slope * dkTip + 0.5 * pr.curvature * dkTip * dkTip)
-      const tx = X(pr.k + dkTip) + side * 6
-      const ty = Math.max(T + 16, Math.min(T + H - 6, tipY + 5))
-      drawMathText(ctx, pr.label, tx, ty, { color: c, size: 14, backdrop: TOKENS.bg, align: side < 0 ? 'right' : 'left' })
+      placeProbeLabel(ctx, {
+        text: pr.label,
+        size: 14,
+        color: c,
+        backdrop: TOKENS.bg,
+        anchorX: tipX,
+        anchorY: tipY,
+        minX: L,
+        maxX: L + W,
+        minY: T,
+        maxY: T + H,
+        occupied,
+        curvePoints: curvePts
+      })
       ctx.globalAlpha = 1
     }
 
@@ -404,19 +480,11 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
     }
 
     // legenda (solo con il confronto attivo)
-    if (p.compare && anim.compare.value > 0.01) {
+    if (legendSpec) {
+      const { items, bx, by, boxW, boxH } = legendSpec
       ctx.globalAlpha = anim.compare.value
-      ctx.font = sansFont(12)
-      const items: { text: string; color: string; dash: number[] }[] = [
-        { text: p.labels.bandsLegend, color: quantityColor('E'), dash: [] },
-        { text: p.compare.label, color: quantityColor(p.compare.quantity), dash: [4, 4] }
-      ]
-      const widths = items.map((it) => ctx.measureText(it.text).width)
-      const boxW = Math.max(...widths) + 40
-      const bx = L + W - boxW - 6
-      const by = T + 6
       ctx.fillStyle = TOKENS.bg
-      ctx.fillRect(bx, by, boxW, items.length * 18 + 8)
+      ctx.fillRect(bx, by, boxW, boxH)
       items.forEach((it, i) => {
         const y = by + 14 + i * 18
         ctx.strokeStyle = it.color
@@ -427,9 +495,7 @@ export const BandPlot = memo(function BandPlot(props: BandPlotProps): JSX.Elemen
         ctx.lineTo(bx + 28, y - 4)
         ctx.stroke()
         ctx.setLineDash([])
-        ctx.fillStyle = TOKENS.textSoft
-        ctx.textAlign = 'left'
-        ctx.fillText(it.text, bx + 34, y)
+        drawRichText(ctx, it.text, bx + 34, y, { size: 12, color: TOKENS.textSoft, align: 'left' })
       })
       ctx.globalAlpha = 1
     }

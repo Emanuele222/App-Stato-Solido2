@@ -10,7 +10,9 @@ Per questo incarico, e solo per questo, puoi scrivere in:
 | `viz/` | Correzioni ai punti sotto |
 | `sections/*/` (tutte e sei) | Componenti, fogli di stile, e in `formulas.ts`/`manifest.ts` solo gli identificatori di colore e di evidenziazione |
 
-Non toccare `physics/`, i testi e le formule (sono dell'incarico 09), `home/`, `App.tsx`, `registry.ts`. Se una correzione chiede una modifica alla fisica, descrivila nel rapporto.
+| `home/` | Solo i quattro ritocchi della parte F |
+
+Non toccare `physics/`, i testi e le formule (sono dell'incarico 09), `App.tsx`, `registry.ts`. Se una correzione chiede una modifica alla fisica, descrivila nel rapporto.
 
 ## Decisioni della regia (rispondono alle domande della revisione D)
 - **Colori**: si aggiungono grandezze nuove a `ui/theme.ts`; niente più colori presi in prestito.
@@ -58,6 +60,13 @@ Non toccare `physics/`, i testi e le formule (sono dell'incarico 09), `home/`, `
 19. «Riempimento» in k·p e Pseudopotenziale non ha il selettore degli elettroni per cella: il suggerimento del pulsante spiega perché (numero di elettroni fissato dal materiale).
 20. **Passaggio dal calcolo ridotto a quello completo nello pseudopotenziale**: oggi è uno scatto dopo circa un secondo. Finché il risultato è provvisorio (indicatore fornito dall'incarico 09) curve e valore del gap sono attenuati; all'arrivo del calcolo completo una transizione breve con gli strumenti di `ui/motion.ts`, non un salto.
 
+## F. Ritocchi alla schermata iniziale (dalla verifica dell'incarico 08)
+La schermata funziona ed è accettata; restano quattro ritocchi.
+21. **Miniatura a riposo**: oggi sono quattro bande dei quasi liberi con V_G = −0,5 eV, e a quella scala sembrano linee che si incrociano: il gap non si vede. Deve leggersi a colpo d'occhio come «due bande separate da un gap»: due sole bande e un gap ben visibile, sempre calcolate da `physics/` (in `home/curves.ts`, con il test aggiornato).
+22. **Testo a riposo**: sotto la miniatura compare l'elenco dei sei metodi in una frase. L'utente vuole a riposo il solo riferimento al capitolo: togli la frase; restano titolo, «6 sezioni», miniatura e il suggerimento sull'anteprima.
+23. **Altezza dei riquadri**: 400 px con molto vuoto sotto; a 1200×900 e 1440×900 la seconda riga esce dallo schermo e la pagina scorre. Riduci l'altezza quanto basta perché le due righe stiano in 900 px, senza che l'elenco dell'anteprima esca dal riquadro (anche con «riduci movimento»).
+24. **Scritta «in arrivo»**: è piccola e attenuata insieme al resto del riquadro. Il riquadro resta ombreggiato, ma la scritta deve leggersi subito: a piena opacità e più evidente.
+
 ## Regole
 - Stile lavagna: fondo scuro piatto, linee nette, nessuna ombra, nessun bagliore. Colori solo dal tema.
 - Con «riduci movimento» attivo, nessuna transizione.
@@ -67,4 +76,4 @@ Non toccare `physics/`, i testi e le formule (sono dell'incarico 09), `home/`, `
 `npm run typecheck`, `npm test`, `npm run build` dopo l'ultima modifica. Verifica visiva obbligatoria di tutte e sei le sezioni a 1440×900, 1100×800 e 800×700, con tutti gli strumenti accesi e in tutte le varianti; se il browser chiede un permesso, chiedilo all'utente in chat. Controlla che la schermata iniziale e la barra laterale dell'incarico 08 funzionino come prima.
 
 ## Consegna
-`reviews/gemini/10-correzioni-grafica.md`, con la struttura di `AGENTS.md`, più: tabella dei 20 punti (fatto / non fatto / fatto in parte, file toccato, come verificato); i colori nuovi con il loro codice; la tabella delle formule vive del punto 9; le altezze misurate dei grafici alle tre larghezze.
+`reviews/gemini/10-correzioni-grafica.md`, con la struttura di `AGENTS.md`, più: tabella dei 24 punti (fatto / non fatto / fatto in parte, file toccato, come verificato); i colori nuovi con il loro codice; la tabella delle formule vive del punto 9; le altezze misurate dei grafici alle tre larghezze.

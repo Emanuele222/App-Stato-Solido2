@@ -43,9 +43,9 @@ export interface MaterialPreset {
 /** Indicativi: in 1D contano solo il passo e il gap reali (progetto.md, «Preset»). */
 export const PRESETS: readonly MaterialPreset[] = [
   { id: 'si', name: 'Silicio', a: 5.43, gap: 1.12 },
-  { id: 'ge', name: 'Germanio', a: 5.66, gap: 0.67 },
+  { id: 'ge', name: 'Germanio', a: 5.66, gap: 0.66 },
   { id: 'gaas', name: 'GaAs', a: 5.65, gap: 1.42 },
-  { id: 'diamond', name: 'Diamante', a: 3.57, gap: 5.47 }
+  { id: 'diamond', name: 'Diamante', a: 3.57, gap: 5.5 }
 ]
 
 /**

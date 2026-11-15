@@ -5,8 +5,9 @@
 import { memo, type JSX } from 'react'
 import type { TightBindingEdgePoint } from '../../physics'
 import { formatNumber } from '../../ui/format'
-import { quantityColor, TOKENS } from '../../ui/theme'
 import { sansFont, useCanvasDraw } from '../../viz/canvas'
+import { quantityColor, TOKENS } from '../../ui/theme'
+import { withAlpha } from '../../viz/canvas'
 import { strings as s } from './strings'
 
 interface EdgesVsDistancePlotProps {
@@ -23,7 +24,7 @@ export const EdgesVsDistancePlot = memo(function EdgesVsDistancePlot({
     const L = 32
     const R = 16
     const T = 6
-    const B = 24
+    const B = 30
     const W = Math.max(10, w - L - R)
     const H = Math.max(10, h - T - B)
 
@@ -46,7 +47,13 @@ export const EdgesVsDistancePlot = memo(function EdgesVsDistancePlot({
     ctx.lineWidth = 1
     ctx.strokeRect(L, T, W, H)
 
-    const fillBand = (minKey: 'sMin' | 'pMin', maxKey: 'sMax' | 'pMax', fill: string, stroke: string): void => {
+    const fillBand = (
+      minKey: 'sMin' | 'pMin',
+      maxKey: 'sMax' | 'pMax',
+      fill: string,
+      stroke: string,
+      dash: number[] = []
+    ): void => {
       ctx.fillStyle = fill
       ctx.beginPath()
       ctx.moveTo(X(points[0].a), Y(points[0][minKey]))
@@ -57,6 +64,7 @@ export const EdgesVsDistancePlot = memo(function EdgesVsDistancePlot({
 
       ctx.strokeStyle = stroke
       ctx.lineWidth = 1.4
+      ctx.setLineDash(dash)
       for (const key of [minKey, maxKey]) {
         ctx.beginPath()
         points.forEach((pt, i) => {
@@ -67,10 +75,12 @@ export const EdgesVsDistancePlot = memo(function EdgesVsDistancePlot({
         })
         ctx.stroke()
       }
+      ctx.setLineDash([])
     }
 
-    fillBand('sMin', 'sMax', 'rgba(131, 193, 103, 0.22)', quantityColor('E'))
-    fillBand('pMin', 'pMax', 'rgba(92, 208, 179, 0.22)', quantityColor('v'))
+    const eCol = quantityColor('E')
+    fillBand('sMin', 'sMax', withAlpha(eCol, 0.2), eCol)
+    fillBand('pMin', 'pMax', withAlpha(eCol, 0.12), eCol, [4, 3])
 
     // Valore corrente di a
     const ax = X(Math.max(aMin, Math.min(aMax, currentA)))
@@ -90,14 +100,13 @@ export const EdgesVsDistancePlot = memo(function EdgesVsDistancePlot({
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'top'
-    for (const aTick of [2, 3, 4, 5]) {
-      ctx.fillText(`${aTick}`, X(aTick), T + H + 4)
+    for (const aTick of [2, 3, 4, 5, 6]) {
+      ctx.fillText(`${aTick}`, X(aTick), T + H + 3)
     }
-    ctx.fillText('6', Math.min(w - 18, X(6)), T + H + 4)
 
     ctx.textAlign = 'right'
     ctx.fillStyle = quantityColor('a')
-    ctx.fillText('a (Å)', w - 4, T + H + 13)
+    ctx.fillText('a (Å)', w - 4, T + H + 16)
 
     return false
   })

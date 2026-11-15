@@ -3,6 +3,7 @@ import { zonePath1D } from './bandStructure'
 import {
   blochCoefficients,
   centralEquationBand,
+  dominantPlaneWaves1D,
   nearlyFreeBands,
   planeWaveBasis1D,
   potentialAt,
@@ -162,5 +163,15 @@ describe('autostati e strutture a bande', () => {
     const empty = nearlyFreeBands({ a, fourier: [0] }, path, { planeWaves: 9, bands: 2 })
     expect(empty.method).toBe('empty-lattice')
     expect(empty.states).toBeUndefined()
+  })
+
+  it('dominantPlaneWaves1D: al bordo ±π/a le prime due onde pesano ~50% ciascuna', () => {
+    const sol = solveCentralEquation1D({ a, fourier: [-0.5] }, edge, { planeWaves: 11 })
+    const top = dominantPlaneWaves1D(sol, 0, 3)
+    expect(top).toHaveLength(3)
+    expect(new Set([top[0].gMultiple, top[1].gMultiple])).toEqual(new Set([-1, 0]))
+    expect(top[0].weight).toBeCloseTo(0.5, 2)
+    expect(top[1].weight).toBeCloseTo(0.5, 2)
+    expect(top[2].weight).toBeLessThan(0.01)
   })
 })

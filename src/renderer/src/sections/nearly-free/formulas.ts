@@ -37,9 +37,10 @@ export const DEFINITIONS: readonly string[] = [
   `${q('VG', 'E_g')}=2|${VG}|`
 ]
 
-/** Al bordo di zona (P3 §11.4 «Il gap dal calcolo», §11.5 onde stazionarie). */
+/** Al bordo di zona (P3 §11.4 «Il gap dal calcolo», §11.5 onde stazionarie e massa efficace). */
 export const EDGE_FORMULAS: readonly string[] = [
   `${k}=\\pm\\dfrac{\\pi}{${a}}:\\quad ${Epm}=${E0}\\pm|${VG}|`,
   `${q('psi', '\\psi_c')}\\propto\\cos\\dfrac{\\pi x}{${a}},\\quad ${q('psi', '\\psi_s')}\\propto\\sin\\dfrac{\\pi x}{${a}}`,
+  `\\dfrac{m_0}{${q('mstar', 'm^*_\\pm')}}=1\\pm\\dfrac{2${E0}}{|${VG}|}`,
   `${k}=\\pm\\dfrac{2\\pi}{${a}}\\equiv 0:\\quad ${q('V2G', 'E_g')}=2|${V2G}|`
 ]

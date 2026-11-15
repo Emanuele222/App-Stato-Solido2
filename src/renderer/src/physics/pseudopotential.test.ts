@@ -7,9 +7,12 @@ import {
   epmBrillouinPath,
   epmDirectionalKinematics,
   epmSegmentDirection,
+  epmSegmentLabel,
   fccReciprocalVectors,
   fccShellCounts,
+  kpGammaMassEstimate,
   pseudopotentialBands,
+  pseudopotentialChemicalPotential,
   pseudopotentialHamiltonian,
   pseudopotentialStateAt,
   realSpacePseudopotentialModel,
@@ -243,5 +246,105 @@ describe('pseudopotential: confronto con materiale/parte4/epm_bande.npz e numeri
     expect(kin.slope).toBeCloseTo(0, 2)
     expect(kin.effectiveMassRatio).toBeGreaterThan(0.05)
     expect(kin.effectiveMassRatio).toBeLessThan(0.2)
+  })
+})
+
+describe('incarico 09 — μ, segmento direzionale, benchmark ridotto, GaAs Γ, preset Ge', () => {
+  const siParams: PseudopotentialParams = {
+    a: 5.43,
+    formFactors: { v3s: -0.21, v8s: 0.04, v11s: 0.08, v3a: 0, v4a: 0, v11a: 0 }
+  }
+  const gaasParams: PseudopotentialParams = {
+    a: 5.65,
+    formFactors: { v3s: -0.252, v8s: 0.0, v11s: 0.08, v3a: 0.068, v4a: 0.066, v11a: 0.012 }
+  }
+  const geParams: PseudopotentialParams = {
+    a: 5.658,
+    formFactors: { v3s: -0.269, v8s: 0.038, v11s: 0.035, v3a: 0, v4a: 0, v11a: 0 }
+  }
+
+  it('punto 2: pseudopotentialChemicalPotential restituisce metà gap se gap > 0, null altrimenti', () => {
+    expect(pseudopotentialChemicalPotential({ gap: 1.12, vbmEnergy: 0, cbmEnergy: 1.12 })).toBeCloseTo(0.56, 12)
+    expect(pseudopotentialChemicalPotential({ gap: 0, vbmEnergy: 0, cbmEnergy: 0 })).toBeNull()
+  })
+
+  it('punto 5: benchmark tempi calcolo ridotto EPM (51 onde piane) per vari pointsPerSegment', () => {
+    const counts = [10, 14, 18, 20, 24]
+    const timings: Record<number, { si: number; gaas: number }> = {}
+    for (const pps of counts) {
+      const t0Si = performance.now()
+      pseudopotentialBands(siParams, { gMaxSq: 11, pointsPerSegment: pps, numBands: 8 })
+      const dtSi = performance.now() - t0Si
+
+      const t0GaAs = performance.now()
+      pseudopotentialBands(gaasParams, { gMaxSq: 11, pointsPerSegment: pps, numBands: 8 })
+      const dtGaAs = performance.now() - t0GaAs
+
+      timings[pps] = { si: Math.round(dtSi * 10) / 10, gaas: Math.round(dtGaAs * 10) / 10 }
+    }
+    console.info('[EPM fast benchmark]', JSON.stringify(timings))
+    expect(timings[10].gaas).toBeLessThan(150)
+  })
+
+  it('punto 6: epmSegmentDirection e epmSegmentLabel in Γ e sui segmenti', () => {
+    const path = epmBrillouinPath(5.43, 40)
+    const dirGamma = epmSegmentDirection(path, 40)
+    const labelGamma = epmSegmentLabel(path, 40)
+    console.info('[EPM Gamma dir/label]', dirGamma, labelGamma)
+    expect(labelGamma.length).toBeGreaterThan(0)
+  })
+
+  it('punto 7: massa efficace del GaAs in Γ stretta attorno a 0,0988 e kpGammaMassEstimate', () => {
+    const kin = epmDirectionalKinematics(gaasParams, [0, 0, 0], [1, 0, 0], 4, 21)
+    expect(kin.effectiveMassRatio).toBeCloseTo(0.0988, 3)
+    expect(kpGammaMassEstimate(1.52, 20)).toBeCloseTo(0.076, 12)
+  })
+
+  it('punto 29 (verifica blocco Ge): fattori P4 r. 1109–1111 con a = 5,658 Å danno gap diretto in Γ anziché indiretto in L', () => {
+    const raw = pseudopotentialBands(geParams, {
+      gMaxSq: 21,
+      pointsPerSegment: 40,
+      numBands: 8,
+      zeroAtValenceTop: false
+    })
+    let rawVbm = -Infinity
+    for (const v of raw.energies[3]) if (v > rawVbm) rawVbm = v
+    const shifted = raw.energies.map((b) => Float64Array.from(b, (e) => e - rawVbm))
+    const summary = analyzeEpmBands({ method: 'pseudopotential', path: raw.path, energies: shifted }, raw, 113)
+    // Documenta la contraddizione numerica con P4 r. 807–809 (CBM atteso in L, invece E_c(Γ) < E_c(L))
+    expect(summary.ecGamma).toBeCloseTo(0.9112, 3)
+    expect(summary.ecL).toBeCloseTo(0.9852, 3)
+    expect(summary.isDirect).toBe(true)
+    expect(summary.cbmDescription).toBe('Γ')
+  })
+})
+
+describe('incarico 11 — preset Ge con i fattori locali di Cohen–Bergstresser (1966)', () => {
+  // Valori indicati dalla regia a memoria (Phys. Rev. 141, 789): non controllati sulla tabella originale.
+  const geCohenBergstresser: PseudopotentialParams = {
+    a: 5.658,
+    formFactors: { v3s: -0.23, v8s: 0.01, v11s: 0.06, v3a: 0, v4a: 0, v11a: 0 }
+  }
+
+  it('Ge: gap indiretto con minimo in L, 0,953 eV (P4 r. 807–809: minimo in L, ≈ 0,9 eV nel calcolo)', () => {
+    const raw = pseudopotentialBands(geCohenBergstresser, {
+      gMaxSq: 21,
+      pointsPerSegment: 40,
+      numBands: 8,
+      zeroAtValenceTop: false
+    })
+    let rawVbm = -Infinity
+    for (const v of raw.energies[3]) if (v > rawVbm) rawVbm = v
+    const shifted = raw.energies.map((b) => Float64Array.from(b, (e) => e - rawVbm))
+    const summary = analyzeEpmBands({ method: 'pseudopotential', path: raw.path, energies: shifted }, raw, 113)
+    expect(summary.isDirect).toBe(false)
+    expect(summary.cbmDescription).toBe('L')
+    expect(Math.abs(summary.gap - 0.953)).toBeLessThan(0.01)
+    // conduzione in Γ (≈ 1,22 eV, P4 r. 807–809: «Γ a circa 1,1 eV») e in X (≈ 1,17 eV)
+    expect(Math.abs(summary.ecGamma - 1.22)).toBeLessThan(0.02)
+    expect(Math.abs(summary.ecX - 1.17)).toBeLessThan(0.02)
+    // il minimo in L sta sotto sia Γ sia X
+    expect(summary.ecL).toBeLessThan(summary.ecGamma)
+    expect(summary.ecL).toBeLessThan(summary.ecX)
   })
 })

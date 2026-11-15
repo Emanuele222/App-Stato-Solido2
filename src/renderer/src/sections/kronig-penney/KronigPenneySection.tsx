@@ -8,14 +8,14 @@
  */
 import { useCallback, type JSX, type PointerEvent } from 'react'
 import { Panel, ParamSlider, Stepper, ToolToggle } from '../../ui/controls'
-import { formatNumber, formatSignificant } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber, formatSignificant } from '../../ui/format'
 import { FOLLOW, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
 import { isQuantityId, type QuantityId } from '../../ui/theme'
 import { LiveFormula } from '../../viz/LiveFormula'
 import {
-  COSINE_FORMULA,
+  cosineFormulaForBand,
   DEFINITIONS_DELTA,
   DEFINITIONS_RECT,
   MAIN_FORMULA_DELTA,
@@ -64,7 +64,7 @@ export function KronigPenneySection(): JSX.Element {
       <ToolToggle
         pressed={st.tools.cosine}
         onToggle={() => st.toggleTool('cosine')}
-        quantity="v"
+        quantity="t"
         title={s.tools.cosineTitle}
       >
         {s.tools.cosine}
@@ -118,7 +118,7 @@ export function KronigPenneySection(): JSX.Element {
               digits={spec.digits}
               active={st.highlight === spec.quantity}
               onChange={(v) => st.setDeltaParam(spec.id, v)}
-              onHighlight={(q) => setHighlight(q, q === 'a' ? 'a' : null)}
+              onHighlight={(q) => setHighlight(q, null)}
             />
           ))
         : (
@@ -147,11 +147,13 @@ export function KronigPenneySection(): JSX.Element {
               })}
               <div
                 className="kp-period-pill"
-                onPointerEnter={() => setHighlight('a', 'a')}
+                onPointerEnter={() => setHighlight('a', null)}
                 onPointerLeave={() => setHighlight(null, null)}
               >
                 <span>a = b + c =</span>
-                <strong>{formatNumber(st.rectParams.b + st.rectParams.c, 2)} Å</strong>
+                <strong>
+                  <Num value={st.rectParams.b + st.rectParams.c} width={4} /> Å
+                </strong>
               </div>
             </>
           )}
@@ -257,7 +259,7 @@ export function KronigPenneySection(): JSX.Element {
           </div>
           {st.tools.cosine && (
             <div className="formula-defs formula-cosine">
-              <LiveFormula tex={COSINE_FORMULA} display={false} highlight={st.highlight} pulse={st.pulse} />
+              <LiveFormula tex={cosineFormulaForBand(st.band)} display={false} highlight={st.highlight} pulse={st.pulse} />
             </div>
           )}
         </div>
@@ -313,8 +315,7 @@ function hoverTerm(e: PointerEvent, setHighlight: (q: QuantityId | null, target?
   if (q === 'a') {
     if (txt === 'b') target = 'b'
     else if (txt === 'c') target = 'c'
-    else if (txt === 'a') target = 'a'
-  } else if (q === 'E' && (txt.startsWith('L') || txt.startsWith('f'))) {
+  } else if (q === 'kp') {
     target = 'L'
   }
   setHighlight(q, target)
@@ -345,10 +346,10 @@ function Values({
     >
       <dt data-q="a">{v.period}</dt>
       <dd data-q="a">
-        <Tex tex="\htmlData{q=a}{a}" /> = <span className="num">{formatNumber(model.a, 2)}</span> Å
+        <Tex tex="\htmlData{q=a}{a}" /> = <Num value={model.a} width={4} /> Å
         <span className="sub">
           {' · '}
-          <Tex tex="\htmlData{q=Ek}{E_0}" /> = <span className="num">{formatNumber(model.E0, 2)}</span> eV
+          <Tex tex="\htmlData{q=Ek}{E_0}" /> = <Num value={model.E0} width={5} /> eV
         </span>
       </dd>
 
@@ -356,17 +357,18 @@ function Values({
         <>
           <dt data-q="VG">{v.opacity}</dt>
           <dd data-q="VG">
-            <Tex tex="\htmlData{q=VG}{P}" /> = <span className="num">{formatNumber(model.effectiveP, 2)}</span>
+            <Tex tex="\htmlData{q=VG}{P}" /> = <Num value={model.effectiveP} width={5} />
             <br />
             <span className="sub">
-              <Tex tex="a\htmlData{q=VG}{V_0}" /> = <span className="num">{formatNumber(model.barrierStrength, 2)}</span> eV·Å
+              <Tex tex="a\htmlData{q=VG}{V_0}" /> = <Num value={model.barrierStrength} width={5} /> eV·Å
               {model.deltaV0 !== null && (
                 <>
                   {' · '}
-                  <Tex tex="\htmlData{q=VG}{V_0}" /> = <span className="num">{formatNumber(model.deltaV0, 2)}</span> eV
+                  <Tex tex="\htmlData{q=VG}{V_0}" /> = <Num value={model.deltaV0} width={5} /> eV
                 </>
               )}
             </span>
+            <span className="sub note">{v.deltaAreaNote}</span>
           </dd>
         </>
       ) : (
@@ -374,10 +376,10 @@ function Values({
           <dt data-q="VG">{v.strength}</dt>
           <dd data-q="VG">
             <Tex tex="\htmlData{q=VG}{V_0}\,\htmlData{q=a}{c}" /> ={' '}
-            <span className="num">{formatNumber(model.barrierStrength, 2)}</span> eV·Å
+            <Num value={model.barrierStrength} width={5} /> eV·Å
             <span className="sub">
               {' · '}
-              <Tex tex="P_{\mathrm{eff}}" /> = <span className="num">{formatNumber(model.effectiveP, 2)}</span>
+              <Tex tex="P_{\mathrm{eff}}" /> = <Num value={model.effectiveP} width={5} />
             </span>
           </dd>
         </>
@@ -388,16 +390,18 @@ function Values({
           <dt data-q="E">{v.bandRow(sel.band + 1)}</dt>
           <dd data-q="E">
             <span className="num">
-              [{formatNumber(edge.lower, 2)}; {formatNumber(edge.upper, 2)}]
+              [<Num value={edge.lower} width={5} />; <Num value={edge.upper} width={5} />]
             </span>{' '}
             eV
             <span className="sub">
               {' · '}
               {bandWidth < 1e-4 ? (
-                <>W &lt; 10⁻⁴ eV</>
+                <>
+                  <Tex tex="\htmlData{q=t}{W}" /> &lt; 10⁻⁴ eV
+                </>
               ) : (
                 <>
-                  W = <span className="num">{formatSignificant(bandWidth, 3)}</span> eV
+                  <Tex tex="\htmlData{q=t}{W}" /> = <span className="num">{formatSignificant(bandWidth, 3)}</span> eV
                 </>
               )}
             </span>
@@ -413,7 +417,7 @@ function Values({
             <span className="sub">
               {' · '}
               <span className="num">
-                [{formatNumber(firstGap.lower, 2)}; {formatNumber(firstGap.upper, 2)}]
+                [<Num value={firstGap.lower} width={5} />; <Num value={firstGap.upper} width={5} />]
               </span>{' '}
               eV
             </span>
@@ -444,30 +448,33 @@ function Values({
 
       <dt data-q="k">{v.state}</dt>
       <dd data-q="k">
-        <Tex tex="\htmlData{q=k}{k}" /> = <span className="num">{formatNumber(sel.kFrac, 2)}</span> π/a{' '}
+        <Tex tex="\htmlData{q=k}{k}" /> = <Num value={sel.kFrac} width={5} /> π/a{' '}
         <span className="sub">
-          (<span className="num">{formatNumber(sel.k, 2)}</span> Å⁻¹)
+          (<Num value={sel.k} width={5} /> Å⁻¹)
         </span>
         <br />
-        <Tex tex="\htmlData{q=E}{E}" /> = <span className="num">{formatNumber(sel.energy, 3)}</span> eV
+        <Tex tex="\htmlData{q=E}{E}" /> = <Num value={sel.energy} digits={3} width={6} /> eV
         <span className="sub">
-          {' · '}L = <span className="num">{formatNumber(sel.L, 3)}</span> ({v.band} {sel.band + 1})
+          {' · '}
+          <Tex tex={variant === 'delta' ? '\\htmlData{q=kp}{f(\\alpha a)}' : '\\htmlData{q=kp}{L}'} /> ={' '}
+          <Num value={sel.L} digits={3} width={6} /> ({v.band} {sel.band + 1})
         </span>
       </dd>
 
       {st.tools.cosine && (
         <>
-          <dt data-q="v">{v.cosine}</dt>
-          <dd data-q="v">
-            <Tex tex="\bar{E}" /> = <span className="num">{formatNumber(model.cosine.center, 3)}</span> eV
+          <dt data-q="t">{v.cosine}</dt>
+          <dd data-q="t">
+            <Tex tex={`\\bar{E} ${model.cosine.cosSign < 0 ? '-' : '+'} 2\\htmlData{q=t}{t}\\cos ka`} /> ·{' '}
+            <Tex tex="\bar{E}" /> = <Num value={model.cosine.center} digits={3} width={6} /> eV
             <span className="sub">
               {' · '}
-              <Tex tex="\htmlData{q=v}{t}" /> = <span className="num">{formatSignificant(model.cosine.t, 3)}</span> eV · W ={' '}
-              <span className="num">{formatSignificant(model.cosine.width, 3)}</span> eV
+              <Tex tex="\htmlData{q=t}{t}" /> = <span className="num">{formatSignificant(model.cosine.t, 3)}</span> eV ·{' '}
+              <Tex tex="\htmlData{q=t}{W}" /> = <span className="num">{formatSignificant(model.cosine.width, 3)}</span> eV
             </span>
             <br />
             <span className="sub">
-              <Tex tex="E_{\cos}" /> = <span className="num">{formatNumber(sel.cosineEnergy, 3)}</span> eV
+              <Tex tex="E_{\cos}" /> = <Num value={sel.cosineEnergy} digits={3} width={6} /> eV
             </span>
           </dd>
         </>
@@ -477,7 +484,7 @@ function Values({
         <>
           <dt data-q="EF">{v.fermi}</dt>
           <dd data-q="EF">
-            <Tex tex="\htmlData{q=EF}{E_F}" /> = <span className="num">{formatNumber(model.filling.fermiLevel, 2)}</span> eV
+            <Tex tex="\htmlData{q=EF}{E_F}" /> = <Num value={model.filling.fermiLevel} width={5} /> eV
             <span className="sub">
               {' · '}
               {model.filling.kind === 'insulator' ? s.scene.insulator : s.scene.metal} ({v.electrons(st.electrons)})
@@ -490,33 +497,28 @@ function Values({
         <>
           <dt data-q="mstar">{v.mass}</dt>
           <dd data-q="mstar">
-            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> ={' '}
-            <span className="num">
-              {Number.isFinite(model.probe.massRatio) ? formatSignificant(model.probe.massRatio, 3) : '∞'}
-            </span>
+            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
+            <span className="num">{formatEffectiveMassRatio(model.probe.massRatio, { withEquals: true })}</span>
             <span className="sub">
               {' · '}
               <Tex tex="\htmlData{q=v}{v}" /> = <span className="num">{formatSignificant(model.probe.velocity / 1e6, 3)}</span> · 10⁶ m/s
             </span>
             <br />
             <span className="sub">
-              {v.cosineMass}:{' '}
-              <span className="num">
-                {Number.isFinite(model.probe.cosineMassRatio)
-                  ? formatSignificant(model.probe.cosineMassRatio, 3)
-                  : '∞'}
-              </span>{' '}
-              ({v.cosineMassNote}:{' '}
-              <span className="num">
-                {Number.isFinite(model.probe.cosineMinMassRatio)
-                  ? formatSignificant(model.probe.cosineMinMassRatio, 3)
-                  : '∞'}
-              </span>
-              )
+              {v.cosineMass}: <span className="num">{formatEffectiveMassRatio(model.probe.cosineMassRatio)}</span> ({v.cosineMassNote}:{' '}
+              <span className="num">{formatEffectiveMassRatio(model.probe.cosineMinMassRatio)}</span>)
             </span>
           </dd>
         </>
       )}
     </dl>
+  )
+}
+
+function Num({ value, digits = 2, width }: { value: number; digits?: number; width: number }): JSX.Element {
+  return (
+    <span className="value-num num" style={{ minWidth: `${width}ch` }}>
+      {formatNumber(value, digits)}
+    </span>
   )
 }

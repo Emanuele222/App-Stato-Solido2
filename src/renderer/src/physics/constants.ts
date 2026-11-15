@@ -12,6 +12,11 @@ export const HBAR2_OVER_M0 = 2 * HBAR2_OVER_2M0
 /** Rydberg in eV (progetto.md «Notazione»). */
 export const RYDBERG_EV = 13.6057
 
+/** Converte un'energia in Rydberg nella scala in eV. */
+export function rydbergToEv(energyRy: number): number {
+  return energyRy * RYDBERG_EV
+}
+
 /**
  * ħ in eV·s (CODATA 2018, 6,582119569·10⁻¹⁶). Serve solo per convertire
  * v = (1/ħ)·dE/dk in m/s; è coerente con ħ²/2m₀ = 3,80998 eV·Å² entro 1 su 10⁶.

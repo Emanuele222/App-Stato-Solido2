@@ -3,6 +3,7 @@
  * Le cifre hanno larghezza fissa nel CSS (font-variant-numeric: tabular-nums),
  * così i valori non «ballano» mentre cambiano.
  */
+import { isEffectiveMassDivergent } from '../physics/semiclassical'
 
 const cache = new Map<string, Intl.NumberFormat>()
 
@@ -42,4 +43,22 @@ export function formatSignificant(x: number, significant = 3): string {
   const magnitude = Math.floor(Math.log10(Math.abs(x)))
   const digits = Math.max(0, Math.min(6, significant - 1 - magnitude))
   return formatNumber(x, digits)
+}
+
+export const DIVERGENT_EFFECTIVE_MASS_TEXT = '→ ∞ (flesso)'
+
+/**
+ * Formato unico per il rapporto m* / m₀ in tutte le sezioni: usa la soglia
+ * definita in `physics/semiclassical.ts` e restituisce «→ ∞ (flesso)» ai flessi.
+ */
+export function formatEffectiveMassRatio(
+  massRatio: number,
+  options: { readonly significant?: number; readonly digits?: number; readonly withEquals?: boolean } = {}
+): string {
+  if (isEffectiveMassDivergent(massRatio)) return DIVERGENT_EFFECTIVE_MASS_TEXT
+  const formatted =
+    options.digits !== undefined
+      ? formatNumber(massRatio, options.digits)
+      : formatSignificant(massRatio, options.significant ?? 3)
+  return options.withEquals ? `= ${formatted}` : formatted
 }

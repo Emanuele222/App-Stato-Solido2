@@ -3,8 +3,9 @@
  * diagramma E(k) collegati, formula viva del modello a due onde, scheda teoria.
  */
 import { useCallback, type JSX, type PointerEvent } from 'react'
+import { isEffectiveMassDivergent } from '../../physics'
 import { ParamSlider, Panel, PresetMenu, Stepper, ToolToggle } from '../../ui/controls'
-import { formatNumber, formatSignificant } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { FOLLOW, GLIDE, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
@@ -157,7 +158,7 @@ export function NearlyFreeSection(): JSX.Element {
                 }
               : null
           }
-          gaps={gapMarkers(model, shown.v2G)}
+          gaps={gapMarkers(model)}
           levels={[{ energy: model.E0, k: model.zoneEdge, label: s.scene.e0, quantity: 'Ek' }]}
           selection={{ k: model.selection.k, energy: model.selection.energy }}
           probe={
@@ -255,10 +256,10 @@ function standingNote(model: NearlyFreeModel): string | null {
   return model.edgeGap.width < 1e-6 ? s.scene.noteDegenerate : null
 }
 
-function gapMarkers(model: NearlyFreeModel, v2G: number): GapMarker[] {
-  const { edgeGap, centerGap } = model
+function gapMarkers(model: NearlyFreeModel): GapMarker[] {
+  const { edgeGap, centerGap, twoWaveCenterGap } = model
   // in k = 0 l'etichetta è 2|V_2G| solo se il gap è davvero quello; altrimenti E_g
-  const match = Math.abs(centerGap.width - 2 * Math.abs(v2G)) < 0.2 * Math.max(centerGap.width, 0.05)
+  const match = Math.abs(centerGap.width - twoWaveCenterGap) < 0.2 * Math.max(centerGap.width, 0.05)
   return [
     { k: edgeGap.k, lower: edgeGap.lower, upper: edgeGap.upper, label: s.scene.gapG, quantity: 'VG' },
     {
@@ -269,6 +270,13 @@ function gapMarkers(model: NearlyFreeModel, v2G: number): GapMarker[] {
       quantity: 'V2G'
     }
   ]
+}
+
+function planeWaveLabelTex(gMultiple: number): string {
+  if (gMultiple === 0) return 'c_0'
+  if (gMultiple === -1) return 'c_{-G}'
+  if (gMultiple === 1) return 'c_{G}'
+  return `c_{${gMultiple}G}`
 }
 
 /** Valori vivi sotto la formula. Larghezze stabili: cifre tabulari e campi a larghezza minima. */
@@ -285,6 +293,7 @@ function Values({
 }): JSX.Element {
   const v = s.values
   const sel = model.selection
+  const pureSecondOrderCenterGap = Math.abs(shown.v2G) < 1e-4 && model.centerGap.width > 1e-5
   return (
     <dl
       className="values"
@@ -298,29 +307,32 @@ function Values({
 
       <dt>{v.gapEdge}</dt>
       <dd>
-        <Tex tex="2|\htmlData{q=VG}{V_G}|" /> = <Num value={2 * Math.abs(shown.vG)} width={4} /> eV
-        <span className="sub">
-          {' · '}
-          <span className="nowrap">
-            {v.computed} <Num value={model.edgeGap.width} width={4} /> eV
-          </span>
+        <Tex tex="2|\htmlData{q=VG}{V_G}|" /> = <Num value={model.twoWaveEdgeGap} width={4} /> eV{' '}
+        <span className="sub">({v.twoWaveFormula})</span>
+        <br />
+        <span className="sub nowrap">
+          {v.computedExact(NUMERICS.planeWaves)} <Num value={model.edgeGap.width} width={4} /> eV
         </span>
-        {Math.abs(shown.vG) > 0.5 * model.E0 && (
+        {model.weakPotentialRatio > 0.5 && (
           <span className="sub note">
-            <RichText text={v.strong(formatNumber(Math.abs(shown.vG) / model.E0, 2))} />
+            <RichText text={v.strong(formatNumber(model.weakPotentialRatio, 2))} />
           </span>
         )}
       </dd>
 
       <dt>{v.gapCenter}</dt>
       <dd>
-        <Tex tex="2|\htmlData{q=V2G}{V_{2G}}|" /> = <Num value={2 * Math.abs(shown.v2G)} width={4} /> eV
-        <span className="sub">
-          {' · '}
-          <span className="nowrap">
-            {v.computed} <Num value={model.centerGap.width} width={4} /> eV
-          </span>
+        <Tex tex="2|\htmlData{q=V2G}{V_{2G}}|" /> = <Num value={model.twoWaveCenterGap} width={4} /> eV{' '}
+        <span className="sub">({v.twoWaveFormula})</span>
+        <br />
+        <span className="sub nowrap">
+          {v.computedExact(NUMERICS.planeWaves)} <Num value={model.centerGap.width} digits={3} width={5} /> eV
         </span>
+        {pureSecondOrderCenterGap && (
+          <span className="sub note">
+            <RichText text={v.secondOrderNotVisible} />
+          </span>
+        )}
       </dd>
 
       <dt>{v.state}</dt>
@@ -328,6 +340,17 @@ function Values({
         <Tex tex="\htmlData{q=k}{k}" /> = <Num value={sel.kFrac} width={5} /> π/a · {v.band} {sel.band + 1}
         <br />
         <Tex tex="\htmlData{q=E}{E}" /> = <Num value={sel.energy} width={5} /> eV
+      </dd>
+
+      <dt data-q="psi">{v.planeWaveWeights}</dt>
+      <dd data-q="psi">
+        {sel.dominantWeights.map((w, idx) => (
+          <span key={w.gMultiple} className="nowrap">
+            {idx > 0 ? ' · ' : ''}
+            <Tex tex={`|\\htmlData{q=psi}{${planeWaveLabelTex(w.gMultiple)}}|^2`} /> ={' '}
+            <Num value={w.weight * 100} digits={1} width={4} />%
+          </span>
+        ))}
       </dd>
 
       {sel.atEdge && (
@@ -351,6 +374,11 @@ function Values({
               {model.filling.kind === 'insulator' ? s.scene.insulator : s.scene.metal}{' '}
               <span className="nowrap">({v.electrons(st.electrons)})</span>
             </span>
+            {model.filling.kind === 'insulator' && st.electrons === 4 && Math.abs(shown.v2G) < 1e-4 && (
+              <span className="sub note">
+                <RichText text={v.secondOrderInsulatorNote} />
+              </span>
+            )}
           </dd>
         </>
       )}
@@ -359,15 +387,11 @@ function Values({
         <>
           <dt>{v.mass}</dt>
           <dd>
-            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> ={' '}
-            {Math.abs(model.probe.massRatio) < 1e-3 ? (
-              <span className="sub">{v.massZero}</span>
-            ) : (
-              <span className="num value-num" style={{ minWidth: '7ch' }}>
-                {formatSignificant(model.probe.massRatio, 3)}
-              </span>
-            )}
-            {model.probe.massRatio < 0 && Math.abs(model.probe.massRatio) >= 1e-3 && (
+            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
+            <span className="num value-num" style={{ minWidth: '7ch' }}>
+              {formatEffectiveMassRatio(model.probe.massRatio, { significant: 3, withEquals: true })}
+            </span>
+            {!isEffectiveMassDivergent(model.probe.massRatio) && model.probe.massRatio < 0 && (
               <span className="sub note">
                 <RichText text={v.massNegative} />
               </span>

@@ -68,6 +68,17 @@
   height: 100%;
 }
 
+/* canvas annidati: riempiono il proprio contenitore (la regola generale di ui.css vale solo per il figlio diretto) */
+.tb-bands-wrap > canvas,
+.tb-real-main > canvas,
+.tb-edges-canvas-box > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .tb-bands-overlay {
   position: absolute;
   inset: 0;
@@ -134,16 +145,46 @@
   line-height: 1.45;
 }
 
-/* Altezze minime garantite su viewport corte/strette (800x600, 800x700):
-   impedisce che lo spazio reale o il diagramma E(k) si schiaccino e fa scorrere la colonna. */
-.stage:has(.tb-bands-wrap) {
-  overflow-y: auto;
-  grid-template-rows: auto minmax(445px, 1fr) auto;
+/*
+ * Barra dei comandi: griglia a colonne di almeno 148 px. Interruttore di catena e contatore degli
+ * elettroni occupano due colonne; con «Riempimento» acceso i comandi stanno su due righe quando la
+ * colonna centrale è larga almeno 790 px (finestre da circa 1440 px), su tre o quattro nelle più strette.
+ */
+.stage:has(.tb-bands-wrap) .params {
+  padding: 6px 12px;
 }
 
-.scene:has(.tb-bands-wrap) {
-  grid-template-rows: minmax(185px, 38fr) minmax(260px, 62fr);
-  min-height: 445px;
+.tb-params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 2px 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.tb-params-grid > .param {
+  max-width: none;
+  min-width: 0;
+  padding: 2px 4px;
+  gap: 5px;
+}
+
+.tb-params-grid > .param .param-symbol {
+  min-width: 26px;
+}
+
+.tb-params-grid > .param .param-track {
+  min-width: 40px;
+}
+
+.tb-params-grid > .tb-variant-switch,
+.tb-params-grid > .stepper {
+  grid-column: span 2;
+}
+
+.tb-params-grid > .tool-toggle,
+.tb-params-grid > .tb-linked-param {
+  justify-self: start;
 }
 
 @media (prefers-reduced-motion: reduce) {

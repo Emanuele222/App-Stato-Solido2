@@ -20,7 +20,22 @@ import {
 import { formatNumber } from '../../ui/format'
 import { easeInOutCubic, Smoothed, useReducedMotion } from '../../ui/motion'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, niceStep, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import {
+  boxesOverlap,
+  drawMathText,
+  drawRichText,
+  drawSegmentedHorizontalLine,
+  measureMathText,
+  measureRichText,
+  niceStep,
+  placeGapLabelBox,
+  placeProbeLabel,
+  sansFont,
+  useCanvasDraw,
+  withAlpha,
+  type RectBox,
+  type XSpan
+} from '../../viz/canvas'
 import { NUMERICS, type ZoneScheme } from './manifest'
 import type { HighlightTarget } from './store'
 
@@ -75,14 +90,6 @@ const MARGIN = { left: 50, right: 14, top: 12, bottom: 48 }
 const DIM = 0.25
 const FOLD_DURATION = 0.68
 const PERIODIC_DURATION = 0.62
-
-/** Rettangolo in pixel CSS (ingombro di un elemento disegnato). */
-interface Rect {
-  readonly x: number
-  readonly y: number
-  readonly w: number
-  readonly h: number
-}
 
 export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesPlotProps): JSX.Element {
   const reduced = useReducedMotion()
@@ -197,7 +204,7 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
     // --- ombreggiatura fuori dalla prima zona (si attenua in zona periodica) ---
     const outerShadeAlpha = 0.025 * (1 - 0.65 * per)
     if (outerShadeAlpha > 0.002) {
-      ctx.fillStyle = `rgba(255,255,255,${outerShadeAlpha.toFixed(4)})`
+      ctx.fillStyle = withAlpha(TOKENS.text, outerShadeAlpha)
       ctx.fillRect(L, T, Math.max(0, X(-kb) - L), H)
       ctx.fillRect(X(kb), T, Math.max(0, L + W - X(kb)), H)
     }
@@ -216,9 +223,11 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
     ctx.textAlign = 'center'
     ctx.textBaseline = 'alphabetic'
     const kTitleW = 64
+    let lastTickX = -Infinity
     for (let k = Math.ceil(k0 / kStep) * kStep; k <= k1 + 1e-9; k += kStep) {
       const x = X(k)
-      if (x < L || x > L + W - kTitleW) continue
+      if (x < L + 12 || x > L + W - kTitleW - 10) continue
+      if (x - lastTickX < 34) continue
       ctx.strokeStyle = TOKENS.dim
       ctx.beginPath()
       ctx.moveTo(x, T + H)
@@ -226,6 +235,7 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
       ctx.stroke()
       ctx.fillStyle = TOKENS.muted
       ctx.fillText(formatNumber(k, kStep < 1 ? 1 : 0), x, T + H + 17)
+      lastTickX = x
     }
     ctx.globalAlpha = em('k')
     ctx.fillStyle = quantityColor('k')
@@ -286,13 +296,31 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
 
     // ingombri già disegnati (pallini, etichette, sonda): le etichette dei rami
     // n, disegnate per ultime, scelgono una posizione lungo il ramo che non li copra
-    const occupied: Rect[] = []
+    const occupied: RectBox[] = []
+    const fermiSkips: XSpan[] = []
     const occupy = (x: number, y: number, rw: number, rh: number): void => {
-      occupied.push({ x, y, w: rw, h: rh })
+      occupied.push({ x0: x, y0: y, x1: x + rw, y1: y + rh })
     }
     const occupyMath = (x: number, y: number, width: number, size: number, align: 'left' | 'center' | 'right'): void => {
       const x0 = align === 'center' ? x - width / 2 : align === 'right' ? x - width : x
       occupy(x0 - 3, y - size * 0.85, width + 6, size * 1.2)
+    }
+
+    const eCol = quantityColor('E')
+    const activeFermiY = p.filling && anim.filling.value > 0.01 ? Y(anim.fermi.value) : null
+    let legendSpec: { items: { text: string; color: string; dash: number[] }[]; bx: number; by: number; boxW: number; boxH: number } | null = null
+    if (p.compare && anim.compare.value > 0.01) {
+      const items: { text: string; color: string; dash: number[] }[] = [
+        { text: p.labels.bandsLegend, color: eCol, dash: [] },
+        { text: p.compare.label, color: quantityColor('VG'), dash: [4, 4] }
+      ]
+      const widths = items.map((it) => measureRichText(ctx, it.text, { size: 12 }))
+      const boxW = Math.max(...widths) + 40
+      const boxH = items.length * 18 + 8
+      const bx = L + W - boxW - 6
+      const by = T + 6
+      legendSpec = { items, bx, by, boxW, boxH }
+      occupy(bx, by, boxW, boxH)
     }
 
     // livello E₀ di riferimento
@@ -377,7 +405,6 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
     }
 
     // --- copie periodiche (quando per > 0.01) ---
-    const eCol = quantityColor('E')
     const fill = anim.filling.value
     const fermiY = Y(anim.fermi.value)
     const periodicShifts = [-3, -2, -1, 1, 2, 3]
@@ -457,14 +484,23 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
           ctx.moveTo(gx - 4, yHi)
           ctx.lineTo(gx + 4, yHi)
           ctx.stroke()
-          const wGap = drawMathText(ctx, cmp.gapLabel, gx + 8, (yLo + yHi) / 2 + 5, {
-            color: cmpCol,
-            align: 'left',
-            size: 13.5,
-            backdrop: TOKENS.bg
-          })
-          occupyMath(gx + 8, (yLo + yHi) / 2 + 5, wGap, 13.5, 'left')
+          const labelW = measureMathText(ctx, cmp.gapLabel, 13.5)
           occupy(gx - 5, yHi - 2, 10, yLo - yHi + 4)
+          placeGapLabelBox(ctx, {
+            text: cmp.gapLabel,
+            size: 13.5,
+            color: cmpCol,
+            backdrop: TOKENS.bg,
+            centerX: gx + 8 + labelW / 2,
+            preferredY: (yLo + yHi) / 2,
+            minX: L,
+            maxX: L + W,
+            minY: T,
+            maxY: T + H,
+            fermiY: activeFermiY,
+            occupied,
+            fermiSkips
+          })
           ctx.globalAlpha = 1
         }
       }
@@ -531,22 +567,20 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
       ctx.strokeStyle = c
       ctx.lineWidth = lw('EF', 1.5)
       ctx.setLineDash([8, 4])
-      ctx.beginPath()
-      ctx.moveTo(L, fermiY)
-      ctx.lineTo(L + W, fermiY)
-      ctx.stroke()
+      drawSegmentedHorizontalLine(ctx, L, L + W, fermiY, fermiSkips, 6)
       ctx.setLineDash([])
-      const wF = drawMathText(ctx, 'E_{F}', L + 8, fermiY - 6, { color: c, size: 15, backdrop: TOKENS.bg })
+      const labelY = Math.max(T + 18, fermiY - 6)
+      const wF = drawMathText(ctx, 'E_{F}', L + 8, labelY, { color: c, size: 15, backdrop: TOKENS.bg })
       ctx.font = sansFont(12)
       const label = p.filling.label
       const lwid = ctx.measureText(label).width
       ctx.fillStyle = TOKENS.bg
-      ctx.fillRect(L + 16 + wF, fermiY - 19, lwid + 8, 17)
+      ctx.fillRect(L + 16 + wF, labelY - 13, lwid + 8, 17)
       ctx.fillStyle = c
       ctx.textAlign = 'left'
       ctx.textBaseline = 'alphabetic'
-      ctx.fillText(label, L + 20 + wF, fermiY - 6)
-      occupy(L + 5, fermiY - 19, wF + lwid + 22, 19)
+      ctx.fillText(label, L + 20 + wF, labelY)
+      occupy(L + 5, labelY - 14, wF + lwid + 22, 19)
       ctx.globalAlpha = 1
     }
 
@@ -642,27 +676,35 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
         ctx.beginPath()
         const bend = Math.abs(0.5 * pr.curvature)
         const span = Math.min(0.45 * kb, bend > 0 ? Math.sqrt((0.22 * (e1 - e0)) / bend) : Infinity)
+        const probePts: { x: number; y: number }[] = []
         for (let i = 0; i <= 48; i++) {
           const dk = -span + (2 * span * i) / 48
-          const y = Y(sel.energy + pr.slope * dk + 0.5 * pr.curvature * dk * dk)
-          if (i === 0) ctx.moveTo(X(kShown + dk), y)
-          else ctx.lineTo(X(kShown + dk), y)
-          if (i % 6 === 0) occupy(X(kShown + dk) - 4, y - 4, 8, 8)
+          const px = X(kShown + dk)
+          const py = Y(sel.energy + pr.slope * dk + 0.5 * pr.curvature * dk * dk)
+          probePts.push({ x: px, y: py })
+          if (i === 0) ctx.moveTo(px, py)
+          else ctx.lineTo(px, py)
+          if (i % 6 === 0) occupy(px - 4, py - 4, 8, 8)
         }
         ctx.stroke()
         const side = pr.slope > 0 ? -1 : 1
         const dkTip = side * span
+        const tipX = X(kShown + dkTip)
         const tipY = Y(sel.energy + pr.slope * dkTip + 0.5 * pr.curvature * dkTip * dkTip)
-        const lx = X(kShown + dkTip) + side * 6
-        const ly = Math.max(T + 16, Math.min(T + H - 8, tipY + 4))
-        const align = side < 0 ? 'right' : 'left'
-        const wM = drawMathText(ctx, pr.label, lx, ly, {
-          color: c,
+        placeProbeLabel(ctx, {
+          text: pr.label,
           size: 13.5,
+          color: c,
           backdrop: TOKENS.bg,
-          align
+          anchorX: tipX,
+          anchorY: tipY,
+          minX: L,
+          maxX: L + W,
+          minY: T,
+          maxY: T + H,
+          occupied,
+          curvePoints: probePts
         })
-        occupyMath(lx, ly, wM, 13.5, align)
         ctx.globalAlpha = 1
       }
 
@@ -699,19 +741,11 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
     }
 
     // --- legenda confronto ---
-    if (p.compare && anim.compare.value > 0.01) {
+    if (legendSpec) {
+      const { items, bx, by, boxW, boxH } = legendSpec
       ctx.globalAlpha = anim.compare.value
-      const items: { text: string; color: string; dash: number[] }[] = [
-        { text: p.labels.bandsLegend, color: eCol, dash: [] },
-        { text: p.compare.label, color: quantityColor('VG'), dash: [4, 4] }
-      ]
-      const widths = items.map((it) => measureRichLegend(ctx, it.text))
-      const boxW = Math.max(...widths) + 40
-      const bx = L + W - boxW - 6
-      const by = T + 6
       ctx.fillStyle = TOKENS.bg
-      ctx.fillRect(bx, by, boxW, items.length * 18 + 8)
-      occupy(bx, by, boxW, items.length * 18 + 8)
+      ctx.fillRect(bx, by, boxW, boxH)
       items.forEach((it, i) => {
         const y = by + 14 + i * 18
         ctx.strokeStyle = it.color
@@ -722,32 +756,25 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
         ctx.lineTo(bx + 28, y - 4)
         ctx.stroke()
         ctx.setLineDash([])
-        drawRichLegend(ctx, it.text, bx + 34, y)
+        drawRichText(ctx, it.text, bx + 34, y, { size: 12, color: TOKENS.textSoft, align: 'left' })
       })
       ctx.globalAlpha = 1
     }
 
     // --- etichette dell'indice n su ogni ramo (per ultime: evitano gli ingombri) ---
-    // Per ogni ramo si provano posizioni lungo il ramo stesso, partendo da quella
-    // preferita e allontanandosi a passi alterni; si prende la prima che non copre
-    // pallini, sonda, etichette e le altre etichette n. Il ramo scelto va per primo.
     {
       const anchors: readonly { n: number; kExtFrac: number }[] = [
-        { n: 0, kExtFrac: 0.45 },
-        { n: 1, kExtFrac: 1.78 },
+        { n: 0, kExtFrac: 0.42 },
+        { n: 1, kExtFrac: 1.32 },
         { n: -1, kExtFrac: -1.78 },
-        { n: 2, kExtFrac: 3.16 },
-        { n: -2, kExtFrac: -3.16 },
-        { n: 3, kExtFrac: 5.15 },
-        { n: -3, kExtFrac: -5.15 }
+        { n: 2, kExtFrac: 3.30 },
+        { n: -2, kExtFrac: -3.72 },
+        { n: 3, kExtFrac: 5.25 },
+        { n: -3, kExtFrac: -5.65 }
       ]
       const ordered = [...anchors].sort((u, v) => Number(v.n === p.selection.n) - Number(u.n === p.selection.n))
-      const offsets = [0, -0.16, 0.16, -0.32, 0.32, -0.48, 0.48, -0.64, 0.64, -0.8, 0.8]
-      const pad = 3
-      const hits = (r: Rect): boolean =>
-        occupied.some(
-          (o) => r.x < o.x + o.w + pad && r.x + r.w + pad > o.x && r.y < o.y + o.h + pad && r.y + r.h + pad > o.y
-        )
+      const offsets = [0, -0.18, 0.18, -0.36, 0.36, -0.54, 0.54, -0.72, 0.72]
+      const hits = (b: RectBox): boolean => occupied.some((o) => boxesOverlap(b, o, 6))
       ctx.font = sansFont(11, 600)
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
@@ -760,8 +787,8 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
         const lo = anchor.n === 0 ? -0.92 : 2 * Math.abs(anchor.n) - 0.92
         const hi = anchor.n === 0 ? 0.92 : 2 * Math.abs(anchor.n) + 0.92
         const sign = anchor.n < 0 ? -1 : 1
-        let chosen: Rect | null = null
-        let fallback: Rect | null = null
+        let chosen: RectBox | null = null
+        let fallback: RectBox | null = null
         for (const off of offsets) {
           const f = Math.abs(anchor.kExtFrac) + off
           if (f < lo || f > hi) continue
@@ -771,25 +798,27 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
           const x = X(kExt - fold * G)
           const y = Y(E)
           if (x < L + tw / 2 + 2 || x > L + W - tw / 2 - 2) continue
-          const r: Rect = { x: x - tw / 2, y: y - 9, w: tw, h: 18 }
-          if (!fallback) fallback = r
-          if (!hits(r)) {
-            chosen = r
+          const b: RectBox = { x0: x - tw / 2, y0: y - 9, x1: x + tw / 2, y1: y + 9 }
+          if (!fallback) fallback = b
+          if (!hits(b)) {
+            chosen = b
             break
           }
         }
         // nessuna posizione libera: il ramo scelto tiene la prima; gli altri si omettono
         const r = chosen ?? (isSel ? fallback : null)
         if (!r) continue
-        occupy(r.x, r.y, r.w, r.h)
+        occupied.push(r)
+        const rw = r.x1 - r.x0
+        const rh = r.y1 - r.y0
         ctx.globalAlpha = isSel && hlG ? 1 : em('E') * (isSel ? 1 : 0.78)
         ctx.fillStyle = TOKENS.bg
-        ctx.fillRect(r.x, r.y, r.w, r.h)
+        ctx.fillRect(r.x0, r.y0, rw, rh)
         ctx.strokeStyle = isSel ? (hlG ? aCol : eCol) : TOKENS.line
         ctx.lineWidth = 1
-        ctx.strokeRect(r.x, r.y, r.w, r.h)
+        ctx.strokeRect(r.x0, r.y0, rw, rh)
         ctx.fillStyle = isSel ? (hlG ? aCol : TOKENS.text) : TOKENS.muted
-        ctx.fillText(tag, r.x + r.w / 2, r.y + 9.5)
+        ctx.fillText(tag, r.x0 + rw / 2, r.y0 + 9.5)
       }
       ctx.globalAlpha = 1
     }
@@ -896,47 +925,3 @@ export const ZoneSchemesPlot = memo(function ZoneSchemesPlot(props: ZoneSchemesP
     />
   )
 })
-
-const LEGEND_MATH_RE = /([A-Za-z]+_\{[^}]+\})/g
-
-function splitLegendTokens(text: string): { kind: 'text' | 'math'; value: string }[] {
-  const out: { kind: 'text' | 'math'; value: string }[] = []
-  let last = 0
-  for (const m of text.matchAll(LEGEND_MATH_RE)) {
-    const idx = m.index ?? 0
-    if (idx > last) out.push({ kind: 'text', value: text.slice(last, idx) })
-    out.push({ kind: 'math', value: m[0] })
-    last = idx + m[0].length
-  }
-  if (last < text.length) out.push({ kind: 'text', value: text.slice(last) })
-  return out
-}
-
-function measureRichLegend(ctx: CanvasRenderingContext2D, text: string): number {
-  let w = 0
-  for (const tok of splitLegendTokens(text)) {
-    if (tok.kind === 'text') {
-      ctx.font = sansFont(12)
-      w += ctx.measureText(tok.value).width
-    } else {
-      w += drawMathText(ctx, tok.value, -9999, -9999, { color: TOKENS.textSoft, size: 13 })
-    }
-  }
-  return w
-}
-
-function drawRichLegend(ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void {
-  let curX = x
-  ctx.textBaseline = 'alphabetic'
-  ctx.textAlign = 'left'
-  for (const tok of splitLegendTokens(text)) {
-    if (tok.kind === 'text') {
-      ctx.font = sansFont(12)
-      ctx.fillStyle = TOKENS.textSoft
-      ctx.fillText(tok.value, curX, y)
-      curX += ctx.measureText(tok.value).width
-    } else {
-      curX += drawMathText(ctx, tok.value, curX, y, { color: TOKENS.textSoft, size: 13 })
-    }
-  }
-}

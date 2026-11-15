@@ -53,3 +53,16 @@ export function effectiveMassRatio(energy: EnergyFunction, k: number, h: number 
 function checkStep(h: number): void {
   if (!(h > 0) || !Number.isFinite(h)) throw new RangeError(`passo di derivazione non valido: ${h}`)
 }
+
+/** Soglia su |m* / m₀| oltre la quale la curvatura è nulla nei limiti numerici (flesso: m* → ∞). */
+export const EFFECTIVE_MASS_DIVERGENCE_THRESHOLD = 1e4
+
+/** Vero se m* / m₀ non è finito oppure |m* / m₀| ≥ EFFECTIVE_MASS_DIVERGENCE_THRESHOLD. */
+export function isEffectiveMassDivergent(massRatio: number): boolean {
+  return !Number.isFinite(massRatio) || Math.abs(massRatio) >= EFFECTIVE_MASS_DIVERGENCE_THRESHOLD
+}
+
+/** Curvatura d²E/dk² (in eV·Å²) corrispondente a un dato rapporto inverso m₀/m*. */
+export function curvatureFromInverseMassRatio(invMassRatio: number): number {
+  return HBAR2_OVER_M0 * invMassRatio
+}

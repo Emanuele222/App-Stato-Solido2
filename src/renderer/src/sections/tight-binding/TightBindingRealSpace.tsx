@@ -8,7 +8,7 @@
  *    Tutte le fasi di Bloch e i campioni arrivano già calcolati da model.ts / physics/.
  */
 import { memo, type JSX } from 'react'
-import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
+import { LOBE_PALETTES, quantityColor, toneColor, TOKENS, type QuantityId } from '../../ui/theme'
 import { drawMathText, sansFont, useCanvasDraw } from '../../viz/canvas'
 import { NUMERICS } from './manifest'
 import type { TightBindingModel } from './model'
@@ -59,7 +59,7 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
     ctx.stroke()
     ctx.setLineDash([])
 
-    ctx.strokeStyle = '#cad8ea'
+    ctx.strokeStyle = toneColor('realPartWave')
     ctx.lineWidth = highlight === 'psi' ? 2.4 : 1.75
     ctx.beginPath()
     for (let i = 0; i < m.xs.length; i++) {
@@ -72,7 +72,7 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
     ctx.restore()
 
     drawMathText(ctx, 'Re ψ_{k}', L - 6, reZeroY + 4, {
-      color: '#cad8ea',
+      color: toneColor('realPartWave'),
       align: 'right',
       size: 12
     })
@@ -148,9 +148,9 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
     if (m.effectiveVariant === 'monoatomic') {
       const sites = m.mono.sites
 
-      ctx.globalAlpha = highlight === 'v' ? 1 : em('v') * 0.65
-      ctx.strokeStyle = highlight === 'v' ? quantityColor('v') : TOKENS.lineStrong
-      ctx.lineWidth = highlight === 'v' ? 3.2 : 1.5
+      ctx.globalAlpha = highlight === 't' ? 1 : em('t') * 0.65
+      ctx.strokeStyle = highlight === 't' ? quantityColor('t') : TOKENS.lineStrong
+      ctx.lineWidth = highlight === 't' ? 3.2 : 1.5
       for (let i = 0; i < sites.length - 1; i++) {
         ctx.beginPath()
         ctx.moveTo(X(sites[i].x), chainY)
@@ -158,9 +158,9 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
         ctx.stroke()
       }
 
-      if (highlight === 'v' && sites.length >= 2) {
+      if (highlight === 't' && sites.length >= 2) {
         drawMathText(ctx, m.selection.band === 0 ? 't_{s}' : 't_{p}', X(0.5 * m.aEff), chainY - 12, {
-          color: quantityColor('v'),
+          color: quantityColor('t'),
           align: 'center',
           size: 13,
           backdrop: TOKENS.bg
@@ -190,18 +190,18 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
       }
     } else {
       const sites = m.diatomic.weightsAll
-      ctx.globalAlpha = highlight === 'v' ? 1 : em('v') * 0.65
-      ctx.strokeStyle = highlight === 'v' ? quantityColor('v') : TOKENS.lineStrong
-      ctx.lineWidth = highlight === 'v' ? 3.2 : 1.5
+      ctx.globalAlpha = highlight === 't' ? 1 : em('t') * 0.65
+      ctx.strokeStyle = highlight === 't' ? quantityColor('t') : TOKENS.lineStrong
+      ctx.lineWidth = highlight === 't' ? 3.2 : 1.5
       for (let i = 0; i < sites.length - 1; i++) {
         ctx.beginPath()
         ctx.moveTo(X(sites[i].x), chainY)
         ctx.lineTo(X(sites[i + 1].x), chainY)
         ctx.stroke()
       }
-      if (highlight === 'v') {
+      if (highlight === 't') {
         drawMathText(ctx, 't', X(0.25 * m.aEff), chainY - 12, {
-          color: quantityColor('v'),
+          color: quantityColor('t'),
           align: 'center',
           size: 13,
           backdrop: TOKENS.bg
@@ -218,7 +218,7 @@ export const TightBindingRealSpace = memo(function TightBindingRealSpace({
         } else {
           ctx.save()
           ctx.setLineDash([2, 2])
-          ctx.strokeStyle = family === 'A' ? '#4f899c' : '#9c6647'
+          ctx.strokeStyle = family === 'A' ? toneColor('faintOrbitalA') : toneColor('faintOrbitalB')
           ctx.lineWidth = 1
           ctx.beginPath()
           ctx.arc(cx, chainY, Math.max(5, maxR * 0.35), 0, 2 * Math.PI)
@@ -282,39 +282,7 @@ function drawLobe(
   signedVal: number,
   family: 'mono' | 'A' | 'B'
 ): void {
-  const palette =
-    family === 'A'
-      ? {
-          posFill: 'rgba(136, 224, 244, 0.88)',
-          posStroke: '#b9f0fc',
-          posText: '#0a1f28',
-          negFill: 'rgba(20, 48, 60, 0.9)',
-          negStroke: '#4c8ca2',
-          negText: '#9cd2e3',
-          zeroFill: 'rgba(72, 118, 134, 0.35)',
-          zeroStroke: '#66a1b5'
-        }
-      : family === 'B'
-        ? {
-            posFill: 'rgba(255, 186, 138, 0.9)',
-            posStroke: '#ffd7ba',
-            posText: '#2c1408',
-            negFill: 'rgba(66, 33, 20, 0.92)',
-            negStroke: '#a86545',
-            negText: '#f0b896',
-            zeroFill: 'rgba(138, 92, 66, 0.35)',
-            zeroStroke: '#b57b5c'
-          }
-        : {
-            posFill: 'rgba(234, 238, 244, 0.88)',
-            posStroke: '#ffffff',
-            posText: '#11151b',
-            negFill: 'rgba(30, 36, 46, 0.92)',
-            negStroke: '#738096',
-            negText: '#c5ccd8',
-            zeroFill: 'rgba(98, 106, 120, 0.34)',
-            zeroStroke: '#808a9a'
-          }
+  const palette = LOBE_PALETTES[family]
 
   const abs = Math.abs(signedVal)
   ctx.save()

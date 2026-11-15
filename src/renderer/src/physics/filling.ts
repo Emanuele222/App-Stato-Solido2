@@ -54,21 +54,30 @@ export function fillBands(
   const tol = options.gapTolerance ?? 1e-6
   const nk = weights.length
 
-  // Isolante: N pari e gap assoluto tra la banda N/2 e la N/2 + 1.
+  // Isolante: N pari e gap assoluto con esattamente N/2 bande interamente sotto.
   if (N % 2 === 0) {
-    const top = max(bands.energies[N / 2 - 1])
-    const bottom = min(bands.energies[N / 2])
-    if (bottom - top > tol) {
-      const occupations = new Float64Array(nBands)
-      occupations.fill(1, 0, N / 2)
-      return {
-        electronsPerCell: N,
-        kind: 'insulator',
-        fermiLevel: 0.5 * (top + bottom),
-        gap: bottom - top,
-        occupations,
-        highestOccupied: top,
-        lowestUnoccupied: bottom
+    const half = N / 2
+    if (half >= 1 && half < nBands) {
+      const bandMins = bands.energies.map((e) => min(e))
+      const bandMaxs = bands.energies.map((e) => max(e))
+      const order = Array.from({ length: nBands }, (_, b) => b).sort((a, b) => bandMaxs[a] - bandMaxs[b])
+      const top = bandMaxs[order[half - 1]]
+      let bottom = Infinity
+      for (let i = half; i < nBands; i++) {
+        if (bandMins[order[i]] < bottom) bottom = bandMins[order[i]]
+      }
+      if (bottom - top > tol) {
+        const occupations = new Float64Array(nBands)
+        for (let i = 0; i < half; i++) occupations[order[i]] = 1
+        return {
+          electronsPerCell: N,
+          kind: 'insulator',
+          fermiLevel: 0.5 * (top + bottom),
+          gap: bottom - top,
+          occupations,
+          highestOccupied: top,
+          lowestUnoccupied: bottom
+        }
       }
     }
   }

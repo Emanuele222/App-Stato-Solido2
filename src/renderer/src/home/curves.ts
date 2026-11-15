@@ -92,9 +92,9 @@ export function computeRestingCurves(): MethodPreviewData {
   const a = 3.0
   const path = zonePath1D(a, 101)
   const bs = nearlyFreeBands(
-    { a, fourier: [-0.75, 0] },
+    { a, fourier: [-1.8, 0] },
     path,
-    { planeWaves: 11, bands: 4 }
+    { planeWaves: 11, bands: 2 }
   )
   return normalizeBandStructure(
     'resting',

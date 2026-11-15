@@ -1,55 +1,174 @@
-/* Layout, controlli e scene della sezione «Pseudopotenziale» (regge da 800×600 in su). */
+/* Layout, controlli e scene della sezione «Pseudopotenziale». */
 
+/*
+ * Scena in due righe: sopra due viste affiancate (spazio reale, fattore di forma), sotto le bande
+ * con i pesi per guscio. Ogni vista ha titolo, legenda in HTML (fuori dal grafico) e grafico.
+ * Altezze minime dei grafici (senza scorrimento da 1100×800 in su): vedi le variabili.
+ */
 .stage:has(.pseudo-bands-wrap) {
-  overflow-y: auto;
-  grid-template-rows: auto minmax(560px, 1fr) auto;
+  /* minimi per il contenitore: 150 px per ciascuna delle due viste in alto, 250 px per le bande, 64 px per i pesi */
+  --pseudo-top-min: 240px;
+  --pseudo-bands-min: 360px;
+  /* i pesi per guscio crescono con l'altezza della finestra: 64 px a 800 px, circa 78 px a 900 px */
+  --pseudo-shells-h: clamp(64px, calc(64px + (100vh - 800px) * 0.14), 90px);
 }
 
 .scene:has(.pseudo-bands-wrap) {
-  grid-template-rows: minmax(200px, 35fr) minmax(350px, 65fr);
-  min-height: 560px;
+  grid-template-rows: minmax(var(--pseudo-top-min), 36fr) minmax(var(--pseudo-bands-min), 64fr);
 }
 
 .pseudo-top-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  min-height: 200px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pseudo-top-row > .view + .view {
+  border-top: 0;
+  border-left: 1px solid var(--line);
+}
+
+.pseudo-top-view .view-head {
+  padding-top: 6px;
+  row-gap: 0;
+}
+
+.pseudo-top-view .view-hint {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.pseudo-hint {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pseudo-bands-view .view-head {
+  padding-top: 6px;
+  flex-wrap: nowrap;
+}
+
+.pseudo-bands-view .view-tag {
+  flex: none;
+  white-space: nowrap;
+}
+
+.pseudo-bands-view .view-hint {
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .pseudo-bands-view {
-  min-height: 350px;
   overflow: hidden;
 }
 
-.pseudo-bands-wrap {
-  display: grid;
-  grid-template-rows: minmax(195px, 71fr) minmax(82px, 29fr);
-  gap: 8px;
-  width: 100%;
-  height: 100%;
+/* colonna di una vista: legenda sopra, grafico che occupa il resto */
+.pseudo-view-col {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.pseudo-bandplot-box,
-.pseudo-shells-box {
+/* un canvas annidato riempie il proprio contenitore (la regola generale di ui.css vale solo per il figlio diretto) */
+.pseudo-canvas-box {
   position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.pseudo-canvas-box > canvas,
+.pseudo-shells-box > canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  display: block;
+}
+
+.pseudo-bands-wrap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) var(--pseudo-shells-h);
+  gap: 2px;
 }
 
 .pseudo-bandplot-box {
-  min-height: 195px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
 }
 
 .pseudo-shells-box {
-  min-height: 82px;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
 }
 
-.pseudo-sliders-row {
+.pseudo-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 12px;
+}
+
+@media (max-height: 740px) {
+  .stage:has(.pseudo-bands-wrap) {
+    /* finestre basse: la colonna centrale scorre; la legenda delle bande può andare su due righe */
+    --pseudo-bands-min: 380px;
+    grid-template-rows: auto minmax(calc(var(--pseudo-top-min) + var(--pseudo-bands-min)), 1fr) auto;
+  }
+}
+
+/* barra dei comandi: griglia di due colonne, tre righe */
+.stage:has(.pseudo-params-grid) .params {
+  padding: 6px 14px;
+}
+
+.pseudo-params-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(210px, 1fr));
-  gap: 6px 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px 16px;
   width: 100%;
+  align-items: center;
+}
+
+.pseudo-params-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pseudo-params-cell > .param {
+  flex: 1 1 auto;
+  max-width: none;
+}
+
+.pseudo-params-cell > .preset {
+  flex: 1 1 0;
+  min-width: 0;
+  flex-wrap: nowrap;
+  padding: 0 8px;
+}
+
+.pseudo-params-cell > .preset select {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+}
+
+.pseudo-preset-source {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--muted);
+  padding: 0 8px;
 }
 
 .pseudo-bands-canvas {
@@ -68,13 +187,12 @@
 }
 
 .pseudo-refine-pill {
-  position: absolute;
-  top: 6px;
-  right: 8px;
+  flex: none;
   font-size: 11px;
-  padding: 2px 8px;
+  line-height: 1.4;
+  padding: 0 8px;
   border-radius: 99px;
-  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  background: var(--panel);
   border: 1px solid var(--line);
   color: var(--muted);
   pointer-events: none;
@@ -86,21 +204,7 @@
   border-color: color-mix(in srgb, var(--q-EF) 60%, var(--line));
 }
 
-/* Barra preset + toggle antisimmetrico GaAs */
-.pseudo-preset-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
-}
-
-.pseudo-antisym-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-}
-
+/* Interruttore del termine antisimmetrico Vᵃ (GaAs) */
 .pseudo-antisym-btn {
   display: inline-flex;
   align-items: center;
@@ -120,6 +224,12 @@
   border-color: var(--line-strong);
 }
 
+/* acceso dal passaggio sul termine Vᵃ della formula (verso formula → comandi) */
+.pseudo-antisym-btn.is-active {
+  color: var(--text);
+  border-color: var(--q-V2G);
+}
+
 .pseudo-antisym-btn[aria-pressed='true'] {
   color: var(--text);
   background: var(--raised);
@@ -136,11 +246,6 @@
 
 .pseudo-antisym-btn[aria-pressed='true'] .pseudo-antisym-swatch {
   opacity: 1;
-}
-
-.pseudo-antisym-note {
-  font-size: 11.5px;
-  color: var(--muted);
 }
 
 /* Formula viva & chip fattori V^s interattivi */
@@ -215,19 +320,12 @@
   line-height: 1.45;
 }
 
-.pseudo-verify-card {
-  margin-top: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--panel);
+.pseudo-callout.pseudo-callout-source {
+  border-color: var(--q-VG);
 }
 
-.pseudo-verify-title {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 2px;
+.pseudo-verify-card {
+  padding: 2px 0 0;
 }
 
 .pseudo-verify-sub {
@@ -241,18 +339,8 @@
   gap: 3px 10px;
 }
 
-@media (max-width: 720px) {
-  .pseudo-top-row {
-    grid-template-columns: 1fr;
-  }
-
-  .scene:has(.pseudo-bands-wrap) {
-    grid-template-rows: auto minmax(350px, 1fr);
-  }
-}
-
 @media (max-width: 560px) {
-  .pseudo-sliders-row {
+  .pseudo-params-grid {
     grid-template-columns: 1fr;
   }
 }

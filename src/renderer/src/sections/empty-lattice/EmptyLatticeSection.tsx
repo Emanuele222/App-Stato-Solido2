@@ -5,7 +5,7 @@
  */
 import { useCallback, type JSX, type PointerEvent } from 'react'
 import { ParamSlider, Panel, Stepper, ToolToggle } from '../../ui/controls'
-import { formatNumber } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { FOLLOW, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
@@ -58,7 +58,7 @@ export function EmptyLatticeSection(): JSX.Element {
       <ToolToggle
         pressed={st.tools.compare}
         onToggle={() => st.toggleTool('compare')}
-        quantity="VG"
+        quantity="Ek"
         title={s.tools.compareTitle}
       >
         {s.tools.compare}
@@ -382,7 +382,8 @@ function Values({
         <>
           <dt>{v.mass}</dt>
           <dd>
-            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> = <Num value={model.probe.massRatio} width={4} />
+            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
+            <span className="num">{formatEffectiveMassRatio(model.probe.massRatio, { digits: 2, withEquals: true })}</span>
             <span className="sub note">
               <RichText text={v.massFreeNote} />
             </span>

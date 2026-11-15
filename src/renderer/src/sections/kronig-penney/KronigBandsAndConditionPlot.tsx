@@ -14,7 +14,22 @@ import {
 import { formatNumber } from '../../ui/format'
 import { Smoothed, useReducedMotion } from '../../ui/motion'
 import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
-import { drawMathText, niceStep, sansFont, useCanvasDraw, withAlpha } from '../../viz/canvas'
+import {
+  boxesOverlap,
+  drawMathText,
+  drawRichText,
+  drawSegmentedHorizontalLine,
+  measureMathText,
+  measureRichText,
+  niceStep,
+  placeGapLabelBox,
+  placeProbeLabel,
+  sansFont,
+  useCanvasDraw,
+  withAlpha,
+  type RectBox as CanvasRectBox,
+  type XSpan
+} from '../../viz/canvas'
 import type { KronigVariant } from './manifest'
 import type { VariantModel } from './model'
 import type { HighlightTarget } from './store'
@@ -74,15 +89,6 @@ function splitLayout(w: number, h: number, topPad = MARGIN.top): {
   }
 }
 
-function boxesOverlap(a: RectBox, b: RectBox, pad = 2): boolean {
-  return !(
-    a.x + a.w + pad < b.x ||
-    b.x + b.w + pad < a.x ||
-    a.y + a.h + pad < b.y ||
-    b.y + b.h + pad < a.y
-  )
-}
-
 export const KronigBandsAndConditionPlot = memo(function KronigBandsAndConditionPlot(
   props: KronigBandsAndConditionPlotProps
 ): JSX.Element {
@@ -119,7 +125,8 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
     if (active.filling) anim.fermi.set(active.filling.fermiLevel, anim.filling.value < 0.02)
     anim.probe.set(active.probe ? 1 : 0)
     const legendWanted = p.showCosine || p.showCompare || p.highlight === 'Ek'
-    const compactOutside = legendWanted && w < 640
+    // la legenda sta sempre in una fascia riservata sopra il grafico, mai sulle curve né sulle etichette dei gap
+    const compactOutside = legendWanted
     anim.topPad.set(compactOutside ? MARGIN.top + 22 : MARGIN.top)
 
     let moving = false
@@ -154,7 +161,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
     const em = (q: QuantityId): number => (p.highlight === null || p.highlight === q ? 1 : DIM)
     const emL = (): number => {
       if (p.highlight === null) return 1
-      if (p.highlight === 'E') return 1
+      if (p.highlight === 'kp' || p.highlightTarget === 'L') return 1
       return DIM
     }
     const lw = (q: QuantityId, base: number): number => (p.highlight === q ? base + 1.25 : base)
@@ -194,7 +201,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
     // --- 2. Fascia |L| ≤ 1 e proiezione orizzontale delle bande permesse ---
     const xLm1 = XL(-1)
     const xLp1 = XL(1)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
+    ctx.fillStyle = withAlpha(TOKENS.text, 0.03)
     ctx.fillRect(xLm1, lBox.y, xLp1 - xLm1, lBox.h)
 
     // proiezione bande permesse su entrambi i riquadri (variante attiva, con leggera dissolvenza in morph)
@@ -213,7 +220,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
     }
 
     // fuori dalla prima zona in E(k)
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.025)'
+    ctx.fillStyle = withAlpha(TOKENS.text, 0.025)
     ctx.fillRect(kBox.x, kBox.y, Math.max(0, XK(-kb) - kBox.x), kBox.h)
     ctx.fillRect(XK(kb), kBox.y, Math.max(0, kBox.x + kBox.w - XK(kb)), kBox.h)
 
@@ -263,9 +270,9 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
       ctx.fillStyle = Math.abs(lv) === 1 ? TOKENS.textSoft : TOKENS.muted
       ctx.fillText(lv > 0 ? `+${lv}` : lv < 0 ? `−${Math.abs(lv)}` : '0', lx, lBox.y + lBox.h + 16)
     }
-    ctx.globalAlpha = p.highlightTarget === 'L' ? 1 : emL()
+    ctx.globalAlpha = p.highlightTarget === 'L' || p.highlight === 'kp' ? 1 : emL()
     drawMathText(ctx, mix > 0.5 ? p.labels.lAxisRect : p.labels.lAxisDelta, XL(0), lBox.y + lBox.h + 35, {
-      color: quantityColor('E'),
+      color: quantityColor('kp'),
       align: 'center',
       size: 13.5
     })
@@ -323,9 +330,9 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
 
     const traceLCurve = (samples: readonly LCurveSample[], alpha: number): void => {
       if (alpha <= 0.01 || samples.length < 2) return
-      ctx.globalAlpha = alpha * (p.highlightTarget === 'L' ? 1 : emL())
-      ctx.strokeStyle = quantityColor('E')
-      ctx.lineWidth = p.highlightTarget === 'L' ? 3.2 : lw('E', 2)
+      ctx.globalAlpha = alpha * (p.highlightTarget === 'L' || p.highlight === 'kp' ? 1 : emL())
+      ctx.strokeStyle = quantityColor('kp')
+      ctx.lineWidth = p.highlightTarget === 'L' || p.highlight === 'kp' ? 3.2 : lw('kp', 2)
       ctx.lineJoin = 'round'
       ctx.beginPath()
       const minX = lBox.x - 160
@@ -369,12 +376,13 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
     ctx.restore()
 
     // --- 4. Contenuto di E(k) (ritagliato) ---
-    const occupiedBoxes: RectBox[] = []
-    const hitsBox = (r: RectBox, pad = 2): boolean => occupiedBoxes.some((b) => boxesOverlap(b, r, pad))
+    const occupiedBoxes: CanvasRectBox[] = []
+    const fermiSkips: XSpan[] = []
+    const hitsBox = (r: CanvasRectBox, pad = 2): boolean => occupiedBoxes.some((b) => boxesOverlap(b, r, pad))
     const selDotX = XK(active.selection.k)
     const selDotY = Y(active.selection.energy)
     if (selDotY >= kBox.y && selDotY <= kBox.y + kBox.h) {
-      occupiedBoxes.push({ x: selDotX - 10, y: selDotY - 10, w: 20, h: 20 })
+      occupiedBoxes.push({ x0: selDotX - 10, y0: selDotY - 10, x1: selDotX + 10, y1: selDotY + 10 })
     }
     ctx.save()
     ctx.beginPath()
@@ -446,11 +454,11 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
 
     // banda a coseno Ē ∓ 2t·cos ka sulla banda selezionata
     if (anim.cosine.value > 0.01) {
-      const cosCol = quantityColor('v')
+      const cosCol = quantityColor('t')
       const cos = active.cosine
-      ctx.globalAlpha = anim.cosine.value * (p.highlight === null || p.highlight === 'E' || p.highlight === 'v' ? 1 : DIM)
+      ctx.globalAlpha = anim.cosine.value * (p.highlight === null || p.highlight === 'E' || p.highlight === 't' ? 1 : DIM)
       ctx.strokeStyle = cosCol
-      ctx.lineWidth = 2.2
+      ctx.lineWidth = lw('t', 2.2)
       ctx.setLineDash([7, 4])
       ctx.beginPath()
       const segs = 120
@@ -466,58 +474,68 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
       ctx.globalAlpha = 1
     }
 
-    // legenda dentro kBox solo quando c'è spazio (altrimenti va fuori in alto sotto step 4b)
-    if (!compactOutside && (anim.cosine.value > 0.05 || cmpAlpha > 0.05)) {
-      ctx.globalAlpha = Math.max(anim.cosine.value, cmpAlpha)
-      ctx.font = sansFont(11.5)
-      const items: { text: string; color: string; dash: number[] }[] = [
-        { text: p.labels.bandsLegend, color: quantityColor('E'), dash: [] }
-      ]
-      if (anim.cosine.value > 0.05) {
-        items.push({ text: p.labels.cosineLegend, color: quantityColor('v'), dash: [6, 3] })
-      }
-      if (cmpAlpha > 0.05) {
-        items.push({ text: p.labels.compareLegend, color: quantityColor('Ek'), dash: [4, 4] })
-      }
-      const boxW = Math.max(...items.map((it) => ctx.measureText(it.text).width)) + 36
-      const boxH = items.length * 17 + 8
-      const bx = kBox.x + kBox.w - boxW - 6
-      const by = kBox.y + 6
-      ctx.fillStyle = withAlpha(TOKENS.bg, 0.92)
-      ctx.fillRect(bx, by, boxW, boxH)
-      occupiedBoxes.push({ x: bx, y: by, w: boxW, h: boxH })
-      items.forEach((it, i) => {
-        const yy = by + 13 + i * 17
-        ctx.strokeStyle = it.color
-        ctx.lineWidth = 2
-        ctx.setLineDash(it.dash)
-        ctx.beginPath()
-        ctx.moveTo(bx + 6, yy - 4)
-        ctx.lineTo(bx + 26, yy - 4)
-        ctx.stroke()
-        ctx.setLineDash([])
-        ctx.fillStyle = TOKENS.textSoft
-        ctx.textAlign = 'left'
-        ctx.fillText(it.text, bx + 32, yy)
-      })
-      ctx.globalAlpha = 1
-    }
+    const activeFermiY = active.filling && fillAlpha > 0.01 ? fermiY : null
 
-    // livello di Fermi (prima dei gap e di m*, così ogni etichetta evita quelle già posate)
+    // indicatori dei gap ai bordi ±π/a o al centro k = 0 (prima di E_F così E_F si spezza attorno alle etichette)
+    for (const g of active.gaps) {
+      const yLoRaw = Y(g.lower)
+      const yHiRaw = Y(g.upper)
+      if (yLoRaw < kBox.y || yHiRaw > kBox.y + kBox.h) continue
+      const yLo = Math.min(kBox.y + kBox.h - 2, yLoRaw)
+      const yHi = Math.max(kBox.y + 2, yHiRaw)
+      if (yLo - yHi < 2) continue
+      const gx = XK(g.location === 'edge' ? kb : 0)
+      const c = quantityColor('VG')
+      ctx.globalAlpha = em('VG') * (mix < 0.05 || mix > 0.95 ? 1 : 0.4)
+      ctx.strokeStyle = c
+      ctx.lineWidth = lw('VG', 2.4)
+      ctx.beginPath()
+      ctx.moveTo(gx, yLo)
+      ctx.lineTo(gx, yHi)
+      ctx.moveTo(gx - 4, yLo)
+      ctx.lineTo(gx + 4, yLo)
+      if (yHiRaw >= kBox.y + 2) {
+        ctx.moveTo(gx - 4, yHi)
+        ctx.lineTo(gx + 4, yHi)
+      }
+      ctx.stroke()
+
+      if (yLo - yHi > 12) {
+        const lbl = `${p.labels.gapLabel}${' '}`.trim()
+        const tag = `${lbl}_{${g.index + 1}}`
+        const wTag = measureMathText(ctx, tag, 13)
+        const prefRight = kBox.x + kBox.w - gx > wTag + 14
+        placeGapLabelBox(ctx, {
+          text: tag,
+          size: 13,
+          color: c,
+          backdrop: TOKENS.bg,
+          centerX: prefRight ? gx + 7 + wTag / 2 : gx - 7 - wTag / 2,
+          preferredY: (yLo + yHi) / 2,
+          minX: kBox.x + 2,
+          maxX: kBox.x + kBox.w - 2,
+          minY: kBox.y + 4,
+          maxY: kBox.y + kBox.h - 4,
+          fermiY: activeFermiY,
+          occupied: occupiedBoxes,
+          fermiSkips
+        })
+      }
+    }
+    ctx.globalAlpha = 1
+
+    // livello di Fermi (spezzato attorno ai gap e con etichetta che evita gli altri riquadri)
     if (active.filling && fillAlpha > 0.01) {
       const c = quantityColor('EF')
       ctx.globalAlpha = fillAlpha * em('EF')
       ctx.strokeStyle = c
       ctx.lineWidth = lw('EF', 1.5)
       ctx.setLineDash([8, 4])
-      ctx.beginPath()
-      ctx.moveTo(kBox.x, fermiY)
-      ctx.lineTo(kBox.x + kBox.w, fermiY)
-      ctx.stroke()
+      drawSegmentedHorizontalLine(ctx, kBox.x, kBox.x + kBox.w, fermiY, fermiSkips, 6)
       ctx.setLineDash([])
 
       const kindLabel = active.filling.kind === 'insulator' ? p.labels.insulator : p.labels.metal
-      const wF = drawMathText(ctx, 'E_{F}', -9999, -9999, { color: c, size: 14.5 })
+      const wF = measureMathText(ctx, 'E_{F}', 14.5)
       ctx.font = sansFont(11.5)
       const lwid = ctx.measureText(kindLabel).width
       const totalBadgeW = wF + lwid + 20
@@ -528,7 +546,9 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
         { fx: kBox.x + kBox.w - totalBadgeW - 6, fy: Math.min(kBox.y + kBox.h - 6, fermiY + 15) }
       ]
       const chosen =
-        candidates.find((cd) => !hitsBox({ x: cd.fx - 2, y: cd.fy - 14, w: totalBadgeW, h: 18 })) ?? candidates[0]
+        candidates.find((cd) =>
+          !hitsBox({ x0: cd.fx - 2, y0: cd.fy - 14, x1: cd.fx - 2 + totalBadgeW, y1: cd.fy + 4 })
+        ) ?? candidates[0]
       drawMathText(ctx, 'E_{F}', chosen.fx, chosen.fy, {
         color: c,
         size: 14.5,
@@ -541,59 +561,9 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
       ctx.textAlign = 'left'
       ctx.textBaseline = 'alphabetic'
       ctx.fillText(kindLabel, chosen.fx + 10 + wF, chosen.fy)
-      occupiedBoxes.push({ x: chosen.fx - 2, y: chosen.fy - 14, w: totalBadgeW, h: 18 })
+      occupiedBoxes.push({ x0: chosen.fx - 2, y0: chosen.fy - 14, x1: chosen.fx - 2 + totalBadgeW, y1: chosen.fy + 4 })
       ctx.globalAlpha = 1
     }
-
-    // indicatori dei gap ai bordi ±π/a o al centro k = 0
-    for (const g of active.gaps) {
-      const yLo = Y(g.lower)
-      const yHi = Y(g.upper)
-      if (yLo < kBox.y || yHi > kBox.y + kBox.h) continue
-      if (yLo - yHi < 2) continue
-      const gx = XK(g.location === 'edge' ? kb : 0)
-      const c = quantityColor('VG')
-      ctx.globalAlpha = em('VG') * (mix < 0.05 || mix > 0.95 ? 1 : 0.4)
-      ctx.strokeStyle = c
-      ctx.lineWidth = lw('VG', 2.4)
-      ctx.beginPath()
-      ctx.moveTo(gx, yLo)
-      ctx.lineTo(gx, yHi)
-      ctx.moveTo(gx - 4, yLo)
-      ctx.lineTo(gx + 4, yLo)
-      ctx.moveTo(gx - 4, yHi)
-      ctx.lineTo(gx + 4, yHi)
-      ctx.stroke()
-
-      if (yLo - yHi > 12) {
-        const lbl = `${p.labels.gapLabel}${' '}`.trim()
-        const tag = `${lbl}_{${g.index + 1}}`
-        const wTag = drawMathText(ctx, tag, -9999, -9999, { color: c, size: 13 }) + 2
-        const yMid = (yLo + yHi) / 2 + 5
-        const prefRight = kBox.x + kBox.w - gx > wTag + 14
-        const sides: ('left' | 'right')[] = prefRight ? ['left', 'right'] : ['right', 'left']
-        const yOffsets = [0, -11, 11]
-        let placed = false
-        for (const dy of yOffsets) {
-          for (const align of sides) {
-            const tx = align === 'left' ? gx + 7 : gx - 7
-            const ty = yMid + dy
-            if (ty - 13 < kBox.y + 2 || ty + 2 > kBox.y + kBox.h - 2) continue
-            const bx = align === 'left' ? tx : tx - wTag
-            if (bx < kBox.x + 2 || bx + wTag > kBox.x + kBox.w - 2) continue
-            const box: RectBox = { x: bx, y: ty - 13, w: wTag, h: 15 }
-            if (!hitsBox(box)) {
-              drawMathText(ctx, tag, tx, ty, { color: c, align, size: 13, backdrop: TOKENS.bg })
-              occupiedBoxes.push(box)
-              placed = true
-              break
-            }
-          }
-          if (placed) break
-        }
-      }
-    }
-    ctx.globalAlpha = 1
 
     // sonda di massa efficace (parabola osculatrice)
     if (active.probe && anim.probe.value > 0.01) {
@@ -605,64 +575,55 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
       ctx.lineWidth = lw('mstar', 2)
       const bend = Math.abs(0.5 * pr.curvature)
       const span = Math.min(0.42 * kb, bend > 0 ? Math.sqrt((0.25 * (e1 - e0)) / bend) : Infinity)
+      const curvePoints: { x: number; y: number }[] = []
       ctx.beginPath()
       for (let i = 0; i <= 60; i++) {
         const dk = -span + (2 * span * i) / 60
         const px = XK(sel.k + dk)
         const py = Y(sel.energy + pr.slope * dk + 0.5 * pr.curvature * dk * dk)
+        curvePoints.push({ x: px, y: py })
         if (i === 0) ctx.moveTo(px, py)
         else ctx.lineTo(px, py)
       }
       ctx.stroke()
 
       const prefSide = sel.k > 0 ? -1 : 1
-      const wProbe = drawMathText(ctx, p.labels.probe, -9999, -9999, { color: c, size: 13.5 }) + 2
-      const probeTries: { side: -1 | 1; dy: number }[] = [
-        { side: prefSide, dy: 5 },
-        { side: prefSide, dy: -11 },
-        { side: (-prefSide) as -1 | 1, dy: 5 },
-        { side: (-prefSide) as -1 | 1, dy: -11 }
-      ]
-      for (const tr of probeTries) {
-        const dkTip = tr.side * span
-        const tipY = Y(sel.energy + pr.slope * dkTip + 0.5 * pr.curvature * dkTip * dkTip)
-        const tx = XK(sel.k + dkTip) + tr.side * 6
-        const ty = Math.max(kBox.y + 16, Math.min(kBox.y + kBox.h - 6, tipY + tr.dy))
-        const align = tr.side < 0 ? 'right' : 'left'
-        const bx = align === 'right' ? tx - wProbe : tx
-        if (bx < kBox.x + 2 || bx + wProbe > kBox.x + kBox.w - 2) continue
-        const box: RectBox = { x: bx, y: ty - 13, w: wProbe, h: 15 }
-        if (!hitsBox(box)) {
-          drawMathText(ctx, p.labels.probe, tx, ty, {
-            color: c,
-            size: 13.5,
-            backdrop: TOKENS.bg,
-            align
-          })
-          occupiedBoxes.push(box)
-          break
-        }
-      }
+      const dkTip = prefSide * span
+      const tipX = XK(sel.k + dkTip)
+      const tipY = Y(sel.energy + pr.slope * dkTip + 0.5 * pr.curvature * dkTip * dkTip)
+      placeProbeLabel(ctx, {
+        text: p.labels.probe,
+        size: 13.5,
+        color: c,
+        backdrop: TOKENS.bg,
+        anchorX: tipX,
+        anchorY: tipY,
+        minX: kBox.x + 2,
+        maxX: kBox.x + kBox.w - 2,
+        minY: kBox.y + 4,
+        maxY: kBox.y + kBox.h - 4,
+        occupied: occupiedBoxes,
+        curvePoints
+      })
       ctx.globalAlpha = 1
     }
 
     ctx.restore() // fine clip kBox
 
-    // --- 4b. Legenda compatta fuori dall'area delle curve (spazio stretto / 800 px) ---
+    // --- 4b. Legenda nella fascia riservata sopra il grafico (fuori dall'area delle curve) ---
     if (compactOutside && (anim.cosine.value > 0.05 || cmpAlpha > 0.05)) {
       ctx.globalAlpha = Math.max(anim.cosine.value, cmpAlpha)
-      ctx.font = sansFont(11)
       const items: { text: string; color: string; dash: number[] }[] = [
         { text: p.labels.bandsLegend, color: quantityColor('E'), dash: [] }
       ]
       if (anim.cosine.value > 0.05) {
-        items.push({ text: p.labels.cosineLegend, color: quantityColor('v'), dash: [6, 3] })
+        items.push({ text: p.labels.cosineLegend, color: quantityColor('t'), dash: [6, 3] })
       }
       if (cmpAlpha > 0.05) {
         items.push({ text: p.labels.compareLegend, color: quantityColor('Ek'), dash: [4, 4] })
       }
       const gap = 12
-      const itemWidths = items.map((it) => 22 + ctx.measureText(it.text).width)
+      const itemWidths = items.map((it) => 22 + measureRichText(ctx, it.text, { size: 11 }))
       const totalLegW = itemWidths.reduce((s, x) => s + x, 0) + gap * (items.length - 1)
       let lx = Math.max(lBox.x, kBox.x + kBox.w - totalLegW)
       const ly = 16
@@ -675,10 +636,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
         ctx.lineTo(lx + 18, ly - 4)
         ctx.stroke()
         ctx.setLineDash([])
-        ctx.fillStyle = TOKENS.textSoft
-        ctx.textAlign = 'left'
-        ctx.textBaseline = 'alphabetic'
-        ctx.fillText(it.text, lx + 22, ly)
+        drawRichText(ctx, it.text, lx + 22, ly, { size: 11, color: TOKENS.textSoft, align: 'left' })
         lx += itemWidths[i] + gap
       })
       ctx.globalAlpha = 1
@@ -714,7 +672,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
 
         // etichetta E_n nel corridoio a sinistra di kBox (evitando sovrapposizioni)
         const lbl = `E_{${lv.index + 1}}`
-        const lblBox: RectBox = { x: kBox.x - 23, y: y - 7, w: 16, h: 14 }
+        const lblBox: CanvasRectBox = { x0: kBox.x - 23, y0: y - 7, x1: kBox.x - 7, y1: y + 7 }
         if (!occupiedBoxes.some((b) => boxesOverlap(b, lblBox, 1))) {
           drawMathText(ctx, lbl, kBox.x - 8, y + 4, {
             color: parentCol,
@@ -773,7 +731,7 @@ export const KronigBandsAndConditionPlot = memo(function KronigBandsAndCondition
         // pallino collegato su L(E)
         if (sxL >= lBox.x && sxL <= lBox.x + lBox.w) {
           ctx.fillStyle = TOKENS.bg
-          ctx.strokeStyle = quantityColor('E')
+          ctx.strokeStyle = quantityColor('kp')
           ctx.lineWidth = 2
           ctx.beginPath()
           ctx.arc(sxL, sy, 4.5, 0, 2 * Math.PI)

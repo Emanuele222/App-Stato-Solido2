@@ -8,7 +8,7 @@
  */
 import { useCallback, type JSX, type PointerEvent } from 'react'
 import { Panel, ParamSlider, Stepper, ToolToggle } from '../../ui/controls'
-import { formatNumber, formatSignificant } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber, formatSignificant } from '../../ui/format'
 import { FOLLOW, GLIDE, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
@@ -26,7 +26,11 @@ import {
 } from './formulas'
 import { DIATOMIC_PARAMS, MONO_PARAMS, NUMERICS, type MonoParams, type TightBindingVariant } from './manifest'
 import { useTightBindingModel, type TightBindingModel } from './model'
-import { useTightBindingStore, type TightBindingState } from './store'
+import {
+  useTightBindingStore,
+  type TightBindingHighlightTarget,
+  type TightBindingState
+} from './store'
 import { strings as s } from './strings'
 import { TightBindingRealSpace } from './TightBindingRealSpace'
 import './tightBinding.css'
@@ -82,27 +86,33 @@ export function TightBindingSection(): JSX.Element {
   const paramControls =
     st.variant === 'monoatomic' ? (
       <>
-        {MONO_PARAMS.filter((p) => !st.linkDistance || (p.id !== 'tS' && p.id !== 'absTP')).map((spec) => (
-          <ParamSlider
-            key={spec.id}
-            quantity={spec.quantity}
-            symbol={spec.symbol}
-            label={s.params.monoatomic[spec.id]}
-            value={st.monoParams[spec.id]}
-            min={spec.min}
-            max={spec.max}
-            step={spec.step}
-            unit={spec.unit}
-            digits={spec.digits}
-            active={st.highlight === spec.quantity}
-            onChange={(val) => st.setMonoParam(spec.id, val)}
-            onHighlight={setHighlight}
-          />
-        ))}
+        {MONO_PARAMS.filter((p) => !st.linkDistance || (p.id !== 'tS' && p.id !== 'absTP')).map((spec) => {
+          const sub: TightBindingHighlightTarget = spec.id === 'a' ? null : spec.id
+          const isActive =
+            st.highlight === spec.quantity &&
+            (sub === null || st.highlightTarget === null || st.highlightTarget === sub)
+          return (
+            <ParamSlider
+              key={spec.id}
+              quantity={spec.quantity}
+              symbol={spec.symbol}
+              label={s.params.monoatomic[spec.id]}
+              value={st.monoParams[spec.id]}
+              min={spec.min}
+              max={spec.max}
+              step={spec.step}
+              unit={spec.unit}
+              digits={spec.digits}
+              active={isActive}
+              onChange={(val) => st.setMonoParam(spec.id, val)}
+              onHighlight={(q) => setHighlight(q, q ? sub : null)}
+            />
+          )
+        })}
         <ToolToggle
           pressed={st.linkDistance}
           onToggle={st.toggleLinkDistance}
-          quantity="v"
+          quantity="t"
           title={s.params.linkDistance.title}
         >
           {s.params.linkDistance.toggle}
@@ -110,9 +120,9 @@ export function TightBindingSection(): JSX.Element {
         {st.linkDistance && (
           <span
             className="tb-linked-param"
-            data-q="v"
-            onMouseEnter={() => setHighlight('v')}
-            onMouseLeave={() => setHighlight(null)}
+            data-q="t"
+            onMouseEnter={() => setHighlight('t', null)}
+            onMouseLeave={() => setHighlight(null, null)}
           >
             <RichText
               text={s.params.linkDistance.linkedNote(
@@ -125,29 +135,35 @@ export function TightBindingSection(): JSX.Element {
       </>
     ) : (
       <>
-        {DIATOMIC_PARAMS.map((spec) => (
-          <ParamSlider
-            key={spec.id}
-            quantity={spec.quantity}
-            symbol={spec.symbol}
-            label={s.params.diatomic[spec.id]}
-            value={st.diatomicParams[spec.id]}
-            min={spec.min}
-            max={spec.max}
-            step={spec.step}
-            unit={spec.unit}
-            digits={spec.digits}
-            active={st.highlight === spec.quantity}
-            onChange={(val) => st.setDiatomicParam(spec.id, val)}
-            onHighlight={setHighlight}
-          />
-        ))}
+        {DIATOMIC_PARAMS.map((spec) => {
+          const sub: TightBindingHighlightTarget = spec.id === 'eA' || spec.id === 'eB' ? spec.id : null
+          const isActive =
+            st.highlight === spec.quantity &&
+            (sub === null || st.highlightTarget === null || st.highlightTarget === sub)
+          return (
+            <ParamSlider
+              key={spec.id}
+              quantity={spec.quantity}
+              symbol={spec.symbol}
+              label={s.params.diatomic[spec.id]}
+              value={st.diatomicParams[spec.id]}
+              min={spec.min}
+              max={spec.max}
+              step={spec.step}
+              unit={spec.unit}
+              digits={spec.digits}
+              active={isActive}
+              onChange={(val) => st.setDiatomicParam(spec.id, val)}
+              onHighlight={(q) => setHighlight(q, q ? sub : null)}
+            />
+          )
+        })}
       </>
     )
 
   const maxElectrons = st.variant === 'diatomic' ? 2 : NUMERICS.electrons.max
   const controls = (
-    <>
+    <div className="tb-params-grid">
       {variantSwitch}
       {paramControls}
       {st.tools.fill && (
@@ -161,7 +177,7 @@ export function TightBindingSection(): JSX.Element {
           increaseLabel={s.tools.electronsIncrease}
         />
       )}
-    </>
+    </div>
   )
 
   const tools = (
@@ -297,32 +313,31 @@ export function TightBindingSection(): JSX.Element {
   const aside = (
     <>
       <Panel title={s.formula.title} className="formula-panel">
-        <LiveFormula
-          tex={GENERAL_FORMULA}
-          highlight={st.highlight}
-          onHighlight={setHighlight}
-          pulse={st.pulse}
-          ariaLabel={s.formula.generalAria}
-        />
-        <LiveFormula
-          tex={isMono ? MONO_MAIN_FORMULA : DIATOMIC_MAIN_FORMULA}
-          highlight={st.highlight}
-          onHighlight={setHighlight}
-          pulse={st.pulse}
-          ariaLabel={isMono ? s.formula.monoAria : s.formula.diatomicAria}
-          className="formula-main"
-        />
-        <div className="formula-defs">
-          {(isMono ? MONO_DEFINITIONS : DIATOMIC_DEFINITIONS).map((def) => (
-            <LiveFormula
-              key={def}
-              tex={def}
-              display={false}
-              highlight={st.highlight}
-              onHighlight={setHighlight}
-              pulse={st.pulse}
-            />
-          ))}
+        <div onPointerOver={(e) => hoverTerm(e, setHighlight)} onPointerLeave={() => setHighlight(null, null)}>
+          <LiveFormula
+            tex={GENERAL_FORMULA}
+            highlight={st.highlight}
+            pulse={st.pulse}
+            ariaLabel={s.formula.generalAria}
+          />
+          <LiveFormula
+            tex={isMono ? MONO_MAIN_FORMULA : DIATOMIC_MAIN_FORMULA}
+            highlight={st.highlight}
+            pulse={st.pulse}
+            ariaLabel={isMono ? s.formula.monoAria : s.formula.diatomicAria}
+            className="formula-main"
+          />
+          <div className="formula-defs">
+            {(isMono ? MONO_DEFINITIONS : DIATOMIC_DEFINITIONS).map((def) => (
+              <LiveFormula
+                key={def}
+                tex={def}
+                display={false}
+                highlight={st.highlight}
+                pulse={st.pulse}
+              />
+            ))}
+          </div>
         </div>
         {isMono && st.linkDistance && (
           <p className="tb-linked-note">
@@ -339,7 +354,7 @@ export function TightBindingSection(): JSX.Element {
       </Panel>
 
       <Panel title={s.theory.title} className="theory">
-        <div onPointerOver={(e) => hoverQuantity(e, setHighlight)} onPointerLeave={() => setHighlight(null)}>
+        <div onPointerOver={(e) => hoverTerm(e, setHighlight)} onPointerLeave={() => setHighlight(null, null)}>
           {s.theory.blocks.map((block) => (
             <div key={block.heading}>
               <h3>{block.heading}</h3>
@@ -383,7 +398,7 @@ function Values({
   shownMono: MonoParams
   shownDiat: { readonly a: number; readonly eA: number; readonly eB: number; readonly t: number }
   st: TightBindingState
-  onHighlight: (q: QuantityId | null) => void
+  onHighlight: (q: QuantityId | null, target?: TightBindingHighlightTarget) => void
 }): JSX.Element {
   const v = s.values
   const sel = model.selection
@@ -395,8 +410,8 @@ function Values({
     <>
       <dl
         className="values"
-        onPointerOver={(e) => hoverQuantity(e, onHighlight)}
-        onPointerLeave={() => onHighlight(null)}
+        onPointerOver={(e) => hoverTerm(e, onHighlight)}
+        onPointerLeave={() => onHighlight(null, null)}
       >
         <dt data-q="a">{v.a}</dt>
         <dd data-q="a">
@@ -413,8 +428,8 @@ function Values({
               <RichText text={v.bandS} />
             </dt>
             <dd data-q="E">
-              <Tex tex="\htmlData{q=v}{t_s}" /> = <Num value={shownMono.tS} width={4} /> eV ·{' '}
-              <Tex tex="\htmlData{q=v}{W_s}" /> = <Num value={model.mono.s.width} width={4} /> eV
+              <Tex tex="\htmlData{q=t}{t_s}" /> = <Num value={shownMono.tS} width={4} /> eV ·{' '}
+              <Tex tex="\htmlData{q=t}{W_s}" /> = <Num value={model.mono.s.width} width={4} /> eV
               <br />
               <span className="sub">
                 [<Num value={model.mono.s.min} width={5} />; <Num value={model.mono.s.max} width={5} />] eV ·{' '}
@@ -422,12 +437,12 @@ function Values({
               </span>
             </dd>
 
-            <dt data-q="v">
+            <dt data-q="E">
               <RichText text={v.bandP} />
             </dt>
-            <dd data-q="v">
-              <Tex tex="\htmlData{q=v}{t_p}" /> = <Num value={tP} width={5} /> eV ·{' '}
-              <Tex tex="\htmlData{q=v}{W_p}" /> = <Num value={model.mono.p.width} width={4} /> eV
+            <dd data-q="E">
+              <Tex tex="\htmlData{q=t}{t_p}" /> = <Num value={tP} width={5} /> eV ·{' '}
+              <Tex tex="\htmlData{q=t}{W_p}" /> = <Num value={model.mono.p.width} width={4} /> eV
               <br />
               <span className="sub">
                 [<Num value={model.mono.p.min} width={5} />; <Num value={model.mono.p.max} width={5} />] eV ·{' '}
@@ -444,11 +459,11 @@ function Values({
               <Num value={Math.max(shownDiat.eA, shownDiat.eB)} width={5} /> eV
             </dd>
 
-            <dt data-q="v">
+            <dt data-q="E">
               <RichText text={v.bandsDiat} />
             </dt>
-            <dd data-q="v">
-              <Tex tex="\htmlData{q=v}{W}" /> = <Num value={model.diatomic.exactWidth} digits={3} width={5} /> eV
+            <dd data-q="E">
+              <Tex tex="\htmlData{q=t}{W}" /> = <Num value={model.diatomic.exactWidth} digits={3} width={5} /> eV
               {shownDiat.t < 0.25 * Math.max(0.01, shownDiat.eB - shownDiat.eA) && (
                 <span className="sub">
                   {' · '}
@@ -501,11 +516,9 @@ function Values({
           <>
             <dt data-q="mstar">{v.massProbe}</dt>
             <dd data-q="mstar">
-              <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> ={' '}
+              <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
               <span className="num value-num" style={{ minWidth: '6ch' }}>
-                {Number.isFinite(model.probe.massRatio) && Math.abs(model.probe.massRatio) < 1e4
-                  ? formatSignificant(model.probe.massRatio, 3)
-                  : '∞'}
+                {formatEffectiveMassRatio(model.probe.massRatio, { significant: 3, withEquals: true })}
               </span>
             </dd>
 
@@ -588,8 +601,26 @@ function Num({ value, digits = 2, width }: { value: number; digits?: number; wid
   )
 }
 
-function hoverQuantity(e: PointerEvent, setHighlight: (q: QuantityId | null) => void): void {
+function hoverTerm(
+  e: PointerEvent,
+  setHighlight: (q: QuantityId | null, target?: TightBindingHighlightTarget) => void
+): void {
   const term = (e.target as Element).closest?.('[data-q]')
   const q = term?.getAttribute('data-q')
-  setHighlight(isQuantityId(q) ? q : null)
+  if (!isQuantityId(q)) {
+    setHighlight(null, null)
+    return
+  }
+  const txt = (term?.textContent ?? '').replace(/\s+/g, '')
+  let target: TightBindingHighlightTarget = null
+  if (q === 't') {
+    if (txt.includes('t_s') || txt === 'ts') target = 'tS'
+    else if (txt.includes('t_p') || txt.includes('tp')) target = 'absTP'
+  } else if (q === 'Ek') {
+    if (txt.includes('Ēs') || txt.includes('Eˉs') || txt.endsWith('Es')) target = 'centerS'
+    else if (txt.includes('Ēp') || txt.includes('Eˉp') || txt.endsWith('Ep')) target = 'centerP'
+    else if (txt === 'EA') target = 'eA'
+    else if (txt === 'EB') target = 'eB'
+  }
+  setHighlight(q, target)
 }

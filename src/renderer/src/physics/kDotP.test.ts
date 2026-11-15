@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   HBAR2_OVER_2M0,
   effectiveMassRatio,
+  intrinsicFermiLevel,
+  isEffectiveMassDivergent,
   kDotPPath1D,
   kaneBands,
   kaneConductionFreeParabola,
@@ -164,5 +166,48 @@ describe('metodo k·p — modello esatto a due bande e verifica sui quasi liberi
 
     const sol = solveCentralEquation1D(potential, kb, { planeWaves: 41, coefficients: true })
     expect(planeWaveMomentumElementSq(sol, 0, 1)).toBeCloseTo(summary.p01Abs * summary.p01Abs, 10)
+  })
+})
+
+describe('test aggiuntivi k·p — breakdown su lh, so, hh e livello intrinseco (incarico 09 punto 7)', () => {
+  const kaneParams = { eg: 1.52, delta: 0.34, ep: 20.0 }
+  const twoParams = { eg: 1.52, ep: 20.0 }
+
+  it('kaneMassBreakdown su lh e so coincide con kaneEffectiveMasses', () => {
+    const masses = kaneEffectiveMasses(kaneParams)
+    const lh = kaneMassBreakdown(kaneParams, 'lh')
+    expect(lh.massMagnitude).toBeCloseTo(masses.mlh, 12)
+    expect(lh.effectiveMassRatio).toBeCloseTo(-masses.mlh, 12)
+    expect(lh.terms.reduce((s, c) => s + c.value, 0)).toBeCloseTo(lh.totalInvMass, 12)
+    expect(lh.terms.find((c) => c.source === 'c')?.value).toBeCloseTo(-(2 * kaneParams.ep) / (3 * kaneParams.eg), 12)
+
+    const so = kaneMassBreakdown(kaneParams, 'so')
+    expect(so.massMagnitude).toBeCloseTo(masses.mso, 12)
+    expect(so.effectiveMassRatio).toBeCloseTo(-masses.mso, 12)
+    expect(so.terms.reduce((s, c) => s + c.value, 0)).toBeCloseTo(so.totalInvMass, 12)
+    expect(so.terms.find((c) => c.source === 'c')?.value).toBeCloseTo(
+      -kaneParams.ep / (3 * (kaneParams.eg + kaneParams.delta)),
+      12
+    )
+  })
+
+  it('twoBandMassBreakdown su lh e hh', () => {
+    const lh0 = twoBandMassBreakdown(twoParams, 'lh', 0)
+    expect(lh0.totalInvMass).toBeCloseTo(1 - twoParams.ep / twoParams.eg, 12)
+    expect(lh0.effectiveMassRatio).toBeCloseTo(1 / (1 - twoParams.ep / twoParams.eg), 12)
+    expect(lh0.massMagnitude).toBeCloseTo(Math.abs(lh0.effectiveMassRatio), 12)
+
+    const hh = twoBandMassBreakdown(twoParams, 'hh', 0.05)
+    expect(hh.totalInvMass).toBeCloseTo(1, 12)
+    expect(hh.effectiveMassRatio).toBeCloseTo(1, 12)
+    expect(hh.terms).toHaveLength(1)
+    expect(hh.terms[0].source).toBe('free')
+  })
+
+  it('intrinsicFermiLevel e flesso di twoBandMassBreakdown', () => {
+    expect(intrinsicFermiLevel(1.42)).toBeCloseTo(0.71, 12)
+    const p = kanePFromEp(twoParams.ep)
+    const kFlex = ((0.5 * twoParams.eg) / p) * Math.sqrt(Math.pow(twoParams.ep / twoParams.eg, 2 / 3) - 1)
+    expect(isEffectiveMassDivergent(twoBandMassBreakdown(twoParams, 'lh', kFlex).effectiveMassRatio)).toBe(true)
   })
 })

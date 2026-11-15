@@ -7,12 +7,14 @@
  *    e scheda compatta «Verifica sui quasi liberi».
  */
 import { useCallback, type JSX, type PointerEvent, type ReactNode } from 'react'
+import { isEffectiveMassDivergent } from '../../physics'
 import { ParamSlider, Panel, PresetMenu, ToolToggle } from '../../ui/controls'
-import { formatNumber } from '../../ui/format'
+import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { FOLLOW, GLIDE, useTweened } from '../../ui/motion'
 import { SceneView, SectionLayout } from '../../ui/shell'
 import { RichText, Tex } from '../../ui/tex'
 import { isQuantityId, type QuantityId } from '../../ui/theme'
+import { ChartLegend, type LegendEntry } from '../../viz/ChartLegend'
 import { LiveFormula } from '../../viz/LiveFormula'
 import {
   GENERAL_KP_FORMULA,
@@ -33,6 +35,15 @@ const PRESET_OPTIONS = PRESETS.map((p) => ({
   id: p.id,
   label: s.presets.item(p.name, formatNumber(p.eg, 2), formatNumber(p.delta, 2), formatNumber(p.ep, 1))
 }))
+
+/** Suggerimento della vista su una riga sola (troncata con puntini); il testo intero è nel title. */
+function HintLine({ text }: { readonly text: string }): JSX.Element {
+  return (
+    <span className="kdotp-hint" title={text}>
+      {text}
+    </span>
+  )
+}
 
 export function KDotPSection(): JSX.Element {
   const st = useKpStore()
@@ -72,91 +83,126 @@ export function KDotPSection(): JSX.Element {
     </>
   )
 
+  // Barra dei comandi: tre righe su due colonne (modello su tutta la riga; i cursori; il materiale).
+  // La nota sui dati dei materiali sta nella scheda teoria e nel suggerimento del selettore.
   const params = (
-    <>
-      <div className="kdotp-variant-switch" role="group" aria-label={s.variants.label}>
-        <span>{s.variants.label}</span>
-        <div className="kdotp-variant-group">
-          <button
-            type="button"
-            className="kdotp-variant-btn"
-            aria-pressed={st.variant === 'kane'}
-            title={s.variants.kaneTitle}
-            onClick={() => st.setVariant('kane')}
-          >
-            {s.variants.kane}
-          </button>
-          <button
-            type="button"
-            className="kdotp-variant-btn"
-            aria-pressed={st.variant === 'two-band'}
-            title={s.variants.twoBandTitle}
-            onClick={() => st.setVariant('two-band')}
-          >
-            {s.variants.twoBand}
-          </button>
+    <div className="kdotp-params-grid" role="group" aria-label={s.params.group}>
+      <div className="kdotp-params-cell kdotp-params-cell-wide">
+        <div className="kdotp-variant-switch" role="group" aria-label={s.variants.label}>
+          <span>{s.variants.label}</span>
+          <div className="kdotp-variant-group">
+            <button
+              type="button"
+              className="kdotp-variant-btn"
+              aria-pressed={st.variant === 'kane'}
+              title={s.variants.kaneTitle}
+              onClick={() => st.setVariant('kane')}
+            >
+              {s.variants.kane}
+            </button>
+            <button
+              type="button"
+              className="kdotp-variant-btn"
+              aria-pressed={st.variant === 'two-band'}
+              title={s.variants.twoBandTitle}
+              onClick={() => st.setVariant('two-band')}
+            >
+              {s.variants.twoBand}
+            </button>
+          </div>
         </div>
       </div>
 
       {PARAMS.filter((spec) => !spec.kaneOnly || st.variant === 'kane').map((spec) => (
-        <ParamSlider
-          key={spec.id}
-          quantity={spec.quantity}
-          symbol={spec.symbol}
-          label={s.params[spec.id]}
-          value={sliderValues[spec.id]}
-          min={spec.min}
-          max={spec.max}
-          step={spec.step}
-          unit={spec.unit}
-          digits={spec.digits}
-          active={st.highlight === spec.quantity}
-          onChange={(v) => st.setParam(spec.id, v)}
-          onHighlight={setHighlight}
-        />
+        <div key={spec.id} className="kdotp-params-cell">
+          <ParamSlider
+            quantity={spec.quantity}
+            symbol={spec.symbol}
+            label={s.params[spec.id]}
+            value={sliderValues[spec.id]}
+            min={spec.min}
+            max={spec.max}
+            step={spec.step}
+            unit={spec.unit}
+            digits={spec.digits}
+            active={st.highlight === spec.quantity}
+            onChange={(v) => st.setParam(spec.id, v)}
+            onHighlight={setHighlight}
+          />
+        </div>
       ))}
 
-      <PresetMenu
-        label={s.presets.label}
-        freeLabel={s.presets.free}
-        options={PRESET_OPTIONS}
-        value={st.presetId}
-        onSelect={st.applyPreset}
-        note={s.presets.note}
-      />
-    </>
+      <div className="kdotp-params-cell" title={s.presets.note}>
+        <PresetMenu
+          label={s.presets.label}
+          freeLabel={s.presets.free}
+          options={PRESET_OPTIONS}
+          value={st.presetId}
+          onSelect={st.applyPreset}
+        />
+      </div>
+    </div>
   )
+
+  // Legenda del diagramma E(k) in HTML, fuori dal grafico (con «Confronto» acceso compare la seconda voce)
+  const bandsLegend: LegendEntry[] = [
+    {
+      id: 'bands',
+      keyKind: 'solid',
+      color: 'var(--q-E)',
+      label: isKane ? s.scene.legendKaneBands : s.scene.legendTwoBandBands
+    },
+    ...(st.tools.compare
+      ? [
+          {
+            id: 'compare',
+            keyKind: 'dashed' as const,
+            color: 'var(--q-Ek)',
+            label: isKane ? s.scene.legendCompareKane : s.scene.legendCompareTwoBand
+          }
+        ]
+      : [])
+  ]
 
   const scene = (
     <>
       <SceneView
+        className="kdotp-view"
         tag={s.scene.levelsTag}
         hint={
-          isKane
-            ? s.scene.levelsHint(s.scene.bandShort(model.selection.role), formatNumber(model.gammaLevels.delta, 2))
-            : s.scene.levelsHintTwoBand(s.scene.bandShort(model.selection.role))
+          <HintLine
+            text={
+              isKane
+                ? s.scene.levelsHint(s.scene.bandShort(model.selection.role), formatNumber(model.gammaLevels.delta, 2))
+                : s.scene.levelsHintTwoBand(s.scene.bandShort(model.selection.role))
+            }
+          />
         }
       >
         <GammaLevelsCanvas model={model} highlight={st.highlight} onSelectRole={onSelectRole} />
       </SceneView>
 
-      <SceneView tag={s.scene.contribTag} hint={s.scene.contribHint}>
+      <SceneView className="kdotp-view" tag={s.scene.contribTag} hint={<HintLine text={s.scene.contribHint} />}>
         <MassContributionsBar model={model} highlight={st.highlight} />
       </SceneView>
 
       <SceneView
+        className="kdotp-view"
         tag={s.scene.bandsTag}
-        hint={isKane ? s.scene.bandsHint : s.scene.bandsHintTwoBand}
+        hint={<HintLine text={isKane ? s.scene.bandsHint : s.scene.bandsHintTwoBand} />}
       >
         <div className="kdotp-bands-wrap">
-          <KpBandPlot
-            model={model}
-            highlight={st.highlight}
-            showProbe={st.tools.mass}
-            showCompare={st.tools.compare}
-            onPick={onPick}
-            onNudge={onNudge}
-          />
+          <ChartLegend entries={bandsLegend} ariaLabel={s.scene.bandsLegendAria} />
+          <div className="kdotp-canvas-box">
+            <KpBandPlot
+              model={model}
+              highlight={st.highlight}
+              showProbe={st.tools.mass}
+              showCompare={st.tools.compare}
+              onPick={onPick}
+              onNudge={onNudge}
+            />
+          </div>
         </div>
       </SceneView>
     </>
@@ -231,21 +277,35 @@ export function KDotPSection(): JSX.Element {
             <RichText text={isKane ? s.values.compareNoteKane : s.values.compareNoteTwoBand} />
           </p>
         )}
-
-        <NearlyFreeVerifyCard summary={model.nearlyFreeCheck} />
       </Panel>
 
       <Panel title={s.theory.title} className="theory">
-        {s.theory.blocks.map((block) => (
-          <div key={block.heading}>
-            <h3>{block.heading}</h3>
-            {block.paragraphs.map((p, i) => (
-              <p key={i}>
-                <RichText text={p} />
-              </p>
-            ))}
-          </div>
-        ))}
+        <div
+          onPointerOver={(e) => {
+            const t = (e.target as Element).closest?.('[data-q]')
+            const q = t ? t.getAttribute('data-q') : null
+            setHighlight(isQuantityId(q) ? q : null)
+          }}
+          onPointerLeave={() => setHighlight(null)}
+        >
+          {s.theory.blocks.map((block) => (
+            <div key={block.heading}>
+              <h3>{block.heading}</h3>
+              {block.paragraphs.map((p, i) => (
+                <p key={i}>
+                  <RichText text={p} />
+                </p>
+              ))}
+            </div>
+          ))}
+          <details className="panel-details">
+            <summary>{s.verification.title}</summary>
+            <NearlyFreeVerifyCard summary={model.nearlyFreeCheck} />
+          </details>
+        </div>
+        <p className="foot">
+          <RichText text={s.presets.note} />
+        </p>
         <p className="foot">{s.theory.foot}</p>
       </Panel>
     </>
@@ -315,7 +375,7 @@ function KpValues({
             <RichText text={s.values.delta} />
           </dt>
           <dd>
-            <Tex tex="\htmlData{q=psi}{\Delta}" /> = <Num value={model.params.delta} digits={2} width={4} /> eV
+            <Tex tex="\htmlData{q=Delta}{\Delta}" /> = <Num value={model.params.delta} digits={2} width={4} /> eV
           </dd>
         </>
       )}
@@ -324,14 +384,14 @@ function KpValues({
         <RichText text={s.values.ep} />
       </dt>
       <dd>
-        <Tex tex="\htmlData{q=v}{E_P}" /> = <Num value={model.params.ep} digits={1} width={4} /> eV
+        <Tex tex="\htmlData{q=EP}{E_P}" /> = <Num value={model.params.ep} digits={1} width={4} /> eV
       </dd>
 
       <dt>
         <RichText text={s.values.pKane} />
       </dt>
       <dd>
-        <Tex tex="\htmlData{q=v}{P}" /> = <Num value={km.pKane} digits={3} width={5} /> eV·Å
+        <Tex tex="\htmlData{q=EP}{P}" /> = <Num value={km.pKane} digits={3} width={5} /> eV·Å
         <span className="note sub">
           <RichText text={s.values.pKaneNote} />
         </span>
@@ -368,7 +428,9 @@ function KpValues({
             <RichText text="$m^*_c(0)/m_0$" />
           </dt>
           <dd>
-            <Num value={1 / (1 + model.params.ep / model.params.eg)} digits={4} width={6} />
+            <span className="value-num num" style={{ minWidth: '6ch' }}>
+              {formatEffectiveMassRatio(model.twoBandGammaMasses.mc, { digits: 4 })}
+            </span>
             {meas?.mc != null && (
               <span className="sub">
                 {' · '}
@@ -381,7 +443,23 @@ function KpValues({
             <RichText text="$m^*_{lh}(0)/m_0$" />
           </dt>
           <dd>
-            <Num value={1 / (1 - model.params.ep / model.params.eg)} digits={4} width={7} />
+            <span className="value-num num" style={{ minWidth: '7ch' }}>
+              {formatEffectiveMassRatio(model.twoBandGammaMasses.mlh, { digits: 4 })}
+            </span>
+            {!isEffectiveMassDivergent(model.twoBandGammaMasses.mlh) && (
+              <span className="sub">
+                {' · '}
+                <Tex tex="m_{lh}/m_0 = -m^*_{lh}/m_0" /> ={' '}
+                {formatNumber(-model.twoBandGammaMasses.mlh, 4)}
+              </span>
+            )}
+          </dd>
+
+          <dt>
+            <RichText text={s.values.twoBandXYLabel} />
+          </dt>
+          <dd className="sub">
+            <RichText text={s.values.twoBandXYNote} />
           </dd>
         </>
       )}
@@ -398,11 +476,14 @@ function KpValues({
         <>
           <dt>{s.values.localMass}</dt>
           <dd>
-            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" /> ={' '}
-            {Number.isFinite(sel.numericalMassRatio) ? <Num value={sel.numericalMassRatio} digits={4} width={7} /> : '∞'}
+            <Tex tex="\htmlData{q=mstar}{m^*}/m_0" />{' '}
+            <span className="value-num num" style={{ minWidth: '7ch' }}>
+              {formatEffectiveMassRatio(sel.numericalMassRatio, { digits: 4, withEquals: true })}
+            </span>
             <span className="note sub">
               {s.values.analyticMass}:{' '}
-              {Number.isFinite(sel.formulaMassRatio) ? formatNumber(sel.formulaMassRatio, 4) : '∞'} m₀
+              {formatEffectiveMassRatio(sel.formulaMassRatio, { digits: 4 })}
+              {isEffectiveMassDivergent(sel.formulaMassRatio) ? '' : ' m₀'}
             </span>
           </dd>
         </>
@@ -437,7 +518,9 @@ function KpValues({
 function NearlyFreeVerifyCard({ summary }: { readonly summary: KpModel['nearlyFreeCheck'] }): JSX.Element {
   return (
     <div className="kdotp-verify-card">
-      <div className="kdotp-verify-title">{s.verification.title}</div>
+      <div className="kdotp-verify-sub">
+        <RichText text={s.verification.intro} />
+      </div>
       <div className="kdotp-verify-sub">
         <RichText text={s.verification.subtitle} />
       </div>
