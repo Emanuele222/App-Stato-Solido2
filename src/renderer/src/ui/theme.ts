@@ -59,7 +59,27 @@ export const QUANTITIES = {
   /** separazione spin–orbita Δ e banda split-off (so) */
   Delta: { color: '#eb82a6', name: 'separazione spin–orbita' },
   /** energia caratteristica di Kane E_P e accoppiamento k·p P */
-  EP: { color: '#64b5f6', name: 'energia caratteristica di Kane' }
+  EP: { color: '#64b5f6', name: 'energia caratteristica di Kane' },
+  /** pulsazione fononica ω(k) e ramo acustico ω₋ (Parte 6) */
+  omega: { color: '#72d67c', name: 'pulsazione ω(k) e ramo acustico' },
+  /** ramo ottico ω₊, gap fononico e temperatura di Einstein Θ_E (Parte 6) */
+  omegaOpt: { color: '#f59e56', name: 'ramo ottico ω₊, gap fononico e Θ_E' },
+  /** costante elastica C e matrice delle costanti di forza Φ (Parte 6) */
+  C: { color: '#e8795e', name: 'costante elastica C' },
+  /** massa atomica M (catena monatomica o atomo pesante nella biatomica) */
+  M: { color: '#7aa2f7', name: 'massa atomica M' },
+  /** massa atomica leggera m nella catena biatomica (M > m) */
+  m: { color: '#e68ab8', name: 'massa atomica leggera m' },
+  /** spostamento atomico u_n(t), pacchetto d’onda Ψ e rapporto d’ampiezza α */
+  u: { color: '#c9e663', name: 'spostamento atomico u_n(t)' },
+  /** velocità di fase v_p = ω/k */
+  vp: { color: '#c49bff', name: 'velocità di fase v_p' },
+  /** temperatura T e scala termica k_B T */
+  T: { color: '#ff6b6b', name: 'temperatura T' },
+  /** temperatura e pulsazione di Debye Θ_D, ω_D */
+  Theta: { color: '#a07ef5', name: 'temperatura e frequenza di Debye' },
+  /** calore specifico molare C_V e densità degli stati fononica g(ω) */
+  CV: { color: '#45b7f7', name: 'calore specifico C_V e densità degli stati' }
 } as const
 
 export type QuantityId = keyof typeof QUANTITIES
@@ -88,7 +108,17 @@ export const DERIVED_TONES = {
   /** etichetta dell'estremo legante (tinta chiara di v) */
   bondingText: { from: 'v', color: '#96e8d4', name: 'estremo legante (tinta chiara di v)' },
   /** etichetta dell'estremo antilegante (tinta chiara di V_2G) */
-  antibondingText: { from: 'V2G', color: '#f7b6ad', name: 'estremo antilegante (tinta chiara di V_2G)' }
+  antibondingText: { from: 'V2G', color: '#f7b6ad', name: 'estremo antilegante (tinta chiara di V_2G)' },
+  /** rami acustici trasversali TA in 3D: tinta chiara di ω */
+  acousticTransverse: { from: 'omega', color: '#a8e6ae', name: 'rami acustici trasversali TA (tinta chiara di ω)' },
+  /** rami ottici trasversali TO in 3D: tinta chiara di ω₊ */
+  opticalTransverse: { from: 'omegaOpt', color: '#f7c597', name: 'rami ottici trasversali TO (tinta chiara di ω₊)' },
+  /** retta della luce infrarossa ω = ck/n: tinta chiara di k */
+  lightLine: { from: 'k', color: '#f9e28b', name: 'retta della luce IR (tinta chiara di k)' },
+  /** densità degli stati 1D con singolarità di Van Hove: tinta chiara di C_V */
+  vanHoveDos: { from: 'CV', color: '#8cd4fa', name: 'densità degli stati Van Hove (tinta chiara di C_V)' },
+  /** modi termicamente attivati nello spettro g(ω): tinta chiara di T */
+  activatedModes: { from: 'T', color: '#ff9999', name: 'modi attivati termicamente (tinta chiara di T)' }
 } as const
 
 export type DerivedToneId = keyof typeof DERIVED_TONES

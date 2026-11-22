@@ -12,19 +12,22 @@ export function App(): JSX.Element {
     return <HomeScreen onSelectSection={setActiveSectionId} />
   }
 
-  const entry = SECTIONS.find((x) => x.id === activeSectionId && x.component) ?? SECTIONS[0]
-  const Section = entry?.component
+  const entry = SECTIONS.find((x) => x.id === activeSectionId && x.component)
+  if (!entry || !entry.component) {
+    return <HomeScreen onSelectSection={setActiveSectionId} />
+  }
+  const Section = entry.component
 
   return (
     <AppShell
       labels={shellStrings}
       chapters={CHAPTERS}
       upcoming={UPCOMING_CHAPTERS}
-      activeSectionId={entry?.id ?? ''}
+      activeSectionId={entry.id}
       onSelectSection={setActiveSectionId}
       onGoHome={() => setActiveSectionId(null)}
     >
-      {Section ? <Section /> : null}
+      <Section />
     </AppShell>
   )
 }

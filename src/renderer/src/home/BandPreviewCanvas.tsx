@@ -52,7 +52,7 @@ function drawMethodBands(
 
   const padLeft = 24
   const padRight = 16
-  const padTop = 14
+  const padTop = 24
   const padBottom = 22
 
   const plotW = size.w - padLeft - padRight
@@ -84,14 +84,15 @@ function drawMethodBands(
   }
   ctx.setLineDash([])
 
-  // Disegno delle bande calcolate
-  ctx.strokeStyle = QUANTITIES.E.color
+  // Disegno delle bande / rami calcolati
   ctx.lineWidth = 1.75
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
 
   const eSpan = data.eMax - data.eMin || 1
-  for (const band of data.bands) {
+  const fallbackColor = data.defaultColor ?? QUANTITIES.E.color
+  data.bands.forEach((band, bandIdx) => {
+    ctx.strokeStyle = data.bandColors?.[bandIdx] ?? fallbackColor
     ctx.beginPath()
     for (let i = 0; i < band.length; i++) {
       const x = padLeft + data.kNormalized[i] * plotW
@@ -100,7 +101,7 @@ function drawMethodBands(
       else ctx.lineTo(x, y)
     }
     ctx.stroke()
-  }
+  })
 
   ctx.restore()
 }

@@ -6,13 +6,19 @@
  * 1. Teoria delle bande (attivo)
  * 2. Cristallografia (in arrivo)
  * 3. Reticolo reciproco e diffrazione (in arrivo)
- * 4. Fononi (in arrivo)
+ * 4. Fononi (attivo)
  * 5. Semiconduttori (in arrivo)
  */
 import type { JSX } from 'react'
 import { SECTIONS } from '../sections/registry'
 import { shellStrings } from '../strings'
 import { ActiveChapterCard } from './ActiveChapterCard'
+import {
+  getPhononPreviewCurves,
+  getPhononRestingCurves,
+  getPreviewCurves,
+  getRestingCurves
+} from './curves'
 import { homeStrings } from './strings'
 import { UpcomingChapterCard } from './UpcomingChapterCard'
 import './home.css'
@@ -22,7 +28,16 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ onSelectSection }: HomeScreenProps): JSX.Element {
-  const bandsSections = SECTIONS.filter((s) => s.chapterId === 'bands')
+  const bandsSections = SECTIONS.filter((s) => s.chapterId === 'bands').map((s) => ({
+    id: s.id,
+    title: s.title,
+    available: s.component !== null
+  }))
+  const phononSections = SECTIONS.filter((s) => s.chapterId === 'phonons').map((s) => ({
+    id: s.id,
+    title: s.title,
+    available: s.component !== null
+  }))
 
   return (
     <div className="home-screen">
@@ -37,9 +52,12 @@ export function HomeScreen({ onSelectSection }: HomeScreenProps): JSX.Element {
           <div role="listitem" className="home-grid-item">
             <ActiveChapterCard
               title={shellStrings.chapters.bands}
-              sectionsCount={homeStrings.sectionsCount}
+              sectionsCount={homeStrings.sectionsCountFor(bandsSections.length)}
               sections={bandsSections}
               onSelect={onSelectSection}
+              getResting={getRestingCurves}
+              getPreview={getPreviewCurves}
+              accentQuantity="E"
             />
           </div>
 
@@ -61,12 +79,16 @@ export function HomeScreen({ onSelectSection }: HomeScreenProps): JSX.Element {
             />
           </div>
 
-          {/* 4. Fononi (in arrivo) */}
+          {/* 4. Fononi (attivo) */}
           <div role="listitem" className="home-grid-item">
-            <UpcomingChapterCard
-              id="phonons"
-              title={shellStrings.upcoming[2]}
-              sketchKind="phonons"
+            <ActiveChapterCard
+              title={shellStrings.chapters.phonons}
+              sectionsCount={homeStrings.sectionsCountFor(phononSections.length)}
+              sections={phononSections}
+              onSelect={onSelectSection}
+              getResting={getPhononRestingCurves}
+              getPreview={getPhononPreviewCurves}
+              accentQuantity="omega"
             />
           </div>
 
@@ -74,7 +96,7 @@ export function HomeScreen({ onSelectSection }: HomeScreenProps): JSX.Element {
           <div role="listitem" className="home-grid-item">
             <UpcomingChapterCard
               id="semiconductors"
-              title={shellStrings.upcoming[3]}
+              title={shellStrings.upcoming[2]}
               sketchKind="semiconductors"
             />
           </div>

@@ -14,6 +14,8 @@
  * e rimangono memorizzate per i passaggi successivi.
  */
 import {
+  AMU_KG,
+  RAD_S_TO_THZ,
   emptyLatticeBands,
   kaneBands,
   kDotPPath1D,
@@ -24,6 +26,7 @@ import {
   zonePath1D,
   type BandStructure
 } from '../physics'
+import { DERIVED_TONES, QUANTITIES } from '../ui/theme'
 
 export interface CurveLabel {
   readonly frac: number
@@ -39,6 +42,10 @@ export interface MethodPreviewData {
   readonly eMin: number
   readonly eMax: number
   readonly kLabels: readonly CurveLabel[]
+  /** Colore per ciascuna curva (opzionale; default `defaultColor` o `QUANTITIES.E.color`). */
+  readonly bandColors?: readonly string[]
+  /** Colore predefinito delle curve del capitolo. */
+  readonly defaultColor?: string
 }
 
 /** Struttura normalizzata a partire da una BandStructure */
@@ -216,4 +223,308 @@ export function getPreviewCurves(): readonly MethodPreviewData[] {
 
 export function getPreviewCalculationTimeMs(): number {
   return previewCalculationTimeMs
+}
+
+// ---------------------------------------------------------------------------
+// Curve del capitolo «Fononi» (Parte 6: Vibrazioni reticolari e fononi)
+// ---------------------------------------------------------------------------
+
+function makeLinearAxis(n: number): Float64Array {
+  const arr = new Float64Array(n)
+  for (let i = 0; i < n; i++) arr[i] = n > 1 ? i / (n - 1) : 0
+  return arr
+}
+
+function diatomicBranchesThz(
+  n: number,
+  mLightAmu: number,
+  mHeavyAmu: number,
+  springC: number,
+  kMinFrac = -1,
+  kMaxFrac = 1
+): { acoustic: Float64Array; optical: Float64Array; kNorm: Float64Array } {
+  const m1 = mLightAmu * AMU_KG
+  const m2 = mHeavyAmu * AMU_KG
+  const invMu = (m1 + m2) / (m1 * m2)
+  const prod = m1 * m2
+  const acoustic = new Float64Array(n)
+  const optical = new Float64Array(n)
+  const kNorm = makeLinearAxis(n)
+
+  for (let i = 0; i < n; i++) {
+    const kFrac = kMinFrac + (kMaxFrac - kMinFrac) * kNorm[i] // in unità di π/a
+    const s = Math.sin((Math.PI * kFrac) / 2)
+    const disc = Math.max(0, invMu * invMu - (4 * s * s) / prod)
+    const root = Math.sqrt(disc)
+    const wAc = Math.sqrt(Math.max(0, springC * (invMu - root)))
+    const wOp = Math.sqrt(Math.max(0, springC * (invMu + root)))
+    acoustic[i] = wAc * RAD_S_TO_THZ
+    optical[i] = wOp * RAD_S_TO_THZ
+  }
+  return { acoustic, optical, kNorm }
+}
+
+/** Quadratura di Gauss–Legendre a 12 punti su [0, 1] per l'integrale di Debye dell'anteprima. */
+const GL12_X = [
+  0.009219682876640374, 0.04794137181476257, 0.11504866290284764, 0.20634102285669128,
+  0.31608425050090984, 0.43738329574426554, 0.5626167042557345, 0.6839157494990902,
+  0.7936589771433087, 0.8849513370971524, 0.9520586281852374, 0.9907803171233596
+] as const
+const GL12_W = [
+  0.023587668193255913, 0.053469662997659215, 0.08003916427167311, 0.10158371336153296,
+  0.1167462682691774, 0.12457352290670139, 0.12457352290670139, 0.1167462682691774,
+  0.10158371336153296, 0.08003916427167311, 0.053469662997659215, 0.023587668193255913
+] as const
+
+function debyeCvOver3R(tOverTheta: number): number {
+  if (tOverTheta <= 1e-4) return 0
+  const xD = 1 / tOverTheta
+  if (xD > 40) {
+    // Limite asintotico T^3: (4π^4 / 5) · (T/Θ_D)^3
+    return ((4 * Math.PI ** 4) / 5) * tOverTheta ** 3
+  }
+  let sum = 0
+  for (let i = 0; i < GL12_X.length; i++) {
+    const x = xD * GL12_X[i]
+    const ex = Math.exp(x)
+    const denom = ex - 1
+    const integrand = denom > 0 ? (x * x * x * x * ex) / (denom * denom) : 0
+    sum += GL12_W[i] * integrand
+  }
+  return 3 * tOverTheta ** 3 * xD * sum
+}
+
+function einsteinCvOver3R(tOverThetaE: number): number {
+  if (tOverThetaE <= 1e-4) return 0
+  const x = 1 / tOverThetaE
+  if (x > 60) return 0
+  const ex = Math.exp(x)
+  const denom = ex - 1
+  return (x * x * ex) / (denom * denom)
+}
+
+/** Curva a riposo del capitolo Fononi: catena biatomica tipo Na–Cl con gap ben visibile. */
+export function computePhononRestingCurves(): MethodPreviewData {
+  const { acoustic, optical, kNorm } = diatomicBranchesThz(101, 23, 35.5, 10)
+  const maxVal = optical[Math.floor(optical.length / 2)] || 5
+  return {
+    id: 'phonons-resting',
+    title: 'Fononi',
+    subtitle: 'Ramo acustico, ramo ottico e gap fononico',
+    bands: [acoustic, optical],
+    kNormalized: kNorm,
+    eMin: -0.25,
+    eMax: maxVal * 1.14,
+    kLabels: [
+      { frac: 0, label: '−π/a' },
+      { frac: 0.5, label: '0' },
+      { frac: 1, label: 'π/a' }
+    ],
+    bandColors: [QUANTITIES.omega.color, QUANTITIES.omegaOpt.color],
+    defaultColor: QUANTITIES.omega.color
+  }
+}
+
+let cachedPhononResting: MethodPreviewData | null = null
+
+export function getPhononRestingCurves(): MethodPreviewData {
+  if (!cachedPhononResting) {
+    cachedPhononResting = computePhononRestingCurves()
+  }
+  return cachedPhononResting
+}
+
+/** Calcola le 6 serie di curve per l'anteprima ciclica del capitolo Fononi. */
+export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
+  const N = 101
+
+  // 1. Catena monatomica: metallo tipico (§3, M = 63,2 u, C = 20 N/m)
+  const kNorm1 = makeLinearAxis(N)
+  const wMax1 = 2 * Math.sqrt(20 / (63.2 * AMU_KG)) * RAD_S_TO_THZ
+  const mono = new Float64Array(N)
+  for (let i = 0; i < N; i++) {
+    const kFrac = -1 + 2 * kNorm1[i]
+    mono[i] = wMax1 * Math.abs(Math.sin((Math.PI * kFrac) / 2))
+  }
+  const s1: MethodPreviewData = {
+    id: 'phonon-monatomic',
+    title: 'Catena monatomica',
+    subtitle: 'Dispersione ω(k) = 2√(C/M)|sin(ka/2)| nella 1BZ',
+    bands: [mono],
+    kNormalized: kNorm1,
+    eMin: -0.25,
+    eMax: wMax1 * 1.16,
+    kLabels: [
+      { frac: 0, label: '−π/a' },
+      { frac: 0.5, label: '0' },
+      { frac: 1, label: 'π/a' }
+    ],
+    bandColors: [QUANTITIES.omega.color],
+    defaultColor: QUANTITIES.omega.color
+  }
+
+  // 2. Catena biatomica tipo Na–Cl (§8: m = 23 u, M = 35,5 u, C = 10 N/m)
+  const diat = diatomicBranchesThz(N, 23, 35.5, 10)
+  const max2 = diat.optical[Math.floor(N / 2)]
+  const s2: MethodPreviewData = {
+    id: 'phonon-diatomic',
+    title: 'Catena biatomica',
+    subtitle: 'Rami acustico e ottico con gap fononico',
+    bands: [diat.acoustic, diat.optical],
+    kNormalized: diat.kNorm,
+    eMin: -0.25,
+    eMax: max2 * 1.14,
+    kLabels: [
+      { frac: 0, label: '−π/a' },
+      { frac: 0.5, label: '0' },
+      { frac: 1, label: 'π/a' }
+    ],
+    bandColors: [QUANTITIES.omega.color, QUANTITIES.omegaOpt.color],
+    defaultColor: QUANTITIES.omega.color
+  }
+
+  // 3. Rami 3D e cristalli reali (profilo qualitativo PbTe lungo Γ–X–K–Γ–L, Tab. 1)
+  const kNorm3 = makeLinearAxis(N)
+  const ta = new Float64Array(N)
+  const la = new Float64Array(N)
+  const to = new Float64Array(N)
+  const lo = new Float64Array(N)
+  for (let i = 0; i < N; i++) {
+    const u = kNorm3[i]
+    // 4 tratti uguali: [0,0.25] Γ-X, [0.25,0.5] X-K, [0.5,0.75] K-Γ, [0.75,1] Γ-L
+    let q = 0
+    let scale = 1
+    if (u <= 0.25) {
+      q = u / 0.25
+      scale = 1.0
+    } else if (u <= 0.5) {
+      const t = (u - 0.25) / 0.25
+      q = 1 - 0.15 * t
+      scale = 1.0 - 0.08 * t
+    } else if (u <= 0.75) {
+      q = 1 - (u - 0.5) / 0.25
+      scale = 0.92
+    } else {
+      q = (u - 0.75) / 0.25
+      scale = 0.86
+    }
+    const sHalf = Math.sin((Math.PI * q) / 2)
+    ta[i] = 1.15 * scale * sHalf
+    la[i] = 2.05 * scale * sHalf
+    to[i] = 1.1 + 0.65 * sHalf * sHalf
+    lo[i] = 3.3 - 0.75 * sHalf * sHalf
+  }
+  const s3: MethodPreviewData = {
+    id: 'phonon-3d',
+    title: 'Rami 3D e cristalli',
+    subtitle: 'Rami LA, TA, LO e TO lungo Γ–X–K–Γ–L',
+    bands: [ta, la, to, lo],
+    kNormalized: kNorm3,
+    eMin: -0.2,
+    eMax: 3.8,
+    kLabels: [
+      { frac: 0, label: 'Γ' },
+      { frac: 0.25, label: 'X' },
+      { frac: 0.5, label: 'K' },
+      { frac: 0.75, label: 'Γ' },
+      { frac: 1, label: 'L' }
+    ],
+    bandColors: [
+      DERIVED_TONES.acousticTransverse.color,
+      QUANTITIES.omega.color,
+      DERIVED_TONES.opticalTransverse.color,
+      QUANTITIES.omegaOpt.color
+    ],
+    defaultColor: QUANTITIES.omega.color
+  }
+
+  // 4. Pacchetti d'onda: metà zona [0, π/a] con v_g > 0 (acustico) e v_g < 0 (ottico)
+  const wp = diatomicBranchesThz(N, 23, 35.5, 10, 0, 1)
+  const max4 = wp.optical[0]
+  const s4: MethodPreviewData = {
+    id: 'phonon-wavepacket',
+    title: 'Pacchetti d’onda',
+    subtitle: 'Velocità di fase v_p e di gruppo v_g su rami acustico e ottico',
+    bands: [wp.acoustic, wp.optical],
+    kNormalized: wp.kNorm,
+    eMin: -0.25,
+    eMax: max4 * 1.14,
+    kLabels: [
+      { frac: 0, label: '0' },
+      { frac: 0.5, label: 'π/2a' },
+      { frac: 1, label: 'π/a' }
+    ],
+    bandColors: [QUANTITIES.omega.color, QUANTITIES.omegaOpt.color],
+    defaultColor: QUANTITIES.omega.color
+  }
+
+  // 5. Modi quantizzati (oscillatore armonico: parabola V(Q) e densità |Ψ_0|², |Ψ_2|²)
+  const kNorm5 = makeLinearAxis(N)
+  const pot = new Float64Array(N)
+  const psi0 = new Float64Array(N)
+  const psi2 = new Float64Array(N)
+  for (let i = 0; i < N; i++) {
+    const q = -2.8 + 5.6 * kNorm5[i]
+    pot[i] = 0.5 * q * q
+    const g = Math.exp(-q * q)
+    psi0[i] = 0.5 + 0.9 * g
+    const h2 = 2 * q * q - 1
+    psi2[i] = 2.5 + 0.35 * h2 * h2 * g
+  }
+  const s5: MethodPreviewData = {
+    id: 'phonon-quantum',
+    title: 'Modi quantizzati',
+    subtitle: 'Oscillatore armonico quantistico, punto zero e processi Umklapp',
+    bands: [pot, psi0, psi2],
+    kNormalized: kNorm5,
+    eMin: -0.2,
+    eMax: 4.3,
+    kLabels: [
+      { frac: 0.14, label: '−a' },
+      { frac: 0.5, label: '0' },
+      { frac: 0.86, label: '+a' }
+    ],
+    bandColors: [QUANTITIES.Ek.color, QUANTITIES.psi.color, QUANTITIES.omega.color],
+    defaultColor: QUANTITIES.psi.color
+  }
+
+  // 6. Calore specifico: Dulong–Petit (3R), Einstein (Θ_E = 0,75 Θ_D) e Debye
+  const kNorm6 = makeLinearAxis(N)
+  const dulong = new Float64Array(N)
+  const einstein = new Float64Array(N)
+  const debye = new Float64Array(N)
+  for (let i = 0; i < N; i++) {
+    const tRatio = 1.5 * kNorm6[i] // T / Θ_D in [0, 1.5]
+    dulong[i] = 1
+    einstein[i] = einsteinCvOver3R(tRatio / 0.75)
+    debye[i] = debyeCvOver3R(tRatio)
+  }
+  const s6: MethodPreviewData = {
+    id: 'phonon-specific-heat',
+    title: 'Calore specifico e Debye',
+    subtitle: 'Confronto Dulong–Petit, Einstein e legge T³ di Debye',
+    bands: [dulong, einstein, debye],
+    kNormalized: kNorm6,
+    eMin: -0.06,
+    eMax: 1.14,
+    kLabels: [
+      { frac: 0, label: '0' },
+      { frac: 1 / 3, label: '0,5' },
+      { frac: 2 / 3, label: 'Θ_{D}' },
+      { frac: 1, label: '1,5' }
+    ],
+    bandColors: [QUANTITIES.Ek.color, QUANTITIES.omegaOpt.color, QUANTITIES.CV.color],
+    defaultColor: QUANTITIES.CV.color
+  }
+
+  return [s1, s2, s3, s4, s5, s6]
+}
+
+let cachedPhononPreview: readonly MethodPreviewData[] | null = null
+
+export function getPhononPreviewCurves(): readonly MethodPreviewData[] {
+  if (!cachedPhononPreview) {
+    cachedPhononPreview = computePhononPreviewCurves()
+  }
+  return cachedPhononPreview
 }

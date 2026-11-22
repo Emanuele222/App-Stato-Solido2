@@ -125,14 +125,146 @@
 }
 
 .band-canvas:focus-visible,
-.real-canvas:focus-visible {
+.real-canvas:focus-visible,
+.dispersion-canvas:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: -2px;
 }
 
+/* ---------- DispersionPlot ---------- */
+
+.dispersion-plot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.dispersion-plot-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+}
+
+.dispersion-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.dispersion-canvas.is-interactive {
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* ---------- PlaybackControls ---------- */
+
+.playback-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.playback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 26px;
+  padding: 0 9px;
+  font-size: 12px;
+  color: var(--text-soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.playback-btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--dim);
+}
+
+.playback-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.playback-play[data-playing] {
+  color: var(--text);
+  border-color: var(--focus);
+  background: var(--raised);
+}
+
+.playback-play-label {
+  min-width: 40px;
+  text-align: left;
+}
+
+.playback-reset {
+  width: 26px;
+  padding: 0;
+}
+
+.playback-speeds {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.playback-speed-btn {
+  height: 24px;
+  padding: 0 7px;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.playback-speed-btn:last-child {
+  border-right: 0;
+}
+
+.playback-speed-btn:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.playback-speed-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+}
+
+.playback-speed-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.playback-reduced-note {
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .live-formula [data-q],
-  .live-formula [data-q].is-pulse {
+  .live-formula [data-q].is-pulse,
+  .playback-btn,
+  .playback-speed-btn {
     transition: none;
     animation: none;
   }

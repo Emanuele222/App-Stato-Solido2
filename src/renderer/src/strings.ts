@@ -9,9 +9,10 @@ export const shellStrings = {
   openNav: 'Apri l’indice delle sezioni',
   closeNav: 'Chiudi l’indice delle sezioni',
   goHome: 'Torna alla schermata iniziale',
-  footnote: 'Capitolo 1: Teoria delle bande completo (6 sezioni disponibili).',
+  footnote: 'Capitoli attivi: Teoria delle bande (6/6) e Fononi.',
   chapters: {
-    bands: 'Teoria delle bande'
+    bands: 'Teoria delle bande',
+    phonons: 'Fononi'
   },
   sections: {
     emptyLattice: 'Reticolo vuoto e schemi di zona',
@@ -19,7 +20,13 @@ export const shellStrings = {
     nearlyFree: 'Elettroni quasi liberi',
     tightBinding: 'Legami forti',
     kp: 'Metodo k·p',
-    pseudopotential: 'Pseudopotenziale'
+    pseudopotential: 'Pseudopotenziale',
+    phononMonatomic: 'Catena monatomica e prima zona',
+    phononDiatomic: 'Catena biatomica e luce IR',
+    phonon3d: 'Rami 3D e cristalli reali',
+    phononWavepacket: 'Pacchetti d’onda (fase e gruppo)',
+    phononQuantum: 'Modi quantizzati e Umklapp',
+    phononSpecificHeat: 'Calore specifico e Debye'
   },
-  upcoming: ['Cristallografia', 'Reticolo reciproco e diffrazione', 'Fononi', 'Semiconduttori']
+  upcoming: ['Cristallografia', 'Reticolo reciproco e diffrazione', 'Semiconduttori']
 } as const

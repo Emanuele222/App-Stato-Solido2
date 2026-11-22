@@ -121,13 +121,13 @@
   outline-offset: 2px;
 }
 
-/* Testata della scheda */
+/* Testata della scheda: altezza minima sufficiente a 2 righe per allineare tutti i canvas */
 .card-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 10px;
-  min-height: 36px;
+  min-height: 42px;
 }
 
 .card-title-group {
@@ -162,7 +162,7 @@
 
 .is-active-badge {
   background: var(--raised);
-  color: var(--q-E);
+  color: var(--q, var(--q-E));
   border: 1px solid var(--line-strong);
 }
 
@@ -223,8 +223,8 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(19, 22, 26, 0.9);
-  border: 1px solid var(--lineStrong);
+  background: color-mix(in srgb, var(--panel) 90%, transparent);
+  border: 1px solid var(--line-strong);
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 11px;
@@ -360,6 +360,42 @@
   margin-top: 6px;
   font-size: 11px;
   color: var(--dim);
+}
+
+/* Compattazione su viewport 1100×800 (nessuno scorrimento verticale da 1100×800 in su) */
+@media (min-width: 1100px) and (max-height: 860px) {
+  .home-screen {
+    padding: 12px 24px;
+  }
+
+  .home-header {
+    margin-bottom: 10px;
+  }
+
+  .home-grid {
+    gap: 12px;
+  }
+
+  .chapter-card {
+    height: 332px;
+    padding: 12px 14px;
+  }
+
+  .card-head {
+    margin-bottom: 8px;
+  }
+
+  .card-canvas-wrap {
+    margin-bottom: 8px;
+  }
+
+  .chapter-card.is-active .card-canvas-wrap {
+    min-height: 110px;
+  }
+
+  .chapter-card.is-active .card-body {
+    height: 114px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

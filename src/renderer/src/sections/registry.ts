@@ -26,14 +26,31 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'nearly-free', chapterId: 'bands', title: s.sections.nearlyFree, component: NearlyFreeSection },
   { id: 'tight-binding', chapterId: 'bands', title: s.sections.tightBinding, component: TightBindingSection },
   { id: 'k-dot-p', chapterId: 'bands', title: s.sections.kp, component: KDotPSection },
-  { id: 'pseudopotential', chapterId: 'bands', title: s.sections.pseudopotential, component: PseudopotentialSection }
+  { id: 'pseudopotential', chapterId: 'bands', title: s.sections.pseudopotential, component: PseudopotentialSection },
+  { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: null },
+  { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: null },
+  { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: null },
+  { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: null },
+  { id: 'phonon-quantum', chapterId: 'phonons', title: s.sections.phononQuantum, component: null },
+  { id: 'phonon-specific-heat', chapterId: 'phonons', title: s.sections.phononSpecificHeat, component: null }
 ]
 
 export const CHAPTERS: readonly NavChapter[] = [
   {
     id: 'bands',
     title: s.chapters.bands,
+    accentQuantity: 'E',
     sections: SECTIONS.filter((x) => x.chapterId === 'bands').map((x) => ({
+      id: x.id,
+      title: x.title,
+      available: x.component !== null
+    }))
+  },
+  {
+    id: 'phonons',
+    title: s.chapters.phonons,
+    accentQuantity: 'omega',
+    sections: SECTIONS.filter((x) => x.chapterId === 'phonons').map((x) => ({
       id: x.id,
       title: x.title,
       available: x.component !== null
@@ -73,12 +90,14 @@ export const ALL_CHAPTERS: readonly ChapterEntry[] = [
   },
   {
     id: 'phonons',
-    title: s.upcoming[2],
-    status: 'upcoming'
+    title: s.chapters.phonons,
+    status: 'active',
+    sectionsCount: SECTIONS.filter((x) => x.chapterId === 'phonons').length,
+    defaultSectionId: 'phonon-monatomic'
   },
   {
     id: 'semiconductors',
-    title: s.upcoming[3],
+    title: s.upcoming[2],
     status: 'upcoming'
   }
 ]

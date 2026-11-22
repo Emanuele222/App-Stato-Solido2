@@ -6,6 +6,7 @@
  * diventa un pannello a scomparsa.
  */
 import { createContext, useContext, useEffect, useRef, useState, type JSX, type ReactNode } from 'react'
+import type { QuantityId } from './theme'
 
 export interface NavSection {
   readonly id: string
@@ -16,6 +17,7 @@ export interface NavSection {
 export interface NavChapter {
   readonly id: string
   readonly title: string
+  readonly accentQuantity?: QuantityId
   readonly sections: readonly NavSection[]
 }
 
@@ -107,7 +109,7 @@ export function AppShell({
             </button>
           </div>
           {chapters.map((chapter) => (
-            <div key={chapter.id} className="nav-chapter">
+            <div key={chapter.id} className="nav-chapter" data-q={chapter.accentQuantity}>
               <div className="nav-chapter-title">{chapter.title}</div>
               <ul>
                 {chapter.sections.map((s) => {
