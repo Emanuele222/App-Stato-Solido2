@@ -17,12 +17,15 @@ import {
   AMU_KG,
   RAD_S_TO_THZ,
   emptyLatticeBands,
+  grapheneBands,
+  graphenePath,
   kaneBands,
   kDotPPath1D,
   kronigPenneyBands,
   monatomicDispersionCurve,
   monatomicZoneEdge,
   nearlyFreeBands,
+  pseudoCore1DBands,
   pseudopotentialBands,
   tightBindingMonoatomicBands,
   zonePath1D,
@@ -148,12 +151,20 @@ export function computeAllPreviewCurves(): readonly MethodPreviewData[] {
     path4
   )
 
-  // 5. Metodo k·p: modello di Kane (so, lh, hh, c) vicino a Gamma
+  // 5. Legami forti in 2D: grafene lungo Γ–M–K–Γ (t = 2.8 eV)
+  const path4b = graphenePath(undefined, 35)
+  const bs4b = grapheneBands({ t: 2.8 }, path4b)
+
+  // 6. Metodo k·p: modello di Kane (so, lh, hh, c) vicino a Gamma
   const path5 = kDotPPath1D(0.12, 101)
   const bs5 = kaneBands({ eg: 1.43, delta: 0.34, ep: 20.0 }, path5)
 
-  // 6. Pseudopotenziale: Si lungo L–Γ–X–W–K–Γ (51 onde piane = gMaxSq 11)
-  const bs6 = pseudopotentialBands(
+  // 6. Pseudopotenziale: modello 1D con stato di core (a = 4,0 Å, V₀ = 60 eV, s = 0,25 Å)
+  const path6 = zonePath1D(4.0, 81)
+  const bs6 = pseudoCore1DBands({ a: 4.0, v0: 60.0, s: 0.25 }, path6, 3, 25)
+
+  // 7. Bande dei materiali veri: Si lungo L–Γ–X–W–K–Γ (51 onde piane = gMaxSq 11)
+  const bs7 = pseudopotentialBands(
     {
       a: 5.43,
       formFactors: { v3s: -0.21, v8s: 0.04, v11s: 0.08, v3a: 0, v4a: 0, v11a: 0 }
@@ -192,6 +203,12 @@ export function computeAllPreviewCurves(): readonly MethodPreviewData[] {
       bs4
     ),
     normalizeBandStructure(
+      'tight-binding-2d',
+      'Legami forti in 2D',
+      'Bande π e π* del grafene con cono di Dirac in K',
+      bs4b
+    ),
+    normalizeBandStructure(
       'k-dot-p',
       'Metodo k·p',
       'Dispersione c, hh, lh, so attorno al punto Γ',
@@ -200,8 +217,14 @@ export function computeAllPreviewCurves(): readonly MethodPreviewData[] {
     normalizeBandStructure(
       'pseudopotential',
       'Pseudopotenziale',
-      'Bande realistiche del silicio lungo i cammini di alta simmetria',
+      'Banda di core profonda e bande di valenza nel modello 1D',
       bs6
+    ),
+    normalizeBandStructure(
+      'real-bands',
+      'Bande dei materiali veri',
+      'Bande realistiche del silicio lungo i cammini di alta simmetria',
+      bs7
     )
   ]
 }

@@ -10,8 +10,10 @@ import { NearlyFreeSection } from './nearly-free/NearlyFreeSection'
 import { EmptyLatticeSection } from './empty-lattice/EmptyLatticeSection'
 import { KronigPenneySection } from './kronig-penney/KronigPenneySection'
 import { TightBindingSection } from './tight-binding/TightBindingSection'
+import { TightBinding2DSection } from './tight-binding-2d/TightBinding2DSection'
 import { KDotPSection } from './k-dot-p/KDotPSection'
 import { PseudopotentialSection } from './pseudopotential/PseudopotentialSection'
+import { RealBandsSection } from './real-bands/RealBandsSection'
 import { PhononMonatomicSection } from './phonon-monatomic/PhononMonatomicSection'
 
 export interface SectionEntry {
@@ -26,8 +28,10 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'kronig-penney', chapterId: 'bands', title: s.sections.kronigPenney, component: KronigPenneySection },
   { id: 'nearly-free', chapterId: 'bands', title: s.sections.nearlyFree, component: NearlyFreeSection },
   { id: 'tight-binding', chapterId: 'bands', title: s.sections.tightBinding, component: TightBindingSection },
+  { id: 'tight-binding-2d', chapterId: 'bands', title: s.sections.tightBinding2d, component: TightBinding2DSection },
   { id: 'k-dot-p', chapterId: 'bands', title: s.sections.kp, component: KDotPSection },
   { id: 'pseudopotential', chapterId: 'bands', title: s.sections.pseudopotential, component: PseudopotentialSection },
+  { id: 'real-bands', chapterId: 'bands', title: s.sections.realBands, component: RealBandsSection },
   { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: PhononMonatomicSection },
   { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: null },
   { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: null },

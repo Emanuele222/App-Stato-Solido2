@@ -1,155 +1,109 @@
 /**
- * Tutti i testi della sezione «Pseudopotenziale» (dispensa P4 §4 e §5.4).
- * Le formule inline nei testi usano $…$ con \htmlData{q=…} per il rendering KaTeX.
+ * Tutti i testi della sezione «Pseudopotenziale» (modello 1D con stato di core, P4 §4).
  */
 export const strings = {
   chapter: 'Teoria delle bande',
   title: 'Pseudopotenziale',
   toolsLabel: 'Strumenti',
   asideLabel: 'Formula viva, valori vivi e scheda teoria',
-
-  presets: {
-    label: 'Materiale',
-    free: 'Parametri liberi',
-    item: (name: string, a: string, extra?: string) => `${name} (a = ${a} Å${extra ? `, ${extra}` : ''})`,
-    note: 'Si, Ge e GaAs (P4 §4, §5.4): gli altri materiali non presenti in elenco non sono ancora calibrati con fattori completi coerenti.',
-    geNote:
-      'Ge: fattori locali di Cohen–Bergstresser (1966); con quelli della tabella P4 il modello locale dà il minimo in Γ.',
-    geShortNote: 'Ge: fattori di Cohen–Bergstresser (1966), non della tabella P4',
-    controlsHeading: 'Comandi e materiali'
-  },
-
-  antisymmetric: {
-    label: 'Termine antisimmetrico Vᵃ (zincoblenda)',
-    shortLabel: 'Termine Vᵃ (zincoblenda)',
-    diamondHint: 'spento: cristallo simmetrico «tipo diamante» con gli stessi fattori Vˢ',
-    basisNote:
-      'Base fcc a 2 atomi: $\\boldsymbol{\\tau} = \\frac{a}{8}(1,1,1)$ (atomi diversi attivano $\\htmlData{q=V2G}{V^a}$).',
-    activeValues: (v3a: string, v4a: string, v11a: string) =>
-      `V₃ᵃ = ${v3a} · V₄ᵃ = ${v4a} · V₁₁ᵃ = ${v11a} Ry`
-  },
+  goToRealBands: 'Bande dei materiali veri →',
 
   params: {
     group: 'Parametri',
-    a: 'Passo reticolare cubico a',
-    v3s: 'Fattore di forma simmetrico V₃ˢ',
-    v8s: 'Fattore di forma simmetrico V₈ˢ',
-    v11s: 'Fattore di forma simmetrico V₁₁ˢ',
-    shellsNote:
-      'Gusci in unità $(2\\pi/\\htmlData{q=a}{a})^2$: $|G|^2 = 3, 8, 11$ per $\\htmlData{q=VG}{V^s}$ ($V^s_4 = 0$ per struttura); $3, 4, 11$ per $\\htmlData{q=V2G}{V^a}$.'
+    a: 'Passo reticolare a',
+    v0: 'Profondità buca V₀',
+    s: 'Larghezza gaussiana s',
+    f: 'Spostamento proiettore f (non unicità di V_ps)',
+    alpha: 'Peso di core α nella pseudo-funzione ψᶠ',
+    smoothestBtn: 'più liscia',
+    smoothestTitle: 'Imposta α al valore che minimizza l’energia cinetica media di ψᶠ (scelta di comodità, non unica)',
+    smoothestNote: 'scelta «più liscia» = minimo di ⟨ψᶠ|T|ψᶠ⟩',
+    fMarkerNote: (val: string) => `tacca f = E − E_c = ${val} eV`,
+    gaugeNote: 'Zero di energia: componente G = 0 del potenziale omessa (spostamento costante).'
   },
 
   tools: {
     fill: 'Riempimento',
-    fillTitle:
-      'Cristallo diamante/zincoblenda a 2 atomi per cella primitiva (8 elettroni di valenza fissi): riempiono le 4 bande di valenza, perciò non serve un selettore elettroni/cella e μ cade nel gap',
+    fillTitle: 'Mostra la banda di core occupata: gli elettroni di core restano inerti e non partecipano alla conduzione',
     mass: 'Massa efficace',
-    massTitle: 'Parabola osculatrice direzionale lungo il tratto corrente e confronto per GaAs in Γ',
-    compare: 'Confronto: reticolo vuoto fcc',
-    compareTitle: 'Sovrappone le bande del reticolo vuoto fcc (V_ps = 0) allineate al fondo della valenza'
+    massTitle: 'Parabola osculatrice e rapporto m*/m₀ nello stato scelto',
+    compare: 'Confronto: reticolo vuoto 1D',
+    compareTitle: 'Sovrappone le bande del reticolo vuoto 1D (V₀ = 0)'
   },
 
   scene: {
-    realTag: 'L’idea, nello spazio reale',
-    realHint: 'curve indicative (P4 §4): r_c ≃ metà della lunghezza di legame · V(r) vs Vₚₛ(r) e ψ(r) vs ψᶠ(r)',
-    realAria:
-      'Confronto indicativo nello spazio reale tra potenziale coulombiano nudo e pseudopotenziale soft/hard core, e tra funzione d’onda vera oscillante e parte liscia.',
-    realLegendAria: 'Legenda delle curve nello spazio reale',
-    formLegendAria: 'Legenda del fattore di forma',
-    bareIonLegend: 'ione nudo (∝ −1/r)',
-    softCoreLegend: 'Vₚₛ soft core',
-    hardCoreLegend: 'Vₚₛ hard core',
-    truePsiLegend: 'valenza vera ψ',
-    smoothPsiLegend: 'parte liscia ψᶠ',
-    rcLabel: 'r_{c}',
+    bandsTag: 'Bande 1D (core + valenza)',
+    bandsHint: 'clicca o trascina su una banda · frecce per spostarti · la tacca su f segna E − E_c',
+    bandsAria: 'Bande 1D nella prima zona di Brillouin con banda di core e bande di valenza.',
+    coreBandLegend: 'core E_c',
+    shiftedCoreLegend: 'core spostato E_c + f',
+    valenceBandLegend: 'valenza E_v',
+    emptyLegend: 'reticolo vuoto 1D',
+    probeSuffix: 'm* nello stato',
 
-    formTag: 'Fattore di forma v(q)',
-    formHint: 'curva tratteggiata indicativa (Ashcroft + Thomas–Fermi, tipo Si) · i 3 punti sono parametri veri (trascinabili)',
-    formAria:
-      'Fattore di forma locale v(q): curva di modello da −2/3 E_F verso 0 e punti interattivi V_3^s, V_8^s, V_{11}^s trascinabili verticalmente.',
-    formCurveLegend: 'Ashcroft + TF (indicativo)',
-    formPointsLegend: 'parametri $V^s$ ($|G|^2 = 3, 8, 11$)',
-    formVaLegend: 'riferimenti $V^a$ (zincoblenda)',
-    v0Badge: 'v(0) = −⅔ E_{F}',
+    realTag: 'Spazio reale: V(x), ψ_c, ψ_k vera e parte liscia ψᶠ',
+    realHint: 'cambiando α cambia ψᶠ ma non lo stato vero (1 − Π_c)ψᶠ · r_c ricavato da |ψ_c|²',
+    realAria: 'Potenziale periodico a buche gaussiane e confronto tra ψ_c, ψ_k e ψ^f nello spazio reale.',
+    potentialLegend: 'V(x)',
+    psiCoreLegend: 'core ψ_c',
+    psiTrueLegend: 'valenza vera ψ_k',
+    psiSmoothLegend: 'pseudo-funzione ψᶠ',
 
-    bandsTag: 'Bande lungo L–Γ–X–W–K–Γ',
-    bandsHint: 'clicca o trascina lungo una banda · frecce per spostarti',
-    bandsAria:
-      'Struttura a bande lungo L–Γ–X–W–K–Γ (zero alla cima della valenza). Frecce sinistra/destra per k, su/giù per cambiare banda.',
-    refining: 'in affinamento…',
-    bandsLegendAria: 'Legenda delle bande',
-    valenceLegend: '4 bande di valenza',
-    conductionLegend: 'conduzione',
-    emptyLegend: 'reticolo vuoto fcc (Vₚₛ = 0)',
-    directGap: 'gap diretto',
-    indirectGap: 'gap indiretto',
-    probeSuffix: 'm* lungo il tratto',
-    chemicalPotential: 'μ',
-
-    shellsTitle: 'Pesi in onde piane $|c_G|^2$ per guscio di $|G|^2$ nello stato scelto',
-    shellsAria: 'Istogramma dei pesi |c_G|² raggruppati per guscio di |G|² nello stato scelto.'
+    recipTag: 'Spazio reciproco: pesi |c_G|² e cancellazione V + V′',
+    recipHint: 'sinistra: pesi |c_G|² (coda di ψ_k vs ψᶠ) · destra: elementi ⟨k+G|V|k⟩ contro ⟨k+G|V+V′|k⟩',
+    recipAria: 'Confronto nello spazio reciproco dei pesi in onde piane e della cancellazione tra V e V primo.',
+    weightsTrueLegend: '|c_G|² di ψ_k',
+    weightsSmoothLegend: '|c_G|² di ψᶠ',
+    matVLegend: '⟨k+G|V|k⟩',
+    matVpsLegend: '⟨k+G|V+V′|k⟩'
   },
 
   formula: {
     title: 'Formula viva',
+    opwTitle: 'Separazione in parte liscia e parte di core',
     pseudoTitle: 'Equazione di pseudo-Schrödinger e potenziale repulsivo V′',
-    pseudoAria: 'Equazione di pseudo-Schrödinger con pseudopotenziale V_ps = V + V primo.',
-    centralTitle: 'Equazione centrale sullo pseudopotenziale (G in 2π/a, τ = a/8 (1,1,1))',
-    centralAria: 'Equazione centrale e fattore di struttura simmetrico e antisimmetrico.',
-    factorsTitle: 'Fattori di forma e limite metallico q → 0 (passa sopra un termine)'
+    nonUniqTitle: 'Le due non unicità: f sul proiettore e α su ψᶠ'
   },
 
   values: {
-    aLabel: 'passo reticolare',
-    planeWavesLabel: 'onde piane',
-    refiningNote: 'calcolo ridotto (51 onde) → in affinamento a 113 onde…',
-    formFactorsLabel: 'fattori Vˢ (Ry / eV)',
-    antisymLabel: 'fattori Vᵃ (zincoblenda)',
-    gapLabel: 'gap assoluto',
-    gapIndicative: (measured: string, kind: string) =>
-      `mis. ${measured} eV (${kind}); il modello locale dà gap indicativi`,
-    gapGenericNote: 'modello locale empirico: la forma delle bande è fedele, il gap è indicativo',
-    cbmPosLabel: 'minimo conduzione',
-    ecPointsLabel: 'conduzione in Γ / X / L',
-    valenceSpanLabel: 'fondo e larghezza valenza',
-    selectedLabel: 'stato scelto',
-    selectedBandValence: (n: number) => `valenza ${n}`,
-    selectedBandConduction: (n: number) => `conduzione ${n}`,
-    massToolLabel: 'massa efficace lungo il tratto',
-    massDirection: (segment: string) => `derivata direzionale lungo ${segment}`,
-    massGaAsCompare: (mCalc: string, mMeas: string, mKp: string) =>
-      `GaAs in $\\Gamma$: calc. ${mCalc} m₀ · mis. ${mMeas} m₀ · stima $k\\cdot p$ $E_g/E_P = ${mKp}$ m₀`,
+    ecLabel: 'energia di core E_c',
+    evLabel: 'energia di valenza E_v',
+    diffLabel: 'separazione E_v − E_c',
+    orthoLabel: 'ortogonalità |⟨ψ_c|ψ_k⟩|',
+    shiftedCoreLabel: 'livello di core con f',
+    alphaLabel: 'α attuale / «più liscia»',
+    lowWavesLabel: 'peso in |n| ≤ 3 (ψ_k vs ψᶠ)',
+    rcLabel: 'raggio indicativo r_c (95% |ψ_c|²)',
+    massLabel: 'massa efficace',
     fillNote:
-      '8 elettroni per cella primitiva (cristallo a 2 atomi, valore fisso) riempiono esattamente le 4 bande di valenza ($E \\le 0$); il potenziale chimico $\\htmlData{q=EF}{\\mu}$ cade nel gap.',
-    metalNoMuNote:
-      'Gap chiuso (sistema metallico): il potenziale chimico $\\htmlData{q=EF}{\\mu}$ non cade in un gap e non è determinato con questa stima.',
+      'La banda di core è completamente piena ma separata dalla valenza da decine di eV e quasi piatta (m* molto grande): gli elettroni di core sono inerti.',
     compareNote:
-      'Confronto con il reticolo vuoto fcc ($V_{\\mathrm{ps}} = 0$) allineato al fondo della banda di valenza: in basso le bande seguono la parabola libera $\\htmlData{q=Ek}{E_k}$.',
+      'Confronto con il reticolo vuoto 1D (V₀ = 0): le bande di valenza seguono da vicino le parabole libere ripiegate.',
 
-    bareIonTitle: 'Confronto di scala sul silicio (esempio fisso: Si, a = 5,431 Å, Z = 14)',
-    bareIonSub: 'stima P4 §4 (−0,211 Ry = −2,87 eV in $|G|^2 = 3$) contro fattori di forma locali $\\htmlData{q=VG}{V^s}$',
+    bareIonTitle: 'Confronto di scala sul silicio (P4 §4: a = 5,431 Å, Z = 14)',
+    bareIonSub: 'stima ione nudo (−0,211 Ry = −2,87 eV in $|G|^2 = 3$) contro fattori locali $\\htmlData{q=VG}{V^s}$',
     bareIonRow: (g2: number) => `$|G|^2 = ${g2}$`,
     bareIonValue: (bare: string, pseudo?: string) =>
       pseudo ? `ione nudo ${bare} eV vs $\\htmlData{q=VG}{V^s} = ${pseudo}$ eV` : `ione nudo ${bare} eV`
   },
 
   theory: {
-    title: 'Scheda teoria (P4 §4, §5.4)',
+    title: 'Scheda teoria (P4 §4)',
     sections: [
       {
-        heading: 'Perché servono pseudopotenziali (e non poche onde piane sul potenziale vero)',
+        heading: 'Perché ψ_k oscilla nel core e servono molte onde piane',
         body:
-          'Vicino allo ione il potenziale vero $V(\\mathbf{r}) \\propto -Ze^2/r$ è profondo (nel Si $|V_G| \\approx 31\\text{ eV}$ per $|G|^2 = 3$, contro energie cinetiche di $\\sim 3{,}8\\text{ eV}$) e la funzione di valenza $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}}$ deve essere ortogonale a tutti gli stati di core $\\psi_c$: per questo oscilla rapidamente dentro il core e richiederebbe migliaia di onde piane.'
+          'Gli stati di valenza $\\htmlData{q=psi}{\\psi_k}$ e di core $\\psi_{ck}$ sono autostati della stessa Hamiltoniana con energie diverse, quindi sono ortogonali: $\\langle\\psi_{ck}|\\psi_k\\rangle = 0$. Per annullare l’integrale nella regione del core (entro $r_c$), $\\psi_k$ deve oscillare rapidamente vicino allo ione, richiedendo molte componenti di Fourier $\\psi_k = \\sum_G c_G e^{i(k+G)x}$.'
       },
       {
-        heading: 'Dalle OPW all’equazione di pseudo-Schrödinger',
+        heading: 'Il potenziale repulsivo V′ e la cancellazione',
         body:
-          'Separando $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}} = \\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}} - \\sum_c \\langle \\psi_c|\\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}}\\rangle \\psi_c$ e portando le oscillazioni di core nel potenziale efficace repulsivo $V\' = \\sum_c (\\htmlData{q=E}{E} - E_c)|\\psi_c\\rangle\\langle\\psi_c| > 0$, la parte liscia $\\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}}$ obbedisce a $[\\hat p^2/2m_0 + \\htmlData{q=VG}{V_{\\mathrm{ps}}}]\\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}} = \\htmlData{q=E}{E}(\\mathbf{k})\\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}}$ con le stesse energie e uno pseudopotenziale debole $\\htmlData{q=VG}{V_{\\mathrm{ps}}} = V + V\'$.'
+          'Scrivendo $\\psi_k = (1 - \\hat\\Pi_c)\\htmlData{q=psi}{\\psi^{\\mathrm f}_k}$, l’equazione per la sola parte liscia diventa $[\\hat p^2/2m_0 + \\htmlData{q=VG}{V_{\\mathrm{ps}}}]\\psi^{\\mathrm f}_k = \\htmlData{q=E}{E}\\psi^{\\mathrm f}_k$ con $V_{\\mathrm{ps}} = V + V\'$ e $V\' = (E - E_c)|\\psi_{ck}\\rangle\\langle\\psi_{ck}| > 0$. Poiché $E > E_c$, $V\'$ è repulsivo e non locale e cancella in buona parte il potenziale attrattivo $V$.'
       },
       {
-        heading: 'Aggancio ai quasi liberi e notazione (ψ_c vs quasi liberi)',
+        heading: 'Le due non unicità e il limite metallico',
         body:
-          'Si torna alla stessa equazione centrale dei quasi liberi (con $\\htmlData{q=VG}{V_{\\mathrm{ps}}}$ al posto di $V$), ma diagonalizzata su 113 onde piane ($|G|^2 \\le 21$) anziché trattata in perturbazione: appena 3 numeri ($\\htmlData{q=VG}{V_3^s}, \\htmlData{q=VG}{V_8^s}, \\htmlData{q=VG}{V_{11}^s}$) danno le bande del Si e 6 (inclusi $\\htmlData{q=V2G}{V^a}$) danno il GaAs. Attenzione alla notazione: qui $\\psi_c$ indica gli «stati di core» (con energia $E_c$), non l’onda stazionaria $\\cos(\\pi x/a)$ della sezione quasi liberi.'
+          'Primo: sostituire $E - E_c$ con qualsiasi $\\htmlData{q=V2G}{f}$ lascia invariati gli autovalori di valenza e sposta solo il livello di core a $E_c + f$. Secondo: aggiungere $\\htmlData{q=psi}{\\alpha}\\,\\psi_{ck}$ a $\\psi^{\\mathrm f}_k$ non cambia lo stato vero $\\psi_k = (1 - \\hat\\Pi_c)\\psi^{\\mathrm f}_k$; il pulsante «più liscia» sceglie l’$\\alpha$ che minimizza l’energia cinetica media (scelta comoda, non unica). Nei metalli semplici la schermatura di Thomas–Fermi fissa il limite $v(0) = -\\frac{2}{3}E_F$.'
       }
     ]
   }

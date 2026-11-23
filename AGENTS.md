@@ -5,6 +5,7 @@ App desktop didattica di fisica dello stato solido (Electron + TypeScript + Reac
 ## Come ricevi il lavoro
 - La regia è Claude Fable, nella sessione dell'utente. Gli incarichi sono file in `incarichi/`. L'utente ti dice quale eseguire.
 - Esegui solo quell'incarico. Se è ambiguo o in conflitto con queste regole, fermati e chiedi: non improvvisare.
+- **Un solo incarico in esecuzione alla volta**, anche con autori diversi e su file diversi. Se mentre lavori la build non passa per file non tuoi, fermati e avvisa l'utente: un incarico non si consegna senza build verde e senza aver guardato le schermate.
 
 ## Cosa puoi scrivere
 Dipende dal ruolo indicato nell'incarico.
@@ -13,6 +14,8 @@ Dipende dal ruolo indicato nell'incarico.
 
 ## Cosa non tocchi mai
 `progetto.md`, `CLAUDE.md`, `AGENTS.md`, `incarichi/`, `materiale/`, `.claude/`, `.tools/`, `mockup-quasi-libero.html`, e i file di un altro autore. Nel progetto lavora anche Claude Opus: se vedi file che cambiano mentre lavori, sono suoi. Un solo autore per sezione, mai due autori sugli stessi file.
+
+**Capitolo Fononi**: è di un altro studente, con i suoi agenti e le sue regole (`.agents/`, `piano-fononi.md`). Non toccare `sections/phonon-*/`, `physics/phononDispersion*`, `physics/constants*`, `viz/DispersionPlot.tsx`, `viz/PlaybackControls.tsx`, `viz/dispersionPlot.test.ts`, `reviews/fononi/`, `crosscheck/fononi/`, `materiale/parte6/`. I file comuni (`registry.ts`, `strings.ts`, `physics/index.ts`, `home/`, `ui/`) li modificano entrambi: tocca solo le righe che l'incarico ti indica e non riscrivere quelle sui Fononi.
 
 ## Ambiente
 - Node non è nel sistema: `export PATH="$PWD/.tools/node/bin:$PATH"` prima di ogni comando.

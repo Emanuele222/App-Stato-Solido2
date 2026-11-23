@@ -1,55 +1,30 @@
 /**
- * Stato Zustand della sezione «Pseudopotenziale».
- * I cambi di preset o dell'interruttore antisimmetrico usano transizioni dolci ('glide');
- * il trascinamento degli slider o dei punti su v(q) segue subito ('follow').
+ * Stato Zustand della sezione «Pseudopotenziale» (modello 1D con stato di core).
  */
 import { create } from 'zustand'
 import type { QuantityId } from '../../ui/theme'
-import {
-  NUMERICS,
-  PARAMS,
-  PRESETS,
-  type AntisymmetricFactors,
-  type EpmParamId,
-  type EpmParamValues,
-  type EpmPresetId,
-  type FormFactorId
-} from './manifest'
+import { DEFAULT_PARAMS, NUMERICS, PARAMS, type PseudoCoreParamId, type PseudoCoreParamValues } from './manifest'
 
-export interface PseudopotentialTools {
+export interface PseudoCoreTools {
   readonly fill: boolean
   readonly mass: boolean
   readonly compare: boolean
 }
 
-export interface PseudopotentialState {
-  readonly presetId: EpmPresetId | null
-  readonly params: EpmParamValues
-  /** Fattori antisimmetrici correnti (presenti su GaAs; restano memorizzati se si spegne il toggle). */
-  readonly antisymmetric: AntisymmetricFactors | null
-  readonly antisymmetricOn: boolean
-  readonly transition: 'follow' | 'glide'
-  /** Indice sul cammino canonico a 201 punti L–Γ–X–W–K–Γ (default 40 = Γ). */
-  readonly pointIndex: number
-  /** Indice della banda scelta 0..7 (0–3 valenza, 4–7 conduzione). */
+export interface PseudoCoreState {
+  readonly params: PseudoCoreParamValues
+  readonly kIndex: number
   readonly bandIndex: number
-  readonly tools: PseudopotentialTools
+  readonly tools: PseudoCoreTools
   readonly highlight: QuantityId | null
-  readonly activeFactor: FormFactorId | null
   readonly pulse: { readonly quantities: readonly QuantityId[]; readonly seq: number } | null
 
-  setParam: (id: EpmParamId, value: number) => void
-  applyPreset: (id: string | null) => void
-  toggleAntisymmetric: () => void
-  selectState: (pointIndex: number, bandIndex: number) => void
-  nudgeState: (dPoint: number, dBand: number) => void
-  toggleTool: (tool: keyof PseudopotentialTools) => void
+  setParam: (id: PseudoCoreParamId, value: number) => void
+  selectState: (kIndex: number, bandIndex: number) => void
+  nudgeState: (dk: number, dBand: number) => void
+  toggleTool: (tool: keyof PseudoCoreTools) => void
   setHighlight: (q: QuantityId | null) => void
-  setActiveFactor: (factor: FormFactorId | null) => void
 }
-
-const DEFAULT_PRESET = PRESETS[0]
-const MAX_POINT_INDEX = NUMERICS.fullPointsPerSegment * 5
 
 const clamp = (x: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, x))
 
@@ -59,17 +34,12 @@ function nextPulse(quantities: readonly QuantityId[]) {
   return { quantities, seq: pulseSeq }
 }
 
-export const usePseudopotentialStore = create<PseudopotentialState>((set, get) => ({
-  presetId: DEFAULT_PRESET.id,
-  params: { ...DEFAULT_PRESET.params },
-  antisymmetric: DEFAULT_PRESET.antisymmetric,
-  antisymmetricOn: false,
-  transition: 'follow',
-  pointIndex: NUMERICS.defaultPointIndex,
+export const usePseudoCoreStore = create<PseudoCoreState>((set, get) => ({
+  params: { ...DEFAULT_PARAMS },
+  kIndex: NUMERICS.defaultKIndex,
   bandIndex: NUMERICS.defaultBandIndex,
   tools: { fill: false, mass: false, compare: false },
   highlight: null,
-  activeFactor: null,
   pulse: null,
 
   setParam: (id, value) => {
@@ -79,63 +49,21 @@ export const usePseudopotentialStore = create<PseudopotentialState>((set, get) =
     const nextVal = clamp(Number(rounded.toFixed(4)), spec.min, spec.max)
     set((cur) => ({
       params: { ...cur.params, [id]: nextVal },
-      presetId: null,
-      transition: 'follow',
       pulse: nextPulse([spec.quantity, 'E'])
     }))
   },
 
-  applyPreset: (id) => {
-    if (id === null) {
-      set({ presetId: null })
-      return
-    }
-    const preset = PRESETS.find((p) => p.id === id)
-    if (!preset) return
-    // Su GaAs portiamo la selezione al fondo conduzione in Γ (40), su Si al gap/Γ o stato corrente
-    const nextPoint = preset.id === 'gaas' ? 40 : get().pointIndex
-    set({
-      presetId: preset.id,
-      params: { ...preset.params },
-      antisymmetric: preset.antisymmetric ? { ...preset.antisymmetric } : null,
-      antisymmetricOn: preset.antisymmetric !== null,
-      pointIndex: nextPoint,
-      transition: 'glide',
-      pulse: nextPulse(['a', 'VG', 'E'])
-    })
-  },
-
-  toggleAntisymmetric: () => {
-    const cur = get()
-    if (!cur.antisymmetric) return
-    const nextOn = !cur.antisymmetricOn
-    const gaas = PRESETS.find((p) => p.id === 'gaas')
-    const matchesGaas =
-      nextOn &&
-      gaas !== undefined &&
-      cur.params.a === gaas.params.a &&
-      cur.params.v3s === gaas.params.v3s &&
-      cur.params.v8s === gaas.params.v8s &&
-      cur.params.v11s === gaas.params.v11s
-    set({
-      antisymmetricOn: nextOn,
-      presetId: matchesGaas ? 'gaas' : null,
-      transition: 'glide',
-      pulse: nextPulse(['V2G', 'E'])
-    })
-  },
-
-  selectState: (pointIndex, bandIndex) => {
-    const pi = clamp(Math.round(pointIndex), 0, MAX_POINT_INDEX)
+  selectState: (kIndex, bandIndex) => {
+    const ki = clamp(Math.round(kIndex), 0, NUMERICS.kPoints - 1)
     const bi = clamp(Math.round(bandIndex), 0, NUMERICS.numBands - 1)
-    set({ pointIndex: pi, bandIndex: bi })
+    set({ kIndex: ki, bandIndex: bi })
   },
 
-  nudgeState: (dPoint, dBand) => {
+  nudgeState: (dk, dBand) => {
     const cur = get()
-    const pi = clamp(cur.pointIndex + dPoint, 0, MAX_POINT_INDEX)
+    const ki = clamp(cur.kIndex + dk, 0, NUMERICS.kPoints - 1)
     const bi = clamp(cur.bandIndex + dBand, 0, NUMERICS.numBands - 1)
-    set({ pointIndex: pi, bandIndex: bi })
+    set({ kIndex: ki, bandIndex: bi })
   },
 
   toggleTool: (tool) => {
@@ -144,11 +72,5 @@ export const usePseudopotentialStore = create<PseudopotentialState>((set, get) =
     }))
   },
 
-  setHighlight: (q) => set({ highlight: q }),
-
-  setActiveFactor: (factor) =>
-    set({
-      activeFactor: factor,
-      highlight: factor ? 'VG' : null
-    })
+  setHighlight: (q) => set({ highlight: q })
 }))

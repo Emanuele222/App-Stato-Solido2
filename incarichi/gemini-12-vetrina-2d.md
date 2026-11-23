@@ -17,8 +17,8 @@ Non eseguire gli script Python di `materiale/`.
 | `src/renderer/src/sections/tight-binding-2d/` (nuova) | Tutto |
 | `src/renderer/src/viz/` | Un componente nuovo per la superficie 3D, se lo scrivi riusabile; non modificare i file esistenti |
 | `sections/registry.ts` | Una voce e la sua importazione, dopo `tight-binding` |
-| `src/renderer/src/strings.ts` | Titolo della sezione; «6 sezioni» → 7 nella nota in fondo alla barra |
-| `home/` (`curves.ts`, il suo test, `strings.ts`, e i componenti solo se serve) | Settima voce dell'anteprima e conteggio «7 sezioni» |
+| `src/renderer/src/strings.ts` | Titolo della sezione; conteggio delle sezioni nella nota in fondo alla barra |
+| `home/` (`curves.ts`, il suo test, `strings.ts`, e i componenti solo se serve) | Voce nuova dell'anteprima e conteggio delle sezioni |
 
 Non toccare le altre sezioni, `ui/` (se ti serve una modifica, descrivila nel rapporto), `App.tsx`, `ui/shell.tsx`, `materiale/`. Niente commit.
 
@@ -83,8 +83,8 @@ Tre viste collegate, come nelle altre sezioni:
 - Nessun errore in console.
 
 ## Schermata iniziale
-- «6 sezioni» diventa «7 sezioni» (testo, etichetta accessibile, nota in fondo alla barra laterale).
-- L'anteprima scorre sette metodi: aggiungi, dopo «Legami forti», le bande del grafene lungo Γ–M–K–Γ calcolate da `physics/tightBinding2d.ts`. Aggiorna il test di `home/curves.ts`. L'elenco deve restare dentro il riquadro (oggi 356 px).
+- Il numero di sezioni non va più scritto a mano: leggilo dal registro (testo, etichetta accessibile, nota in fondo alla barra laterale). Sarà 7, oppure 8 se l'incarico 13 è già stato eseguito.
+- L'anteprima guadagna un passo: aggiungi, dopo «Legami forti», le bande del grafene lungo Γ–M–K–Γ calcolate da `physics/tightBinding2d.ts`. Aggiorna il test di `home/curves.ts`. L'elenco deve restare dentro il riquadro (oggi 356 px).
 
 ## Verifica prima di consegnare
 - `npm run typecheck`, `npm test`, `npm run build` dopo l'ultima modifica.

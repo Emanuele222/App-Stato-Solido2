@@ -1,12 +1,14 @@
-import { useState, type JSX } from 'react'
+import { type JSX } from 'react'
 import { HomeScreen } from './home/HomeScreen'
 import { CHAPTERS, SECTIONS, UPCOMING_CHAPTERS } from './sections/registry'
 import { shellStrings } from './strings'
+import { useNavigationStore } from './ui/navigation'
 import { AppShell } from './ui/shell'
 
 export function App(): JSX.Element {
   // All'avvio dell'applicazione mostrare la schermata iniziale (nessuna sezione attiva)
-  const [activeSectionId, setActiveSectionId] = useState<string | null>(null)
+  const activeSectionId = useNavigationStore((s) => s.activeSectionId)
+  const setActiveSectionId = useNavigationStore((s) => s.navigateTo)
 
   if (!activeSectionId) {
     return <HomeScreen onSelectSection={setActiveSectionId} />

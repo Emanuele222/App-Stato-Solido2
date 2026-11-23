@@ -12,9 +12,9 @@ import {
 } from './curves'
 
 describe('home/curves: preparazione curve anteprima e miniatura', () => {
-  it('produce esattamente 6 serie di curve per i 6 metodi', () => {
+  it('produce esattamente 8 serie di curve per gli 8 metodi', () => {
     const series = computeAllPreviewCurves()
-    expect(series).toHaveLength(6)
+    expect(series).toHaveLength(8)
 
     const ids = series.map((s) => s.id)
     expect(ids).toEqual([
@@ -22,8 +22,10 @@ describe('home/curves: preparazione curve anteprima e miniatura', () => {
       'kronig-penney',
       'nearly-free',
       'tight-binding',
+      'tight-binding-2d',
       'k-dot-p',
-      'pseudopotential'
+      'pseudopotential',
+      'real-bands'
     ])
   })
 
@@ -96,7 +98,7 @@ describe('home/curves: preparazione curve anteprima e miniatura', () => {
   it('getPreviewCurves memorizza i risultati e misura il tempo di calcolo', () => {
     const first = getPreviewCurves()
     const time = getPreviewCalculationTimeMs()
-    expect(first).toHaveLength(6)
+    expect(first).toHaveLength(8)
     expect(time).toBeGreaterThanOrEqual(0)
     expect(time).toBeLessThan(1000) // Deve completarsi in tempi ampiamente interattivi
 
