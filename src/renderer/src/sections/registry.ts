@@ -12,6 +12,7 @@ import { KronigPenneySection } from './kronig-penney/KronigPenneySection'
 import { TightBindingSection } from './tight-binding/TightBindingSection'
 import { KDotPSection } from './k-dot-p/KDotPSection'
 import { PseudopotentialSection } from './pseudopotential/PseudopotentialSection'
+import { PhononMonatomicSection } from './phonon-monatomic/PhononMonatomicSection'
 
 export interface SectionEntry {
   readonly id: string
@@ -27,7 +28,7 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'tight-binding', chapterId: 'bands', title: s.sections.tightBinding, component: TightBindingSection },
   { id: 'k-dot-p', chapterId: 'bands', title: s.sections.kp, component: KDotPSection },
   { id: 'pseudopotential', chapterId: 'bands', title: s.sections.pseudopotential, component: PseudopotentialSection },
-  { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: null },
+  { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: PhononMonatomicSection },
   { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: null },
   { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: null },
   { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: null },

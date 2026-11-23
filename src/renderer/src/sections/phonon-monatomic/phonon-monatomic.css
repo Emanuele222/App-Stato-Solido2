@@ -1,0 +1,92 @@
+/* Stili locali della sezione «Catena monatomica» — solo token di ui/theme.ts, nessun hex. */
+
+.phonon-mono-chain-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.phonon-mono-chain-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding: 2px 16px 0;
+  flex-wrap: wrap;
+}
+
+.phonon-mono-chain-bar .chart-legend {
+  padding: 0;
+}
+
+.phonon-mono-chain-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.phonon-mono-quick {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.phonon-mono-quick-btn {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.phonon-mono-quick-btn:last-child {
+  border-right: 0;
+}
+
+.phonon-mono-quick-btn:hover {
+  color: var(--text);
+}
+
+.phonon-mono-quick-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+}
+
+.phonon-mono-chain-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+}
+
+.phonon-mono-chain-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Evita scrollbar spurie di 1 px sui termini brevi inline di KaTeX (\sqrt, pedici corsivi) */
+.phonon-mono-formula-panel .formula-defs .live-formula {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phonon-mono-quick-btn {
+    transition: none;
+  }
+}

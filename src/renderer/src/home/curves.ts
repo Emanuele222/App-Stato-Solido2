@@ -20,6 +20,8 @@ import {
   kaneBands,
   kDotPPath1D,
   kronigPenneyBands,
+  monatomicDispersionCurve,
+  monatomicZoneEdge,
   nearlyFreeBands,
   pseudopotentialBands,
   tightBindingMonoatomicBands,
@@ -338,19 +340,16 @@ export function getPhononRestingCurves(): MethodPreviewData {
 export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
   const N = 101
 
-  // 1. Catena monatomica: metallo tipico (§3, M = 63,2 u, C = 20 N/m)
+  // 1. Catena monatomica: metallo tipico (§3, a = 2,5 Å, M = 63,2 u, C = 20 N/m)
   const kNorm1 = makeLinearAxis(N)
-  const wMax1 = 2 * Math.sqrt(20 / (63.2 * AMU_KG)) * RAD_S_TO_THZ
-  const mono = new Float64Array(N)
-  for (let i = 0; i < N; i++) {
-    const kFrac = -1 + 2 * kNorm1[i]
-    mono[i] = wMax1 * Math.abs(Math.sin((Math.PI * kFrac) / 2))
-  }
+  const kb1 = monatomicZoneEdge(2.5)
+  const monoCurve = monatomicDispersionCurve({ a: 2.5, massAmu: 63.2, springC: 20 }, -kb1, kb1, N)
+  const wMax1 = monoCurve.freqThz[N - 1] || 4.4
   const s1: MethodPreviewData = {
     id: 'phonon-monatomic',
     title: 'Catena monatomica',
     subtitle: 'Dispersione ω(k) = 2√(C/M)|sin(ka/2)| nella 1BZ',
-    bands: [mono],
+    bands: [monoCurve.freqThz],
     kNormalized: kNorm1,
     eMin: -0.25,
     eMax: wMax1 * 1.16,
