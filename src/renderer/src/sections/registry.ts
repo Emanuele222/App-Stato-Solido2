@@ -13,6 +13,8 @@ import { TightBindingSection } from './tight-binding/TightBindingSection'
 import { KDotPSection } from './k-dot-p/KDotPSection'
 import { PseudopotentialSection } from './pseudopotential/PseudopotentialSection'
 import { PhononMonatomicSection } from './phonon-monatomic/PhononMonatomicSection'
+import { PhononDiatomicSection } from './phonon-diatomic/PhononDiatomicSection'
+import { Phonon3DSection } from './phonon-3d/Phonon3DSection'
 
 export interface SectionEntry {
   readonly id: string
@@ -29,8 +31,8 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'k-dot-p', chapterId: 'bands', title: s.sections.kp, component: KDotPSection },
   { id: 'pseudopotential', chapterId: 'bands', title: s.sections.pseudopotential, component: PseudopotentialSection },
   { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: PhononMonatomicSection },
-  { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: null },
-  { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: null },
+  { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: PhononDiatomicSection },
+  { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: Phonon3DSection },
   { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: null },
   { id: 'phonon-quantum', chapterId: 'phonons', title: s.sections.phononQuantum, component: null },
   { id: 'phonon-specific-heat', chapterId: 'phonons', title: s.sections.phononSpecificHeat, component: null }

@@ -14,8 +14,9 @@
  * e rimangono memorizzate per i passaggi successivi.
  */
 import {
-  AMU_KG,
-  RAD_S_TO_THZ,
+  computePhonon3DDispersion,
+  defaultParamsForCrystal,
+  diatomicDispersionCurve,
   emptyLatticeBands,
   kaneBands,
   kDotPPath1D,
@@ -237,33 +238,27 @@ function makeLinearAxis(n: number): Float64Array {
   return arr
 }
 
-function diatomicBranchesThz(
+function diatomicPreviewFromPhysics(
   n: number,
+  a: number,
   mLightAmu: number,
   mHeavyAmu: number,
   springC: number,
   kMinFrac = -1,
   kMaxFrac = 1
 ): { acoustic: Float64Array; optical: Float64Array; kNorm: Float64Array } {
-  const m1 = mLightAmu * AMU_KG
-  const m2 = mHeavyAmu * AMU_KG
-  const invMu = (m1 + m2) / (m1 * m2)
-  const prod = m1 * m2
-  const acoustic = new Float64Array(n)
-  const optical = new Float64Array(n)
-  const kNorm = makeLinearAxis(n)
-
-  for (let i = 0; i < n; i++) {
-    const kFrac = kMinFrac + (kMaxFrac - kMinFrac) * kNorm[i] // in unità di π/a
-    const s = Math.sin((Math.PI * kFrac) / 2)
-    const disc = Math.max(0, invMu * invMu - (4 * s * s) / prod)
-    const root = Math.sqrt(disc)
-    const wAc = Math.sqrt(Math.max(0, springC * (invMu - root)))
-    const wOp = Math.sqrt(Math.max(0, springC * (invMu + root)))
-    acoustic[i] = wAc * RAD_S_TO_THZ
-    optical[i] = wOp * RAD_S_TO_THZ
+  const kb = monatomicZoneEdge(a)
+  const curve = diatomicDispersionCurve(
+    { a, massHeavyAmu: mHeavyAmu, massLightAmu: mLightAmu, springC },
+    kMinFrac * kb,
+    kMaxFrac * kb,
+    n
+  )
+  return {
+    acoustic: curve.acousticFreqThz,
+    optical: curve.opticalFreqThz,
+    kNorm: makeLinearAxis(n)
   }
-  return { acoustic, optical, kNorm }
 }
 
 /** Quadratura di Gauss–Legendre a 12 punti su [0, 1] per l'integrale di Debye dell'anteprima. */
@@ -307,7 +302,7 @@ function einsteinCvOver3R(tOverThetaE: number): number {
 
 /** Curva a riposo del capitolo Fononi: catena biatomica tipo Na–Cl con gap ben visibile. */
 export function computePhononRestingCurves(): MethodPreviewData {
-  const { acoustic, optical, kNorm } = diatomicBranchesThz(101, 23, 35.5, 10)
+  const { acoustic, optical, kNorm } = diatomicPreviewFromPhysics(101, 5.64, 23, 35.5, 10)
   const maxVal = optical[Math.floor(optical.length / 2)] || 5
   return {
     id: 'phonons-resting',
@@ -362,8 +357,8 @@ export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
     defaultColor: QUANTITIES.omega.color
   }
 
-  // 2. Catena biatomica tipo Na–Cl (§8: m = 23 u, M = 35,5 u, C = 10 N/m)
-  const diat = diatomicBranchesThz(N, 23, 35.5, 10)
+  // 2. Catena biatomica tipo Na–Cl (§8: a = 5,64 Å, m = 23 u, M = 35,5 u, C = 10 N/m)
+  const diat = diatomicPreviewFromPhysics(N, 5.64, 23, 35.5, 10)
   const max2 = diat.optical[Math.floor(N / 2)]
   const s2: MethodPreviewData = {
     id: 'phonon-diatomic',
@@ -382,55 +377,30 @@ export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
     defaultColor: QUANTITIES.omega.color
   }
 
-  // 3. Rami 3D e cristalli reali (profilo qualitativo PbTe lungo Γ–X–K–Γ–L, Tab. 1)
-  const kNorm3 = makeLinearAxis(N)
-  const ta = new Float64Array(N)
-  const la = new Float64Array(N)
-  const to = new Float64Array(N)
-  const lo = new Float64Array(N)
-  for (let i = 0; i < N; i++) {
-    const u = kNorm3[i]
-    // 4 tratti uguali: [0,0.25] Γ-X, [0.25,0.5] X-K, [0.5,0.75] K-Γ, [0.75,1] Γ-L
-    let q = 0
-    let scale = 1
-    if (u <= 0.25) {
-      q = u / 0.25
-      scale = 1.0
-    } else if (u <= 0.5) {
-      const t = (u - 0.25) / 0.25
-      q = 1 - 0.15 * t
-      scale = 1.0 - 0.08 * t
-    } else if (u <= 0.75) {
-      q = 1 - (u - 0.5) / 0.25
-      scale = 0.92
-    } else {
-      q = (u - 0.75) / 0.25
-      scale = 0.86
-    }
-    const sHalf = Math.sin((Math.PI * q) / 2)
-    ta[i] = 1.15 * scale * sHalf
-    la[i] = 2.05 * scale * sHalf
-    to[i] = 1.1 + 0.65 * sHalf * sHalf
-    lo[i] = 3.3 - 0.75 * sHalf * sHalf
-  }
+  // 3. Rami 3D e cristalli reali (PbTe polare da physics/phonon3d.ts lungo Γ–X–K–Γ–L, Tab. 1)
+  const disp3d = computePhonon3DDispersion(defaultParamsForCrystal('pbte'), 25)
+  const n3 = disp3d.path.points.length
+  const maxDist3 = disp3d.path.distance[n3 - 1] || 1
+  const kNorm3 = new Float64Array(n3)
+  for (let i = 0; i < n3; i++) kNorm3[i] = disp3d.path.distance[i] / maxDist3
+  const kLabels3: CurveLabel[] = disp3d.path.labels.map((l) => ({
+    frac: disp3d.path.distance[l.index] / maxDist3,
+    label: l.label
+  }))
   const s3: MethodPreviewData = {
     id: 'phonon-3d',
     title: 'Rami 3D e cristalli',
-    subtitle: 'Rami LA, TA, LO e TO lungo Γ–X–K–Γ–L',
-    bands: [ta, la, to, lo],
+    subtitle: 'Rami LA, TA, LO e TO lungo Γ–X–K–Γ–L (PbTe)',
+    bands: disp3d.branches.map((b) => b.freqThz),
     kNormalized: kNorm3,
     eMin: -0.2,
-    eMax: 3.8,
-    kLabels: [
-      { frac: 0, label: 'Γ' },
-      { frac: 0.25, label: 'X' },
-      { frac: 0.5, label: 'K' },
-      { frac: 0.75, label: 'Γ' },
-      { frac: 1, label: 'L' }
-    ],
+    eMax: disp3d.maxFreqThz * 1.15,
+    kLabels: kLabels3,
     bandColors: [
       DERIVED_TONES.acousticTransverse.color,
+      DERIVED_TONES.acousticTransverse.color,
       QUANTITIES.omega.color,
+      DERIVED_TONES.opticalTransverse.color,
       DERIVED_TONES.opticalTransverse.color,
       QUANTITIES.omegaOpt.color
     ],
@@ -438,7 +408,7 @@ export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
   }
 
   // 4. Pacchetti d'onda: metà zona [0, π/a] con v_g > 0 (acustico) e v_g < 0 (ottico)
-  const wp = diatomicBranchesThz(N, 23, 35.5, 10, 0, 1)
+  const wp = diatomicPreviewFromPhysics(N, 5.64, 23, 35.5, 10, 0, 1)
   const max4 = wp.optical[0]
   const s4: MethodPreviewData = {
     id: 'phonon-wavepacket',

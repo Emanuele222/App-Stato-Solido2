@@ -1,0 +1,1567 @@
+{
+  "totals": {
+    "total": 59,
+    "pass": 59,
+    "fail": 0
+  },
+  "constantsApp": {
+    "AMU_KG": 1.6605390666e-27,
+    "C_LIGHT_M_S": 299792458,
+    "THZ_TO_MEV": 4.135667696
+  },
+  "constantsExactSI": {
+    "AMU_KG": 1.6605390666e-27,
+    "C_LIGHT_M_S": 299792458.0,
+    "THZ_TO_MEV_EXACT": 4.135667696923859,
+    "THZ_TO_MEV_REL_DIFF": 2.2338816342568138e-10
+  },
+  "summaryTable": {
+    "nacl-pair": {
+      "app": {
+        "soundSpeedMs": 4046.3330321795465,
+        "omegaAcousticMaxRadS": 18419433647425.055,
+        "freqAcousticMaxThz": 2.931543913940877,
+        "energyAcousticMaxMev": 12.123891464290688,
+        "omegaOpticalMinRadS": 22883715041356.605,
+        "freqOpticalMinThz": 3.6420563651382603,
+        "energyOpticalMinMev": 15.062334856313482,
+        "omegaOpticalZeroRadS": 29375839562230.47,
+        "freqOpticalZeroThz": 4.6753100738034385,
+        "energyOpticalZeroMev": 19.335528841012255,
+        "omegaGapRadS": 4464281393931.551,
+        "freqGapThz": 0.7105124511973833,
+        "energyGapMev": 2.938443392022794,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869,
+        "massRatio": 1.5434782608695652,
+        "equalMasses": false,
+        "invertedMasses": false
+      },
+      "ref": {
+        "vs": 4046.3330321795465,
+        "wAcMax": 18419433647425.055,
+        "nuAcMax": 2.9315439139408768,
+        "eAcMax": 12.12389146699902,
+        "wOptMin": 22883715041356.61,
+        "nuOptMin": 3.6420563651382603,
+        "eOptMin": 15.062334859678229,
+        "wOpt0": 29375839562230.47,
+        "nuOpt0": 4.6753100738034385,
+        "eOpt0": 19.33552884533158,
+        "wGap": 4464281393931.554,
+        "nuGap": 0.7105124511973836,
+        "eGap": 2.938443392679209,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869
+      }
+    },
+    "nacl-swapped": {
+      "app": {
+        "soundSpeedMs": 4046.3330321795465,
+        "omegaAcousticMaxRadS": 18419433647425.055,
+        "freqAcousticMaxThz": 2.931543913940877,
+        "energyAcousticMaxMev": 12.123891464290688,
+        "omegaOpticalMinRadS": 22883715041356.605,
+        "freqOpticalMinThz": 3.6420563651382603,
+        "energyOpticalMinMev": 15.062334856313482,
+        "omegaOpticalZeroRadS": 29375839562230.47,
+        "freqOpticalZeroThz": 4.6753100738034385,
+        "energyOpticalZeroMev": 19.335528841012255,
+        "omegaGapRadS": 4464281393931.551,
+        "freqGapThz": 0.7105124511973833,
+        "energyGapMev": 2.938443392022794,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869,
+        "massRatio": 0.647887323943662,
+        "equalMasses": false,
+        "invertedMasses": true
+      },
+      "ref": {
+        "vs": 4046.3330321795465,
+        "wAcMax": 18419433647425.055,
+        "nuAcMax": 2.9315439139408768,
+        "eAcMax": 12.12389146699902,
+        "wOptMin": 22883715041356.61,
+        "nuOptMin": 3.6420563651382603,
+        "eOptMin": 15.062334859678229,
+        "wOpt0": 29375839562230.47,
+        "nuOpt0": 4.6753100738034385,
+        "eOpt0": 19.33552884533158,
+        "wGap": 4464281393931.554,
+        "nuGap": 0.7105124511973836,
+        "eGap": 2.938443392679209,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869
+      }
+    },
+    "mass-ratio-2": {
+      "app": {
+        "soundSpeedMs": 3542.051183660254,
+        "omegaAcousticMaxRadS": 17352436085577.613,
+        "freqAcousticMaxThz": 2.7617259777058565,
+        "energyAcousticMaxMev": 11.421580911202126,
+        "omegaOpticalMinRadS": 24540050452436.16,
+        "freqOpticalMinThz": 3.9056703332297182,
+        "energyOpticalMinMev": 16.1525546283637,
+        "omegaOpticalZeroRadS": 30055300935312.03,
+        "freqOpticalZeroThz": 4.783449709969376,
+        "energyOpticalZeroMev": 19.782758440960915,
+        "omegaGapRadS": 7187614366858.547,
+        "freqGapThz": 1.1439443555238615,
+        "energyGapMev": 4.7309737171615724,
+        "zoneEdge": 0.6283185307179586,
+        "reciprocalG": 1.2566370614359172,
+        "massRatio": 2,
+        "equalMasses": false,
+        "invertedMasses": false
+      },
+      "ref": {
+        "vs": 3542.051183660254,
+        "wAcMax": 17352436085577.613,
+        "nuAcMax": 2.761725977705856,
+        "eAcMax": 11.42158091375357,
+        "wOptMin": 24540050452436.16,
+        "nuOptMin": 3.905670333229718,
+        "eOptMin": 16.152554631971984,
+        "wOpt0": 30055300935312.035,
+        "nuOpt0": 4.783449709969375,
+        "eOpt0": 19.782758445380146,
+        "wGap": 7187614366858.548,
+        "nuGap": 1.1439443555238615,
+        "eGap": 4.730973718218416,
+        "zoneEdge": 0.6283185307179586,
+        "reciprocalG": 1.2566370614359172
+      }
+    },
+    "equal-masses": {
+      "app": {
+        "soundSpeedMs": 4063.7366954299723,
+        "omegaAcousticMaxRadS": 20379402654575.496,
+        "freqAcousticMaxThz": 3.2434826697357844,
+        "energyAcousticMaxMev": 13.413966499762118,
+        "omegaOpticalMinRadS": 20379402654575.496,
+        "freqOpticalMinThz": 3.2434826697357844,
+        "energyOpticalMinMev": 13.413966499762118,
+        "omegaOpticalZeroRadS": 28820827627162.92,
+        "freqOpticalZeroThz": 4.586977180862441,
+        "energyOpticalZeroMev": 18.970213349181943,
+        "omegaGapRadS": 0,
+        "freqGapThz": 0,
+        "energyGapMev": 0,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869,
+        "massRatio": 1,
+        "equalMasses": true,
+        "invertedMasses": false
+      },
+      "ref": {
+        "vs": 4063.7366954299723,
+        "wAcMax": 20379402654575.496,
+        "nuAcMax": 3.243482669735784,
+        "eAcMax": 13.413966502758639,
+        "wOptMin": 20379402654575.496,
+        "nuOptMin": 3.243482669735784,
+        "eOptMin": 13.413966502758639,
+        "wOpt0": 28820827627162.92,
+        "nuOpt0": 4.58697718086244,
+        "eOpt0": 18.97021335341966,
+        "wGap": 0.0,
+        "nuGap": 0.0,
+        "eGap": 0.0,
+        "zoneEdge": 0.5570199740407434,
+        "reciprocalG": 1.1140399480814869
+      }
+    },
+    "lii-contrast": {
+      "app": {
+        "soundSpeedMs": 2846.3194932242295,
+        "omegaAcousticMaxRadS": 9742258256435.45,
+        "freqAcousticMaxThz": 1.5505285583895316,
+        "energyAcousticMaxMev": 6.412470870657035,
+        "omegaOpticalMinRadS": 41779756425570.93,
+        "freqOpticalMinThz": 6.649454756304991,
+        "energyOpticalMinMev": 27.4999352316641,
+        "omegaOpticalZeroRadS": 42900578584852.67,
+        "freqOpticalZeroThz": 6.8278391432816115,
+        "energyOpticalZeroMev": 28.237673778354072,
+        "omegaGapRadS": 32037498169135.48,
+        "freqGapThz": 5.09892619791546,
+        "energyGapMev": 21.08746436100707,
+        "zoneEdge": 0.5235987755982988,
+        "reciprocalG": 1.0471975511965976,
+        "massRatio": 18.391304347826086,
+        "equalMasses": false,
+        "invertedMasses": false
+      },
+      "ref": {
+        "vs": 2846.31949322423,
+        "wAcMax": 9742258256435.45,
+        "nuAcMax": 1.5505285583895314,
+        "eAcMax": 6.412470872089504,
+        "wOptMin": 41779756425570.93,
+        "nuOptMin": 6.64945475630499,
+        "eOptMin": 27.499935237807257,
+        "wOpt0": 42900578584852.68,
+        "nuOpt0": 6.8278391432816115,
+        "eOpt0": 28.237673784662036,
+        "wGap": 32037498169135.484,
+        "nuGap": 5.098926197915459,
+        "eGap": 21.087464365717754,
+        "zoneEdge": 0.5235987755982989,
+        "reciprocalG": 1.0471975511965979
+      }
+    },
+    "nacl-dispensa-rounded-kg": {
+      "vs": 4047.1983672781435,
+      "wAcMax": 18427115179918.688,
+      "wOptMin": 22881438097813.777,
+      "wOpt0": 29378883288479.05
+    }
+  },
+  "smallKDmTable": [
+    {
+      "k": 0.1,
+      "wAcRef": 4031048925802.382,
+      "wAcEq20App": 4031048925802.382,
+      "wAcDmApp": 4031048925802.382,
+      "relErrEq20": 0.0,
+      "relErrDmOmega": 0.0,
+      "relErrDmEig": 1.321580819397471e-16,
+      "dmDet": 1.3758176420318714e+52
+    },
+    {
+      "k": 0.01,
+      "wAcRef": 404618058862.1515,
+      "wAcEq20App": 404618058862.1515,
+      "wAcDmApp": 404618058862.1514,
+      "relErrEq20": 0.0,
+      "relErrDmOmega": 1.508463473470272e-16,
+      "relErrDmEig": 2.0495540088103106e-16,
+      "dmDet": 1.412500785909938e+50
+    },
+    {
+      "k": 0.001,
+      "wAcRef": 40463315077.821175,
+      "wAcEq20App": 40463315077.82117,
+      "wAcDmApp": 40463315077.82117,
+      "relErrEq20": 1.885509013924526e-16,
+      "relErrDmOmega": 1.885509013924526e-16,
+      "relErrDmEig": 1.601094628167596e-16,
+      "dmDet": 1.4128715259316476e+48
+    },
+    {
+      "k": 0.0001,
+      "wAcRef": 4046333016.935576,
+      "wAcEq20App": 4046333016.9355764,
+      "wAcDmApp": 4046333016.935576,
+      "relErrEq20": 1.1784426941810386e-16,
+      "relErrDmOmega": 0.0,
+      "relErrDmEig": 0.0,
+      "dmDet": 1.412875233724948e+46
+    },
+    {
+      "k": 1e-05,
+      "wAcRef": 404633303.2027107,
+      "wAcEq20App": 404633303.20271075,
+      "wAcDmApp": 404633303.2027107,
+      "relErrEq20": 1.4730533622322793e-16,
+      "relErrDmOmega": 0.0,
+      "relErrDmEig": 0.0,
+      "dmDet": 1.4128752708029205e+44
+    },
+    {
+      "k": 1e-06,
+      "wAcRef": 40463330.32178022,
+      "wAcEq20App": 40463330.32178022,
+      "wAcDmApp": 40463330.32178022,
+      "relErrEq20": 0.0,
+      "relErrDmOmega": 0.0,
+      "relErrDmEig": 3.053843349057303e-16,
+      "dmDet": 1.4128752711736997e+42
+    },
+    {
+      "k": 1e-07,
+      "wAcRef": 4046333.032179531,
+      "wAcEq20App": 4046333.0321795302,
+      "wAcDmApp": 4046333.0321795302,
+      "relErrEq20": 2.301645878401234e-16,
+      "relErrDmOmega": 2.301645878401234e-16,
+      "relErrDmEig": 4.771630232898477e-16,
+      "dmDet": 1.4128752711774072e+40
+    },
+    {
+      "k": 1e-08,
+      "wAcRef": 404633.30321795464,
+      "wAcEq20App": 404633.3032179546,
+      "wAcDmApp": 404633.3032179546,
+      "relErrEq20": 1.4385286740007658e-16,
+      "relErrDmOmega": 1.4385286740007658e-16,
+      "relErrDmEig": 1.8639180597259536e-16,
+      "dmDet": 1.4128752711774446e+38
+    },
+    {
+      "k": 1e-09,
+      "wAcRef": 40463.33032179547,
+      "wAcEq20App": 40463.33032179547,
+      "wAcDmApp": 40463.33032179546,
+      "relErrEq20": 0.0,
+      "relErrDmOmega": 1.798160842500957e-16,
+      "relErrDmEig": 1.4561859841609014e-16,
+      "dmDet": 1.4128752711774452e+36
+    },
+    {
+      "k": 1e-10,
+      "wAcRef": 4046.3330321795465,
+      "wAcEq20App": 4046.333032179546,
+      "wAcDmApp": 4046.333032179546,
+      "relErrEq20": 1.1238505265630982e-16,
+      "relErrDmOmega": 1.1238505265630982e-16,
+      "relErrDmEig": 1.137645300125704e-16,
+      "dmDet": 1.4128752711774454e+34
+    }
+  ],
+  "irNaClN1": {
+    "app": {
+      "refractiveIndex": 1,
+      "omegaRadS": 29375839559554.74,
+      "freqThz": 4.675310073377583,
+      "energyMev": 19.335528839251058,
+      "wavelengthUm": 64.12247600583656,
+      "kLightMInv": 97987.25343368958,
+      "kLightAngInv": 9.798725343368957e-06,
+      "kOverZoneEdge": 1.759133567919815e-05,
+      "speedRatio": 74089.91193157366
+    },
+    "ref": {
+      "omegaRadS": 29375839559554.742,
+      "freqThz": 4.675310073377583,
+      "energyMevExact": 19.335528843570383,
+      "wavelengthUm": 64.12247600583656,
+      "kLightMInv": 97987.25343368959,
+      "kLightAngInv": 9.798725343368959e-06,
+      "kOverZoneEdge": 1.759133567919815e-05,
+      "speedRatio": 74089.91193157366,
+      "shiftRelFromZero": 9.108604540614439e-11
+    },
+    "resEq": 0.0
+  },
+  "checks": [
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary nacl-pair (\u03c9, \u03bd, v_s, gap)",
+      "status": "PASS",
+      "maxRelErr": 6.562506350926762e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err su \u03c9/\u03bd/v_s/gap = 6.563e-16",
+      "extra": {
+        "app": {
+          "soundSpeedMs": 4046.3330321795465,
+          "omegaAcousticMaxRadS": 18419433647425.055,
+          "freqAcousticMaxThz": 2.931543913940877,
+          "energyAcousticMaxMev": 12.123891464290688,
+          "omegaOpticalMinRadS": 22883715041356.605,
+          "freqOpticalMinThz": 3.6420563651382603,
+          "energyOpticalMinMev": 15.062334856313482,
+          "omegaOpticalZeroRadS": 29375839562230.47,
+          "freqOpticalZeroThz": 4.6753100738034385,
+          "energyOpticalZeroMev": 19.335528841012255,
+          "omegaGapRadS": 4464281393931.551,
+          "freqGapThz": 0.7105124511973833,
+          "energyGapMev": 2.938443392022794,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869,
+          "massRatio": 1.5434782608695652,
+          "equalMasses": false,
+          "invertedMasses": false
+        },
+        "ref": {
+          "vs": 4046.3330321795465,
+          "wAcMax": 18419433647425.055,
+          "nuAcMax": 2.9315439139408768,
+          "eAcMax": 12.12389146699902,
+          "wOptMin": 22883715041356.61,
+          "nuOptMin": 3.6420563651382603,
+          "eOptMin": 15.062334859678229,
+          "wOpt0": 29375839562230.47,
+          "nuOpt0": 4.6753100738034385,
+          "eOpt0": 19.33552884533158,
+          "wGap": 4464281393931.554,
+          "nuGap": 0.7105124511973836,
+          "eGap": 2.938443392679209,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869
+        },
+        "errs": {
+          "soundSpeedMs": 0.0,
+          "soundSpeedFn": 0.0,
+          "omegaAcousticMaxRadS": 0.0,
+          "freqAcousticMaxThz": 1.514864599974807e-16,
+          "omegaOpticalMinRadS": 1.7069999311477298e-16,
+          "freqOpticalMinThz": 0.0,
+          "omegaOpticalZeroRadS": 0.0,
+          "freqOpticalZeroThz": 0.0,
+          "zoneEdge": 0.0,
+          "reciprocalG": 0.0,
+          "omegaGapRadS": 6.562506350926762e-16,
+          "freqGapThz": 4.687699797888826e-16
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary nacl-pair (energie meV vs SI 2019 esatto)",
+      "status": "PASS",
+      "maxRelErr": 2.2338865674693853e-10,
+      "maxAbsErr": null,
+      "tolerance": 1e-09,
+      "detail": "max rel err meV = 2.234e-10 (scarto noto 2.23e-10 da THZ_TO_MEV troncato)",
+      "extra": {
+        "errsMev": {
+          "energyAcousticMaxMev": 2.2338795628019358e-10,
+          "energyOpticalMinMev": 2.233881224145354e-10,
+          "energyOpticalZeroMev": 2.2338801159205425e-10,
+          "energyGapMev": 2.2338865674693853e-10
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary nacl-swapped (\u03c9, \u03bd, v_s, gap)",
+      "status": "PASS",
+      "maxRelErr": 6.562506350926762e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err su \u03c9/\u03bd/v_s/gap = 6.563e-16",
+      "extra": {
+        "app": {
+          "soundSpeedMs": 4046.3330321795465,
+          "omegaAcousticMaxRadS": 18419433647425.055,
+          "freqAcousticMaxThz": 2.931543913940877,
+          "energyAcousticMaxMev": 12.123891464290688,
+          "omegaOpticalMinRadS": 22883715041356.605,
+          "freqOpticalMinThz": 3.6420563651382603,
+          "energyOpticalMinMev": 15.062334856313482,
+          "omegaOpticalZeroRadS": 29375839562230.47,
+          "freqOpticalZeroThz": 4.6753100738034385,
+          "energyOpticalZeroMev": 19.335528841012255,
+          "omegaGapRadS": 4464281393931.551,
+          "freqGapThz": 0.7105124511973833,
+          "energyGapMev": 2.938443392022794,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869,
+          "massRatio": 0.647887323943662,
+          "equalMasses": false,
+          "invertedMasses": true
+        },
+        "ref": {
+          "vs": 4046.3330321795465,
+          "wAcMax": 18419433647425.055,
+          "nuAcMax": 2.9315439139408768,
+          "eAcMax": 12.12389146699902,
+          "wOptMin": 22883715041356.61,
+          "nuOptMin": 3.6420563651382603,
+          "eOptMin": 15.062334859678229,
+          "wOpt0": 29375839562230.47,
+          "nuOpt0": 4.6753100738034385,
+          "eOpt0": 19.33552884533158,
+          "wGap": 4464281393931.554,
+          "nuGap": 0.7105124511973836,
+          "eGap": 2.938443392679209,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869
+        },
+        "errs": {
+          "soundSpeedMs": 0.0,
+          "soundSpeedFn": 0.0,
+          "omegaAcousticMaxRadS": 0.0,
+          "freqAcousticMaxThz": 1.514864599974807e-16,
+          "omegaOpticalMinRadS": 1.7069999311477298e-16,
+          "freqOpticalMinThz": 0.0,
+          "omegaOpticalZeroRadS": 0.0,
+          "freqOpticalZeroThz": 0.0,
+          "zoneEdge": 0.0,
+          "reciprocalG": 0.0,
+          "omegaGapRadS": 6.562506350926762e-16,
+          "freqGapThz": 4.687699797888826e-16
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary nacl-swapped (energie meV vs SI 2019 esatto)",
+      "status": "PASS",
+      "maxRelErr": 2.2338865674693853e-10,
+      "maxAbsErr": null,
+      "tolerance": 1e-09,
+      "detail": "max rel err meV = 2.234e-10 (scarto noto 2.23e-10 da THZ_TO_MEV troncato)",
+      "extra": {
+        "errsMev": {
+          "energyAcousticMaxMev": 2.2338795628019358e-10,
+          "energyOpticalMinMev": 2.233881224145354e-10,
+          "energyOpticalZeroMev": 2.2338801159205425e-10,
+          "energyGapMev": 2.2338865674693853e-10
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary mass-ratio-2 (\u03c9, \u03bd, v_s, gap)",
+      "status": "PASS",
+      "maxRelErr": 1.8567738213052346e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err su \u03c9/\u03bd/v_s/gap = 1.857e-16",
+      "extra": {
+        "app": {
+          "soundSpeedMs": 3542.051183660254,
+          "omegaAcousticMaxRadS": 17352436085577.613,
+          "freqAcousticMaxThz": 2.7617259777058565,
+          "energyAcousticMaxMev": 11.421580911202126,
+          "omegaOpticalMinRadS": 24540050452436.16,
+          "freqOpticalMinThz": 3.9056703332297182,
+          "energyOpticalMinMev": 16.1525546283637,
+          "omegaOpticalZeroRadS": 30055300935312.03,
+          "freqOpticalZeroThz": 4.783449709969376,
+          "energyOpticalZeroMev": 19.782758440960915,
+          "omegaGapRadS": 7187614366858.547,
+          "freqGapThz": 1.1439443555238615,
+          "energyGapMev": 4.7309737171615724,
+          "zoneEdge": 0.6283185307179586,
+          "reciprocalG": 1.2566370614359172,
+          "massRatio": 2,
+          "equalMasses": false,
+          "invertedMasses": false
+        },
+        "ref": {
+          "vs": 3542.051183660254,
+          "wAcMax": 17352436085577.613,
+          "nuAcMax": 2.761725977705856,
+          "eAcMax": 11.42158091375357,
+          "wOptMin": 24540050452436.16,
+          "nuOptMin": 3.905670333229718,
+          "eOptMin": 16.152554631971984,
+          "wOpt0": 30055300935312.035,
+          "nuOpt0": 4.783449709969375,
+          "eOpt0": 19.782758445380146,
+          "wGap": 7187614366858.548,
+          "nuGap": 1.1439443555238615,
+          "eGap": 4.730973718218416,
+          "zoneEdge": 0.6283185307179586,
+          "reciprocalG": 1.2566370614359172
+        },
+        "errs": {
+          "soundSpeedMs": 0.0,
+          "soundSpeedFn": 0.0,
+          "omegaAcousticMaxRadS": 0.0,
+          "freqAcousticMaxThz": 1.6080132983322408e-16,
+          "omegaOpticalMinRadS": 0.0,
+          "freqOpticalMinThz": 1.1370371074888743e-16,
+          "omegaOpticalZeroRadS": 1.2996875354558632e-16,
+          "freqOpticalZeroThz": 1.8567738213052346e-16,
+          "zoneEdge": 0.0,
+          "reciprocalG": 0.0,
+          "omegaGapRadS": 1.3586740330739544e-16,
+          "freqGapThz": 0.0
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary mass-ratio-2 (energie meV vs SI 2019 esatto)",
+      "status": "PASS",
+      "maxRelErr": 2.2338815739588673e-10,
+      "maxAbsErr": null,
+      "tolerance": 1e-09,
+      "detail": "max rel err meV = 2.234e-10 (scarto noto 2.23e-10 da THZ_TO_MEV troncato)",
+      "extra": {
+        "errsMev": {
+          "energyAcousticMaxMev": 2.233879460458558e-10,
+          "energyOpticalMinMev": 2.233878979751069e-10,
+          "energyOpticalZeroMev": 2.233880181776672e-10,
+          "energyGapMev": 2.2338815739588673e-10
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary equal-masses (\u03c9, \u03bd, v_s, gap)",
+      "status": "PASS",
+      "maxRelErr": 1.936304421582343e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err su \u03c9/\u03bd/v_s/gap = 1.936e-16",
+      "extra": {
+        "app": {
+          "soundSpeedMs": 4063.7366954299723,
+          "omegaAcousticMaxRadS": 20379402654575.496,
+          "freqAcousticMaxThz": 3.2434826697357844,
+          "energyAcousticMaxMev": 13.413966499762118,
+          "omegaOpticalMinRadS": 20379402654575.496,
+          "freqOpticalMinThz": 3.2434826697357844,
+          "energyOpticalMinMev": 13.413966499762118,
+          "omegaOpticalZeroRadS": 28820827627162.92,
+          "freqOpticalZeroThz": 4.586977180862441,
+          "energyOpticalZeroMev": 18.970213349181943,
+          "omegaGapRadS": 0,
+          "freqGapThz": 0,
+          "energyGapMev": 0,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869,
+          "massRatio": 1,
+          "equalMasses": true,
+          "invertedMasses": false
+        },
+        "ref": {
+          "vs": 4063.7366954299723,
+          "wAcMax": 20379402654575.496,
+          "nuAcMax": 3.243482669735784,
+          "eAcMax": 13.413966502758639,
+          "wOptMin": 20379402654575.496,
+          "nuOptMin": 3.243482669735784,
+          "eOptMin": 13.413966502758639,
+          "wOpt0": 28820827627162.92,
+          "nuOpt0": 4.58697718086244,
+          "eOpt0": 18.97021335341966,
+          "wGap": 0.0,
+          "nuGap": 0.0,
+          "eGap": 0.0,
+          "zoneEdge": 0.5570199740407434,
+          "reciprocalG": 1.1140399480814869
+        },
+        "errs": {
+          "soundSpeedMs": 0.0,
+          "soundSpeedFn": 0.0,
+          "omegaAcousticMaxRadS": 0.0,
+          "freqAcousticMaxThz": 1.3691739869423701e-16,
+          "omegaOpticalMinRadS": 0.0,
+          "freqOpticalMinThz": 1.3691739869423701e-16,
+          "omegaOpticalZeroRadS": 0.0,
+          "freqOpticalZeroThz": 1.936304421582343e-16,
+          "zoneEdge": 0.0,
+          "reciprocalG": 0.0,
+          "omegaGapAbs": 0
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary equal-masses (energie meV vs SI 2019 esatto)",
+      "status": "PASS",
+      "maxRelErr": 2.2338809065584598e-10,
+      "maxAbsErr": null,
+      "tolerance": 1e-09,
+      "detail": "max rel err meV = 2.234e-10 (scarto noto 2.23e-10 da THZ_TO_MEV troncato)",
+      "extra": {
+        "errsMev": {
+          "energyAcousticMaxMev": 2.2338809065584598e-10,
+          "energyOpticalMinMev": 2.2338809065584598e-10,
+          "energyOpticalZeroMev": 2.2338789116253106e-10
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary lii-contrast (\u03c9, \u03bd, v_s, gap)",
+      "status": "PASS",
+      "maxRelErr": 2.1203697876423442e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err su \u03c9/\u03bd/v_s/gap = 2.120e-16",
+      "extra": {
+        "app": {
+          "soundSpeedMs": 2846.3194932242295,
+          "omegaAcousticMaxRadS": 9742258256435.45,
+          "freqAcousticMaxThz": 1.5505285583895316,
+          "energyAcousticMaxMev": 6.412470870657035,
+          "omegaOpticalMinRadS": 41779756425570.93,
+          "freqOpticalMinThz": 6.649454756304991,
+          "energyOpticalMinMev": 27.4999352316641,
+          "omegaOpticalZeroRadS": 42900578584852.67,
+          "freqOpticalZeroThz": 6.8278391432816115,
+          "energyOpticalZeroMev": 28.237673778354072,
+          "omegaGapRadS": 32037498169135.48,
+          "freqGapThz": 5.09892619791546,
+          "energyGapMev": 21.08746436100707,
+          "zoneEdge": 0.5235987755982988,
+          "reciprocalG": 1.0471975511965976,
+          "massRatio": 18.391304347826086,
+          "equalMasses": false,
+          "invertedMasses": false
+        },
+        "ref": {
+          "vs": 2846.31949322423,
+          "wAcMax": 9742258256435.45,
+          "nuAcMax": 1.5505285583895314,
+          "eAcMax": 6.412470872089504,
+          "wOptMin": 41779756425570.93,
+          "nuOptMin": 6.64945475630499,
+          "eOptMin": 27.499935237807257,
+          "wOpt0": 42900578584852.68,
+          "nuOpt0": 6.8278391432816115,
+          "eOpt0": 28.237673784662036,
+          "wGap": 32037498169135.484,
+          "nuGap": 5.098926197915459,
+          "eGap": 21.087464365717754,
+          "zoneEdge": 0.5235987755982989,
+          "reciprocalG": 1.0471975511965979
+        },
+        "errs": {
+          "soundSpeedMs": 1.5976679777832644e-16,
+          "soundSpeedFn": 1.5976679777832644e-16,
+          "omegaAcousticMaxRadS": 0.0,
+          "freqAcousticMaxThz": 1.4320574988677387e-16,
+          "omegaOpticalMinRadS": 0.0,
+          "freqOpticalMinThz": 1.3357161635816193e-16,
+          "omegaOpticalZeroRadS": 1.8210710106269836e-16,
+          "freqOpticalZeroThz": 0.0,
+          "zoneEdge": 2.1203697876423442e-16,
+          "reciprocalG": 2.1203697876423442e-16,
+          "omegaGapRadS": 1.2192743576223538e-16,
+          "freqGapThz": 1.7418930677271423e-16
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Summary lii-contrast (energie meV vs SI 2019 esatto)",
+      "status": "PASS",
+      "maxRelErr": 2.233882286862344e-10,
+      "maxAbsErr": null,
+      "tolerance": 1e-09,
+      "detail": "max rel err meV = 2.234e-10 (scarto noto 2.23e-10 da THZ_TO_MEV troncato)",
+      "extra": {
+        "errsMev": {
+          "energyAcousticMaxMev": 2.2338789442022174e-10,
+          "energyOpticalMinMev": 2.2338805677199568e-10,
+          "energyOpticalZeroMev": 2.233882286862344e-10,
+          "energyGapMev": 2.2338793766627422e-10
+        }
+      }
+    },
+    {
+      "group": "1. Scale e preset",
+      "name": "Rapporti canonici M = 2m (\u221a2, \u221a3, v_s)",
+      "status": "PASS",
+      "maxRelErr": 1.570092458683775e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-14,
+      "detail": "\u03c9_min^ott/\u03c9_max^ac=1.414213562373095 (\u221a2), \u03c9_+(0)/\u03c9_max^ac=1.732050807568877 (\u221a3)"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 3.524942817933782e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=3.525e-16, \u03c9_+=1.706e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 6.970267760924314e-16,
+      "maxAbsErr": 2.2523934834821584e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=2.62e-16, \u03c9_-\u00b2=6.97e-16, \u03c9_+\u00b2=2.20e-16, \u03c9_-=3.72e-16 (worst k=-0.0325), res=2.25e-16, ortho=2.22e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 2.735683917011697e-15,
+      "maxAbsErr": 7.536443801682119e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=2.74e-15, eq17-18=7.54e-16, \u03b1_-\u03b1_+=5.75e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.4451312958443238e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.45e-12, FD2=1.75e-09, v_p=3.63e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-swapped: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 3.524942817933782e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=3.525e-16, \u03c9_+=1.706e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-swapped: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 6.970267760924314e-16,
+      "maxAbsErr": 2.220446049250313e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=2.62e-16, \u03c9_-\u00b2=6.97e-16, \u03c9_+\u00b2=2.20e-16, \u03c9_-=3.72e-16 (worst k=-0.0325), res=1.78e-16, ortho=2.22e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-swapped: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 6.942536106401929e-16,
+      "maxAbsErr": 7.536443801682119e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=6.94e-16, eq17-18=7.54e-16, \u03b1_-\u03b1_+=6.85e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-swapped: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.4451312958443238e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.45e-12, FD2=1.75e-09, v_p=3.63e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia mass-ratio-2: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 2.2061798742369298e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=2.206e-16, \u03c9_+=1.592e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia mass-ratio-2: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 6.069059288560274e-16,
+      "maxAbsErr": 2.282227515128757e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=1.14e-16, \u03c9_-\u00b2=6.07e-16, \u03c9_+\u00b2=2.17e-16, \u03c9_-=3.32e-16 (worst k=-0.1676), res=2.28e-16, ortho=2.22e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia mass-ratio-2: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 2.9752102739970265e-15,
+      "maxAbsErr": 5.617333549722722e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=2.98e-15, eq17-18=5.62e-16, \u03b1_-\u03b1_+=6.66e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia mass-ratio-2: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.4732214699477637e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.47e-12, FD2=5.67e-10, v_p=2.71e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 3.699208974400805e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=3.699e-16, \u03c9_+=1.904e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 7.267267401908073e-16,
+      "maxAbsErr": 1.8499157506812698e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=3.31e-16, \u03c9_-\u00b2=7.27e-16, \u03c9_+\u00b2=3.22e-16, \u03c9_-=4.26e-16 (worst k=-0.3528), res=1.85e-16, ortho=0.00e+00"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 1.1102230246251565e-14,
+      "maxAbsErr": 7.105427357601002e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=5.77e-15, eq17-18=7.11e-16, \u03b1_-\u03b1_+=1.11e-14"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.2678134677530012e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.27e-12, FD2=3.47e-11, v_p=3.36e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia lii-contrast: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 2.7682725402503695e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=2.768e-16, \u03c9_+=1.870e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia lii-contrast: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 4.403724557631565e-16,
+      "maxAbsErr": 2.220446049250313e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=7.87e-17, \u03c9_-\u00b2=4.40e-16, \u03c9_+\u00b2=1.57e-16, \u03c9_-=2.55e-16 (worst k=0.3054), res=1.87e-16, ortho=2.22e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia lii-contrast: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 1.471558065542442e-14,
+      "maxAbsErr": 4.1317602818954126e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=1.47e-14, eq17-18=4.13e-16, \u03b1_-\u03b1_+=3.86e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia lii-contrast: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 3.563713256831474e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=3.56e-12, FD2=1.32e-10, v_p=3.76e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair-ext: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 2.5049235564354657e-14,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=2.505e-14, \u03c9_+=1.705e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair-ext: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 5.036572693169974e-14,
+      "maxAbsErr": 3.2833995126118746e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=1.31e-16, \u03c9_-\u00b2=5.04e-14, \u03c9_+\u00b2=3.84e-16, \u03c9_-=2.52e-14 (worst k=-1.1085), res=3.28e-16, ortho=2.22e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair-ext: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 3.281490779724959e-15,
+      "maxAbsErr": 8.881784197001252e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=3.28e-15, eq17-18=8.88e-16, \u03b1_-\u03b1_+=5.75e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia nacl-pair-ext: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.302655145339287e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.30e-12, FD2=1.76e-09, v_p=2.52e-14"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses-ext: eq. (20) vs diatomicOmega (nessun NaN/Inf)",
+      "status": "PASS",
+      "maxRelErr": 2.534638631653233e-14,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err \u03c9_-=2.535e-14, \u03c9_+=1.917e-16"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses-ext: D(k) 2\u00d72 elementi, autovalori \u03c9\u00b2, residuo, ortonormalit\u00e0",
+      "status": "PASS",
+      "maxRelErr": 5.0426275000098754e-14,
+      "maxAbsErr": 1.8499157506812698e-16,
+      "tolerance": 1e-10,
+      "detail": "d_ij=1.65e-16, \u03c9_-\u00b2=5.04e-14, \u03c9_+\u00b2=3.21e-16, \u03c9_-=2.52e-14 (worst k=-1.1085), res=1.85e-16, ortho=0.00e+00"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses-ext: \u03b1 da autovettori D(k), eqq. (17)\u2013(18) e identit\u00e0 \u03b1_-\u03b1_+ = \u2212M/m",
+      "status": "PASS",
+      "maxRelErr": 1.7319479184152442e-14,
+      "maxAbsErr": 7.944109290391274e-16,
+      "tolerance": 1e-11,
+      "detail": "\u03b1_eig vs app=8.88e-15, eq17-18=7.94e-16, \u03b1_-\u03b1_+=1.73e-14"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Griglia equal-masses-ext: v_g analitica vs FD4/FD2 e v_p = \u03c9/k",
+      "status": "PASS",
+      "maxRelErr": 1.3082666712123516e-12,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "v_g FD4=1.31e-12, FD2=4.04e-11, v_p=2.54e-14"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Curva campionata nacl-1bz (241 pt)",
+      "status": "PASS",
+      "maxRelErr": 4.4137476711327055e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "\u03c9=1.71e-16, \u03bd=4.41e-16, \u0127\u03c9=2.23e-10"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Curva campionata nacl-ext (401 pt)",
+      "status": "PASS",
+      "maxRelErr": 4.3985291334953003e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "\u03c9=2.24e-16, \u03bd=4.40e-16, \u0127\u03c9=2.23e-10"
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Sonda piccoli k (10\u207b\u00b9\u202610\u207b\u00b9\u2070 \u00c5\u207b\u00b9): stabilit\u00e0 diatomicOmega (eq. 20 coniugata)",
+      "status": "PASS",
+      "maxRelErr": 2.301645878401234e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "max rel err diatomicOmega su [1e-10, 1e-1] \u00c5\u207b\u00b9 = 2.302e-16",
+      "extra": {
+        "table": [
+          {
+            "k": 0.1,
+            "wAcRef": 4031048925802.382,
+            "wAcEq20App": 4031048925802.382,
+            "wAcDmApp": 4031048925802.382,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 1.321580819397471e-16,
+            "dmDet": 1.3758176420318714e+52
+          },
+          {
+            "k": 0.01,
+            "wAcRef": 404618058862.1515,
+            "wAcEq20App": 404618058862.1515,
+            "wAcDmApp": 404618058862.1514,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 1.508463473470272e-16,
+            "relErrDmEig": 2.0495540088103106e-16,
+            "dmDet": 1.412500785909938e+50
+          },
+          {
+            "k": 0.001,
+            "wAcRef": 40463315077.821175,
+            "wAcEq20App": 40463315077.82117,
+            "wAcDmApp": 40463315077.82117,
+            "relErrEq20": 1.885509013924526e-16,
+            "relErrDmOmega": 1.885509013924526e-16,
+            "relErrDmEig": 1.601094628167596e-16,
+            "dmDet": 1.4128715259316476e+48
+          },
+          {
+            "k": 0.0001,
+            "wAcRef": 4046333016.935576,
+            "wAcEq20App": 4046333016.9355764,
+            "wAcDmApp": 4046333016.935576,
+            "relErrEq20": 1.1784426941810386e-16,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 0.0,
+            "dmDet": 1.412875233724948e+46
+          },
+          {
+            "k": 1e-05,
+            "wAcRef": 404633303.2027107,
+            "wAcEq20App": 404633303.20271075,
+            "wAcDmApp": 404633303.2027107,
+            "relErrEq20": 1.4730533622322793e-16,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 0.0,
+            "dmDet": 1.4128752708029205e+44
+          },
+          {
+            "k": 1e-06,
+            "wAcRef": 40463330.32178022,
+            "wAcEq20App": 40463330.32178022,
+            "wAcDmApp": 40463330.32178022,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 3.053843349057303e-16,
+            "dmDet": 1.4128752711736997e+42
+          },
+          {
+            "k": 1e-07,
+            "wAcRef": 4046333.032179531,
+            "wAcEq20App": 4046333.0321795302,
+            "wAcDmApp": 4046333.0321795302,
+            "relErrEq20": 2.301645878401234e-16,
+            "relErrDmOmega": 2.301645878401234e-16,
+            "relErrDmEig": 4.771630232898477e-16,
+            "dmDet": 1.4128752711774072e+40
+          },
+          {
+            "k": 1e-08,
+            "wAcRef": 404633.30321795464,
+            "wAcEq20App": 404633.3032179546,
+            "wAcDmApp": 404633.3032179546,
+            "relErrEq20": 1.4385286740007658e-16,
+            "relErrDmOmega": 1.4385286740007658e-16,
+            "relErrDmEig": 1.8639180597259536e-16,
+            "dmDet": 1.4128752711774446e+38
+          },
+          {
+            "k": 1e-09,
+            "wAcRef": 40463.33032179547,
+            "wAcEq20App": 40463.33032179547,
+            "wAcDmApp": 40463.33032179546,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 1.798160842500957e-16,
+            "relErrDmEig": 1.4561859841609014e-16,
+            "dmDet": 1.4128752711774452e+36
+          },
+          {
+            "k": 1e-10,
+            "wAcRef": 4046.3330321795465,
+            "wAcEq20App": 4046.333032179546,
+            "wAcDmApp": 4046.333032179546,
+            "relErrEq20": 1.1238505265630982e-16,
+            "relErrDmOmega": 1.1238505265630982e-16,
+            "relErrDmEig": 1.137645300125704e-16,
+            "dmDet": 1.4128752711774454e+34
+          }
+        ]
+      }
+    },
+    {
+      "group": "2. Griglia 1BZ e D(k)",
+      "name": "Sonda piccoli k (10\u207b\u00b9\u202610\u207b\u00b9\u2070 \u00c5\u207b\u00b9): cancellazione in diatomicDynamicalMatrix (det = d11\u00b7d22 \u2212 d12\u00b2)",
+      "status": "PASS",
+      "maxRelErr": 2.301645878401234e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-10,
+      "detail": "max rel err dm.omegasRadS[0] = 2.302e-16 (a k=1e-5: 0.00e+00; a k=1e-7: 2.30e-16; a k=1e-8: 1.44e-16, azzerato dal clamp 1e-14!)",
+      "extra": {
+        "table": [
+          {
+            "k": 0.1,
+            "wAcRef": 4031048925802.382,
+            "wAcEq20App": 4031048925802.382,
+            "wAcDmApp": 4031048925802.382,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 1.321580819397471e-16,
+            "dmDet": 1.3758176420318714e+52
+          },
+          {
+            "k": 0.01,
+            "wAcRef": 404618058862.1515,
+            "wAcEq20App": 404618058862.1515,
+            "wAcDmApp": 404618058862.1514,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 1.508463473470272e-16,
+            "relErrDmEig": 2.0495540088103106e-16,
+            "dmDet": 1.412500785909938e+50
+          },
+          {
+            "k": 0.001,
+            "wAcRef": 40463315077.821175,
+            "wAcEq20App": 40463315077.82117,
+            "wAcDmApp": 40463315077.82117,
+            "relErrEq20": 1.885509013924526e-16,
+            "relErrDmOmega": 1.885509013924526e-16,
+            "relErrDmEig": 1.601094628167596e-16,
+            "dmDet": 1.4128715259316476e+48
+          },
+          {
+            "k": 0.0001,
+            "wAcRef": 4046333016.935576,
+            "wAcEq20App": 4046333016.9355764,
+            "wAcDmApp": 4046333016.935576,
+            "relErrEq20": 1.1784426941810386e-16,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 0.0,
+            "dmDet": 1.412875233724948e+46
+          },
+          {
+            "k": 1e-05,
+            "wAcRef": 404633303.2027107,
+            "wAcEq20App": 404633303.20271075,
+            "wAcDmApp": 404633303.2027107,
+            "relErrEq20": 1.4730533622322793e-16,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 0.0,
+            "dmDet": 1.4128752708029205e+44
+          },
+          {
+            "k": 1e-06,
+            "wAcRef": 40463330.32178022,
+            "wAcEq20App": 40463330.32178022,
+            "wAcDmApp": 40463330.32178022,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 0.0,
+            "relErrDmEig": 3.053843349057303e-16,
+            "dmDet": 1.4128752711736997e+42
+          },
+          {
+            "k": 1e-07,
+            "wAcRef": 4046333.032179531,
+            "wAcEq20App": 4046333.0321795302,
+            "wAcDmApp": 4046333.0321795302,
+            "relErrEq20": 2.301645878401234e-16,
+            "relErrDmOmega": 2.301645878401234e-16,
+            "relErrDmEig": 4.771630232898477e-16,
+            "dmDet": 1.4128752711774072e+40
+          },
+          {
+            "k": 1e-08,
+            "wAcRef": 404633.30321795464,
+            "wAcEq20App": 404633.3032179546,
+            "wAcDmApp": 404633.3032179546,
+            "relErrEq20": 1.4385286740007658e-16,
+            "relErrDmOmega": 1.4385286740007658e-16,
+            "relErrDmEig": 1.8639180597259536e-16,
+            "dmDet": 1.4128752711774446e+38
+          },
+          {
+            "k": 1e-09,
+            "wAcRef": 40463.33032179547,
+            "wAcEq20App": 40463.33032179547,
+            "wAcDmApp": 40463.33032179546,
+            "relErrEq20": 0.0,
+            "relErrDmOmega": 1.798160842500957e-16,
+            "relErrDmEig": 1.4561859841609014e-16,
+            "dmDet": 1.4128752711774452e+36
+          },
+          {
+            "k": 1e-10,
+            "wAcRef": 4046.3330321795465,
+            "wAcEq20App": 4046.333032179546,
+            "wAcDmApp": 4046.333032179546,
+            "relErrEq20": 1.1238505265630982e-16,
+            "relErrDmOmega": 1.1238505265630982e-16,
+            "relErrDmEig": 1.137645300125704e-16,
+            "dmDet": 1.4128752711774454e+34
+          }
+        ]
+      }
+    },
+    {
+      "group": "3. Limite M = m e ripiegamento",
+      "name": "Ripiegamento equal-29u vs monatomica di passo a/2 (\u00a78.3 p. 23)",
+      "status": "PASS",
+      "maxRelErr": 3.3571123202780385e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "\u03c9_- vs mono=1.36e-16, \u03c9_+ vs mono(k-G)=2.71e-16, formule sin/cos(ka/4)=2.71e-16, v_g=3.36e-16, v_s=0.00e+00, \u03c9_+(0)=0.00e+00"
+    },
+    {
+      "group": "3. Limite M = m e ripiegamento",
+      "name": "Ripiegamento equal-28u-a5 vs monatomica di passo a/2 (\u00a78.3 p. 23)",
+      "status": "PASS",
+      "maxRelErr": 3.720959886987023e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "\u03c9_- vs mono=1.33e-16, \u03c9_+ vs mono(k-G)=2.66e-16, formule sin/cos(ka/4)=1.33e-16, v_g=3.72e-16, v_s=0.00e+00, \u03c9_+(0)=0.00e+00"
+    },
+    {
+      "group": "3. Limite M = m e ripiegamento",
+      "name": "Chiusura continua e monotona del gap per M/m = 1 + \u03b4 (\u03b4 \u2208 [0, 10\u207b\u00b9])",
+      "status": "PASS",
+      "maxRelErr": 1.160665048197917e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-14,
+      "detail": "monotona=True, max err/\u03c9_+(0)=1.16e-16; transizione \u03b4\u22641e-11: \u03b4=1e-11: eqFlag=False, ampAc.\u03b1=2.8327692144396137e-05, dm.eAc=[0.9999999995987706, 2.832770475374186e-05]; \u03b4=1e-12: eqFlag=False, ampAc.\u03b1=0.00028320146142226613, dm.eAc=[0.9999999598943212, 0.0002832160940091169]; \u03b4=1e-13: eqFlag=True, ampAc.\u03b1=1, dm.eAc=[0.9999959828772335, 0.002834471625503048]; \u03b4=1e-14: eqFlag=True, ampAc.\u03b1=1, dm.eAc=[0.9996069937704551, 0.02803315902985527]; \u03b4=1e-15: eqFlag=True, ampAc.\u03b1=1, dm.eAc=[0.9742407607581217, 0.22551039904500267]",
+      "extra": {
+        "rows": [
+          {
+            "delta": 0.1,
+            "refGap": 948404632265.4463,
+            "appGap": 948404632265.4453,
+            "equalMasses": false,
+            "ampAcAlpha": 0,
+            "ampOpAlpha": null,
+            "dmEigVecAc": [
+              1,
+              2.9478122039827746e-15
+            ]
+          },
+          {
+            "delta": 0.01,
+            "refGap": 101139099008.70067,
+            "appGap": 101139099008.69922,
+            "equalMasses": false,
+            "ampAcAlpha": 0,
+            "ampOpAlpha": null,
+            "dmEigVecAc": [
+              1,
+              2.8482941770361375e-14
+            ]
+          },
+          {
+            "delta": 0.0001,
+            "refGap": 1018893716.3368263,
+            "appGap": 1018893716.3359375,
+            "equalMasses": false,
+            "ampAcAlpha": 0,
+            "ampOpAlpha": null,
+            "dmEigVecAc": [
+              1,
+              2.832906301973507e-12
+            ]
+          },
+          {
+            "delta": 1e-06,
+            "refGap": 10189693.685018122,
+            "appGap": 10189693.68359375,
+            "equalMasses": false,
+            "ampAcAlpha": 2.8327722809489453e-10,
+            "ampOpAlpha": -3530114321.71059,
+            "dmEigVecAc": [
+              1,
+              2.8327701867912743e-10
+            ]
+          },
+          {
+            "delta": 1e-08,
+            "refGap": 101897.01250864989,
+            "appGap": 101897.01171875,
+            "equalMasses": false,
+            "ampAcAlpha": 2.832769516360159e-08,
+            "ampOpAlpha": -35301142.9976299,
+            "dmEigVecAc": [
+              0.9999999999999996,
+              2.832769469568806e-08
+            ]
+          },
+          {
+            "delta": 1e-10,
+            "refGap": 1018.970132652352,
+            "appGap": 1018.96875,
+            "equalMasses": false,
+            "ampAcAlpha": 2.832769214439614e-06,
+            "ampOpAlpha": -353011.4613300126,
+            "dmEigVecAc": [
+              0.9999999999959878,
+              2.8327657915513845e-06
+            ]
+          },
+          {
+            "delta": 1e-11,
+            "refGap": 101.89701327211326,
+            "appGap": 101.89453125,
+            "equalMasses": false,
+            "ampAcAlpha": 2.8327692144396137e-05,
+            "ampOpAlpha": -35301.14613300127,
+            "dmEigVecAc": [
+              0.9999999995987706,
+              2.832770475374186e-05
+            ]
+          },
+          {
+            "delta": 1e-12,
+            "refGap": 10.189701327280106,
+            "appGap": 10.19140625,
+            "equalMasses": false,
+            "ampAcAlpha": 0.00028320146142226613,
+            "ampOpAlpha": -3531.0552247078804,
+            "dmEigVecAc": [
+              0.9999999598943212,
+              0.0002832160940091169
+            ]
+          },
+          {
+            "delta": 1e-13,
+            "refGap": 1.0189701327286984,
+            "appGap": 1.015625,
+            "equalMasses": true,
+            "ampAcAlpha": 1,
+            "ampOpAlpha": -1,
+            "dmEigVecAc": [
+              0.9999959828772335,
+              0.002834471625503048
+            ]
+          },
+          {
+            "delta": 1e-14,
+            "refGap": 0.10189701327287672,
+            "appGap": 0.1015625,
+            "equalMasses": true,
+            "ampAcAlpha": 1,
+            "ampOpAlpha": -1,
+            "dmEigVecAc": [
+              0.9996069937704551,
+              0.02803315902985527
+            ]
+          },
+          {
+            "delta": 1e-15,
+            "refGap": 0.010189701327287741,
+            "appGap": 0.01171875,
+            "equalMasses": true,
+            "ampAcAlpha": 1,
+            "ampOpAlpha": -1,
+            "dmEigVecAc": [
+              0.9742407607581217,
+              0.22551039904500267
+            ]
+          },
+          {
+            "delta": 0,
+            "refGap": 0.0,
+            "appGap": 0,
+            "equalMasses": true,
+            "ampAcAlpha": 1,
+            "ampOpAlpha": -1,
+            "dmEigVecAc": [
+              0.7071067811865476,
+              0.7071067811865475
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "group": "4. Simmetria m > M",
+      "name": "Invarianza completa sotto scambio M \u2194 m (241 pt 1BZ + summary + \u03b1 \u2194 1/\u03b1 + R_cm)",
+      "status": "PASS",
+      "maxRelErr": 3.3306690738754696e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "summary=0.00e+00, \u03c9=0.00e+00, v_g=0.00e+00, \u03b1\u21941/\u03b1=0.00e+00, R_cm=3.33e-16, flags=True"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello nacl-N4 (N=4, 2N=8 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 3.185365412141249e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=1.99e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=3.19e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello nacl-N5 (N=5, 2N=10 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 6.370730824282495e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=2.66e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=6.37e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello nacl-N8 (N=8, 2N=16 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 3.9817067651765587e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=2.66e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=3.98e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello nacl-N12 (N=12, 2N=24 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 7.963413530353122e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=3.99e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=7.96e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello m2m-N6 (N=6, 2N=12 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 6.085940040343354e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=2.60e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=6.09e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello eq-N6 (N=6, 2N=12 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 6.6184597938734e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=4.07e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=6.62e-16"
+    },
+    {
+      "group": "5. Spettro 2N\u00d72N anello BvK",
+      "name": "Anello swap-N7 (N=7, 2N=14 modi, somma nulla \u03a6)",
+      "status": "PASS",
+      "maxRelErr": 7.963413530353123e-16,
+      "maxAbsErr": 0.0,
+      "tolerance": 1e-13,
+      "detail": "max|\u2211\u03a6|=0.0e+00, max|\u03c9_app\u2212\u03c9_J2N|/\u03c9_max=3.99e-16, max|\u03c9\u00b2_app\u2212\u03bb_J2N|/\u03bb_max=7.96e-16"
+    },
+    {
+      "group": "6. Equazioni di Newton e R_cm",
+      "name": "Equazioni di Newton discrete (13)\u2013(14) su 120 configurazioni u_n(t)",
+      "status": "PASS",
+      "maxRelErr": null,
+      "maxAbsErr": 7.105427357601002e-16,
+      "tolerance": 1e-13,
+      "detail": "residuo normalizzato max |\u2212\u03c9\u00b2 m_i u_i \u2212 C(u_{i+1}\u22122u_i+u_{i\u22121})|/(2C) = 7.11e-16"
+    },
+    {
+      "group": "6. Equazioni di Newton e R_cm",
+      "name": "Centro di massa della cella R_cm (analitico, k=0 ottico = 0, k=0 acustico = 1, dominio del tempo)",
+      "status": "PASS",
+      "maxRelErr": null,
+      "maxAbsErr": 2.220446049250313e-16,
+      "tolerance": 1e-13,
+      "detail": "err R_cm=2.22e-16, R_cm(ott,0)=0.0e+00, |R_cm(ac,0)\u22121|=0.00e+00, TD=5.92e-17"
+    },
+    {
+      "group": "7. Curvatura ottica e segni v_g",
+      "name": "Curvatura ramo ottico \u03c9_+''(0) = \u2212Ca\u00b2/(2(m+M)\u03c9_+(0)) (\u00a78.1 p. 21) e segni v_g in (0, \u03c0/a)",
+      "status": "PASS",
+      "maxRelErr": 2.793145026837316e-07,
+      "maxAbsErr": null,
+      "tolerance": 1e-05,
+      "detail": "\u03c9_+''(0) num=-5.573562e-07, analitica=-5.573564e-07 (err=2.79e-07), v_g(ott)<0=True, v_g(ac)>0=True"
+    },
+    {
+      "group": "8. Incrocio luce IR (\u00a724)",
+      "name": "Incrocio \u03c9\u208a(k) = (c/n)k su 25 combinazioni (5 preset \u00d7 5 indici n)",
+      "status": "PASS",
+      "maxRelErr": 4.246877959274303e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "\u03c9=1.82e-16, k=4.25e-16, \u03bb/ratio=2.35e-16, residuo=1.82e-16, meV=2.23e-10",
+      "extra": {
+        "nacl_n1": {
+          "app": {
+            "refractiveIndex": 1,
+            "omegaRadS": 29375839559554.74,
+            "freqThz": 4.675310073377583,
+            "energyMev": 19.335528839251058,
+            "wavelengthUm": 64.12247600583656,
+            "kLightMInv": 97987.25343368958,
+            "kLightAngInv": 9.798725343368957e-06,
+            "kOverZoneEdge": 1.759133567919815e-05,
+            "speedRatio": 74089.91193157366
+          },
+          "ref": {
+            "omegaRadS": 29375839559554.742,
+            "freqThz": 4.675310073377583,
+            "energyMevExact": 19.335528843570383,
+            "wavelengthUm": 64.12247600583656,
+            "kLightMInv": 97987.25343368959,
+            "kLightAngInv": 9.798725343368959e-06,
+            "kOverZoneEdge": 1.759133567919815e-05,
+            "speedRatio": 74089.91193157366,
+            "shiftRelFromZero": 9.108604540614439e-11
+          },
+          "resEq": 0.0
+        }
+      }
+    },
+    {
+      "group": "9. Estremi slider (16 vertici)",
+      "name": "Stabilit\u00e0 su tutti i 16 vertici (a\u2208{3,7}, M\u2208{6,210}, m\u2208{6,210}, C\u2208{2,80})",
+      "status": "PASS",
+      "maxRelErr": 2.206855513154847e-16,
+      "maxAbsErr": null,
+      "tolerance": 1e-13,
+      "detail": "badNum/swap=False, max err eq20=2.21e-16, D(k)=1.92e-16"
+    }
+  ]
+}

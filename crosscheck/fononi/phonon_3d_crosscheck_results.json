@@ -1,0 +1,1182 @@
+{
+  "summary": {
+    "total": 49,
+    "passed": 49,
+    "failed": 0,
+    "verdict": "PASS"
+  },
+  "constantsCheck": {
+    "THZ_TO_MEV_EXACT": 4.135667696923859,
+    "THZ_TO_MEV_APP": 4.135667696,
+    "thzToMevRelDiff": 2.2338816342568138e-10
+  },
+  "dispSummary": {
+    "aluminum": {
+      "maxMatRel": 5.954446178122793e-16,
+      "maxMatAbs": 2199023255552.0,
+      "maxHerm": 0.0,
+      "maxSumRule": 1.0658141036401503e-14,
+      "maxPhiSym": 0.0,
+      "maxW2Rel": 7.443057722653492e-16,
+      "maxWRel": 1.7341641687245698e-13,
+      "maxThzRel": 1.7349255528297153e-13,
+      "maxMevRelExact": 2.2350075302472036e-10,
+      "maxEigRes": 6.046768678675924e-16,
+      "maxOrthoErr": 8.183950836961667e-16,
+      "maxLFracErr": 6.661338147750939e-16,
+      "maxDispErr": 1.1102230246251565e-16,
+      "maxNewtonRes": 3.9674868297452935e-16,
+      "maxTraceErr": 3.9330556479705087e-16,
+      "maxFrobErr": 7.983852906521174e-16,
+      "minEigRatio": -7.443057722653491e-17
+    },
+    "diamond": {
+      "maxMatRel": 7.443057722653491e-17,
+      "maxMatAbs": 4398046511104.0,
+      "maxHerm": 0.0,
+      "maxSumRule": 0.0,
+      "maxPhiSym": 0.0,
+      "maxW2Rel": 1.935195007889908e-15,
+      "maxWRel": 7.126878540527646e-13,
+      "maxThzRel": 7.127726670954483e-13,
+      "maxMevRelExact": 2.2354095387770595e-10,
+      "maxEigRes": 2.0082761907503703e-15,
+      "maxOrthoErr": 3.6512751886610574e-15,
+      "maxLFracErr": 1.5543122344752192e-15,
+      "maxDispErr": 2.2887833992611187e-16,
+      "maxNewtonRes": 1.101119943700703e-15,
+      "maxTraceErr": 1.3893707748953185e-15,
+      "maxFrobErr": 2.790208156712095e-15,
+      "minEigRatio": 0.0
+    },
+    "pbte": {
+      "maxMatRel": 3.9960624732486216e-16,
+      "maxMatAbs": 171798704947.1995,
+      "maxHerm": 2.6592710996176514e-16,
+      "maxSumRule": 4.496403249731884e-15,
+      "maxPhiSym": 0.0,
+      "maxW2Rel": 2.077952327554108e-15,
+      "maxWRel": 9.635276643568398e-13,
+      "maxThzRel": 9.635377325527776e-13,
+      "maxMevRelExact": 2.243517511176035e-10,
+      "maxEigRes": 1.0900374544433568e-15,
+      "maxOrthoErr": 2.750464110209959e-15,
+      "maxLFracErr": 1.7763568394002505e-15,
+      "maxDispErr": 1.1102230246251565e-16,
+      "maxNewtonRes": null,
+      "maxTraceErr": 1.4492432288338016e-15,
+      "maxFrobErr": 3.2218273264442712e-15,
+      "minEigRatio": -3.6327055588354585e-17
+    }
+  },
+  "branchRoleAudit": {
+    "aluminum": {
+      "mismatchCount": 0,
+      "sampleMismatches": [],
+      "segMaxJumpFrac": 0.045222515719711164,
+      "segSpecErr": 0.0
+    },
+    "diamond": {
+      "mismatchCount": 0,
+      "sampleMismatches": [],
+      "segMaxJumpFrac": 0.023244229681318656,
+      "segSpecErr": 0.0
+    },
+    "pbte": {
+      "mismatchCount": 0,
+      "sampleMismatches": [],
+      "segMaxJumpFrac": 0.011514172236029206,
+      "segSpecErr": 6.728624391667613e-17
+    }
+  },
+  "tests": [
+    {
+      "group": "1. Tab. 1 e calibrazioni",
+      "name": "Costanti di forza calibrate C_L (Al, Diamante, PbTe)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 4.4677625590670875e-10,
+      "tolerance": 1e-09,
+      "detail": "Al C_L=10.341503 N/m (err vs app_const=1.72e-16, vs SI2019=4.47e-10); Dia C_L=276.215458 N/m (err vs app_const=2.06e-16, vs SI2019=4.47e-10); PbTe C_L=2.007680 N/m (err=2.21e-16)",
+      "extra": {
+        "al_vs_app_const": 1.717697009161024e-16,
+        "al_vs_si2019": 4.4677625590670875e-10,
+        "dia_vs_app_const": 2.0579376395050394e-16,
+        "dia_vs_si2019": 4.467762037985134e-10,
+        "pbte_vs_si2019": 2.2119516745548392e-16
+      }
+    },
+    {
+      "group": "1. Tab. 1 e calibrazioni",
+      "name": "Alluminio Tab. 1 a X: LA = 40 meV (9,67 THz), TA = 24 meV (5,80 THz)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.2338845747537987e-10,
+      "tolerance": 1e-09,
+      "detail": "LA=40.000000000000 meV (9.671956971 THz), TA=24.000000000000 meV (5.803174182 THz)",
+      "extra": {
+        "app": {
+          "laAtXMev": 40,
+          "laAtXThz": 9.671956970500274,
+          "taAtXMev": 24.000000000000007,
+          "taAtXThz": 5.8031741823001655,
+          "loAtGammaMev": null,
+          "loAtGammaThz": null,
+          "toAtGammaMev": null,
+          "toAtGammaThz": null,
+          "loToSplitThz": null,
+          "loToSplitMev": null
+        },
+        "refThzExact": [
+          9.671956968339673,
+          5.803174181003803
+        ],
+        "mevErr": 2.9605947323337506e-16,
+        "thzErrExact": 2.2338845747537987e-10
+      }
+    },
+    {
+      "group": "1. Tab. 1 e calibrazioni",
+      "name": "Diamante Tab. 1 a Γ: 3 ottici degeneri = 160 meV (38,69 THz), split = 0, LA(X) = 160/√2",
+      "status": "PASS",
+      "maxAbsErr": 0,
+      "maxRelErr": 2.233881513744799e-10,
+      "tolerance": 1e-09,
+      "detail": "LO=TO=160.000000000000 meV (38.687827882 THz), split=0.00e+00, LA(X)=113.137084990 meV",
+      "extra": {
+        "app": {
+          "laAtXMev": 113.13708498984762,
+          "laAtXThz": 27.356425444740964,
+          "taAtXMev": 84.85281374238572,
+          "taAtXThz": 20.517319083555723,
+          "loAtGammaMev": 160,
+          "loAtGammaThz": 38.687827882001095,
+          "toAtGammaMev": 160,
+          "toAtGammaThz": 38.687827882001095,
+          "loToSplitThz": 0,
+          "loToSplitMev": 0
+        },
+        "refThzExact": 38.68782787335869,
+        "diaLaXRef": 113.1370849898476
+      }
+    },
+    {
+      "group": "1. Tab. 1 e calibrazioni",
+      "name": "PbTe Tab. 1 a Γ: LO = 3,30 THz (13,65 meV), TO = 1,10 THz (4,55 meV), split = 2,20 THz",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.2338771438081896e-10,
+      "tolerance": 1e-09,
+      "detail": "LO=3.300000000000 THz (13.647703397 meV), TO=1.100000000000 THz (4.549234466 meV)",
+      "extra": {
+        "app": {
+          "laAtXMev": 11.147738912859277,
+          "laAtXThz": 2.6955112770886602,
+          "taAtXMev": 4.389914303307881,
+          "taAtXThz": 1.0614765561444377,
+          "loAtGammaMev": 13.647703396800004,
+          "loAtGammaThz": 3.300000000000001,
+          "toAtGammaMev": 4.549234465600001,
+          "toAtGammaThz": 1.1000000000000005,
+          "loToSplitThz": 2.2000000000000006,
+          "loToSplitMev": 9.098468931200003
+        },
+        "refMevExact": [
+          13.647703399848734,
+          4.5492344666162445
+        ],
+        "thzErr": 4.0371746350005696e-16,
+        "mevErrExact": 2.2338771438081896e-10
+      }
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "aluminum: D(k) da spazio reale vs buildDynamicalMatrix3D (161 pt)",
+      "status": "PASS",
+      "maxAbsErr": 2199023255552.0,
+      "maxRelErr": 5.954446178122793e-16,
+      "tolerance": 1e-14,
+      "detail": "rel=5.95e-16, herm=0.00e+00, sumRule=1.07e-14, minEig/max=-7.44e-17",
+      "extra": {
+        "maxMatRel": 5.954446178122793e-16,
+        "maxMatAbs": 2199023255552.0,
+        "maxHerm": 0.0,
+        "maxSumRule": 1.0658141036401503e-14,
+        "maxPhiSym": 0.0,
+        "maxW2Rel": 7.443057722653492e-16,
+        "maxWRel": 1.7341641687245698e-13,
+        "maxThzRel": 1.7349255528297153e-13,
+        "maxMevRelExact": 2.2350075302472036e-10,
+        "maxEigRes": 6.046768678675924e-16,
+        "maxOrthoErr": 8.183950836961667e-16,
+        "maxLFracErr": 6.661338147750939e-16,
+        "maxDispErr": 1.1102230246251565e-16,
+        "maxNewtonRes": 3.9674868297452935e-16,
+        "maxTraceErr": 3.9330556479705087e-16,
+        "maxFrobErr": 7.983852906521174e-16,
+        "minEigRatio": -7.443057722653491e-17
+      }
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "aluminum: autovalori ω, ν (Jacobi indipendente vs eigh/solvePhonon3DAtK, 161 pt)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 1.7349255528297153e-13,
+      "tolerance": 1e-12,
+      "detail": "ω rel=1.73e-13, ν rel=1.73e-13, meV vs SI2019=2.24e-10, trace=3.93e-16",
+      "extra": {}
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "aluminum: residui autovettori ‖Dε−ω²ε‖, ortonormalità, L_s, u_α e Newton eq.(25)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 8.183950836961667e-16,
+      "tolerance": 1e-12,
+      "detail": "res=6.05e-16, ortho=8.18e-16, L_err=6.66e-16, u_err=1.11e-16, newton=3.97e-16",
+      "extra": {}
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "diamond: D(k) da spazio reale vs buildDynamicalMatrix3D (161 pt)",
+      "status": "PASS",
+      "maxAbsErr": 4398046511104.0,
+      "maxRelErr": 7.443057722653491e-17,
+      "tolerance": 1e-14,
+      "detail": "rel=7.44e-17, herm=0.00e+00, sumRule=0.00e+00, minEig/max=0.00e+00",
+      "extra": {
+        "maxMatRel": 7.443057722653491e-17,
+        "maxMatAbs": 4398046511104.0,
+        "maxHerm": 0.0,
+        "maxSumRule": 0.0,
+        "maxPhiSym": 0.0,
+        "maxW2Rel": 1.935195007889908e-15,
+        "maxWRel": 7.126878540527646e-13,
+        "maxThzRel": 7.127726670954483e-13,
+        "maxMevRelExact": 2.2354095387770595e-10,
+        "maxEigRes": 2.0082761907503703e-15,
+        "maxOrthoErr": 3.6512751886610574e-15,
+        "maxLFracErr": 1.5543122344752192e-15,
+        "maxDispErr": 2.2887833992611187e-16,
+        "maxNewtonRes": 1.101119943700703e-15,
+        "maxTraceErr": 1.3893707748953185e-15,
+        "maxFrobErr": 2.790208156712095e-15,
+        "minEigRatio": 0.0
+      }
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "diamond: autovalori ω, ν (Jacobi indipendente vs eigh/solvePhonon3DAtK, 161 pt)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 7.127726670954483e-13,
+      "tolerance": 1e-12,
+      "detail": "ω rel=7.13e-13, ν rel=7.13e-13, meV vs SI2019=2.24e-10, trace=1.39e-15",
+      "extra": {}
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "diamond: residui autovettori ‖Dε−ω²ε‖, ortonormalità, L_s, u_α e Newton eq.(25)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 3.6512751886610574e-15,
+      "tolerance": 1e-12,
+      "detail": "res=2.01e-15, ortho=3.65e-15, L_err=1.55e-15, u_err=2.29e-16, newton=1.10e-15",
+      "extra": {}
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "pbte: D(k) da spazio reale vs buildDynamicalMatrix3D (161 pt)",
+      "status": "PASS",
+      "maxAbsErr": 171798704947.1995,
+      "maxRelErr": 3.9960624732486216e-16,
+      "tolerance": 1e-14,
+      "detail": "rel=4.00e-16, herm=2.66e-16, sumRule=4.50e-15, minEig/max=-3.63e-17",
+      "extra": {
+        "maxMatRel": 3.9960624732486216e-16,
+        "maxMatAbs": 171798704947.1995,
+        "maxHerm": 2.6592710996176514e-16,
+        "maxSumRule": 4.496403249731884e-15,
+        "maxPhiSym": 0.0,
+        "maxW2Rel": 2.077952327554108e-15,
+        "maxWRel": 9.635276643568398e-13,
+        "maxThzRel": 9.635377325527776e-13,
+        "maxMevRelExact": 2.243517511176035e-10,
+        "maxEigRes": 1.0900374544433568e-15,
+        "maxOrthoErr": 2.750464110209959e-15,
+        "maxLFracErr": 1.7763568394002505e-15,
+        "maxDispErr": 1.1102230246251565e-16,
+        "maxNewtonRes": null,
+        "maxTraceErr": 1.4492432288338016e-15,
+        "maxFrobErr": 3.2218273264442712e-15,
+        "minEigRatio": -3.6327055588354585e-17
+      }
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "pbte: autovalori ω, ν (Jacobi indipendente vs eigh/solvePhonon3DAtK, 161 pt)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 9.635377325527776e-13,
+      "tolerance": 1e-12,
+      "detail": "ω rel=9.64e-13, ν rel=9.64e-13, meV vs SI2019=2.24e-10, trace=1.45e-15",
+      "extra": {}
+    },
+    {
+      "group": "2. Matrice dinamica & Jacobi",
+      "name": "pbte: residui autovettori ‖Dε−ω²ε‖, ortonormalità, L_s, u_α e Newton eq.(25)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.750464110209959e-15,
+      "tolerance": 1e-12,
+      "detail": "res=1.09e-15, ortho=2.75e-15, L_err=1.78e-15, u_err=1.11e-16, newton=0.00e+00",
+      "extra": {}
+    },
+    {
+      "group": "3. Formule analitiche chiuse",
+      "name": "aluminum: formula chiusa ω² lungo Γ–X ([100]) e Γ–L ([111])",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 1.8863179930675396e-14,
+      "tolerance": 1e-13,
+      "detail": "max err ω²/ω²_max: Γ–X=1.66e-14, Γ–L=1.89e-14",
+      "extra": {}
+    },
+    {
+      "group": "3. Formule analitiche chiuse",
+      "name": "diamond: formula chiusa ω² lungo Γ–X ([100]) e Γ–L ([111])",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 1.9481107181628115e-15,
+      "tolerance": 1e-13,
+      "detail": "max err ω²/ω²_max: Γ–X=1.93e-15, Γ–L=1.95e-15",
+      "extra": {}
+    },
+    {
+      "group": "3. Formule analitiche chiuse",
+      "name": "pbte: formula chiusa ω² lungo Γ–X ([100]) e Γ–L ([111])",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 1.505168767020186e-15,
+      "tolerance": 1e-13,
+      "detail": "max err ω²/ω²_max: Γ–X=1.01e-15, Γ–L=1.51e-15",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "aluminum: degenerazione TA/TO e purezza L/T su Γ–X (C₄) e Γ–L (C₃)",
+      "status": "PASS",
+      "maxAbsErr": 3.552713678800501e-15,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "Δν_deg Γ–X=0.00e+00 THz, Γ–L=3.55e-15 THz, impurezza L/T=4.44e-16",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "diamond: degenerazione TA/TO e purezza L/T su Γ–X (C₄) e Γ–L (C₃)",
+      "status": "PASS",
+      "maxAbsErr": 1.1013412404281553e-13,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "Δν_deg Γ–X=5.42e-14 THz, Γ–L=1.10e-13 THz, impurezza L/T=1.44e-15",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "pbte: degenerazione TA/TO e purezza L/T su Γ–X (C₄) e Γ–L (C₃)",
+      "status": "PASS",
+      "maxAbsErr": 2.028238688112083e-14,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "Δν_deg Γ–X=5.00e-15 THz, Γ–L=2.03e-14 THz, impurezza L/T=1.55e-15",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "aluminum: rimozione degenerazione su K–Γ ([110], tutti i 3 rami distinti + purezza L/T)",
+      "status": "PASS",
+      "maxAbsErr": 6.661338147750939e-16,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "a metà K–Γ: ΔTA=1.6013 THz, min_gap=1.6013 THz, err_sym=6.66e-16",
+      "extra": {
+        "midFreqsThz": [
+          3.2240708327138425,
+          4.825420139719603,
+          7.093532706252431
+        ],
+        "splitTA": 1.6013493070057607,
+        "splitTO": null
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "diamond: rimozione degenerazione su K–Γ ([110], tutti i 6 rami distinti + 2 modi [1,-1,0] puri T + 4 modi Σ₁ misti)",
+      "status": "PASS",
+      "maxAbsErr": 3.9968028886505635e-15,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "a metà K–Γ: ΔTA=2.1778 THz, ΔTO=0.7431 THz, min_gap=0.7431 THz, err_sym=4.00e-15",
+      "extra": {
+        "midFreqsThz": [
+          11.398811744188587,
+          13.57665393063735,
+          16.893325939970687,
+          34.80464861068497,
+          36.22737216905266,
+          36.970462764859874
+        ],
+        "splitTA": 2.177842186448764,
+        "splitTO": 0.7430905958072174
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "pbte: rimozione degenerazione su K–Γ ([110], tutti i 6 rami distinti + purezza L/T)",
+      "status": "PASS",
+      "maxAbsErr": 1.7763568394002505e-15,
+      "maxRelErr": null,
+      "tolerance": 1e-11,
+      "detail": "a metà K–Γ: ΔTA=0.1248 THz, ΔTO=0.0927 THz, min_gap=0.0802 THz, err_sym=1.78e-15",
+      "extra": {
+        "midFreqsThz": [
+          0.43301752156860596,
+          0.5578422853520628,
+          0.6380589736443673,
+          0.9827747618179682,
+          1.0754368050243277,
+          3.1189981360690964
+        ],
+        "splitTA": 0.12482476378345686,
+        "splitTO": 0.09266204320635951
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "aluminum: polarizzazione mista su X–K (2/3 misti) e 3D generico + regola somma ∑L_s = p",
+      "status": "PASS",
+      "maxAbsErr": 6.661338147750939e-16,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "X–K L=[0.0414, 0, 0.9586]; 3D gen L=[0.0001, 0.0407, 0.9592]; |∑L−p|=6.66e-16",
+      "extra": {
+        "xkLs": [
+          0.0413937208198185,
+          0,
+          0.9586062791801816
+        ],
+        "g3Ls": [
+          7.512303206168335e-05,
+          0.04074095343768891,
+          0.9591839235302502
+        ]
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "diamond: polarizzazione mista su X–K (6/6 misti) e 3D generico + regola somma ∑L_s = p",
+      "status": "PASS",
+      "maxAbsErr": 1.3322676295501878e-15,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "X–K L=[0.0243, 0.2356, 0.74, 0.74, 0.2356, 0.0243]; 3D gen L=[0.0207, 0.0846, 0.8947, 0.8947, 0.0846, 0.0207]; |∑L−p|=1.33e-15",
+      "extra": {
+        "xkLs": [
+          0.02433288135990033,
+          0.2356367619961825,
+          0.7400303566439181,
+          0.7400303566439177,
+          0.2356367619961823,
+          0.024332881359900416
+        ],
+        "g3Ls": [
+          0.020686502122436237,
+          0.08464346758517403,
+          0.8946700302923896,
+          0.8946700302923905,
+          0.0846434675851756,
+          0.020686502122434544
+        ]
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "pbte: polarizzazione mista su X–K (4/6 misti) e 3D generico + regola somma ∑L_s = p",
+      "status": "PASS",
+      "maxAbsErr": 4.440892098500626e-16,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "X–K L=[0, 0.0776, 0.4358, 0.4869, 0, 0.9997]; 3D gen L=[0.0091, 0.0864, 0.8419, 0.0586, 0.0043, 0.9997]; |∑L−p|=4.44e-16",
+      "extra": {
+        "xkLs": [
+          0,
+          0.07759450523755507,
+          0.43577842237809994,
+          0.4869252410639823,
+          0,
+          0.9997018313203626
+        ],
+        "g3Ls": [
+          0.009124885334471318,
+          0.08640663132872783,
+          0.8418542295761555,
+          0.05861402578150317,
+          0.0043044897247472395,
+          0.9996957382543955
+        ]
+      }
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "aluminum: 3 modi acustici nulli a Γ e isotropia spettrale lungo [100], [111], [110]",
+      "status": "PASS",
+      "maxAbsErr": 0.0,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "max ω_ac(Γ)=0.00e+00 rad/s, max Δν tra direzioni=0.00e+00 THz",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "diamond: 3 modi acustici nulli a Γ e isotropia spettrale lungo [100], [111], [110]",
+      "status": "PASS",
+      "maxAbsErr": 0.0,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "max ω_ac(Γ)=0.00e+00 rad/s, max Δν tra direzioni=0.00e+00 THz",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "pbte: 3 modi acustici nulli a Γ e isotropia spettrale lungo [100], [111], [110]",
+      "status": "PASS",
+      "maxAbsErr": 4.440892098500626e-16,
+      "maxRelErr": null,
+      "tolerance": 1e-12,
+      "detail": "max ω_ac(Γ)=0.00e+00 rad/s, max Δν tra direzioni=4.44e-16 THz",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale aluminum:Oh",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.871282768333183e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 2.87e-16 su 5 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale aluminum:G_SR",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 4.3069241524997746e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 4.31e-16 su 4 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale diamond:Oh",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 8.424484770896515e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 8.42e-16 su 5 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale diamond:G_SR",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 6.318363578172386e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 6.32e-16 su 4 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale pbte:Oh",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 4.236877818610192e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 4.24e-16 su 5 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Invarianza spettrale pbte:G_SR",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.988628795203946e-16,
+      "tolerance": 1e-13,
+      "detail": "max |ω_rot − ω_0|/ω_max = 2.99e-16 su 4 vettori equivalenti",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "aluminum: stabilità dinamica (ω² ≥ 0) su griglia 3D densa (1029 punti × 3 valori di r)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 7.443057722653491e-17,
+      "tolerance": 1e-13,
+      "detail": "min(λ_min / ω²_max) = -7.443e-17 su 1029 configurazioni 3D",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "diamond: stabilità dinamica (ω² ≥ 0) su griglia 3D densa (1029 punti × 3 valori di r)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.6803312513436604e-81,
+      "tolerance": 1e-13,
+      "detail": "min(λ_min / ω²_max) = -2.680e-81 su 1029 configurazioni 3D",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "pbte: stabilità dinamica (ω² ≥ 0) su griglia 3D densa (1029 punti × 3 valori di r)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 9.201853378884433e-17,
+      "tolerance": 1e-13,
+      "detail": "min(λ_min / ω²_max) = -9.202e-17 su 1029 configurazioni 3D",
+      "extra": {}
+    },
+    {
+      "group": "4. Simmetrie & polarizzazioni",
+      "name": "Alluminio: velocità del suono k → 0 ([100], [110], [111]) vs tensore di Christoffel",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 7.243414324053342e-09,
+      "tolerance": 1e-08,
+      "detail": "max rel err a k=10⁻⁴ Å⁻¹ = 7.24e-09 (atteso O((ka)²) ~ 10⁻⁸)",
+      "extra": {
+        "100": {
+          "app": [
+            3691.819896972165,
+            3691.819896972165,
+            6153.033161620276
+          ],
+          "ref": [
+            3691.8198991697705,
+            3691.8198991697705,
+            6153.033165282951
+          ],
+          "relErr": 5.952633895217555e-10
+        },
+        "110": {
+          "app": [
+            2610.510904531393,
+            3691.81990085927,
+            6683.904850983522
+          ],
+          "ref": [
+            2610.510885622381,
+            3691.8198991697705,
+            6683.904862954354
+          ],
+          "relErr": 7.243414324053342e-09
+        },
+        "111": {
+          "app": [
+            3014.358310827958,
+            3014.358310827959,
+            6851.727737339739
+          ],
+          "ref": [
+            3014.35832507306,
+            3014.35832507306,
+            6851.727756194725
+          ],
+          "relErr": 4.725749297854959e-09
+        }
+      }
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "aluminum: lunghezze geometriche cammino Γ–X–K–Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 5.784326419773151e-15,
+      "tolerance": 1e-14,
+      "detail": "max rel err lunghezze = 5.78e-15, totale = 5.766963 Å⁻¹",
+      "extra": {}
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "diamond: lunghezze geometriche cammino Γ–X–K–Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 5.827173282141841e-15,
+      "tolerance": 1e-14,
+      "detail": "max rel err lunghezze = 5.83e-15, totale = 6.542353 Å⁻¹",
+      "extra": {}
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "pbte: lunghezze geometriche cammino Γ–X–K–Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 5.667619727987957e-15,
+      "tolerance": 1e-14,
+      "detail": "max rel err lunghezze = 5.67e-15, totale = 3.615511 Å⁻¹",
+      "extra": {}
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "aluminum: coerenza spettrale e continuità dei 4 segmenti Γ–X, X–K, K–Γ, Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 0.0,
+      "tolerance": 1e-12,
+      "detail": "segSpecErr=0.00e+00, maxJump/maxFreq=0.0452; mismatch branches.role vs modesAtPoint=0",
+      "extra": {
+        "mismatchCount": 0,
+        "sampleMismatches": [],
+        "segMaxJumpFrac": 0.045222515719711164,
+        "segSpecErr": 0.0
+      }
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "diamond: coerenza spettrale e continuità dei 4 segmenti Γ–X, X–K, K–Γ, Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 0.0,
+      "tolerance": 1e-12,
+      "detail": "segSpecErr=0.00e+00, maxJump/maxFreq=0.0232; mismatch branches.role vs modesAtPoint=0",
+      "extra": {
+        "mismatchCount": 0,
+        "sampleMismatches": [],
+        "segMaxJumpFrac": 0.023244229681318656,
+        "segSpecErr": 0.0
+      }
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "pbte: coerenza spettrale e continuità dei 4 segmenti Γ–X, X–K, K–Γ, Γ–L",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 6.728624391667613e-17,
+      "tolerance": 1e-12,
+      "detail": "segSpecErr=6.73e-17, maxJump/maxFreq=0.0115; mismatch branches.role vs modesAtPoint=0",
+      "extra": {
+        "mismatchCount": 0,
+        "sampleMismatches": [],
+        "segMaxJumpFrac": 0.011514172236029206,
+        "segSpecErr": 6.728624391667613e-17
+      }
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "Stress-test estremi slider UI (21 configurazioni, r ∈ [0.15, 0.85], polar ∈ [1, 3.5])",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 0.09157452816305917,
+      "tolerance": 0.12,
+      "detail": "anomalie=0, maxJump/maxFreq su 20 pt/seg = 0.0916",
+      "extra": {
+        "anomalies": [],
+        "diamondPolarAudit": [
+          {
+            "tag": "diamond_r0.15_pol2.00",
+            "atX": {
+              "TA1": 14.507935455750406,
+              "TA2": 14.507935455750406,
+              "LA": 24.658748663605337,
+              "TO1": 31.711631621874883,
+              "TO2": 31.711631621874883,
+              "LO": 55.46740413612519
+            },
+            "tab1": {
+              "laAtXMev": 101.98039027185575,
+              "laAtXThz": 24.658748663605337,
+              "taAtXMev": 59.999999999999986,
+              "taAtXThz": 14.507935455750406,
+              "loAtGammaMev": 288.44410203711925,
+              "loAtGammaThz": 69.74547358244018,
+              "toAtGammaMev": 144.22205101855963,
+              "toAtGammaThz": 34.87273679122009,
+              "loToSplitThz": 34.87273679122009,
+              "loToSplitMev": 144.22205101855963
+            }
+          },
+          {
+            "tag": "diamond_r0.15_pol3.50",
+            "atX": {
+              "TA1": 14.507935455750422,
+              "TA2": 14.50793545575041,
+              "LA": 24.658748663605312,
+              "TO1": 31.71163162187489,
+              "TO2": 31.711631621874883,
+              "LO": 99.32384039318065
+            },
+            "tab1": {
+              "laAtXMev": 101.98039027185565,
+              "laAtXThz": 24.658748663605312,
+              "taAtXMev": 60,
+              "taAtXThz": 14.50793545575041,
+              "loAtGammaMev": 504.7771785649585,
+              "loAtGammaThz": 122.05457876927028,
+              "toAtGammaMev": 144.2220510185596,
+              "toAtGammaThz": 34.872736791220085,
+              "loToSplitThz": 87.18184197805019,
+              "loToSplitMev": 360.5551275463989
+            }
+          },
+          {
+            "tag": "diamond_r0.30_pol2.00",
+            "atX": {
+              "TA1": 20.517319083555737,
+              "TA2": 20.517319083555723,
+              "LA": 27.35642544474097,
+              "TO1": 32.79920187826073,
+              "TO2": 32.799201878260725,
+              "LO": 61.53555991682548
+            },
+            "tab1": {
+              "laAtXMev": 113.13708498984765,
+              "laAtXThz": 27.35642544474097,
+              "taAtXMev": 84.85281374238572,
+              "taAtXThz": 20.517319083555723,
+              "loAtGammaMev": 320,
+              "loAtGammaThz": 77.37565576400219,
+              "toAtGammaMev": 160,
+              "toAtGammaThz": 38.687827882001095,
+              "loToSplitThz": 38.687827882001095,
+              "loToSplitMev": 160
+            }
+          },
+          {
+            "tag": "diamond_r0.30_pol3.50",
+            "atX": {
+              "TA1": 20.517319083555748,
+              "TA2": 20.517319083555726,
+              "LA": 27.35642544474098,
+              "TO1": 32.79920187826074,
+              "TO2": 32.79920187826073,
+              "LO": 110.1899075118814
+            },
+            "tab1": {
+              "laAtXMev": 113.1370849898477,
+              "laAtXThz": 27.35642544474098,
+              "taAtXMev": 84.85281374238573,
+              "taAtXThz": 20.517319083555726,
+              "loAtGammaMev": 560,
+              "loAtGammaThz": 135.40739758700383,
+              "toAtGammaMev": 160,
+              "toAtGammaThz": 38.687827882001095,
+              "loToSplitThz": 96.71956970500273,
+              "loToSplitMev": 400
+            }
+          },
+          {
+            "tag": "diamond_r0.85_pol2.00",
+            "atX": {
+              "TA1": 34.53579423438693,
+              "TA2": 34.535794234386906,
+              "LA": 35.53703908782103,
+              "TO1": 36.51083689616997,
+              "TO2": 36.51083689616995,
+              "LO": 79.93703718610543
+            },
+            "tab1": {
+              "laAtXMev": 146.96938456699073,
+              "laAtXThz": 35.53703908782103,
+              "taAtXMev": 142.82856857085696,
+              "taAtXThz": 34.535794234386906,
+              "loAtGammaMev": 415.69219381653056,
+              "loAtGammaThz": 100.51392528915858,
+              "toAtGammaMev": 207.84609690826528,
+              "toAtGammaThz": 50.25696264457929,
+              "loToSplitThz": 50.25696264457929,
+              "loToSplitMev": 207.84609690826528
+            }
+          },
+          {
+            "tag": "diamond_r0.85_pol3.50",
+            "atX": {
+              "TA1": 34.535794234386934,
+              "TA2": 34.53579423438692,
+              "LA": 35.537039087821,
+              "TO1": 36.510836896169984,
+              "TO2": 36.51083689616997,
+              "LO": 143.14088871892054
+            },
+            "tab1": {
+              "laAtXMev": 146.9693845669906,
+              "laAtXThz": 35.537039087821,
+              "taAtXMev": 142.82856857085702,
+              "taAtXThz": 34.53579423438692,
+              "loAtGammaMev": 727.4613391789285,
+              "loAtGammaThz": 175.8993692560275,
+              "toAtGammaMev": 207.84609690826528,
+              "toAtGammaThz": 50.25696264457929,
+              "loToSplitThz": 125.64240661144822,
+              "loToSplitMev": 519.6152422706632
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "5. Cammino, rami & slider",
+      "name": "Velocità di gruppo al bordo zona X e L (Al, Diamante non-sticking, PbTe trasversali vs LO dipolare)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 9.0025926339815e-13,
+      "tolerance": 0.0001,
+      "detail": "Al |v_g(X,L)|/scale=0.00e+00; Dia TA/TO(X)&L=9.00e-13; PbTe |dω_LO/dk|/(a·ω_max): a X=4.572e-02, a L=5.004e-02 (effetto inviluppo gaussiano)",
+      "extra": {
+        "slopes": {
+          "aluminum": {
+            "h": 0.0001,
+            "dOmegaDkAtX": [
+              0,
+              0,
+              0
+            ],
+            "dOmegaDkAtL": [
+              0,
+              0,
+              0
+            ]
+          },
+          "diamond": {
+            "h": 0.0001,
+            "dOmegaDkAtX": [
+              156.25,
+              -156.25,
+              -468.75,
+              -781.25,
+              0,
+              -156.25
+            ],
+            "dOmegaDkAtL": [
+              781.25,
+              468.75,
+              312.5,
+              156.25,
+              0,
+              156.25
+            ]
+          },
+          "pbte": {
+            "h": 0.0001,
+            "dOmegaDkAtX": [
+              -4.8828125,
+              -7.32421875,
+              -22481787055.664062,
+              0,
+              -4.8828125,
+              -6123657710908.203
+            ],
+            "dOmegaDkAtL": [
+              0,
+              4.8828125,
+              3743458683857.422,
+              -29.296875,
+              -24.4140625,
+              -6701966984199.219
+            ]
+          }
+        },
+        "pbteLoSlopeNormX": 0.045717721854481704,
+        "pbteLoSlopeNormL": 0.05003523660634149
+      }
+    },
+    {
+      "group": "6. Conteggio 3D BvK",
+      "name": "computeModeCounting3D: v_c=a³/4, N_c=4N³, p−1 LO, 2(p−1) TO (8 casi, 50 cifre)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.413226992658335e-16,
+      "tolerance": 1e-14,
+      "detail": "max err relativo su tutte le 17 identità × 8 casi = 2.41e-16",
+      "extra": {
+        "cases": [
+          {
+            "input": {
+              "N": 1,
+              "p": 1,
+              "a": 4.05
+            },
+            "maxErr": 2.139218421642591e-16
+          },
+          {
+            "input": {
+              "N": 4,
+              "p": 1,
+              "a": 4.05
+            },
+            "maxErr": 2.139218421642591e-16
+          },
+          {
+            "input": {
+              "N": 8,
+              "p": 1,
+              "a": 4.05
+            },
+            "maxErr": 2.139218421642591e-16
+          },
+          {
+            "input": {
+              "N": 8,
+              "p": 2,
+              "a": 3.57
+            },
+            "maxErr": 1.5616566520277583e-16
+          },
+          {
+            "input": {
+              "N": 8,
+              "p": 2,
+              "a": 6.46
+            },
+            "maxErr": 2.413226992658335e-16
+          },
+          {
+            "input": {
+              "N": 7,
+              "p": 3,
+              "a": 5
+            },
+            "maxErr": 1.499218001071727e-16
+          },
+          {
+            "input": {
+              "N": 12,
+              "p": 4,
+              "a": 5.43
+            },
+            "maxErr": 2.103957295102702e-16
+          },
+          {
+            "input": {
+              "N": 100,
+              "p": 2,
+              "a": 6.46
+            },
+            "maxErr": 2.413226992658335e-16
+          }
+        ]
+      }
+    },
+    {
+      "group": "6. Conteggio 3D BvK",
+      "name": "Stima macroscopica 1 cm³ di Al (§14.2 p. 35: N_c ≈ 6,0·10²², 3N_c ≈ 1,8·10²³, Δk ≈ 6,3·10² m⁻¹)",
+      "status": "PASS",
+      "maxAbsErr": null,
+      "maxRelErr": 2.78628139008e-16,
+      "tolerance": 1e-14,
+      "detail": "N_c(a³/4)=6.021365e+22 vs N_c(ρ·N_A/M)=6.026605e+22 (scarto 0.087%); 3N_c=1.806409e+23; Δk=628.3185 m⁻¹; Δk/(2π/a)=4.0500e-08; err app=2.79e-16",
+      "extra": {
+        "app": {
+          "primitiveCells": 6.021364554108548e+22,
+          "totalModes": 1.8064093662325642e+23,
+          "deltaKMInv": 628.3185307179587,
+          "bzWidthMInv": 15514037795.505152,
+          "spacingRatio": 4.05e-08
+        },
+        "refGeom": 6.021364554108546e+22,
+        "refDens": 6.026604911786509e+22,
+        "errs": {
+          "primitiveCells": 2.78628139008e-16,
+          "totalModes": 1.85752092672e-16,
+          "deltaKMInv": 0.0,
+          "bzWidthMInv": 0.0,
+          "spacingRatio": 0.0
+        }
+      }
+    },
+    {
+      "group": "6. Conteggio 3D BvK",
+      "name": "Griglia 2D Born–von Kármán Fig. 17 (N = 2…15: N² contati, 2N+1/0 ghost equivalenti per G)",
+      "status": "PASS",
+      "maxAbsErr": 0.0,
+      "maxRelErr": null,
+      "tolerance": 1e-15,
+      "detail": "Tutti i 14 valori N=2..15 verificati (N=8: 64 contati + 17 ghost; N=7: 49 + 0), coord err=0.00e+00",
+      "extra": {
+        "grids": [
+          {
+            "N": 2,
+            "counted": 4,
+            "ghosts": 5
+          },
+          {
+            "N": 3,
+            "counted": 9,
+            "ghosts": 0
+          },
+          {
+            "N": 4,
+            "counted": 16,
+            "ghosts": 9
+          },
+          {
+            "N": 5,
+            "counted": 25,
+            "ghosts": 0
+          },
+          {
+            "N": 6,
+            "counted": 36,
+            "ghosts": 13
+          },
+          {
+            "N": 7,
+            "counted": 49,
+            "ghosts": 0
+          },
+          {
+            "N": 8,
+            "counted": 64,
+            "ghosts": 17
+          },
+          {
+            "N": 9,
+            "counted": 81,
+            "ghosts": 0
+          },
+          {
+            "N": 10,
+            "counted": 100,
+            "ghosts": 21
+          },
+          {
+            "N": 11,
+            "counted": 121,
+            "ghosts": 0
+          },
+          {
+            "N": 12,
+            "counted": 144,
+            "ghosts": 25
+          },
+          {
+            "N": 13,
+            "counted": 169,
+            "ghosts": 0
+          },
+          {
+            "N": 14,
+            "counted": 196,
+            "ghosts": 29
+          },
+          {
+            "N": 15,
+            "counted": 225,
+            "ghosts": 0
+          }
+        ]
+      }
+    }
+  ]
+}

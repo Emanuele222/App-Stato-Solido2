@@ -67,7 +67,7 @@ Aggiungere nello stesso unico file le costanti SI/fononiche (CODATA 2018, coeren
 
 ## Scaletta delle 6 sezioni
 
-### Sezione 1 — Catena monatomica e prima zona di Brillouin (`sections/phonon-monatomic/`, Chat 3)
+### Sezione 1 — Catena monatomica e prima zona di Brillouin (`sections/phonon-monatomic/`, Chat 3 — completata)
 * **Fonte**: Lezione 1 (§§1–5) + Lezione 3 (§13 Born–von Kármán).
 * **Fisica** (`physics/phononDispersion.ts`): $\omega(k) = 2\sqrt{C/M}|\sin(ka/2)|$, $v_s = a\sqrt{C/M}$, $\omega_{\max} = 2\sqrt{C/M}$, $v_g(k) = a\sqrt{C/M}\cos(ka/2)\operatorname{sgn}(k)$, $v_p = \omega/k$, aliasing $k + G$, quantizzazione Born–von Kármán $k = 2\pi j/(Na)$.
 * **Viste (2 principali)**: (1) Catena 1D animata (atomi $M$, molle $C$, frecce $u_n(t)$, inviluppo continuo; toggle *Aliasing $k+G$* e *Anello Born–von Kármán $N$*); (2) `DispersionPlot` con 1BZ + repliche periodiche attenuate, tangente $v_s|k|$, banda evanescente $\omega > \omega_{\max}$.
@@ -75,7 +75,7 @@ Aggiungere nello stesso unico file le costanti SI/fononiche (CODATA 2018, coeren
 * **Strumenti**: *Aliasing ($k+G$)*, *Born–von Kármán ($N$)*, *Sonda $v_p, v_g$*.
 * **Preset**: *Metallo tipico* (dispensa §3: $M = 63{,}2\text{ u} \approx 1{,}05\times 10^{-25}\text{ kg}$, $a = 2{,}50\text{ Å}$, $C = 20\text{ N/m}$ → $v_s \approx 3{,}5\text{ km/s}$, $\nu_{\max} \approx 4{,}4\text{ THz}$, $18\text{ meV}$), *Piombo 1D*, *Carbonio 1D*.
 
-### Sezione 2 — Catena biatomica, gap fononico e luce infrarossa (`sections/phonon-diatomic/`, Chat 4)
+### Sezione 2 — Catena biatomica, gap fononico e luce infrarossa (`sections/phonon-diatomic/`, Chat 4 — completata)
 * **Fonte**: Lezione 2 (§§7–8, §10.3) + Lezione 4 (§24).
 * **Fisica** (`physics/phononDispersion.ts`): $\omega_{\mp}^2(k)$ (eq. 20), rapporto $\alpha = u_{n-1}/u_n$, $v_s = a\sqrt{C/2(m+M)}$, $\omega_+(0) = \sqrt{2C(m+M)/mM}$, bordi C ($\sqrt{2C/M}$) e B ($\sqrt{2C/m}$), gap $\Delta\omega_{\text{gap}}$, chiusura a $M = m$, matrice dinamica $2\times 2$ (§10.3), incrocio luce IR $\omega = ck/n$.
 * **Viste (2 principali)**: (1) Catena biatomica animata ($M$ grande, $m$ piccola, molle $C$, marcatore $R_{\text{cm}}$, dipolo ionico, 4 pulsanti rapidi per i modi canonici Fig. 12); (2) `DispersionPlot` con rami acustico/ottico, fascia del gap, punti B e C, retta luce IR opzionale.
