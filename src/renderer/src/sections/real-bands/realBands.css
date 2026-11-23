@@ -1,0 +1,373 @@
+/* Layout, controlli e scene della sezione «Bande dei materiali veri». */
+
+/*
+ * Scena in due righe:
+ * - sopra: Fattore di forma v(q) e Pesi |c_G|² affiancati (>= 150 px a 1100×800)
+ * - sotto: Bande lungo L–Γ–X–W–K–Γ (>= 300 px a 1100×800)
+ */
+.stage:has(.realbands-scene) {
+  --realbands-top-min: 185px;
+  --realbands-bands-min: 335px;
+}
+
+.scene:has(.realbands-scene) {
+  grid-template-rows: minmax(var(--realbands-top-min), 32fr) minmax(var(--realbands-bands-min), 68fr);
+}
+
+.pseudo-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.pseudo-top-row > .view + .view {
+  border-top: 0;
+  border-left: 1px solid var(--line);
+}
+
+.pseudo-top-view .view-head {
+  padding-top: 6px;
+  row-gap: 0;
+}
+
+.pseudo-top-view .view-hint {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.pseudo-hint {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pseudo-bands-view .view-head {
+  padding-top: 6px;
+  flex-wrap: nowrap;
+}
+
+.pseudo-bands-view .view-tag {
+  flex: none;
+  white-space: nowrap;
+}
+
+.pseudo-bands-view .view-hint {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.pseudo-bands-view {
+  overflow: hidden;
+}
+
+.pseudo-view-col {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.pseudo-canvas-box {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.pseudo-canvas-box.is-locked {
+  pointer-events: none;
+  opacity: 0.78;
+}
+
+.pseudo-canvas-box > canvas,
+.pseudo-shells-box > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pseudo-shells-box {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.pseudo-bands-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.pseudo-bandplot-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.pseudo-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 12px;
+}
+
+.pseudo-refining-pill {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Barra dei comandi su due righe di tre celle */
+.pseudo-params-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 14px;
+  row-gap: 8px;
+  align-items: center;
+}
+
+.pseudo-params-cell {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.pseudo-params-cell > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pseudo-params-cell.is-locked {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.pseudo-antisym-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--raised);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pseudo-antisym-btn:hover,
+.pseudo-antisym-btn.is-active {
+  border-color: var(--q-V2G);
+  color: var(--text);
+}
+
+.pseudo-antisym-btn[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--q-V2G) 14%, var(--raised));
+  border-color: var(--q-V2G);
+  color: var(--text);
+}
+
+.pseudo-antisym-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: none;
+  background: var(--q-V2G);
+  opacity: 0.45;
+}
+
+.pseudo-antisym-btn[aria-pressed='true'] .pseudo-antisym-swatch {
+  opacity: 1;
+}
+
+.pseudo-preset-source {
+  display: block;
+  width: 100%;
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.al-electrons-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.al-electrons-label {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.al-electrons-pills {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.al-electrons-pill {
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--line-strong);
+  background: var(--raised);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.al-electrons-pill[aria-pressed='true'] {
+  border-color: var(--q-EF);
+  background: color-mix(in srgb, var(--q-EF) 15%, var(--raised));
+  color: var(--text);
+}
+
+.section-cross-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--raised);
+  color: var(--focus);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.section-cross-link:hover {
+  border-color: var(--focus);
+  background: color-mix(in srgb, var(--focus) 12%, var(--raised));
+}
+
+.pseudo-formula-panel .pseudo-formula-block + .pseudo-formula-block {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.pseudo-formula-subhead {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.pseudo-factor-chips {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.pseudo-factor-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.pseudo-factor-chip .num {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.pseudo-factor-chip.is-active,
+.pseudo-factor-chip:hover {
+  border-color: var(--q-VG);
+  background: color-mix(in srgb, var(--q-VG) 12%, var(--raised));
+}
+
+.pseudo-values {
+  margin-top: 10px;
+}
+
+.pseudo-values dd .note {
+  display: block;
+  margin-top: 2px;
+}
+
+.pseudo-callout {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-soft);
+}
+
+.pseudo-callout-source {
+  border-color: color-mix(in srgb, var(--q-VG) 45%, var(--line));
+}
+
+.pseudo-verify-card {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+}
+
+.pseudo-verify-sub {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+@media (max-width: 1120px) {
+  .pseudo-params-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .scene:has(.realbands-scene) {
+    grid-template-rows: auto auto;
+  }
+  .pseudo-top-row {
+    grid-template-columns: 1fr;
+    border-bottom: 0;
+  }
+  .pseudo-top-row > .view {
+    min-height: 170px;
+  }
+  .pseudo-top-row > .view + .view {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .pseudo-bands-view {
+    min-height: 300px;
+  }
+  .pseudo-params-grid {
+    grid-template-columns: 1fr;
+  }
+}

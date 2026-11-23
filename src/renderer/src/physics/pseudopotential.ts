@@ -730,3 +730,47 @@ export function epmSegmentLabel(path: KPath, pointIndex: number): string {
   const prev = labels[labels.length - 2]
   return `${prev.label}–${last.label}`
 }
+
+export interface FccZoneBoundaryDistances {
+  readonly gammaL: number
+  readonly gammaX: number
+  readonly gammaK: number
+  readonly gammaW: number
+}
+
+/**
+ * Distanze dei punti di alta simmetria da Γ in unità di 2π/a per la zona fcc (P4 §5.2, tabella r. 1350–1358):
+ * |ΓL| = √3/2 ≈ 0,866; |ΓX| = 1; |ΓK| = 3√2/4 ≈ 1,061; |ΓW| = √5/2 ≈ 1,118.
+ */
+export function fccZoneBoundaryDistancesDimless(): FccZoneBoundaryDistances {
+  return {
+    gammaL: Math.sqrt(0.5 * 0.5 + 0.5 * 0.5 + 0.5 * 0.5),
+    gammaX: 1,
+    gammaK: Math.hypot(0.75, 0.75),
+    gammaW: Math.hypot(1, 0.5)
+  }
+}
+
+/**
+ * Conta quante bande in `bands` attraversano l'energia `energyEv` lungo il cammino.
+ */
+export function countBandsCrossingEnergy(
+  bands: BandStructure,
+  energyEv: number
+): { readonly count: number; readonly bandIndices: readonly number[] } {
+  const bandIndices: number[] = []
+  for (let b = 0; b < bands.energies.length; b++) {
+    const arr = bands.energies[b]
+    let minE = Infinity
+    let maxE = -Infinity
+    for (let i = 0; i < arr.length; i++) {
+      const e = arr[i]
+      if (e < minE) minE = e
+      if (e > maxE) maxE = e
+    }
+    if (minE <= energyEv && maxE >= energyEv) {
+      bandIndices.push(b)
+    }
+  }
+  return { count: bandIndices.length, bandIndices }
+}

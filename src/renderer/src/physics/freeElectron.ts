@@ -72,3 +72,30 @@ export function twoWaveEnergies(k: number, kPrime: number, vG: number): TwoWaveE
   const root = Math.sqrt(half * half + vG * vG)
   return { lower: mean - root, upper: mean + root }
 }
+
+export interface FccFermiSphere {
+  /** Densità elettronica n = N · 4 / a³ (Å⁻³). */
+  readonly densityAng3: number
+  /** Vettore d'onda di Fermi k_F (Å⁻¹). */
+  readonly kFAngInv: number
+  /** Vettore d'onda di Fermi in unità di 2π/a. */
+  readonly kFDimless: number
+  /** Energia di Fermi E_F = ħ²k_F² / 2m₀ (eV) sopra il fondo della banda. */
+  readonly eFEv: number
+}
+
+/**
+ * Sfera di Fermi del gas di elettroni liberi su reticolo fcc (4 celle primitive per
+ * cubo di lato a, quindi n = electronsPerCell · 4 / a³). Usata per l'alluminio
+ * (P4 §5.2, r. 1384–1396: a = 4,05 Å, N = 3 → k_F = 1,75 Å⁻¹, E_F = 11,65 eV;
+ * N = 1 → k_F′ = 0,78 (2π/a), E_F′ = 5,6 eV).
+ */
+export function fccFreeElectronFermiSphere(a: number, electronsPerCell: number): FccFermiSphere {
+  if (!(a > 0)) throw new RangeError(`passo reticolare non valido: ${a}`)
+  if (!(electronsPerCell > 0)) throw new RangeError(`numero di elettroni non valido: ${electronsPerCell}`)
+  const densityAng3 = (electronsPerCell * 4) / (a * a * a)
+  const kFAngInv = Math.cbrt(3 * Math.PI * Math.PI * densityAng3)
+  const kFDimless = kFAngInv / ((2 * Math.PI) / a)
+  const eFEv = freeElectronEnergy(kFAngInv)
+  return { densityAng3, kFAngInv, kFDimless, eFEv }
+}

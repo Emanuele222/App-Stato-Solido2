@@ -1,72 +1,44 @@
-/* Layout, controlli e scene della sezione «Pseudopotenziale». */
+/* Layout e controlli della sezione «Pseudopotenziale» (modello 1D con stato di core). */
 
-/*
- * Scena in due righe: sopra due viste affiancate (spazio reale, fattore di forma), sotto le bande
- * con i pesi per guscio. Ogni vista ha titolo, legenda in HTML (fuori dal grafico) e grafico.
- * Altezze minime dei grafici (senza scorrimento da 1100×800 in su): vedi le variabili.
- */
-.stage:has(.pseudo-bands-wrap) {
-  /* minimi per il contenitore: 150 px per ciascuna delle due viste in alto, 250 px per le bande, 64 px per i pesi */
-  --pseudo-top-min: 240px;
-  --pseudo-bands-min: 360px;
-  /* i pesi per guscio crescono con l'altezza della finestra: 64 px a 800 px, circa 78 px a 900 px */
-  --pseudo-shells-h: clamp(64px, calc(64px + (100vh - 800px) * 0.14), 90px);
+.stage:has(.pseudo1d-scene) {
+  --pseudo1d-bands-min: 250px;
+  --pseudo1d-bottom-min: 220px;
 }
 
-.scene:has(.pseudo-bands-wrap) {
-  grid-template-rows: minmax(var(--pseudo-top-min), 36fr) minmax(var(--pseudo-bands-min), 64fr);
+.scene:has(.pseudo1d-scene) {
+  grid-template-rows: minmax(var(--pseudo1d-bands-min), 52fr) minmax(var(--pseudo1d-bottom-min), 48fr);
 }
 
-.pseudo-top-row {
+.pseudo1d-bottom-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   min-height: 0;
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
 }
 
-.pseudo-top-row > .view + .view {
+.pseudo1d-bottom-row > .view + .view {
   border-top: 0;
   border-left: 1px solid var(--line);
 }
 
-.pseudo-top-view .view-head {
+.pseudo1d-view .view-head {
   padding-top: 6px;
   row-gap: 0;
 }
 
-.pseudo-top-view .view-hint {
+.pseudo1d-view .view-hint {
   flex: 1 1 100%;
   min-width: 0;
 }
 
-.pseudo-hint {
+.pseudo1d-hint {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.pseudo-bands-view .view-head {
-  padding-top: 6px;
-  flex-wrap: nowrap;
-}
-
-.pseudo-bands-view .view-tag {
-  flex: none;
-  white-space: nowrap;
-}
-
-.pseudo-bands-view .view-hint {
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-.pseudo-bands-view {
-  overflow: hidden;
-}
-
-/* colonna di una vista: legenda sopra, grafico che occupa il resto */
-.pseudo-view-col {
+.pseudo1d-view-col {
   position: absolute;
   inset: 0;
   display: flex;
@@ -74,15 +46,21 @@
   min-height: 0;
 }
 
-/* un canvas annidato riempie il proprio contenitore (la regola generale di ui.css vale solo per il figlio diretto) */
-.pseudo-canvas-box {
+.pseudo1d-bandplot-box {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.pseudo1d-canvas-box {
   position: relative;
   flex: 1 1 0;
   min-height: 0;
 }
 
-.pseudo-canvas-box > canvas,
-.pseudo-shells-box > canvas {
+.pseudo1d-canvas-box > canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -90,270 +68,150 @@
   display: block;
 }
 
-.pseudo-bands-wrap {
-  position: absolute;
-  inset: 0;
+/* Comandi su due righe: riga 1 (a, V0, s), riga 2 (f, alpha + pulsante «più liscia») */
+.pseudo1d-params-grid {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) var(--pseudo-shells-h);
-  gap: 2px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 14px;
+  row-gap: 8px;
+  align-items: center;
 }
 
-.pseudo-bandplot-box {
-  display: flex;
-  flex-direction: column;
+.pseudo1d-params-cell {
   min-width: 0;
-  min-height: 0;
-}
-
-.pseudo-shells-box {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
-}
-
-.pseudo-legend-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  padding-right: 12px;
 }
 
-@media (max-height: 740px) {
-  .stage:has(.pseudo-bands-wrap) {
-    /* finestre basse: la colonna centrale scorre; la legenda delle bande può andare su due righe */
-    --pseudo-bands-min: 380px;
-    grid-template-rows: auto minmax(calc(var(--pseudo-top-min) + var(--pseudo-bands-min)), 1fr) auto;
-  }
-}
-
-/* barra dei comandi: griglia di due colonne, tre righe */
-.stage:has(.pseudo-params-grid) .params {
-  padding: 6px 14px;
-}
-
-.pseudo-params-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2px 16px;
-  width: 100%;
-  align-items: center;
-}
-
-.pseudo-params-cell {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-}
-
-.pseudo-params-cell > .param {
+.pseudo1d-params-cell > :first-child {
   flex: 1 1 auto;
-  max-width: none;
-}
-
-.pseudo-params-cell > .preset {
-  flex: 1 1 0;
   min-width: 0;
-  flex-wrap: nowrap;
-  padding: 0 8px;
 }
 
-.pseudo-params-cell > .preset select {
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: none;
+.pseudo1d-params-cell.is-span-2 {
+  grid-column: span 2;
 }
 
-.pseudo-preset-source {
-  font-size: 11px;
-  line-height: 1.3;
-  color: var(--muted);
-  padding: 0 8px;
-}
-
-.pseudo-bands-canvas {
-  cursor: crosshair;
-  outline: none;
-}
-
-.pseudo-bands-canvas:focus-visible {
-  box-shadow: inset 0 0 0 1.5px var(--focus);
-  border-radius: 4px;
-}
-
-.pseudo-static-canvas,
-.pseudo-shells-canvas {
-  cursor: default;
-}
-
-.pseudo-refine-pill {
+.pseudo1d-smooth-btn {
   flex: none;
-  font-size: 11px;
-  line-height: 1.4;
-  padding: 0 8px;
-  border-radius: 99px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  pointer-events: none;
-  user-select: none;
-}
-
-.pseudo-refine-pill.is-refining {
-  color: var(--q-EF);
-  border-color: color-mix(in srgb, var(--q-EF) 60%, var(--line));
-}
-
-/* Interruttore del termine antisimmetrico Vᵃ (GaAs) */
-.pseudo-antisym-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--muted);
-  font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
-}
-
-.pseudo-antisym-btn:hover {
-  color: var(--text);
-  border-color: var(--line-strong);
-}
-
-/* acceso dal passaggio sul termine Vᵃ della formula (verso formula → comandi) */
-.pseudo-antisym-btn.is-active {
-  color: var(--text);
-  border-color: var(--q-V2G);
-}
-
-.pseudo-antisym-btn[aria-pressed='true'] {
-  color: var(--text);
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
   background: var(--raised);
-  border-color: var(--q-V2G);
+  color: var(--q-psi);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.pseudo-antisym-swatch {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--q-V2G);
-  opacity: 0.35;
+.pseudo1d-smooth-btn:hover {
+  border-color: var(--q-psi);
+  background: color-mix(in srgb, var(--q-psi) 14%, var(--raised));
 }
 
-.pseudo-antisym-btn[aria-pressed='true'] .pseudo-antisym-swatch {
-  opacity: 1;
+.pseudo1d-f-badge {
+  flex: none;
+  font-size: 10.5px;
+  color: var(--q-V2G);
+  white-space: nowrap;
 }
 
-/* Formula viva & chip fattori V^s interattivi */
-.pseudo-formula-panel .formula-main {
-  font-size: 13px;
-}
-
-.pseudo-formula-panel .formula-main .katex-display {
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  margin: 0.4em 0;
-}
-
-.pseudo-formula-block + .pseudo-formula-block {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed var(--line);
-}
-
-.pseudo-formula-subhead {
-  font-size: 11px;
-  color: var(--muted);
-  margin: 4px 0 2px;
-  letter-spacing: 0.02em;
-}
-
-.pseudo-factor-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 6px 0 4px;
-}
-
-.pseudo-factor-chip {
+.pseudo1d-cross-link {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 8px;
+  padding: 4px 9px;
   border-radius: 6px;
-  border: 1px solid var(--line);
-  background: var(--panel);
-  color: var(--text-soft);
-  font-size: 12px;
+  border: 1px solid var(--line-strong);
+  background: var(--raised);
+  color: var(--focus);
+  font: inherit;
+  font-size: 11.5px;
   cursor: pointer;
-  transition: border-color 0.15s, background-color 0.15s;
 }
 
-.pseudo-factor-chip:hover,
-.pseudo-factor-chip:focus-visible,
-.pseudo-factor-chip.is-active {
-  border-color: var(--q-VG);
-  background: color-mix(in srgb, var(--q-VG) 12%, var(--panel));
-  color: var(--text);
-  outline: none;
+.pseudo1d-cross-link:hover {
+  border-color: var(--focus);
+  background: color-mix(in srgb, var(--focus) 12%, var(--raised));
 }
 
-.pseudo-values {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed var(--line);
+.pseudo1d-formula-panel .pseudo1d-formula-block + .pseudo1d-formula-block {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
 }
 
-.pseudo-callout {
-  font-size: 12px;
-  color: var(--text-soft);
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 7px 10px;
-  margin: 10px 0 0;
-  line-height: 1.45;
-}
-
-.pseudo-callout.pseudo-callout-source {
-  border-color: var(--q-VG);
-}
-
-.pseudo-verify-card {
-  padding: 2px 0 0;
-}
-
-.pseudo-verify-sub {
+.pseudo1d-formula-subhead {
   font-size: 11px;
   color: var(--muted);
-  margin: 0 0 6px;
+  margin-bottom: 4px;
 }
 
-.pseudo-verify-card .values {
+.pseudo1d-values {
+  margin-top: 10px;
+}
+
+.pseudo1d-values dd .note {
+  display: block;
+  margin-top: 2px;
+}
+
+.pseudo1d-callout {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-soft);
+}
+
+.pseudo1d-verify-card {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--raised);
+}
+
+.pseudo1d-verify-sub {
   font-size: 11.5px;
-  gap: 3px 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
 }
 
-@media (max-width: 560px) {
-  .pseudo-params-grid {
+@media (max-width: 1120px) {
+  .pseudo1d-params-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pseudo1d-params-cell.is-span-2 {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 860px) {
+  .scene:has(.pseudo1d-scene) {
+    grid-template-rows: auto auto;
+  }
+  .pseudo1d-view {
+    min-height: 220px;
+  }
+  .pseudo1d-bottom-row {
     grid-template-columns: 1fr;
+    border-top: 0;
   }
-}
-
-@media (max-width: 1023px) {
-  .pseudo-formula-panel .formula-main {
-    font-size: 11.8px;
+  .pseudo1d-bottom-row > .view {
+    min-height: 200px;
+    border-top: 1px solid var(--line);
   }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pseudo-antisym-btn,
-  .pseudo-factor-chip {
-    transition: none;
+  .pseudo1d-bottom-row > .view + .view {
+    border-left: 0;
+  }
+  .pseudo1d-params-grid {
+    grid-template-columns: 1fr;
   }
 }

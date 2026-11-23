@@ -5,6 +5,7 @@ import { nearlyFreeBands } from './centralEquation1d'
 import {
   emptyLatticeBands,
   emptyLatticeEnergies,
+  fccFreeElectronFermiSphere,
   freeElectronEnergy,
   reciprocalVector1D,
   twoWaveEnergies,
@@ -94,5 +95,22 @@ describe('emptyLatticeBands', () => {
     // al bordo le prime due bande sono degeneri in E₀
     expect(closed.energies[0][40]).toBeCloseTo(zoneBoundaryEnergy(a), 12)
     expect(closed.energies[1][40]).toBeCloseTo(zoneBoundaryEnergy(a), 12)
+  })
+})
+
+describe('fccFreeElectronFermiSphere (alluminio, P4 §5.2 r. 1384–1396)', () => {
+  const aAl = 4.05
+
+  it('N = 3 elettroni per cella: k_F = 1,75 Å⁻¹ = 1,127·(2π/a), E_F = 11,65 eV', () => {
+    const al3 = fccFreeElectronFermiSphere(aAl, 3)
+    expect(al3.kFAngInv).toBeCloseTo(1.75, 2)
+    expect(al3.kFDimless).toBeCloseTo(1.127, 3)
+    expect(al3.eFEv).toBeCloseTo(11.65, 2)
+  })
+
+  it('N = 1 elettrone per cella: k_F′ = 0,78·(2π/a), E_F′ = 5,60 eV', () => {
+    const al1 = fccFreeElectronFermiSphere(aAl, 1)
+    expect(al1.kFDimless).toBeCloseTo(0.78, 2)
+    expect(al1.eFEv).toBeCloseTo(5.6, 1)
   })
 })

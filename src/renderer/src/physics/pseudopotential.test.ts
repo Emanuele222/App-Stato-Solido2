@@ -348,3 +348,26 @@ describe('incarico 11 — preset Ge con i fattori locali di Cohen–Bergstresser
     expect(summary.ecL).toBeLessThan(summary.ecX)
   })
 })
+
+describe('incarico 13 — alluminio nel reticolo vuoto fcc (P4 §5.2 r. 1346–1400)', () => {
+  it('distanze |ΓL| = 0,866 e |ΓW| = 1,118 (unità 2π/a) rispetto a k_F(N=3) e k_F′(N=1)', async () => {
+    const { fccFreeElectronFermiSphere } = await import('./freeElectron')
+    const { countBandsCrossingEnergy, emptyLatticeFccBands, fccZoneBoundaryDistancesDimless } =
+      await import('./pseudopotential')
+
+    const dist = fccZoneBoundaryDistancesDimless()
+    expect(dist.gammaL).toBeCloseTo(0.866, 3)
+    expect(dist.gammaW).toBeCloseTo(1.118, 3)
+
+    const al3 = fccFreeElectronFermiSphere(4.05, 3)
+    const al1 = fccFreeElectronFermiSphere(4.05, 1)
+    expect(al3.kFDimless).toBeGreaterThan(dist.gammaW)
+    expect(al1.kFDimless).toBeLessThan(dist.gammaL)
+
+    const bands = emptyLatticeFccBands(4.05, { gMaxSq: 21, pointsPerSegment: 40, numBands: 8 })
+    const cross3 = countBandsCrossingEnergy(bands, al3.eFEv)
+    const cross1 = countBandsCrossingEnergy(bands, al1.eFEv)
+    expect(cross3.count).toBeGreaterThanOrEqual(3)
+    expect(cross1.count).toBe(1)
+  })
+})
