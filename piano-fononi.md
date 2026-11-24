@@ -13,6 +13,7 @@ Documento di riferimento condiviso per tutte le chat di sviluppo del capitolo **
 4. **Schermate ariose e snelle**: al massimo 2 viste principali collegate, 3–4 slider, nessuno scorrimento da `1100×800` in su (a `800×700` può scorrere solo la colonna centrale).
 5. **Animazioni controllate**: ogni animazione temporale ha Play/Pausa, velocità e reset fase (`PlaybackControls`), si congela in un'istantanea chiara con `prefers-reduced-motion`, e non lascia loop continui a riposo.
 6. **Fonti discrete**: eventuali modelli calibrati sui dati della Tab. 1 della dispensa (o integrati da letteratura) sono dichiarati con una semplice nota discreta a fondo della scheda teoria (`.foot`).
+7. **Scheda guida a lato (4 parti)**: in ogni sezione il pannello teoria a lato usa una struttura pedagogica snella (`L’idea`, `Come intervengono i parametri`, `Cosa provare`, tutti brevi e collegati via `\htmlData{q=...}`) seguita dal riquadro richiudibile `<details className="panel-details">` (*Dettagli formali*, chiuso di default) per le definizioni formali e gli errori tipici. Non usare sintassi Markdown (`**`, `*`) dentro `strings.ts` (`RichText` interpreta solo LaTeX `$...$`).
 
 ---
 
@@ -83,7 +84,7 @@ Aggiungere nello stesso unico file le costanti SI/fononiche (CODATA 2018, coeren
 * **Strumenti**: *Luce infrarossa*, *Confronto $M = m$ (ripiegamento)*, *Matrice dinamica $2\times 2$*.
 * **Preset**: *Coppia Na–Cl* (dispensa §8: $m = 23\text{ u}$, $M = 35{,}5\text{ u}$, $a = 5{,}64\text{ Å}$, $C = 10\text{ N/m}$ → $v_s \approx 4{,}1\text{ km/s}$, $2{,}9 / 3{,}6 / 4{,}7\text{ THz}$, gap $0{,}7\text{ THz}$), *Masse $M = 2m$ (Fig. 11)*, *Limite $M = m$*, *Contrasto forte (Li–I)*.
 
-### Sezione 3 — Rami 3D, polarizzazioni e cristalli reali (`sections/phonon-3d/`, Chat 5)
+### Sezione 3 — Rami 3D, polarizzazioni e cristalli reali (`sections/phonon-3d/`, Chat 5 — completata)
 * **Fonte**: Lezione 2 (§§9–10) + Lezione 3 (§14, Tab. 1, Figg. 17–18).
 * **Fisica** (`physics/phonon3d.ts`): matrice dinamica hermitiana $3p\times 3p$ (riusa `physics/linalg.ts`), cammino $\Gamma\text{–}X\text{–}K\text{–}\Gamma\text{–}L$, modelli calibrati su Tab. 1 (Al: LA $40\text{ meV}$, TA $24\text{ meV}$ a X; Diamante: ottici degeneri a $\Gamma$ $160\text{ meV}$; PbTe: LO $3{,}3\text{ THz}$, TO $1{,}1\text{ THz}$ a $\Gamma$), conteggio 3D Born–von Kármán ($3pN_c$, $v_c = a^3/4$ per fcc).
 * **Viste (2 principali)**: (1) Proiezione isometrica animata Canvas 2D della polarizzazione reale $\boldsymbol{\varepsilon}^s(\mathbf{k})$ (LA, $\text{TA}_1$, $\text{TA}_2$, LO, $\text{TO}_1$, $\text{TO}_2$) rispetto a $\mathbf{k}$; (2) `DispersionPlot` 3D con degenerazioni etichettate e unità commutabili meV / THz.
@@ -91,21 +92,24 @@ Aggiungere nello stesso unico file le costanti SI/fononiche (CODATA 2018, coeren
 * **Strumenti**: *Conteggio modi 3D ($3pN_c$ e 1BZ)*, *Unità meV / THz*.
 * **Nota fonte**: discreta a fondo della scheda teoria (`.foot`).
 
-### Sezione 4 — Pacchetti d'onda: velocità di fase e di gruppo (`sections/phonon-wavepacket/`, Chat 6)
+### Sezione 4 — Pacchetti d'onda: velocità di fase e di gruppo (`sections/phonon-wavepacket/`, Chat 6 — completata)
 * **Fonte**: Lezione 2 (§6, pp. 14–17, Figg. 7–9).
 * **Fisica** (`physics/phononDispersion.ts`): $v_p = \omega/k$, $v_g = d\omega/dk$, $\omega''$, allargamento gaussiano $\sigma(t) = \sigma_0\sqrt{1 + (\omega'' t / 2\sigma_0^2)^2}$ sui 4 regimi (lineare, ramo acustico, ramo ottico $v_g < 0$, quadratico libero $v_g = 2v_p$).
 * **Viste (2 principali + mini-pannello $\sigma(t)$)**: (1) Pacchetto $\Psi(x,t)$ animato con **atomi discreti della catena campionati sotto l'inviluppo** (nei regimi reticolari), cresta marcata a $v_p$, centro inviluppo a $v_g$; (2) Dispersione $\omega(k)$ con corda ($v_p$) e tangente ($v_g$) + curva $\sigma(t)/\sigma_0$.
 * **Parametri**: regime (*Lineare* | *Ramo acustico* | *Ramo ottico $v_g<0$* | *Quadratico*), $k_0$, $\sigma_0$.
 * **Strumenti**: *Riferimento comovente ($\xi = x - v_g t$)*, *Profilo iniziale $t=0$*.
 
-### Sezione 5 — Modi quantizzati (fononi) e processi Umklapp (`sections/phonon-quantum/`, Chat 7)
+### Revisione pedagogica schede guida — Sezioni 1–4 (Chat 7)
+* **Obiettivo**: riscrivere i pannelli teoria laterali (`strings.ts` + `*Section.tsx`) di `phonon-monatomic`, `phonon-diatomic`, `phonon-3d` e `phonon-wavepacket` nella struttura accogliente in 4 parti (*L’idea*, *Come intervengono i parametri*, *Cosa provare* + `<details className="panel-details">` per *Dettagli formali*), senza toccare `physics/` né le viste grafiche/canvas.
+
+### Sezione 5 — Modi quantizzati (fononi) e processi Umklapp (`sections/phonon-quantum/`, Chat 8)
 * **Fonte**: Lezione 2 (§11) + Lezione 3 (§§15–18, Figg. 19–21).
 * **Fisica** (`physics/phononQuantum.ts`): oscillatore classico $P_{\text{cl}}(x) = 1/\pi\sqrt{a^2-x^2}$ e quantistico $\Psi_n$ (ricorrenza stabile Hermite), $a_{\text{ho}} = \sqrt{\hbar/m\omega}$, tunneling $\operatorname{erfc}(1) \approx 0{,}1573$, Bose–Einstein $\bar{n}(T) = (e^{\hbar\omega/k_B T}-1)^{-1}$ ($\mu = 0$), cinematica Normali ($G=0$) vs Umklapp ($G\ne 0$).
 * **Due modalità 100% visive**:
   * **Modalità A — Quantizzazione di un modo**: parabola $V(Q)$ con $P_n$ vs $P_{\text{cl}}$ (tunneling + corrispondenza di Bohr fino a $n = 25$) **sincronizzata con la catena vibrante del modo** (mostra visivamente l'ampiezza non nulla di punto zero a $n = 0$: $\Delta x \approx 1{,}7\%\,a$), con slider $n$ o accoppiamento termico a $T$ tramite Bose–Einstein.
   * **Modalità B — Collisioni nella 1BZ (Normali vs Umklapp)**: vettori $k_1, k_2$ trascinabili in 1BZ + curva $\omega(k)$ con frecce di $v_g(k_1), v_g(k_2), v_g(k_3)$; appena $|k_1+k_2| > \pi/a$ scatta $-G$ e $v_g(k_3)$ si inverte (esempio dispensa $0{,}7 + 0{,}6 \to -0{,}7\,\pi/a$).
 
-### Sezione 6 — Calore specifico del reticolo: evoluzione storica e modello di Debye (`sections/phonon-specific-heat/`, Chat 8)
+### Sezione 6 — Calore specifico del reticolo: evoluzione storica e modello di Debye (`sections/phonon-specific-heat/`, Chat 9)
 * **Fonte**: Lezione 4 (§§20–23, §25, Figg. 22–27, Tabb. 2–4).
 * **Fisica** (`physics/specificHeat.ts`): Dulong–Petit $3R$, Einstein $3R\,\mathcal{E}(\Theta_E/T)$, integrale di Debye con quadratura Gauss–Legendre composta ad alta precisione, asintoto $T^3$ ($\frac{12\pi^4}{5}R(T/\Theta_D)^3$), DOS 1D con singolarità di Van Hove e DOS 3D di Debye + schema TA/LA, analogia corpo nero ($T^4$: 3 vs 2 polarizzazioni), dataset sperimentale Tab. 2 e Tab. 3.
 * **Barra «Tappe storiche»**: **1819 Dulong–Petit** → **1907 Einstein** → **1912 Debye** → **1953 Oltre Debye (Van Hove & corpo nero)** → **Confronto completo**.

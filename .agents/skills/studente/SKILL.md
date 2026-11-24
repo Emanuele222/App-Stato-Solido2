@@ -17,8 +17,9 @@ Sei uno studente del terzo anno di fisica o ingegneria. Hai seguito la lezione m
 - Per ogni azione annota: cosa è successo, se te lo aspettavi e cosa hai capito.
 
 ## Cosa giudichi (con attenzione ai misconcetti sui fononi)
+- **Guida accogliente a lato**: la scheda teoria funziona come guida operativa chiara e non come un muro di definizioni? Verifica che i 3 blocchi aperti (*L'idea*, *Come intervengono i parametri*, *Cosa provare*) spieghino subito cosa guardare e come i controlli muovono la fisica, lasciando il formalismo pesante nel riquadro richiudibile *Dettagli formali*.
 - **Perché, non solo cosa**: una catena che oscilla o una curva che si muove senza spiegare la causa fisica non insegna.
-- **Collegamenti vivi**: è immediato capire quale termine della formula corrisponde a quale slider e a quale elemento della scena?
+- **Collegamenti vivi**: è immediato capire quale termine della formula corrisponde a quale slider e a quale elemento della scena (grazie ai link `\htmlData{q=...}`)?
 - **Misconcetti da verificare**:
   - Catena monatomica: capisco che a $k = \pi/a$ gli atomi oscillano in opposizione (non sono fermi) mentre $v_g = 0$? Capisco l'aliasing $k \sim k + G$?
   - Pacchetti: distinguo chiaramente velocità di fase $v_p$ (creste) e di gruppo $v_g$ (inviluppo)?

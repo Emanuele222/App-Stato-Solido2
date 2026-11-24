@@ -14,6 +14,8 @@
 import {
   ANGSTROM_IN_M,
   C_LIGHT_M_S,
+  HBAR2_OVER_2M0,
+  HBAR_EV_S,
   RAD_S_TO_THZ,
   amuToKg,
   radSToMev,
@@ -917,5 +919,500 @@ export function diatomicInfraredCrossing(
     kLightAngInv: kAngInv,
     kOverZoneEdge: kAngInv / zoneEdge,
     speedRatio: cMedium / vs
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pacchetti d'onda: velocità di fase, velocità di gruppo e allargamento
+// (dispensa Parte 6: Lezione 2 §6, pp. 14–17, eqq. 10–12, Figg. 7–9)
+// ---------------------------------------------------------------------------
+
+export type WavepacketRegime = 'linear' | 'acoustic' | 'optical' | 'quadratic'
+
+export interface WavepacketParams {
+  /** Regime di dispersione (§6.2–§6.3). */
+  readonly regime: WavepacketRegime
+  /** Vettore d'onda centrale k₀ (Å⁻¹). */
+  readonly k0: number
+  /** Larghezza spaziale iniziale σ₀ = 1/(2s) di |Ψ(x,0)|² (Å), > 0. */
+  readonly sigma0Ang: number
+  /** Parametri della catena monatomica (usati per 'linear' e 'acoustic', e passo di riferimento per 'quadratic'). */
+  readonly monatomic: MonatomicParams
+  /** Parametri della catena biatomica (usati per 'optical'). */
+  readonly diatomic: DiatomicParams
+  /** Massa efficace in unità di m₀ per il regime 'quadratic' (default 1). */
+  readonly freeMassRatio?: number
+}
+
+export interface WavepacketCharacteristics {
+  readonly regime: WavepacketRegime
+  /** Passo reticolare di riferimento a (Å); per 'quadratic' è il passo usato per la scala di k₀. */
+  readonly latticeA: number
+  /** Bordo della prima zona π/a (Å⁻¹). */
+  readonly zoneEdge: number
+  /** Vettore d'onda centrale k₀ (Å⁻¹) e frazione di bordo zona k₀/(π/a). */
+  readonly k0: number
+  readonly k0Frac: number
+  /** Pulsazione centrale ω(k₀) (rad·s⁻¹), frequenza ν(k₀) (THz) ed energia ħω(k₀) (meV). */
+  readonly omega0RadS: number
+  readonly freq0Thz: number
+  readonly energy0Mev: number
+  /**
+   * Velocità di fase v_p = ω(k₀)/k₀ in m·s⁻¹.
+   * Vale `null` in k₀ = 0 per i regimi reticolari (forma 0/0 su 'linear'/'acoustic',
+   * divergenza ±∞ su 'optical'); vale 0 in k₀ = 0 per 'quadratic' (v_p = ħk/2m → 0).
+   */
+  readonly vpMs: number | null
+  /**
+   * Velocità di gruppo v_g = dω/dk in m·s⁻¹.
+   * Nei punti angolosi (k₀ = 0 su 'linear'/'acoustic', o bordo zona con M = m su 'optical')
+   * vale 0 per convenzione di disparità (la UI deve mostrare i limiti destro/sinistro).
+   */
+  readonly vgMs: number
+  /** Velocità asintotica del suono v_s (m·s⁻¹) per 'linear'/'acoustic'; null negli altri regimi. */
+  readonly soundSpeedMs: number | null
+  /** Curvatura ω''(k₀) = d²ω/dk² in Å²·s⁻¹. */
+  readonly omegaSecondAng2S: number
+  /** Curvatura ω''(k₀) = d²ω/dk² in m²·s⁻¹. */
+  readonly omegaSecondM2S: number
+  /** Larghezza iniziale σ₀ (Å). */
+  readonly sigma0Ang: number
+  /** Larghezza spettrale Δk = s = 1/(2σ₀) in Å⁻¹ (soddisfa σ₀·Δk = 1/2). */
+  readonly deltaKAngInv: number
+  /** Tempo caratteristico di dispersione τ_disp = 2σ₀²/|ω''| in s (null se ω'' = 0). */
+  readonly spreadingTimeScaleS: number | null
+  /** Vero se k₀ = 0 su 'linear' o 'acoustic' (punto angoloso: limiti v_p, v_g = ±v_s). */
+  readonly isOriginCusp: boolean
+  /** Vero se k₀ = 0 su 'optical' (v_g = 0 liscio, v_p → ±∞). */
+  readonly isVpDivergent: boolean
+  /** Vero se al bordo zona k₀ = ±π/a si ha onda stazionaria (v_g = 0, ω'' ≠ 0). */
+  readonly isZoneEdgeStanding: boolean
+  /** Vero se il regime possiede un reticolo discreto campionabile a passo a ('linear', 'acoustic', 'optical'). */
+  readonly hasDiscreteLattice: boolean
+}
+
+export interface WavepacketDispersionCurve {
+  readonly k: Float64Array
+  readonly omegaRadS: Float64Array
+  readonly freqThz: Float64Array
+  readonly energyMev: Float64Array
+}
+
+export interface WavepacketFieldSample {
+  /** Posizione x (Å) nel laboratorio (o coordinata comovente ξ se `comoving` = true). */
+  readonly x: number
+  /** Inviluppo gaussiano F(ξ, t) ≥ 0 (picco unitario a t = 0). */
+  readonly envelope: number
+  /** Parte reale della portante modulata Re Ψ(x, t). */
+  readonly realPsi: number
+  /** Parte immaginaria Im Ψ(x, t). */
+  readonly imagPsi: number
+  /** Densità |Ψ(x, t)|² = F(ξ, t)². */
+  readonly probDensity: number
+}
+
+export interface WavepacketLatticeSample {
+  readonly n: number
+  /** Posizione di equilibrio x_n⁰ = n·a (Å). */
+  readonly xEq: number
+  /** Spostamento normalizzato u_n(t) = Re Ψ(x_n⁰, t). */
+  readonly u: number
+  /** Valore dell'inviluppo F(x_n⁰ − v_g t, t). */
+  readonly envelope: number
+}
+
+export interface WavepacketFieldSnapshot {
+  readonly characteristics: WavepacketCharacteristics
+  readonly timeS: number
+  readonly sigmaAng: number
+  readonly spreadRatio: number
+  readonly gamma: number
+  /** Posizione del centro dell'inviluppo x_g = v_g·t (Å) nel laboratorio. */
+  readonly groupCenterAng: number
+  /** Posizione di una cresta di riferimento della portante x_p = v_p·t (Å) (0 se v_p = null). */
+  readonly phaseCenterAng: number
+  readonly profile: readonly WavepacketFieldSample[]
+  readonly atoms: readonly WavepacketLatticeSample[]
+}
+
+/** Valida i parametri di input per il pacchetto d'onda. */
+function assertWavepacketParams(params: WavepacketParams): number {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  if (!Number.isFinite(params.k0)) {
+    throw new RangeError('Il vettore d’onda centrale k₀ deve essere finito.')
+  }
+  if (!(params.sigma0Ang > 0) || !Number.isFinite(params.sigma0Ang)) {
+    throw new RangeError('La larghezza iniziale σ₀ deve essere finita e positiva.')
+  }
+  const freeMassRatio = params.freeMassRatio ?? 1
+  if (!(freeMassRatio > 0) || !Number.isFinite(freeMassRatio)) {
+    throw new RangeError('Il rapporto di massa efficace deve essere finito e positivo.')
+  }
+  return freeMassRatio
+}
+
+/** Costante quadratica α_q = ħ/m_eff in Å²·s⁻¹ tale che ω(k) = ½ α_q k² per la particella libera. */
+function quadraticAlphaAng2S(freeMassRatio: number): number {
+  return (2 * HBAR2_OVER_2M0) / (freeMassRatio * HBAR_EV_S)
+}
+
+/** Passo reticolare a (Å) associato al regime scelto. */
+export function wavepacketLatticeA(params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic'>): number {
+  return params.regime === 'optical' ? params.diatomic.a : params.monatomic.a
+}
+
+/**
+ * Pulsazione ω(k) in rad·s⁻¹ per ciascuno dei 4 regimi di dispersione (§6.2–§6.3).
+ */
+export function wavepacketOmega(
+  k: number,
+  params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic' | 'freeMassRatio'>
+): number {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  const freeMassRatio = params.freeMassRatio ?? 1
+  if (!(freeMassRatio > 0) || !Number.isFinite(freeMassRatio)) {
+    throw new RangeError('Il rapporto di massa efficace deve essere finito e positivo.')
+  }
+
+  switch (params.regime) {
+    case 'linear': {
+      const vsAngS = monatomicSoundSpeed(params.monatomic) / ANGSTROM_IN_M
+      return vsAngS * Math.abs(k)
+    }
+    case 'acoustic':
+      return monatomicOmega(k, params.monatomic)
+    case 'optical':
+      return diatomicOmega(k, 'optical', params.diatomic)
+    case 'quadratic': {
+      const alphaQ = quadraticAlphaAng2S(freeMassRatio)
+      return 0.5 * alphaQ * k * k
+    }
+  }
+}
+
+/**
+ * Velocità di gruppo v_g(k) = dω/dk in m·s⁻¹ per ciascuno dei 4 regimi.
+ */
+export function wavepacketGroupVelocity(
+  k: number,
+  params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic' | 'freeMassRatio'>
+): number {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  const freeMassRatio = params.freeMassRatio ?? 1
+  if (!(freeMassRatio > 0) || !Number.isFinite(freeMassRatio)) {
+    throw new RangeError('Il rapporto di massa efficace deve essere finito e positivo.')
+  }
+
+  switch (params.regime) {
+    case 'linear': {
+      if (Math.abs(k) < 1e-12) return 0
+      return monatomicSoundSpeed(params.monatomic) * Math.sign(k)
+    }
+    case 'acoustic':
+      return Math.abs(k) < 1e-12 ? 0 : monatomicGroupVelocity(k, params.monatomic)
+    case 'optical':
+      return diatomicGroupVelocity(k, 'optical', params.diatomic)
+    case 'quadratic': {
+      const alphaQ = quadraticAlphaAng2S(freeMassRatio)
+      return alphaQ * k * ANGSTROM_IN_M
+    }
+  }
+}
+
+/**
+ * Velocità di fase v_p(k) = ω(k)/k in m·s⁻¹ per ciascuno dei 4 regimi.
+ * Restituisce `null` in k = 0 per i regimi reticolari (forma 0/0 su 'linear'/'acoustic',
+ * divergenza ±∞ su 'optical'); per 'quadratic' vale 0 in k = 0 (v_p = ħk/2m → 0).
+ */
+export function wavepacketPhaseVelocity(
+  k: number,
+  params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic' | 'freeMassRatio'>
+): number | null {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  const freeMassRatio = params.freeMassRatio ?? 1
+  if (!(freeMassRatio > 0) || !Number.isFinite(freeMassRatio)) {
+    throw new RangeError('Il rapporto di massa efficace deve essere finito e positivo.')
+  }
+
+  if (params.regime === 'quadratic') {
+    const alphaQ = quadraticAlphaAng2S(freeMassRatio)
+    return 0.5 * alphaQ * k * ANGSTROM_IN_M
+  }
+  if (Math.abs(k) < 1e-12) return null
+  const omega = wavepacketOmega(k, params)
+  return omega / (k / ANGSTROM_IN_M)
+}
+
+/**
+ * Derivata seconda della dispersione ω''(k) = d²ω/dk² in Å²·s⁻¹ (§6.3, eq. 12):
+ * - 'linear': 0 ovunque (k ≠ 0);
+ * - 'acoustic': −(a² ω_max / 4)|sin(ka/2)| = −(a²/4)ω(k) (al bordo di zona −a²ω_max/4 ≠ 0);
+ * - 'optical': derivata seconda analitica esatta di ω₊(k) da eq. (20);
+ * - 'quadratic': ħ/m_eff = cost > 0.
+ */
+export function wavepacketCurvatureAng2S(
+  k: number,
+  params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic' | 'freeMassRatio'>
+): number {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  const freeMassRatio = params.freeMassRatio ?? 1
+  if (!(freeMassRatio > 0) || !Number.isFinite(freeMassRatio)) {
+    throw new RangeError('Il rapporto di massa efficace deve essere finito e positivo.')
+  }
+
+  switch (params.regime) {
+    case 'linear':
+      return 0
+    case 'acoustic': {
+      const a = params.monatomic.a
+      return -0.25 * a * a * monatomicOmega(k, params.monatomic)
+    }
+    case 'optical': {
+      const pair = diatomicOmegaSquaredPair(k, params.diatomic)
+      if (pair.sqrtD < 1e-14 * pair.S) return 0
+      const wPlus = Math.sqrt(pair.wPlusSq)
+      const a = params.diatomic.a
+      const ka = k * a
+      const sinKa = Math.sin(ka)
+      const cosKa = Math.cos(ka)
+      const invMm = 1 / (pair.mHeavyKg * pair.mLightKg)
+      const c = params.diatomic.springC
+      // f(k) = ω₊²(k) = C(S + √D) con D = S² − 4sin²(ka/2)/(mM)
+      const fPrime = (-c * a * sinKa * invMm) / pair.sqrtD
+      const wPrime = fPrime / (2 * wPlus)
+      const fSecond =
+        ((-c * a * a * invMm) / pair.sqrtD) *
+        (cosKa + (sinKa * sinKa * invMm) / (pair.sqrtD * pair.sqrtD))
+      return (fSecond - 2 * wPrime * wPrime) / (2 * wPlus)
+    }
+    case 'quadratic':
+      return quadraticAlphaAng2S(freeMassRatio)
+  }
+}
+
+/**
+ * Calcola tutte le caratteristiche cinematiche e dispersive del pacchetto d'onda in k₀.
+ */
+export function wavepacketCharacteristics(params: WavepacketParams): WavepacketCharacteristics {
+  const freeMassRatio = assertWavepacketParams(params)
+  const latticeA = wavepacketLatticeA(params)
+  const zoneEdge = Math.PI / latticeA
+  const k0Frac = params.k0 / zoneEdge
+
+  const omega0RadS = wavepacketOmega(params.k0, { ...params, freeMassRatio })
+  const freq0Thz = radSToThz(omega0RadS)
+  const energy0Mev = radSToMev(omega0RadS)
+  const vpMs = wavepacketPhaseVelocity(params.k0, { ...params, freeMassRatio })
+  const vgMs = wavepacketGroupVelocity(params.k0, { ...params, freeMassRatio })
+  const omegaSecondAng2S = wavepacketCurvatureAng2S(params.k0, { ...params, freeMassRatio })
+  const omegaSecondM2S = omegaSecondAng2S * ANGSTROM_IN_M * ANGSTROM_IN_M
+
+  const soundSpeedMs =
+    params.regime === 'linear' || params.regime === 'acoustic'
+      ? monatomicSoundSpeed(params.monatomic)
+      : null
+
+  const deltaKAngInv = 0.5 / params.sigma0Ang
+  const absCurv = Math.abs(omegaSecondAng2S)
+  const curvScaleRef = Math.max(1, omega0RadS * latticeA * latticeA)
+  const spreadingTimeScaleS =
+    absCurv > 1e-11 * curvScaleRef ? (2 * params.sigma0Ang * params.sigma0Ang) / absCurv : null
+
+  const atOrigin = Math.abs(params.k0) < 1e-12
+  const atEdge = Math.abs(Math.abs(k0Frac) - 1) < 1e-4
+  const equalDiatomicMasses =
+    Math.abs(params.diatomic.massHeavyAmu - params.diatomic.massLightAmu) /
+      Math.max(params.diatomic.massHeavyAmu, params.diatomic.massLightAmu) <
+    1e-12
+
+  return {
+    regime: params.regime,
+    latticeA,
+    zoneEdge,
+    k0: params.k0,
+    k0Frac,
+    omega0RadS,
+    freq0Thz,
+    energy0Mev,
+    vpMs,
+    vgMs,
+    soundSpeedMs,
+    omegaSecondAng2S,
+    omegaSecondM2S,
+    sigma0Ang: params.sigma0Ang,
+    deltaKAngInv,
+    spreadingTimeScaleS,
+    isOriginCusp: atOrigin && (params.regime === 'linear' || params.regime === 'acoustic'),
+    isVpDivergent: atOrigin && params.regime === 'optical',
+    isZoneEdgeStanding:
+      atEdge &&
+      (params.regime === 'acoustic' || (params.regime === 'optical' && !equalDiatomicMasses)),
+    hasDiscreteLattice: params.regime !== 'quadratic'
+  }
+}
+
+/**
+ * Campiona la curva di dispersione ω(k) (rad·s⁻¹, THz, meV) su [kMin, kMax] per uno dei 4 regimi.
+ */
+export function wavepacketDispersionCurve(
+  params: Pick<WavepacketParams, 'regime' | 'monatomic' | 'diatomic' | 'freeMassRatio'>,
+  kMin: number,
+  kMax: number,
+  nPoints: number
+): WavepacketDispersionCurve {
+  assertMonatomicParams(params.monatomic)
+  assertDiatomicParams(params.diatomic)
+  const n = Math.max(2, Math.round(nPoints))
+  const kArr = new Float64Array(n)
+  const omegaRadS = new Float64Array(n)
+  const freqThz = new Float64Array(n)
+  const energyMev = new Float64Array(n)
+  const step = (kMax - kMin) / (n - 1)
+
+  for (let i = 0; i < n; i++) {
+    const kv = kMin + i * step
+    const w = wavepacketOmega(kv, params)
+    kArr[i] = kv
+    omegaRadS[i] = w
+    freqThz[i] = radSToThz(w)
+    energyMev[i] = radSToMev(w)
+  }
+
+  return { k: kArr, omegaRadS, freqThz, energyMev }
+}
+
+/**
+ * Legge di allargamento gaussiano σ(t) = σ₀ √(1 + (ω'' t / (2σ₀²))²)
+ * (dispensa Parte 6, Lezione 2 §6.3, eq. 12).
+ */
+export function wavepacketWidthAt(
+  sigma0Ang: number,
+  omegaSecondAng2S: number,
+  timeS: number
+): { readonly sigmaAng: number; readonly spreadRatio: number; readonly gamma: number } {
+  if (!(sigma0Ang > 0) || !Number.isFinite(sigma0Ang)) {
+    throw new RangeError('La larghezza iniziale σ₀ deve essere finita e positiva.')
+  }
+  const gamma = (omegaSecondAng2S * timeS) / (2 * sigma0Ang * sigma0Ang)
+  const spreadRatio = Math.hypot(1, gamma)
+  return {
+    sigmaAng: sigma0Ang * spreadRatio,
+    spreadRatio,
+    gamma
+  }
+}
+
+/**
+ * Valuta il campo del pacchetto d'onda Ψ(x, t) a una posizione `xAng` (Å) e tempo `timeS` (s)
+ * secondo l'integrale gaussiano al secondo ordine (eqq. 10–12), con norma L² conservata
+ * (∫|Ψ|² dx = √(2π)·σ₀, picco unitario a t = 0).
+ */
+export function wavepacketFieldAt(
+  xAng: number,
+  timeS: number,
+  char: WavepacketCharacteristics
+): WavepacketFieldSample {
+  const vgAngPerS = char.vgMs / ANGSTROM_IN_M
+  const xi = xAng - vgAngPerS * timeS
+  const { sigmaAng, gamma } = wavepacketWidthAt(char.sigma0Ang, char.omegaSecondAng2S, timeS)
+  const ampScale = Math.sqrt(char.sigma0Ang / sigmaAng)
+  const invFourSigmaSq = 1 / (4 * sigmaAng * sigmaAng)
+  const envelope = ampScale * Math.exp(-xi * xi * invFourSigmaSq)
+
+  const phase =
+    char.k0 * xAng -
+    char.omega0RadS * timeS +
+    gamma * xi * xi * invFourSigmaSq -
+    0.5 * Math.atan(gamma)
+
+  const realPsi = envelope * Math.cos(phase)
+  const imagPsi = envelope * Math.sin(phase)
+
+  return {
+    x: xAng,
+    envelope,
+    realPsi,
+    imagPsi,
+    probDensity: envelope * envelope
+  }
+}
+
+/**
+ * Genera l'istantanea completa del pacchetto d'onda su una finestra spaziale
+ * centrata sull'origine del laboratorio oppure nel riferimento comovente (ξ = x − v_g t).
+ * Nei 3 regimi reticolari campiona inoltre gli atomi discreti a passo a sotto l'onda.
+ */
+export function wavepacketSnapshot(
+  params: WavepacketParams,
+  timeS: number,
+  options: {
+    readonly halfSpanAng: number
+    readonly nProfilePoints: number
+    readonly comoving?: boolean
+  }
+): WavepacketFieldSnapshot {
+  const char = wavepacketCharacteristics(params)
+  const halfSpan = Math.max(char.latticeA, options.halfSpanAng)
+  const nPts = Math.max(16, Math.round(options.nProfilePoints))
+  const comoving = options.comoving ?? false
+
+  const vgAngPerS = char.vgMs / ANGSTROM_IN_M
+  const groupCenterAng = vgAngPerS * timeS
+  const phaseCenterAng = char.vpMs !== null ? (char.vpMs / ANGSTROM_IN_M) * timeS : 0
+  const { sigmaAng, spreadRatio, gamma } = wavepacketWidthAt(
+    char.sigma0Ang,
+    char.omegaSecondAng2S,
+    timeS
+  )
+
+  const profile: WavepacketFieldSample[] = []
+  const xStart = (comoving ? groupCenterAng : 0) - halfSpan
+  const step = (2 * halfSpan) / (nPts - 1)
+  for (let i = 0; i < nPts; i++) {
+    const xLab = xStart + i * step
+    const sample = wavepacketFieldAt(xLab, timeS, char)
+    profile.push(
+      comoving
+        ? {
+            ...sample,
+            x: xLab - groupCenterAng
+          }
+        : sample
+    )
+  }
+
+  const atoms: WavepacketLatticeSample[] = []
+  if (char.hasDiscreteLattice) {
+    const xMinLab = (comoving ? groupCenterAng : 0) - halfSpan
+    const xMaxLab = (comoving ? groupCenterAng : 0) + halfSpan
+    const nMin = Math.ceil(xMinLab / char.latticeA)
+    const nMax = Math.floor(xMaxLab / char.latticeA)
+    for (let n = nMin; n <= nMax; n++) {
+      const xEq = n * char.latticeA
+      const sample = wavepacketFieldAt(xEq, timeS, char)
+      atoms.push({
+        n,
+        xEq: comoving ? xEq - groupCenterAng : xEq,
+        u: sample.realPsi,
+        envelope: sample.envelope
+      })
+    }
+  }
+
+  return {
+    characteristics: char,
+    timeS,
+    sigmaAng,
+    spreadRatio,
+    gamma,
+    groupCenterAng,
+    phaseCenterAng,
+    profile,
+    atoms
   }
 }

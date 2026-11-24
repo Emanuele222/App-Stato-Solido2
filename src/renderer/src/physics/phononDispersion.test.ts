@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { AMU_KG, ANGSTROM_IN_M, C_LIGHT_M_S, radSToMev, radSToThz } from './constants'
+import {
+  AMU_KG,
+  ANGSTROM_IN_M,
+  C_LIGHT_M_S,
+  HBAR2_OVER_2M0,
+  HBAR_EV_S,
+  radSToMev,
+  radSToThz
+} from './constants'
 import {
   bvkAllowedK1D,
   bvkSnapToAllowedK,
@@ -29,8 +37,18 @@ import {
   monatomicZoneEdge,
   velocityMsToMevAngstrom,
   velocityMsToThzAngstrom,
+  wavepacketCharacteristics,
+  wavepacketCurvatureAng2S,
+  wavepacketDispersionCurve,
+  wavepacketFieldAt,
+  wavepacketGroupVelocity,
+  wavepacketOmega,
+  wavepacketPhaseVelocity,
+  wavepacketSnapshot,
+  wavepacketWidthAt,
   type DiatomicParams,
-  type MonatomicParams
+  type MonatomicParams,
+  type WavepacketParams
 } from './phononDispersion'
 
 /** Esempio numerico della dispensa Parte 6, Lezione 1 §3 (p. 9): metallo tipico. */
@@ -531,5 +549,224 @@ describe('phononDispersion — catena biatomica, gap, matrice 2×2 e luce IR (Pa
     expect(irN.refractiveIndex).toBe(1.5)
     expect(irN.kLightMInv / ir1.kLightMInv).toBeCloseTo(1.5, 6)
     expect(irN.wavelengthUm).toBeCloseTo(ir1.wavelengthUm, 6)
+  })
+})
+
+describe('phononDispersion — pacchetti d’onda: velocità di fase, gruppo e spreading (Parte 6 §6)', () => {
+  const baseParams = (overrides: Partial<WavepacketParams> = {}): WavepacketParams => ({
+    regime: 'acoustic',
+    k0: 0.65 * monatomicZoneEdge(TYPICAL_METAL_KG.a),
+    sigma0Ang: 3 * TYPICAL_METAL_KG.a,
+    monatomic: TYPICAL_METAL_KG,
+    diatomic: NACL_PAIR,
+    freeMassRatio: 1,
+    ...overrides
+  })
+
+  it('verifica derivate numeriche v_g = dω/dk e ω\'\' = d²ω/dk² su tutti e 4 i regimi', () => {
+    const dk = 1e-4 // Å⁻¹
+
+    for (const regime of ['linear', 'acoustic', 'optical', 'quadratic'] as const) {
+      const a = regime === 'optical' ? NACL_PAIR.a : TYPICAL_METAL_KG.a
+      const kb = monatomicZoneEdge(a)
+      for (const frac of [-0.72, -0.35, 0.35, 0.72]) {
+        const k = frac * kb
+        const p = baseParams({ regime, k0: k })
+
+        const wM = wavepacketOmega(k - dk, p)
+        const w0 = wavepacketOmega(k, p)
+        const wP = wavepacketOmega(k + dk, p)
+
+        const vgNum = ((wP - wM) / (2 * dk)) * ANGSTROM_IN_M
+        const vgAn = wavepacketGroupVelocity(k, p)
+        expect(Math.abs(vgAn - vgNum) / Math.max(1, Math.abs(vgAn))).toBeLessThan(1e-6)
+
+        const curvNum = (wP - 2 * w0 + wM) / (dk * dk)
+        const curvAn = wavepacketCurvatureAng2S(k, p)
+        if (regime === 'linear') {
+          expect(curvAn).toBe(0)
+          expect(Math.abs(curvNum)).toBeLessThan(1e-2)
+        } else {
+          expect(Math.abs(curvAn - curvNum) / Math.max(1e6, Math.abs(curvAn))).toBeLessThan(1e-5)
+        }
+      }
+    }
+  })
+
+  it('riproduce i 4 regimi e tutti i casi limite della dispensa (§6.2–§6.3)', () => {
+    const kbMono = monatomicZoneEdge(TYPICAL_METAL_KG.a)
+    const vsMono = monatomicSoundSpeed(TYPICAL_METAL_KG)
+    const wMaxMono = monatomicOmegaMax(TYPICAL_METAL_KG)
+
+    // 1. Regime lineare: v_p = v_g = v_s, ω'' = 0, nessuno spreading
+    const cLin = wavepacketCharacteristics(baseParams({ regime: 'linear', k0: 0.4 * kbMono }))
+    expect(cLin.vpMs).toBeCloseTo(vsMono, 8)
+    expect(wavepacketPhaseVelocity(0.4 * kbMono, baseParams({ regime: 'linear' }))).toBeCloseTo(vsMono, 8)
+    expect(wavepacketPhaseVelocity(0, baseParams({ regime: 'linear' }))).toBeNull()
+    expect(cLin.vgMs).toBeCloseTo(vsMono, 8)
+    expect(cLin.omegaSecondAng2S).toBe(0)
+    expect(cLin.spreadingTimeScaleS).toBeNull()
+    expect(wavepacketWidthAt(cLin.sigma0Ang, cLin.omegaSecondAng2S, 1e-11).spreadRatio).toBe(1)
+
+    // 2. Bordo di zona sul ramo acustico: v_g = 0, v_p = (2/π)v_s ≠ 0, ma ω'' = −a²ω_max/4 ≠ 0
+    const cEdge = wavepacketCharacteristics(baseParams({ regime: 'acoustic', k0: kbMono }))
+    expect(cEdge.vgMs).toBe(0)
+    expect(cEdge.vpMs).toBeCloseTo((2 / Math.PI) * vsMono, 6)
+    expect(cEdge.isZoneEdgeStanding).toBe(true)
+    const expectedEdgeCurv = -0.25 * TYPICAL_METAL_KG.a * TYPICAL_METAL_KG.a * wMaxMono
+    expect(cEdge.omegaSecondAng2S / 1e13).toBeCloseTo(expectedEdgeCurv / 1e13, 8)
+    expect(cEdge.omegaSecondAng2S).toBeLessThan(0)
+    expect(cEdge.spreadingTimeScaleS).not.toBeNull()
+    // Pacchetto fermo che si allarga: centro a 0, ma σ(t) > σ₀
+    const snapEdge = wavepacketSnapshot(baseParams({ regime: 'acoustic', k0: kbMono }), 2e-12, {
+      halfSpanAng: 30,
+      nProfilePoints: 121
+    })
+    expect(snapEdge.groupCenterAng).toBe(0)
+    expect(snapEdge.spreadRatio).toBeGreaterThan(1.2)
+
+    // 3. Ramo ottico (k₀ > 0): v_p > 0 e v_g < 0 (inviluppo all'indietro rispetto alle creste)
+    const kbDiat = monatomicZoneEdge(NACL_PAIR.a)
+    const cOpt = wavepacketCharacteristics(baseParams({ regime: 'optical', k0: 0.5 * kbDiat }))
+    expect(cOpt.vpMs).not.toBeNull()
+    expect(cOpt.vpMs!).toBeGreaterThan(0)
+    expect(cOpt.vgMs).toBeLessThan(0)
+
+    // 4. Dispersione quadratica (particella libera, §6.3): v_g = 2 v_p, ω'' = ħ/m₀ = cost
+    const cQuad = wavepacketCharacteristics(baseParams({ regime: 'quadratic', k0: 0.5 * kbMono }))
+    expect(cQuad.vpMs).not.toBeNull()
+    expect(cQuad.vgMs).toBeCloseTo(2 * cQuad.vpMs!, 4)
+    const expectedAlphaQ = (2 * HBAR2_OVER_2M0) / HBAR_EV_S
+    expect(cQuad.omegaSecondAng2S / 1e15).toBeCloseTo(expectedAlphaQ / 1e15, 8)
+    expect(cQuad.hasDiscreteLattice).toBe(false)
+
+    // 5. Casi limite in k₀ = 0: mai "0,00" improprio sui punti angolosi / divergenza
+    const cLinZero = wavepacketCharacteristics(baseParams({ regime: 'linear', k0: 0 }))
+    expect(cLinZero.isOriginCusp).toBe(true)
+    expect(cLinZero.vpMs).toBeNull()
+    expect(cLinZero.vgMs).toBe(0)
+
+    const cAcZero = wavepacketCharacteristics(baseParams({ regime: 'acoustic', k0: 0 }))
+    expect(cAcZero.isOriginCusp).toBe(true)
+    expect(cAcZero.vpMs).toBeNull()
+    expect(cAcZero.vgMs).toBe(0)
+
+    const cOptZero = wavepacketCharacteristics(baseParams({ regime: 'optical', k0: 0 }))
+    expect(cOptZero.isVpDivergent).toBe(true)
+    expect(cOptZero.vpMs).toBeNull()
+    expect(cOptZero.vgMs).toBe(0)
+    // Curvatura analitica in k = 0 sul ramo ottico: ω₊''(0) = −C a² / [2(m+M) ω₊(0)]
+    const mSumKg = (NACL_PAIR.massHeavyAmu + NACL_PAIR.massLightAmu) * AMU_KG
+    const wOpt0 = diatomicSummary(NACL_PAIR).omegaOpticalZeroRadS
+    const expectedOptCurv0 = -(NACL_PAIR.springC * NACL_PAIR.a * NACL_PAIR.a) / (2 * mSumKg * wOpt0)
+    expect(cOptZero.omegaSecondAng2S / 1e13).toBeCloseTo(expectedOptCurv0 / 1e13, 8)
+
+    // Bordo zona ramo ottico (punto B): v_g = 0, ma ω₊''(π/a) > 0 (minimo del ramo ottico)
+    const cOptEdge = wavepacketCharacteristics(baseParams({ regime: 'optical', k0: kbDiat }))
+    expect(cOptEdge.isZoneEdgeStanding).toBe(true)
+    expect(cOptEdge.vgMs).toBe(0)
+    expect(cOptEdge.omegaSecondAng2S).toBeGreaterThan(0)
+    expect(cOptEdge.spreadingTimeScaleS).not.toBeNull()
+
+    const cQuadZero = wavepacketCharacteristics(baseParams({ regime: 'quadratic', k0: 0 }))
+    expect(cQuadZero.isOriginCusp).toBe(false)
+    expect(cQuadZero.isVpDivergent).toBe(false)
+    expect(cQuadZero.vpMs).toBe(0)
+    expect(cQuadZero.vgMs).toBe(0)
+  })
+
+  it('soddisfa Δx·Δk = 1/2, la formula eq. (12), la conservazione della norma e l’integrale eq. (10)', () => {
+    const kb = monatomicZoneEdge(TYPICAL_METAL_KG.a)
+    const p = baseParams({
+      regime: 'quadratic',
+      k0: 0.45 * kb,
+      sigma0Ang: 5 * TYPICAL_METAL_KG.a
+    })
+    const char = wavepacketCharacteristics(p)
+
+    // Principio di indeterminazione gaussiano: σ₀ · Δk = 1/2
+    expect(char.sigma0Ang * char.deltaKAngInv).toBeCloseTo(0.5, 12)
+
+    // Allargamento al tempo caratteristico τ_disp = 2σ₀²/|ω''| deve dare √2 · σ₀
+    const tau = char.spreadingTimeScaleS!
+    expect(tau).toBeGreaterThan(0)
+    const wTau = wavepacketWidthAt(char.sigma0Ang, char.omegaSecondAng2S, tau)
+    expect(wTau.spreadRatio).toBeCloseTo(Math.SQRT2, 12)
+    expect(wTau.sigmaAng).toBeCloseTo(Math.SQRT2 * char.sigma0Ang, 12)
+
+    // Conservazione della norma L²: ∫|Ψ(x, t)|² dx = √(2π) σ₀ per ogni t
+    const tTest = 1.5 * tau
+    const halfSpan = 8 * wTau.sigmaAng
+    const nPts = 601
+    const snap = wavepacketSnapshot(p, tTest, { halfSpanAng: halfSpan, nProfilePoints: nPts, comoving: true })
+    const dx = (2 * halfSpan) / (nPts - 1)
+    let integral = 0
+    for (let i = 0; i < snap.profile.length; i++) {
+      const weight = i === 0 || i === snap.profile.length - 1 ? 0.5 : 1
+      integral += weight * snap.profile[i].probDensity * dx
+    }
+    const expectedNorm = Math.sqrt(2 * Math.PI) * char.sigma0Ang
+    expect(integral).toBeCloseTo(expectedNorm, 4)
+
+    // Confronto diretto con l'integrale numerico di Fourier eq. (10) (per dispersione quadratica è esatto!)
+    const sWidth = char.deltaKAngInv // = 1/(2σ₀)
+    const nQuad = 401
+    const kSpan = 7 * sWidth
+    const dkQuad = (2 * kSpan) / (nQuad - 1)
+    // Peso normalizzato affinché Ψ(0,0) = 1: (1/√2π) ∫ Φ(k) dk = 1 con Φ(k₀+κ) = (√2π / (2s√π)) e^{-κ²/4s²}
+    const normFactor = 1 / (2 * sWidth * Math.sqrt(Math.PI))
+    for (const xLab of [char.vgMs / ANGSTROM_IN_M * tTest, char.vgMs / ANGSTROM_IN_M * tTest + 6]) {
+      let reInt = 0
+      let imInt = 0
+      for (let j = 0; j < nQuad; j++) {
+        const kappa = -kSpan + j * dkQuad
+        const k = char.k0 + kappa
+        const w = wavepacketOmega(k, p)
+        const phi = normFactor * Math.exp(-(kappa * kappa) / (4 * sWidth * sWidth))
+        const phase = k * xLab - w * tTest
+        const weight = j === 0 || j === nQuad - 1 ? 0.5 : 1
+        reInt += weight * phi * Math.cos(phase) * dkQuad
+        imInt += weight * phi * Math.sin(phase) * dkQuad
+      }
+      const analytic = wavepacketFieldAt(xLab, tTest, char)
+      expect(analytic.realPsi).toBeCloseTo(reInt, 5)
+      expect(analytic.imagPsi).toBeCloseTo(imInt, 5)
+    }
+  })
+
+  it('campiona gli atomi discreti ogni passo a solo nei 3 regimi reticolari e genera curve di dispersione coerenti', () => {
+    const kb = monatomicZoneEdge(TYPICAL_METAL_KG.a)
+    for (const regime of ['linear', 'acoustic', 'optical'] as const) {
+      const a = regime === 'optical' ? NACL_PAIR.a : TYPICAL_METAL_KG.a
+      const snap = wavepacketSnapshot(baseParams({ regime, k0: 0.4 * monatomicZoneEdge(a) }), 0, {
+        halfSpanAng: 4 * a,
+        nProfilePoints: 81
+      })
+      expect(snap.atoms.length).toBeGreaterThanOrEqual(7)
+      for (let i = 1; i < snap.atoms.length; i++) {
+        expect(snap.atoms[i].xEq - snap.atoms[i - 1].xEq).toBeCloseTo(a, 10)
+      }
+    }
+
+    const snapQuad = wavepacketSnapshot(baseParams({ regime: 'quadratic', k0: 0.4 * kb }), 0, {
+      halfSpanAng: 15,
+      nProfilePoints: 81
+    })
+    expect(snapQuad.atoms.length).toBe(0)
+
+    const curve = wavepacketDispersionCurve(baseParams({ regime: 'linear' }), -kb, kb, 101)
+    expect(curve.k.length).toBe(101)
+    expect(curve.freqThz[50]).toBeCloseTo(0, 12)
+    expect(curve.freqThz[100]).toBeCloseTo(
+      radSToThz(monatomicSoundSpeed(TYPICAL_METAL_KG) * (kb / ANGSTROM_IN_M)),
+      10
+    )
+
+    expect(() =>
+      wavepacketCharacteristics(baseParams({ sigma0Ang: 0 }))
+    ).toThrow(RangeError)
+    expect(() =>
+      wavepacketCharacteristics(baseParams({ freeMassRatio: -1 }))
+    ).toThrow(RangeError)
   })
 })

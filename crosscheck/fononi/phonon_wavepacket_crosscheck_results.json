@@ -1,0 +1,619 @@
+{
+  "total_checks": 34,
+  "passed": 34,
+  "failed": 0,
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "Costanti e scala quadratica \u0127/m\u2080",
+      "category": "costanti",
+      "passed": true,
+      "max_err": 5.553464895192187e-07,
+      "threshold": 1e-05,
+      "details": {
+        "app_HBAR2_OVER_2M0": 3.80998,
+        "app_HBAR_EV_S": 6.582119569e-16,
+        "hbar_eV_s_SI2019": 6.582119569509066e-16,
+        "alpha_q_app_ang2_s": 1.157675718303257e+16,
+        "alpha_q_codata2018_ang2_s": 1.1576763612147602e+16,
+        "rel_diff_codata_vs_progetto": 5.553464895192187e-07
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (linear_035_s3)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 1.610465098522417e-15,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 1.159106867033638e-15,
+        "max_env_err": 3.3306690738754696e-16,
+        "max_prob_err": 6.661338147750939e-16,
+        "max_width_rel_err": 0.0,
+        "max_phase_rad_err": 1.610465098522417e-15,
+        "n_samples": 21,
+        "worst_pt": {
+          "x": 31.359713852150126,
+          "t": 8e-13,
+          "psi_app": [
+            -0.0737054994232692,
+            0.9365171658540818
+          ],
+          "psi_gl": [
+            -0.07370549942327032,
+            0.9365171658540822
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (acoustic_066_s3)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 7.857011980980201e-15,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 2.494915946531976e-15,
+        "max_env_err": 5.551115123125783e-16,
+        "max_prob_err": 1.1102230246251565e-15,
+        "max_width_rel_err": 1.682990204838675e-16,
+        "max_phase_rad_err": 7.857011980980201e-15,
+        "n_samples": 28,
+        "worst_pt": {
+          "x": 52.70432935410426,
+          "t": 3e-12,
+          "psi_app": [
+            -0.3958307716437779,
+            -0.744242865794986
+          ],
+          "psi_gl": [
+            -0.3958307716437802,
+            -0.7442428657949851
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (acoustic_edge_s15)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 9.704653972609019e-15,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 2.277987190955421e-15,
+        "max_env_err": 6.938893903907228e-16,
+        "max_prob_err": 1.2212453270876722e-15,
+        "max_width_rel_err": 1.2935025946994713e-16,
+        "max_phase_rad_err": 9.704653972609019e-15,
+        "n_samples": 21,
+        "worst_pt": {
+          "x": 3.4332301432548813,
+          "t": 1e-12,
+          "psi_app": [
+            -0.4295928386197145,
+            0.5453536490130654
+          ],
+          "psi_gl": [
+            -0.4295928386197129,
+            0.545353649013067
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (optical_050_s3)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 5.484646274570457e-14,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 2.0411881318512657e-14,
+        "max_env_err": 8.881784197001252e-16,
+        "max_prob_err": 1.1102230246251565e-15,
+        "max_width_rel_err": 3.3306690738754696e-16,
+        "max_phase_rad_err": 5.484646274570457e-14,
+        "n_samples": 28,
+        "worst_pt": {
+          "x": -88.34645834179346,
+          "t": 6e-12,
+          "psi_app": [
+            0.8257064160520896,
+            0.4685888498209228
+          ],
+          "psi_gl": [
+            0.8257064160520992,
+            0.46858884982090476
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (optical_000_s4)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 3.946611099993046e-14,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 3.0136778542874585e-14,
+        "max_env_err": 8.881784197001252e-16,
+        "max_prob_err": 1.5543122344752192e-15,
+        "max_width_rel_err": 1.1102230246251565e-16,
+        "max_phase_rad_err": 3.946611099993046e-14,
+        "n_samples": 21,
+        "worst_pt": {
+          "x": 0,
+          "t": 5e-12,
+          "psi_app": [
+            -0.6033207352253085,
+            -0.7749263048273489
+          ],
+          "psi_gl": [
+            -0.6033207352252852,
+            -0.774926304827368
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (quadratic_050_s3)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 1.2027766101165943e-14,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 8.346632775696473e-15,
+        "max_env_err": 8.881784197001252e-16,
+        "max_prob_err": 1.3322676295501878e-15,
+        "max_width_rel_err": 0.0,
+        "max_phase_rad_err": 1.2027766101165943e-14,
+        "n_samples": 28,
+        "worst_pt": {
+          "x": 116.00530924388457,
+          "t": 1.5e-14,
+          "psi_app": [
+            0.6044551685851424,
+            0.3383258735726598
+          ],
+          "psi_gl": [
+            0.6044551685851384,
+            0.33832587357266714
+          ]
+        }
+      }
+    },
+    {
+      "name": "Quadratura eq. (10) [2\u00b0 ord.] vs wavepacketFieldAt (quadratic_neg_s6)",
+      "category": "eq10_quadratura_2nd",
+      "passed": true,
+      "max_err": 1.1372524621938946e-14,
+      "threshold": 1e-11,
+      "details": {
+        "max_psi_abs_err": 8.639254521821033e-15,
+        "max_env_err": 8.881784197001252e-16,
+        "max_prob_err": 1.1102230246251565e-15,
+        "max_width_rel_err": 0.0,
+        "max_phase_rad_err": 1.1372524621938946e-14,
+        "n_samples": 21,
+        "worst_pt": {
+          "x": -174.57338552931836,
+          "t": 3e-14,
+          "psi_app": [
+            0.8065570917888715,
+            -0.3756486212376137
+          ],
+          "psi_gl": [
+            0.8065570917888754,
+            -0.375648621237606
+          ]
+        }
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (linear_035_s3)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 1.2722856631171286e-06,
+      "threshold": 0.15,
+      "details": {
+        "exact_2nd_order_regime": false,
+        "max_abs_diff_vs_full_eq10": 1.2722856631171286e-06,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (acoustic_066_s3)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 0.009928302450170871,
+      "threshold": 0.15,
+      "details": {
+        "exact_2nd_order_regime": false,
+        "max_abs_diff_vs_full_eq10": 0.009928302450170871,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (acoustic_edge_s15)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 0.004495587095660015,
+      "threshold": 0.15,
+      "details": {
+        "exact_2nd_order_regime": false,
+        "max_abs_diff_vs_full_eq10": 0.004495587095660015,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (optical_050_s3)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 0.008731051276807041,
+      "threshold": 0.15,
+      "details": {
+        "exact_2nd_order_regime": false,
+        "max_abs_diff_vs_full_eq10": 0.008731051276807041,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (optical_000_s4)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 0.0001034574684621767,
+      "threshold": 0.15,
+      "details": {
+        "exact_2nd_order_regime": false,
+        "max_abs_diff_vs_full_eq10": 0.0001034574684621767,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (quadratic_050_s3)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 8.498827956506644e-15,
+      "threshold": 1e-11,
+      "details": {
+        "exact_2nd_order_regime": true,
+        "max_abs_diff_vs_full_eq10": 8.498827956506644e-15,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Integrale eq. (10) con \u03c9(k) ESATTA vs Gaussian 2\u00b0 ord. (quadratic_neg_s6)",
+      "category": "eq10_full_dispersion",
+      "passed": true,
+      "max_err": 3.554447978966673e-15,
+      "threshold": 1e-11,
+      "details": {
+        "exact_2nd_order_regime": true,
+        "max_abs_diff_vs_full_eq10": 3.554447978966673e-15,
+        "note": "Coincidenza esatta attesa per quadratic e linear lontano da k=0; per acoustic/optical quantifica il contributo fisico di \u03c9''' e \u03c9''''"
+      }
+    },
+    {
+      "name": "Norma L\u00b2, \u27e8x\u27e9, \u03c3(t), picco e chirp spaziale (acoustic_066)",
+      "category": "conservazione_e_chirp",
+      "passed": true,
+      "max_err": 1.5129453245776858e-11,
+      "threshold": 1e-09,
+      "details": {
+        "expected_L2": 18.799712059732503,
+        "max_L2_rel_err": 1.7007932359608418e-15,
+        "max_mean_x_abs_err_Ang": 3.552713678800501e-15,
+        "max_sigma_rel_err": 2.202038002384099e-16,
+        "max_peak_rel_err": 1.5117487261275444e-16,
+        "max_chirp_k_loc_err": 1.5129453245776858e-11
+      }
+    },
+    {
+      "name": "Norma L\u00b2, \u27e8x\u27e9, \u03c3(t), picco e chirp spaziale (acoustic_edge)",
+      "category": "conservazione_e_chirp",
+      "passed": true,
+      "max_err": 2.3705938362250895e-11,
+      "threshold": 1e-09,
+      "details": {
+        "expected_L2": 12.533141373155,
+        "max_L2_rel_err": 5.527578016872737e-15,
+        "max_mean_x_abs_err_Ang": 8.324289716081118e-17,
+        "max_sigma_rel_err": 2.9238360376647997e-16,
+        "max_peak_rel_err": 1.3490170020803507e-16,
+        "max_chirp_k_loc_err": 2.3705938362250895e-11
+      }
+    },
+    {
+      "name": "Norma L\u00b2, \u27e8x\u27e9, \u03c3(t), picco e chirp spaziale (optical_050)",
+      "category": "conservazione_e_chirp",
+      "passed": true,
+      "max_err": 6.959521847704764e-11,
+      "threshold": 1e-09,
+      "details": {
+        "expected_L2": 42.41215040675652,
+        "max_L2_rel_err": 7.036378635771806e-15,
+        "max_mean_x_abs_err_Ang": 1.4210854715202004e-14,
+        "max_sigma_rel_err": 2.0997125761232278e-16,
+        "max_peak_rel_err": 3.396750428922863e-16,
+        "max_chirp_k_loc_err": 6.959521847704764e-11
+      }
+    },
+    {
+      "name": "Norma L\u00b2, \u27e8x\u27e9, \u03c3(t), picco e chirp spaziale (quadratic_050)",
+      "category": "conservazione_e_chirp",
+      "passed": true,
+      "max_err": 4.099798278645039e-11,
+      "threshold": 1e-09,
+      "details": {
+        "expected_L2": 18.799712059732503,
+        "max_L2_rel_err": 4.5354486292289116e-15,
+        "max_mean_x_abs_err_Ang": 7.105427357601002e-15,
+        "max_sigma_rel_err": 1.4905614958650448e-16,
+        "max_peak_rel_err": 0.0,
+        "max_chirp_k_loc_err": 4.099798278645039e-11
+      }
+    },
+    {
+      "name": "Norma L\u00b2, \u27e8x\u27e9, \u03c3(t), picco e chirp spaziale (linear_035)",
+      "category": "conservazione_e_chirp",
+      "passed": true,
+      "max_err": 7.131739643284618e-12,
+      "threshold": 1e-09,
+      "details": {
+        "expected_L2": 18.799712059732503,
+        "max_L2_rel_err": 0.0,
+        "max_mean_x_abs_err_Ang": 5.245166140806816e-32,
+        "max_sigma_rel_err": 0.0,
+        "max_peak_rel_err": 0.0,
+        "max_chirp_k_loc_err": 7.131739643284618e-12
+      }
+    },
+    {
+      "name": "Griglia [-2\u03c0/a, +2\u03c0/a]: \u03c9, v_p, v_g (FD4) e \u03c9'' (FD4) \u2014 linear",
+      "category": "derivate_e_dispersione",
+      "passed": true,
+      "max_err": 2.2737367544323206e-16,
+      "threshold": 1e-11,
+      "details": {
+        "n_points": 201,
+        "n_points_smooth_fd4": 200,
+        "max_omega_rel_err": 2.196819603214028e-16,
+        "max_vp_rel_err": 2.2737367544323206e-16,
+        "max_vg_vs_FD4_rel_err": 0.0,
+        "max_vg_vs_analytic_rel_err": 0.0,
+        "max_curv_vs_FD4_rel_err": 8.583333333333332e-37,
+        "max_curv_vs_analytic_rel_err": 0.0
+      }
+    },
+    {
+      "name": "Griglia [-2\u03c0/a, +2\u03c0/a]: \u03c9, v_p, v_g (FD4) e \u03c9'' (FD4) \u2014 acoustic",
+      "category": "derivate_e_dispersione",
+      "passed": true,
+      "max_err": 1.46484375e-15,
+      "threshold": 1e-11,
+      "details": {
+        "n_points": 201,
+        "n_points_smooth_fd4": 198,
+        "max_omega_rel_err": 9.27734375e-16,
+        "max_vp_rel_err": 2.2737367544323206e-16,
+        "max_vg_vs_FD4_rel_err": 2.2737367544323206e-16,
+        "max_vg_vs_analytic_rel_err": 2.2737367544323206e-16,
+        "max_curv_vs_FD4_rel_err": 1.46484375e-15,
+        "max_curv_vs_analytic_rel_err": 1.46484375e-15
+      }
+    },
+    {
+      "name": "Griglia [-2\u03c0/a, +2\u03c0/a]: \u03c9, v_p, v_g (FD4) e \u03c9'' (FD4) \u2014 optical",
+      "category": "derivate_e_dispersione",
+      "passed": true,
+      "max_err": 8.7890625e-15,
+      "threshold": 1e-11,
+      "details": {
+        "n_points": 201,
+        "n_points_smooth_fd4": 201,
+        "max_omega_rel_err": 1.7054604712412203e-16,
+        "max_vp_rel_err": 2.2737367544323206e-16,
+        "max_vg_vs_FD4_rel_err": 6.864045167808231e-16,
+        "max_vg_vs_analytic_rel_err": 3.979039320256561e-16,
+        "max_curv_vs_FD4_rel_err": 8.7890625e-15,
+        "max_curv_vs_analytic_rel_err": 8.7890625e-15
+      }
+    },
+    {
+      "name": "Griglia [-2\u03c0/a, +2\u03c0/a]: \u03c9, v_p, v_g (FD4) e \u03c9'' (FD4) \u2014 quadratic",
+      "category": "derivate_e_dispersione",
+      "passed": true,
+      "max_err": 4.267878848962664e-16,
+      "threshold": 1e-11,
+      "details": {
+        "n_points": 201,
+        "n_points_smooth_fd4": 201,
+        "max_omega_rel_err": 3.1009500228720113e-16,
+        "max_vp_rel_err": 4.267878848962664e-16,
+        "max_vg_vs_FD4_rel_err": 2.1339394244813324e-16,
+        "max_vg_vs_analytic_rel_err": 2.1339394244813324e-16,
+        "max_curv_vs_FD4_rel_err": 0.0,
+        "max_curv_vs_analytic_rel_err": 0.0
+      }
+    },
+    {
+      "name": "Caso limite acoustic k\u2080 = \u00b1\u03c0/a (v_g=0, \u03c9''=-a\u00b2\u03c9_max/4)",
+      "category": "casi_limite",
+      "passed": true,
+      "max_err": 0.0,
+      "threshold": 1e-13,
+      "details": {
+        "omega_max_ref": 27609713852150.125,
+        "curv_formula_ref": -43140177893984.57,
+        "curv_FD4_ref": -43140177893984.57,
+        "app_curv_pos": -43140177893984.57,
+        "app_curv_neg": -43140177893984.57,
+        "app_vg_pos": 0,
+        "app_vp_pos": 2197.111218461234,
+        "tau_disp_s": 2.607777841724823e-12,
+        "isZoneEdgeStanding": true
+      }
+    },
+    {
+      "name": "Caso limite optical k\u2080 = 0 e k\u2080 \u2192 0\u207a (v_g=0, v_p=null, \u03c9''(0)=-Ca\u00b2/[2(m+M)\u03c9\u208a(0)])",
+      "category": "casi_limite",
+      "passed": true,
+      "max_err": 5.196520780328092e-15,
+      "threshold": 1e-13,
+      "details": {
+        "w_opt_0_ref": 29375839562230.47,
+        "curv_opt_0_formula": -55735635989646.44,
+        "curv_opt_0_FD4": -55735635989646.44,
+        "app_curv_opt_0": -55735635989646.42,
+        "app_vg_opt_0": 0,
+        "app_vp_opt_0": null,
+        "isVpDivergent": true,
+        "small_k0_vg_neg": -0.31045862458320367,
+        "small_k0_curv_vs_FD4_rel_err": 1.401706449003127e-16
+      }
+    },
+    {
+      "name": "Regime optical: v_g < 0 (k>0), v_g > 0 (k<0), bordo \u00b1\u03c0/a (\u03c9''>0) e punto di flesso (\u03c9''=0)",
+      "category": "regimi",
+      "passed": true,
+      "max_err": 7.504942202627515e-15,
+      "threshold": 1e-13,
+      "details": {
+        "opt_pos_vg_vp": [
+          -1472.4409723632245,
+          9790.070769025338
+        ],
+        "opt_neg_vg_vp": [
+          1472.4409723632245,
+          -9790.070769025338
+        ],
+        "opt_edge_curv_formula": 334844038110587.06,
+        "opt_edge_curv_app": 334844038110587,
+        "opt_inflection_k_AngInv": 0.42412105685659995,
+        "opt_inflection_curv_app": 0.07504942202627515,
+        "opt_inflection_tau_disp": null
+      }
+    },
+    {
+      "name": "Caso limite optical M = m al bordo zona k\u2080 = \u03c0/a (punto angoloso ripiegato)",
+      "category": "casi_limite",
+      "passed": true,
+      "max_err": 0.0,
+      "threshold": 1e-12,
+      "details": {
+        "vgMs": 0,
+        "omegaSecondAng2S": 0,
+        "isZoneEdgeStanding": false
+      }
+    },
+    {
+      "name": "Regime lineare: v_p = v_g = \u00b1v_s, \u03c9'' = 0, cuspide in k\u2080 = 0",
+      "category": "regimi",
+      "passed": true,
+      "max_err": 0.0,
+      "threshold": 1e-13,
+      "details": {
+        "vs_ref": 3451.2142315187657,
+        "lin_pos_vg_vp": [
+          3451.2142315187657,
+          3451.2142315187657
+        ],
+        "lin_0_vp_vg_cusp": [
+          null,
+          0,
+          true
+        ]
+      }
+    },
+    {
+      "name": "Regime quadratico: v_g = 2 v_p, \u03c9'' = \u0127/m_eff, k\u2080 = 0 e m_eff = 0.25 m\u2080",
+      "category": "regimi",
+      "passed": true,
+      "max_err": 0.0,
+      "threshold": 1e-13,
+      "details": {
+        "q_pos_vg_vp": [
+          727389.1063721598,
+          363694.5531860799
+        ],
+        "q_0_vg_vp_curv": [
+          0,
+          0,
+          11576757183032570
+        ],
+        "q_eff025_curv": 46307028732130280,
+        "hasDiscreteLattice": false
+      }
+    },
+    {
+      "name": "Caso limite acoustic k\u2080 = 0 e k\u2080 \u2192 0\u207a (cuspide \u00b1v_s)",
+      "category": "casi_limite",
+      "passed": true,
+      "max_err": 0.0,
+      "threshold": 1e-13,
+      "details": {
+        "ac_0": {
+          "omega0": 0,
+          "vg": 0,
+          "vp": null,
+          "curv": 0,
+          "isOriginCusp": true
+        },
+        "ac_small_vg": 3451.214188941117,
+        "ac_small_vp": 3451.214217326216
+      }
+    },
+    {
+      "name": "Sonde logaritmiche k \u2208 [10\u207b\u00b9\u2075, 10\u207b\u00b9] \u00c5\u207b\u00b9 (assenza NaN/Inf e stabilit\u00e0)",
+      "category": "stabilita_numerica",
+      "passed": true,
+      "max_err": 2.2106406671522549e-16,
+      "threshold": 1e-12,
+      "details": {
+        "log_summary": {
+          "linear": {
+            "max_omega_rel_err": 2.2106406671522549e-16,
+            "n_probes": 16
+          },
+          "acoustic": {
+            "max_omega_rel_err": 2.010565974298747e-16,
+            "n_probes": 16
+          },
+          "optical": {
+            "max_omega_rel_err": 1.3297504901769122e-16,
+            "n_probes": 16
+          },
+          "quadratic": {
+            "max_omega_rel_err": 1.8291671274226754e-16,
+            "n_probes": 16
+          }
+        },
+        "vp_null_while_vg_nonzero_window": []
+      }
+    },
+    {
+      "name": "Snapshot (profile, atoms, comoving) e DispersionCurve (rad/s, THz)",
+      "category": "snapshot_e_curve",
+      "passed": true,
+      "max_err": 4.632344004784314e-16,
+      "threshold": 1e-12,
+      "details": {
+        "max_snap_consistency_err": 2.220446049250313e-16,
+        "max_curve_rad_thz_rel_err": 4.632344004784314e-16,
+        "max_curve_mev_rel_err_vs_SI2019": 2.2338834856352185e-10
+      }
+    },
+    {
+      "name": "Stress-test 60 estremi slider (\u03c3\u2080\u00b7\u0394k = 1/2, 0 NaN/Inf) e sviluppo \u00a76.3 piccolo k",
+      "category": "slider_e_asintotica",
+      "passed": true,
+      "max_err": 5.111970515780672e-16,
+      "threshold": 1e-13,
+      "details": {
+        "n_combinations": 60,
+        "max_sigma0_deltaK_err": 0.0,
+        "max_slider_vg_curv_rel_err": 5.111970515780672e-16,
+        "acoustic_small_k_asymptotic_rel_err": 4.1123351999302885e-09
+      }
+    }
+  ]
+}

@@ -5,6 +5,12 @@ Queste regole si affiancano a `progetto.md` e `CLAUDE.md` per lo sviluppo autono
 ## Fonte fisica e notazione
 - **Fonte unica per i Fononi**: `materiale/parte6/dispensa.pdf` e il suo estratto strutturato `materiale/parte6/riferimento-formule.md`.
 - **Piano approvato del capitolo**: `piano-fononi.md` nella radice del progetto (scaletta delle 6 sezioni, tabella colori, costanti SI, infrastruttura multi-capitolo).
+- **Scheda guida a lato (struttura pedagogica in 4 parti)**: in ogni sezione dei Fononi la scheda teoria a lato funge da guida accessibile e orientata all'interazione:
+  1. `L’idea` (1–2 frasi brevi sull'intuizione fisica centrale e su cosa mostra la scena).
+  2. `Come intervengono i parametri` (2–4 frasi sintetiche che legano ogni slider/strumento all'effetto fisico visibile, con termini colorati via `\htmlData{q=...}`).
+  3. `Cosa provare` (2–3 micro-esperimenti guidati con i preset o i valori della sezione).
+  4. `<details className="panel-details">` con `<summary>Dettagli formali</summary>` chiuso di default: raccoglie equazioni estese, definizioni formali, limiti asintotici e chiarimenti sugli errori tipici della dispensa senza appesantire la prima lettura.
+  - Nota tecnica: `RichText` (`src/renderer/src/ui/tex.tsx`) renderizza testo semplice e formule `$...$` / `$$...$$`, ma non supporta grassetto o corsivo Markdown (`**...**`, `*...*`); non usare mai asterischi Markdown nelle stringhe di `strings.ts`.
 - Rispettare sempre i simboli e le convenzioni della Parte 6: $C$ per la costante elastica (non $\gamma$ o $K$), $M > m$ nella biatomica con passo reticolare $a$ e distanza primi vicini $a/2$, $\omega_-$ ramo acustico, $\omega_+$ ramo ottico, $g(\omega)$ per polarizzazione in 3D (totale $3g$ normalizzato a $3N$), $\mathcal{E}(x) = x^2 e^x / (e^x-1)^2$, $\mu = 0$ per i fononi.
 - Nessun errore delle slide va reintrodotto: seguire le correzioni esplicite della dispensa (es. $p-1$ LO e $2(p-1)$ TO; stesso segno $\pm$ in energia e quasi-impulso nello scattering elettrone-fonone).
 

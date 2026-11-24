@@ -6,7 +6,7 @@ export const strings = {
   chapter: 'Fononi',
   title: 'Catena monatomica e prima zona',
   toolsLabel: 'Strumenti sulla dispersione e sulla catena',
-  asideLabel: 'Formule vive e teoria',
+  asideLabel: 'Formule vive e guida alla sezione',
 
   tools: {
     aliasing: 'Aliasing ($k + G$)',
@@ -102,37 +102,56 @@ export const strings = {
   },
 
   theory: {
-    title: 'Teoria in breve',
+    title: 'Guida alla sezione',
     blocks: [
       {
-        heading: 'Approssimazione armonica e molle',
+        heading: 'L’idea',
         paragraphs: [
-          'Attorno al minimo di equilibrio $x_n^0 = n\\htmlData{q=a}{a}$ il potenziale si sviluppa al secondo ordine: il termine lineare si annulla e restano le costanti di forza $\\Phi(n,m) = \\left.\\partial^2 V/\\partial u_n\\partial u_m\\right|_0$, con regola di somma nulla $\\sum_m \\Phi(n,m) = 0$ (una traslazione rigida non produce forze). Questa approssimazione vale solo per piccoli spostamenti: l’anarmonicità è trascurata, non assente.',
-          'A primi vicini ogni coppia equivale a una molla di costante $\\htmlData{q=C}{C} = V\'\'_{\\text{coppia}}(a)$ e ogni atomo di massa $\\htmlData{q=M}{M}$ risponde a $\\htmlData{q=u}{u_{n+1}} + \\htmlData{q=u}{u_{n-1}} - 2\\htmlData{q=u}{u_n}$, con soluzioni a onda piana $\\htmlData{q=u}{u_n}(t) = A e^{i(\\htmlData{q=k}{k}n\\htmlData{q=a}{a} - \\htmlData{q=omega}{\\omega}t)}$. La catena 1D descrive un solo ramo longitudinale; in 3D compaiono anche modi trasversali e polarizzazioni.'
+          'In un cristallo gli atomi non stanno fermi: oscillano attorno alle posizioni di equilibrio legati da forze elastiche che, per piccoli spostamenti, si comportano come molle di costante $\\htmlData{q=C}{C}$. In alto vedi una fila unidimensionale di atomi di massa $\\htmlData{q=M}{M}$ a distanza $\\htmlData{q=a}{a}$, mentre in basso la curva $\\htmlData{q=omega}{\\nu}(\\htmlData{q=k}{k})$ mostra la frequenza di oscillazione per ciascun vettore d’onda $\\htmlData{q=k}{k}$ scelto.'
         ]
       },
       {
-        heading: 'Regime acustico, bordo zona e taglio',
+        heading: 'Come intervengono i parametri',
         paragraphs: [
-          'La dispersione $\\htmlData{q=omega}{\\omega}(\\htmlData{q=k}{k}) = 2\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}\\,|\\sin(\\htmlData{q=k}{k}\\htmlData{q=a}{a}/2)|$ è pari in $k$. Per $ka \\ll 1$ ($\\lambda \\gg a$) è lineare come un mezzo continuo: $\\htmlData{q=v}{v_g} = \\htmlData{q=vp}{v_p} = \\htmlData{q=v}{v_s} = \\htmlData{q=a}{a}\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}$.',
-          'Al bordo $\\htmlData{q=k}{k} = \\pm\\pi/\\htmlData{q=a}{a}$ ($\\lambda = 2a$) si raggiunge $\\htmlData{q=omega}{\\omega_{\\max}} = 2\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}$ e $\\htmlData{q=v}{v_g} = 0$: gli atomi oscillano in opposizione di fase come onda stazionaria ($u_n = A(-1)^n\\cos\\omega_{\\max}t$, riflessione di Bragg), non sono fermi e $|\\htmlData{q=vp}{v_p}| \\neq 0$. Per $\\omega > \\omega_{\\max}$ non esiste $k$ reale: il vettore d’onda diventa complesso ($k = \\pi/a + i\\kappa$) e l’ampiezza decade esponenzialmente come $e^{-\\kappa x}$ (onda evanescente, filtro passa-basso).'
+          'Molle più rigide ($\\htmlData{q=C}{C}$ grande) richiamano gli atomi più in fretta e alzano tutta la curva e la velocità del suono $\\htmlData{q=v}{v_s}$; atomi più pesanti ($\\htmlData{q=M}{M}$ grande) oppongono più inerzia e abbassano le frequenze. Allargando il passo reticolare $\\htmlData{q=a}{a}$ si restringe la prima zona di Brillouin $(\\pm\\pi/\\htmlData{q=a}{a})$, perché la lunghezza d’onda minima compatibile con il reticolo diventa più grande.',
+          'I tre strumenti in alto attivano tre aspetti chiave: Aliasing ($k + G$) sovrappone un’onda equivalente più corta che passa per gli stessi atomi, Born–von Kármán ($N$) chiude la catena ad anello lasciando esattamente $N$ modi discreti, e Sonda $v_p, v_g$ disegna corda $(\\htmlData{q=vp}{v_p})$ e tangente $(\\htmlData{q=v}{v_g})$ nel punto scelto.'
         ]
       },
       {
-        heading: 'Aliasing e prima zona di Brillouin',
+        heading: 'Cosa provare',
         paragraphs: [
-          'Poiché l’onda è campionata solo nei siti discreti $x_n^0 = n\\htmlData{q=a}{a}$, sostituire $\\htmlData{q=k}{k}$ con $k\' = k + G$ ($G = 2\\pi m/a$) moltiplica lo spostamento per $e^{i2\\pi mn} = 1$: i due vettori descrivono lo stesso moto fisico e la stessa $\\omega$.',
-          'Tutte le onde distinte cadono nella prima zona di Brillouin $-\\pi/a < k \\le \\pi/a$ (l’insieme dei $k$ più vicini all’origine che a ogni altro $G$, ossia la cella di Wigner–Seitz del reticolo reciproco), con limite di Nyquist $\\lambda_{\\min} = 2a$.'
-        ]
-      },
-      {
-        heading: 'Condizioni periodiche di Born–von Kármán',
-        paragraphs: [
-          'Chiudendo una catena di $N$ atomi ($L = Na$) ad anello ($u_{n+N} = u_n$) si eliminano i bordi preservando le onde viaggianti: da $e^{ikNa} = 1$ seguono i valori discreti $k_j = \\frac{2\\pi}{Na}j$ con $-N/2 < j \\le N/2$.',
-          'In zona cadono esattamente $N$ punti (poiché $-\\pi/a$ e $+\\pi/a$ coincidono per $G$), tanti quanti i gradi di libertà longitudinali. L’anello è un artificio matematico e non un’ipotesi fisica: le proprietà di volume e il conteggio di $N$ modi restano gli stessi anche con estremi bloccati. Per $N \\gg 1$ il passo $\\Delta k = 2\\pi/L \\to 0$ e $\\sum_k \\to \\frac{L}{2\\pi}\\int dk$.'
+          'Seleziona il modo rapido $\\pi/a$ (oppure clicca il bordo di zona sul grafico) e attiva Sonda $v_p, v_g$: la tangente diventa piatta $(\\htmlData{q=v}{v_g} = 0)$, ma nella catena in alto vedi gli atomi oscillare vigorosamente in opposizione di fase come onda stazionaria.',
+          'Attiva Aliasing ($k + G$) a $k = \\pi/2a$: l’onda gialla tratteggiata $k\' = k - G$ oscilla più in fretta nello spazio vuoto fra i siti, eppure tocca esattamente gli stessi spostamenti $\\htmlData{q=u}{u_n}$ sugli atomi. Poi passa a Born–von Kármán ($N$) e conta gli $N$ pallini verdi nella prima zona.',
+          'Confronta i preset Piombo 1D (pesante e molle, banda bassa) e Carbonio 1D (leggero e rigido, banda altissima) per vedere come massa e molla spostano il tetto $\\htmlData{q=omega}{\\nu_{\\max}}$.'
         ]
       }
     ],
+    details: {
+      title: 'Dettagli formali',
+      blocks: [
+        {
+          heading: 'Approssimazione armonica e legge di dispersione',
+          paragraphs: [
+            'Attorno ai siti di equilibrio $x_n^0 = n\\htmlData{q=a}{a}$, lo sviluppo del potenziale al secondo ordine definisce le costanti di forza $\\Phi(n,m) = \\left.\\partial^2 V/\\partial u_n\\partial u_m\\right|_0$, con simmetria $\\Phi(n,m) = \\Phi(m,n)$ e regola di somma nulla $\\sum_m \\Phi(n,m) = 0$ (una traslazione rigida non produce forze). L’approssimazione vale solo per piccoli spostamenti: i termini anarmonici sono trascurati, non assenti.',
+            'A primi vicini con costante $\\htmlData{q=C}{C}$ e massa $\\htmlData{q=M}{M}$, l’equazione del moto $\\htmlData{q=M}{M}\\,\\htmlData{q=u}{\\ddot{u}_n} = \\htmlData{q=C}{C}(\\htmlData{q=u}{u_{n+1}} + \\htmlData{q=u}{u_{n-1}} - 2\\htmlData{q=u}{u_n})$ ammette soluzioni a onda piana $\\htmlData{q=u}{u_n}(t) = A e^{i(\\htmlData{q=k}{k}n\\htmlData{q=a}{a} - \\htmlData{q=omega}{\\omega}t)}$ con dispersione $\\htmlData{q=omega}{\\omega}(\\htmlData{q=k}{k}) = 2\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}\\,|\\sin(\\htmlData{q=k}{k}\\htmlData{q=a}{a}/2)|$. La catena 1D modella un solo ramo longitudinale; in 3D compaiono anche polarizzazioni trasversali.'
+          ]
+        },
+        {
+          heading: 'Limite acustico, bordo di zona e banda evanescente',
+          paragraphs: [
+            'Per $ka \\ll 1$ ($\\lambda \\gg a$), $\\sin(ka/2) \\simeq ka/2$ e il reticolo si comporta come un continuo elastico: $\\htmlData{q=omega}{\\omega} \\simeq \\htmlData{q=v}{v_s}|\\htmlData{q=k}{k}|$ con $\\htmlData{q=v}{v_s} = \\htmlData{q=a}{a}\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}$ e $\\htmlData{q=vp}{v_p} = \\htmlData{q=v}{v_g} = \\pm\\htmlData{q=v}{v_s}$.',
+            'Al bordo $\\htmlData{q=k}{k} = \\pm\\pi/\\htmlData{q=a}{a}$ ($\\lambda = 2a$) si raggiunge la pulsazione di taglio $\\htmlData{q=omega}{\\omega_{\\max}} = 2\\sqrt{\\htmlData{q=C}{C}/\\htmlData{q=M}{M}}$ e $\\htmlData{q=v}{v_g} = 0$: l’onda è stazionaria ($u_n(t) = A(-1)^n\\cos\\omega_{\\max}t$, riflessione di Bragg), ma gli atomi non sono fermi e $|\\htmlData{q=vp}{v_p}| = \\frac{2}{\\pi}v_s \\neq 0$. Per $\\omega > \\omega_{\\max}$ non esiste $k$ reale: ponendo $k = \\pi/a + i\\kappa$ l’ampiezza decade esponenzialmente nello spazio come $e^{-\\kappa x}$ (onda evanescente, filtro passa-basso).'
+          ]
+        },
+        {
+          heading: 'Aliasing, prima zona di Brillouin e Born–von Kármán',
+          paragraphs: [
+            'Poiché l’onda è campionata solo nei siti discreti $x_n^0 = n\\htmlData{q=a}{a}$, sostituire $\\htmlData{q=k}{k}$ con $k\' = k + G$ ($G = 2\\pi m/a$, $m \\in \\mathbb{Z}$) moltiplica lo spostamento per $e^{i2\\pi mn} = 1$: i due vettori descrivono lo stesso moto fisico e la stessa $\\omega$. Tutte le onde distinte cadono nella prima zona di Brillouin $-\\pi/a < k \\le \\pi/a$ (i punti più vicini a $k = 0$ che a ogni altro $G$, ossia la cella di Wigner–Seitz del reticolo reciproco), con limite di Nyquist $\\lambda_{\\min} = 2a$.',
+            'Chiudendo una catena di $N$ atomi ($L = Na$) ad anello con condizioni periodiche di Born–von Kármán ($u_{n+N} = u_n$), da $e^{ikNa} = 1$ seguono $k_j = \\frac{2\\pi}{Na}j$ con $-N/2 < j \\le N/2$. In zona cadono esattamente $N$ punti (poiché $-\\pi/a$ e $+\\pi/a$ coincidono per $G$), tanti quanti i gradi di libertà longitudinali; l’anello è un artificio matematico per eliminare gli effetti di bordo e per $N \\gg 1$ porta a $\\sum_k \\to \\frac{L}{2\\pi}\\int\\mathrm{d}k$.'
+          ]
+        }
+      ]
+    },
     foot: 'Fonte: dispensa Parte 6, Lezione 1 (§§1–5) e Lezione 3 (§13). Il preset «Metallo tipico» riproduce l’esempio del §3 ($M = 1{,}05\\times 10^{-25}\\,\\text{kg} \\approx 63\\,\\text{u}$, $a = 2{,}5\\,\\text{Å}$, $C = 20\\,\\text{N/m}$); «Piombo 1D» e «Carbonio 1D» sono esterni alla dispensa (profili 1D illustrativi).'
   }
 } as const

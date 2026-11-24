@@ -9,7 +9,7 @@ export const strings = {
   chapter: 'Fononi',
   title: 'Rami 3D, polarizzazioni e cristalli reali',
   toolsLabel: 'Strumenti sui fononi 3D',
-  asideLabel: 'Formule vive e teoria',
+  asideLabel: 'Formule vive e guida alla sezione',
 
   tools: {
     unitLabel: (unit: 'meV' | 'THz'): string => `Unità: ${unit}`,
@@ -131,37 +131,63 @@ export const strings = {
   },
 
   theory: {
-    title: 'Teoria in breve',
+    title: 'Guida alla sezione',
     blocks: [
       {
-        heading: 'Dai rami 1D ai $3p$ rami in 3D (e conteggio LO / TO)',
+        heading: 'L’idea',
         paragraphs: [
-          'In tre dimensioni ciascun atomo ha $3$ gradi di libertà: con una base di $p$ atomi per cella primitiva si hanno $3p$ rami fononici per ogni $\\htmlData{q=k}{\\mathbf{k}}$ nella prima zona di Brillouin. Tre rami sono sempre acustici ($\\htmlData{q=omega}{\\omega}(\\mathbf{k}\\to\\mathbf{0}) = 0$: $1$ longitudinale LA e $2$ trasversali $\\text{TA}_1$, $\\text{TA}_2$, nei quali la cella trasla rigidamente) e i restanti $3p - 3$ sono ottici ($\\htmlData{q=omegaOpt}{\\omega}(\\mathbf{0}) > 0$, moti interni della base, con bande tipicamente quasi piatte e piccola velocità di gruppo $v_g$).',
-          'Attenzione a due errori frequenti (§9.1 e §12): i rami ottici non sono «solo trasversali» né contengono «un unico LO per ogni $p$» (come in formulazioni imprecise diffuse con $1$ LO e $3p - 4$ TO). Il conto corretto lungo le direzioni di alta simmetria è $p - 1$ rami LO e $2(p - 1)$ rami TO: un longitudinale e due trasversali per ciascun atomo aggiunto alla base (coincidono solo per $p = 2$). Inoltre le etichette LA, TA, LO, TO sono esatte soltanto lungo direzioni di alta simmetria: lungo una direzione generica come $X\\text{–}K$ gli spostamenti sono in generale misti.'
+          'In un cristallo tridimensionale ogni atomo può spostarsi nelle tre direzioni dello spazio: con $p$ atomi per cella primitiva compaiono $3p$ rami fononici lungo il cammino $\\Gamma\\text{–}X\\text{–}K\\text{–}\\Gamma\\text{–}L$. La vista 3D in alto mostra i piani atomici che oscillano secondo la polarizzazione $\\htmlData{q=u}{\\boldsymbol{\\varepsilon}^s}(\\htmlData{q=k}{\\mathbf{k}})$ rispetto alla direzione di propagazione $\\htmlData{q=k}{\\mathbf{k}}$.'
         ]
       },
       {
-        heading: 'Matrice dinamica $3p \\times 3p$ e regola di somma acustica',
+        heading: 'Come intervengono i parametri',
         paragraphs: [
-          'Scrivendo lo spostamento dell’atomo $\\alpha$ nella cella $n$ come onda di Bloch $\\htmlData{q=u}{\\mathbf{u}_{n\\alpha}}(t) = M_\\alpha^{-1/2}\\htmlData{q=u}{\\boldsymbol{\\varepsilon}^s_\\alpha}(\\mathbf{k})e^{i(\\mathbf{k}\\cdot\\mathbf{R}_n - \\omega t)}$, le $3pN_c$ equazioni armoniche si riducono per ogni $\\mathbf{k}$ al problema agli autovalori della matrice dinamica $3p\\times 3p$ $\\mathbf{D}(\\mathbf{k})$, trasformata di Fourier delle costanti di forza $\\htmlData{q=C}{\\Phi_{\\alpha i,\\beta j}}(0, m)$ pesate con $1/\\sqrt{\\htmlData{q=M}{M_\\alpha M_\\beta}}$.',
-          'La simmetria di Schwarz e l’invarianza traslazionale garantiscono che $\\mathbf{D}(\\mathbf{k})$ sia hermitiana (autovalori $\\omega_s^2 \\ge 0$ reali e autovettori ortonormali $\\boldsymbol{\\varepsilon}^s$). La regola di somma nulla $\\sum_{m\\beta}\\Phi_{\\alpha i,\\beta j}(0, m) = 0$ (invarianza per traslazione rigida) annulla $\\mathbf{D}(\\mathbf{0})$ su tre vettori indipendenti $\\varepsilon_{\\beta j} = \\sqrt{M_\\beta}\\,c_j$, garantendo esattamente $3$ rami acustici a $\\omega(\\mathbf{0}) = 0$.'
+          'Il menu Cristallo confronta tre casi reali di Tab. 1: Alluminio ($p = 1$, solo $3$ rami acustici $\\htmlData{q=omega}{\\text{LA}}$ e $\\htmlData{q=omega}{\\text{TA}_{1,2}}$), Diamante ($p = 2$ non polare, $3$ rami ottici degeneri a $\\Gamma$) e PbTe ($p = 2$ ionico polare, con separazione fra $\\htmlData{q=omegaOpt}{\\text{LO}}$ e $\\htmlData{q=omegaOpt}{\\text{TO}_{1,2}}$ a $\\Gamma$).',
+          'Lo slider $\\htmlData{q=C}{C_T}/\\htmlData{q=C}{C_L}$ regola quanto le forze trasversali di taglio siano più morbide di quelle longitudinali, alzando o abbassando i rami trasversali. Nei cristalli con base $(p = 2)$, lo slider $\\htmlData{q=omegaOpt}{\\omega_{\\mathrm{LO}}/\\omega_{\\mathrm{TO}}}$ regola lo splitting polare a $\\Gamma$. In alto puoi commutare le unità (meV / THz) o aprire Conteggio modi 3D (1BZ) per vedere i punti di Born–von Kármán e il volume $v_c = a^3/4$.'
         ]
       },
       {
-        heading: 'Simmetria cubica, degenerazioni e cristalli reali (Tab.\u00A01)',
+        heading: 'Cosa provare',
         paragraphs: [
-          'Lungo $[100]$ ($\\Gamma\\text{–}X$, asse rotazionale quaternario $C_4$) e $[111]$ ($\\Gamma\\text{–}L$, asse ternario $C_3$) nessuna direzione del piano trasversale resta invariante per rotazione di $2\\pi/n$ ($n \\ge 3$): le due polarizzazioni trasversali hanno quindi esattamente la stessa frequenza ($\\text{TA}_1 = \\text{TA}_2$, e per $p = 2$ anche $\\text{TO}_1 = \\text{TO}_2$). Lungo $[110]$ ($K\\text{–}\\Gamma$) resta solo un asse binario $C_2$: la degenerazione si rimuove e compaiono tutti i rami distinti (tutti e $6$ in PbTe).',
-          'Nell’alluminio (fcc, $p = 1$) esistono solo i $3$ rami acustici (a $X$: LA $\\approx 40\\,\\text{meV}$, TA $\\approx 24\\,\\text{meV}$). Nel diamante (base C–C, $p = 2$) gli atomi sono identici e non generano dipolo: a $\\Gamma$ i $3$ rami ottici sono degeneri a $\\approx 160\\,\\text{meV}$ ($39\\,\\text{THz}$) e non assorbono luce IR a un fotone. Nel PbTe (struttura NaCl ionica, $p = 2$) l’oscillazione di cariche opposte crea un campo elettrico macroscopico che irrigidisce il modo longitudinale, aprendo lo splitting LO–TO a $\\Gamma$ (LO $\\approx 3{,}3\\,\\text{THz} \\approx 14\\,\\text{meV}$ sopra TO $\\approx 1{,}1\\,\\text{THz} \\approx 4{,}5\\,\\text{meV}$). Sperimentalmente le curve $\\omega_s(\\mathbf{k})$ si misurano con scattering anelastico di neutroni (INS) e raggi X (IXS).'
-        ]
-      },
-      {
-        heading: 'Conteggio 3D di Born–von Kármán e cella primitiva fcc ($v_c = a^3/4$)',
-        paragraphs: [
-          'Con condizioni periodiche su un cubo di lato $L = Na$ ($N$ celle convenzionali per lato, volume $V = L^3$) i vettori permessi sono $\\mathbf{k} = \\frac{2\\pi}{L}(n_x, n_y, n_z)$, ciascuno con volume $\\Delta V_k = (2\\pi)^3/V$. Poiché la 1BZ ha volume $V_{\\mathrm{1BZ}} = (2\\pi)^3/v_c$, il numero di punti $\\mathbf{k}$ distinti in zona è $\\mathcal{N}_k = V/v_c = N_c$, uno per cella primitiva, e il bilancio dei modi è $3pN_c = N_c \\times 3p$ (tanti quanti i gradi di libertà meccanici).',
-          'Tre errori tipici da evitare (§14.1 e §19): le condizioni periodiche sono un artificio matematico per eliminare le superfici (non una proprietà fisica: gli estremi bloccati danno lo stesso conteggio di bulk); in zona cadono $N$ valori per asse e non $N + 1$ o $2N$, perché i bordi $-\\pi/a$ e $+\\pi/a$ coincidono per un vettore $\\mathbf{G}$ (cerchi vuoti in Fig. 17); infine, il volume della cella primitiva non è $\\htmlData{q=a}{a}^3$ per tutti i reticoli cubici: per i reticoli fcc (Al, diamante, PbTe) la cella convenzionale $a^3$ contiene $4$ celle primitive, quindi $v_c = a^3/4$ e $N_c = 4N^3$.'
+          'Su PbTe usa i pulsanti rapidi sopra la vista 3D: confronta Γ–X: LA e Γ–X: TA (2×) per vedere nello schema vettoriale $\\htmlData{q=u}{\\boldsymbol{\\varepsilon}^s}$ prima parallelo e poi ortogonale a $\\htmlData{q=k}{\\mathbf{k}}$, poi passa a Γ–X: LO dove le due specie atomiche oscillano in controfase.',
+          'Confronta Γ–X: TA (2×) con K–Γ: TA₁ e K–Γ: TA₂: lungo l’asse binario $[110]$ i due modi trasversali (uno fuori piano, uno nel piano) perdono la degenerazione e si separano sul grafico; su X–K: misto il vettore di polarizzazione diventa obliquo.',
+          'Attiva Conteggio modi 3D (1BZ) e varia il numero di celle $N$ per vedere perché i cerchi vuoti sui bordi $-\\pi/a$ (per $N$ pari, come a $N = 8$) sono copie per $\\mathbf{G}$ da non contare due volte e perché $N_c = 4N^3$ celle primitive stanno nel cubo di lato $Na$.'
         ]
       }
     ],
+    details: {
+      title: 'Dettagli formali',
+      blocks: [
+        {
+          heading: 'Dai rami 1D ai $3p$ rami in 3D (e conteggio LO / TO)',
+          paragraphs: [
+            'In tre dimensioni ciascun atomo ha $3$ gradi di libertà: con una base di $p$ atomi per cella primitiva si hanno $3p$ rami fononici per ogni $\\htmlData{q=k}{\\mathbf{k}}$ nella prima zona di Brillouin. Tre rami sono sempre acustici ($\\htmlData{q=omega}{\\omega}(\\mathbf{k}\\to\\mathbf{0}) = 0$: $1$ longitudinale LA e $2$ trasversali $\\text{TA}_1$, $\\text{TA}_2$, nei quali la cella trasla rigidamente) e i restanti $3p - 3$ sono ottici ($\\htmlData{q=omegaOpt}{\\omega}(\\mathbf{0}) > 0$, moti interni della base con bande tipicamente quasi piatte e piccola velocità di gruppo $v_g$).',
+            'Attenzione a due errori frequenti (§9.1 e §12): i rami ottici non sono «solo trasversali» né contengono «un unico LO per ogni $p$» (come in formulazioni imprecise diffuse con $1$ LO e $3p - 4$ TO). Il conto corretto lungo le direzioni di alta simmetria è $p - 1$ rami LO e $2(p - 1)$ rami TO: un longitudinale e due trasversali per ciascun atomo aggiunto alla base (coincidono solo per $p = 2$). Inoltre le etichette LA, TA, LO, TO sono esatte soltanto lungo direzioni di alta simmetria: lungo una direzione generica come $X\\text{–}K$ gli spostamenti sono in generale misti.'
+          ]
+        },
+        {
+          heading: 'Matrice dinamica $3p \\times 3p$ e regola di somma acustica',
+          paragraphs: [
+            'Scrivendo lo spostamento dell’atomo $\\alpha$ nella cella $n$ come onda di Bloch $\\htmlData{q=u}{\\mathbf{u}_{n\\alpha}}(t) = M_\\alpha^{-1/2}\\htmlData{q=u}{\\boldsymbol{\\varepsilon}^s_\\alpha}(\\mathbf{k})e^{i(\\mathbf{k}\\cdot\\mathbf{R}_n - \\omega t)}$, le $3pN_c$ equazioni armoniche si riducono per ogni $\\mathbf{k}$ al problema agli autovalori della matrice dinamica $3p\\times 3p$ $\\mathbf{D}(\\mathbf{k})$, trasformata di Fourier delle costanti di forza $\\htmlData{q=C}{\\Phi_{\\alpha i,\\beta j}}(0, m)$ pesate con $1/\\sqrt{\\htmlData{q=M}{M_\\alpha M_\\beta}}$.',
+            'La simmetria di Schwarz e l’invarianza traslazionale garantiscono che $\\mathbf{D}(\\mathbf{k})$ sia hermitiana (autovalori $\\omega_s^2 \\ge 0$ reali e autovettori ortonormali $\\boldsymbol{\\varepsilon}^s$). La regola di somma nulla $\\sum_{m\\beta}\\Phi_{\\alpha i,\\beta j}(0, m) = 0$ (invarianza per traslazione rigida) annulla $\\mathbf{D}(\\mathbf{0})$ su tre vettori indipendenti $\\varepsilon_{\\beta j} = \\sqrt{M_\\beta}\\,c_j$, garantendo esattamente $3$ rami acustici a $\\omega(\\mathbf{0}) = 0$.'
+          ]
+        },
+        {
+          heading: 'Simmetria cubica, degenerazioni e cristalli reali (Tab.\u00A01)',
+          paragraphs: [
+            'Lungo $[100]$ ($\\Gamma\\text{–}X$, asse rotazionale quaternario $C_4$) e $[111]$ ($\\Gamma\\text{–}L$, asse ternario $C_3$) nessuna direzione del piano trasversale resta invariante per rotazione di $2\\pi/n$ ($n \\ge 3$): le due polarizzazioni trasversali hanno quindi esattamente la stessa frequenza ($\\text{TA}_1 = \\text{TA}_2$, e per $p = 2$ anche $\\text{TO}_1 = \\text{TO}_2$). Lungo $[110]$ ($K\\text{–}\\Gamma$) resta solo un asse binario $C_2$: la degenerazione si rimuove e compaiono tutti i rami distinti (tutti e $6$ in PbTe).',
+            'Nell’alluminio (fcc, $p = 1$) esistono solo i $3$ rami acustici (a $X$: LA $\\approx 40\\,\\text{meV}$, TA $\\approx 24\\,\\text{meV}$). Nel diamante (base C–C, $p = 2$) gli atomi sono identici e non generano dipolo: a $\\Gamma$ i $3$ rami ottici sono degeneri a $\\approx 160\\,\\text{meV}$ ($39\\,\\text{THz}$) e non assorbono luce IR a un fotone. Nel PbTe (struttura NaCl ionica, $p = 2$) l’oscillazione di cariche opposte crea un campo elettrico macroscopico che irrigidisce il modo longitudinale, aprendo lo splitting LO–TO a $\\Gamma$ (LO $\\approx 3{,}3\\,\\text{THz} \\approx 14\\,\\text{meV}$ sopra TO $\\approx 1{,}1\\,\\text{THz} \\approx 4{,}5\\,\\text{meV}$). Sperimentalmente le curve $\\omega_s(\\mathbf{k})$ si misurano con scattering anelastico di neutroni (INS) e raggi X (IXS).'
+          ]
+        },
+        {
+          heading: 'Conteggio 3D di Born–von Kármán e cella primitiva fcc ($v_c = a^3/4$)',
+          paragraphs: [
+            'Con condizioni periodiche su un cubo di lato $L = Na$ ($N$ celle convenzionali per lato, volume $V = L^3$) i vettori permessi sono $\\mathbf{k} = \\frac{2\\pi}{L}(n_x, n_y, n_z)$, ciascuno con volume $\\Delta V_k = (2\\pi)^3/V$. Poiché la 1BZ ha volume $V_{\\mathrm{1BZ}} = (2\\pi)^3/v_c$, il numero di punti $\\mathbf{k}$ distinti in zona è $\\mathcal{N}_k = V/v_c = N_c$, uno per cella primitiva, e il bilancio dei modi è $3pN_c = N_c \\times 3p$ (tanti quanti i gradi di libertà meccanici).',
+            'Tre errori tipici da evitare (§14.1 e §19): le condizioni periodiche sono un artificio matematico per eliminare le superfici (non una proprietà fisica: gli estremi bloccati danno lo stesso conteggio di bulk); in zona cadono $N$ valori per asse e non $N + 1$ o $2N$, perché i bordi $-\\pi/a$ e $+\\pi/a$ coincidono per un vettore $\\mathbf{G}$ (cerchi vuoti in Fig. 17); infine, il volume della cella primitiva non è $\\htmlData{q=a}{a}^3$ per tutti i reticoli cubici: per i reticoli fcc (Al, diamante, PbTe) la cella convenzionale $a^3$ contiene $4$ celle primitive, quindi $v_c = a^3/4$ e $N_c = 4N^3$.'
+          ]
+        }
+      ]
+    },
     foot: 'Fonte: dispensa Parte 6, Lezione 2 (§§9–10, Fig. 13, §12) e Lezione 3 (§14, Tab. 1, Figg. 17–18, §19). Le curve complete lungo Γ–X–K–Γ–L derivano da modelli armonici 3D (matrice dinamica Born–von Kármán a primi/secondi vicini e termine dipolare macroscopico per PbTe) calibrati sui valori numerici della Tab. 1 della dispensa (passo a = 4,05 Å e massa dell’Al da §14.2; passi reticolari a = 3,57 Å per Diamante, a = 6,46 Å per PbTe e masse standard esterni alla dispensa), non da dati sperimentali o calcoli DFT diretti (es. Zhang et al. 2009).'
   }
 } as const

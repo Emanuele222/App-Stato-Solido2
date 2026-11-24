@@ -7,7 +7,7 @@ export const strings = {
   chapter: 'Fononi',
   title: 'Catena biatomica, gap e luce IR',
   toolsLabel: 'Strumenti sulla catena biatomica',
-  asideLabel: 'Formule vive e teoria',
+  asideLabel: 'Formule vive e guida alla sezione',
 
   tools: {
     infrared: 'Luce infrarossa',
@@ -122,37 +122,56 @@ export const strings = {
   },
 
   theory: {
-    title: 'Teoria in breve',
+    title: 'Guida alla sezione',
     blocks: [
       {
-        heading: 'Passo reticolare a, base di due atomi e rami ω₋ / ω₊',
+        heading: 'L’idea',
         paragraphs: [
-          'La catena biatomica ha una base di $p = 2$ atomi per cella di masse $\\htmlData{q=M}{M}$ (siti pari $n$) e $\\htmlData{q=m}{m}$ (siti dispari $n-1$), collegati da molle identiche $\\htmlData{q=C}{C}$. Attenzione a non confondere il passo del reticolo di Bravais $\\htmlData{q=a}{a}$ (distanza tra atomi uguali) con la distanza tra primi vicini $a/2$: la prima zona di Brillouin è $-\\pi/a < \\htmlData{q=k}{k} \\le \\pi/a$ e la fase tra vicini è $ka/2$.',
-          'Dalle due equazioni del moto accoppiate $M\\ddot{u}_n = C(u_{n+1} - 2u_n + u_{n-1})$ e $m\\ddot{u}_{n-1} = C(u_n - 2u_{n-1} + u_{n-2})$ con ansatz $u_n = Ae^{i(kna/2 - \\omega t)}$ e $u_{n-1} = \\alpha A e^{i(k(n-1)a/2 - \\omega t)}$ (dove $\\htmlData{q=u}{\\alpha}$ è il rapporto d’ampiezza tra $m$ e $M$, che coincide con $u_{n-1}/u_n$ in $k = 0$) si ottiene l’equazione secolare quadratica in $\\omega^2$. Il segno meno dà il ramo acustico $\\htmlData{q=omega}{\\omega_-}(k)$, il segno più dà il ramo ottico $\\htmlData{q=omegaOpt}{\\omega_+}(k)$ (non invertire i segni). Con $N$ celle si hanno $N$ valori di $k$ su due rami, cioè $2N$ modi per $2N$ gradi di libertà.'
+          'Quando ogni cella di passo $\\htmlData{q=a}{a}$ contiene due atomi di masse diverse $\\htmlData{q=M}{M}$ e $\\htmlData{q=m}{m}$ collegati da molle $\\htmlData{q=C}{C}$, le vibrazioni si sdoppiano in due rami: il ramo acustico $\\htmlData{q=omega}{\\omega_-}$ (atomi vicini in fase a basse frequenze) e il ramo ottico $\\htmlData{q=omegaOpt}{\\omega_+}$ (atomi in controfase a frequenze più alte, separati da un gap proibito).'
         ]
       },
       {
-        heading: 'Limiti k → 0: traslazione acustica e dipolo ottico',
+        heading: 'Come intervengono i parametri',
         paragraphs: [
-          'Per $k \\to 0$ sul ramo acustico si ha $\\htmlData{q=omega}{\\omega_-} \\simeq \\htmlData{q=v}{v_s}|k|$ con $\\htmlData{q=v}{v_s} = \\htmlData{q=a}{a}\\sqrt{\\htmlData{q=C}{C}/[2(\\htmlData{q=m}{m}+\\htmlData{q=M}{M})]}$ (massa di cella $m+M$ e due molle $C$ in serie equivalenti a $C/2$) e $\\htmlData{q=u}{\\alpha} = 1$: i due atomi si muovono in fase e la cella trasla rigidamente ($|R_{\\mathrm{cm}}|/u_{\\max} = 1$).',
-          'Sul ramo ottico a $k = 0$ resta la pulsazione finita $\\htmlData{q=omegaOpt}{\\omega_+}(0) = \\sqrt{2C(m+M)/(mM)}$ con $\\htmlData{q=u}{\\alpha} = -M/m$: gli atomi oscillano in opposizione di fase mantenendo fermo il centro di massa della cella $R_{\\mathrm{cm}} = (Mu_n + mu_{n-1})/(M+m) = 0$. (Nei valori a destra $|R_{\\mathrm{cm}}|/u_{\\max}$ è normalizzato allo spostamento massimo: per $k \\neq 0$ lo sfasamento $ka/2$ tra i due atomi rende $|R_{\\mathrm{cm}}| > 0$.) Allontanandosi da $k = 0$ il ramo ottico scende, quindi per $k > 0$ ha velocità di gruppo negativa ($v_g < 0$, opposta a $v_p > 0$).'
+          'Allargare la differenza tra $\\htmlData{q=M}{M}$ e $\\htmlData{q=m}{m}$ amplia il gap fononico $\\htmlData{q=omegaOpt}{\\Delta\\omega_{\\mathrm{gap}}}$ fra i bordi C e B; portando $\\htmlData{q=M}{M} = \\htmlData{q=m}{m}$ il gap si chiude. Aumentare la molla $\\htmlData{q=C}{C}$ alza in blocco entrambi i rami, mentre aumentare il passo $\\htmlData{q=a}{a}$ restringe la prima zona $(\\pm\\pi/\\htmlData{q=a}{a})$ e accelera il suono $\\htmlData{q=v}{v_s}$.',
+          'Gli strumenti in alto mostrano la retta della luce infrarossa (che intercetta solo il ramo ottico vicino a $k = 0$ grazie al dipolo oscillante), il Confronto $M = m$ con la catena monatomica di passo $a/2$ ripiegata in zona, e la Matrice $\\mathbf{D}(k)$ $2\\times 2$ con i suoi autovalori.'
         ]
       },
       {
-        heading: 'Bordo zona (punti C e B), gap fononico e limite M = m',
+        heading: 'Cosa provare',
         paragraphs: [
-          'Al bordo $k = \\pm\\pi/a$ ($\\lambda = 2a$) esistono due onde stazionarie con $v_g = 0$ (gli atomi non sono tutti fermi: nel biatomico al bordo si ferma solo un tipo di atomo). Per $M > m$, nel punto C (acustico) $\\htmlData{q=omega}{\\omega_{\\max}^{\\mathrm{ac}}} = \\sqrt{2C/M}$ oscilla solo la massa pesante $M$ ($\\alpha = 0$, $m$ ferma); nel punto B (ottico) $\\htmlData{q=omegaOpt}{\\omega_{\\min}^{\\mathrm{ott}}} = \\sqrt{2C/m}$ oscilla solo la massa leggera $m$ ($1/\\alpha = 0$, $M$ ferma).',
-          'Tra C e B si apre il gap fononico $\\htmlData{q=omegaOpt}{\\Delta\\omega_{\\mathrm{gap}}} = \\sqrt{2C/m} - \\sqrt{2C/M}$: nella fascia proibita non esistono modi propaganti (onde evanescenti). Il gap esiste solo per $M \\neq m$: per $M = m$ si chiude con continuità e il ramo ottico coincide con il ramo acustico della catena monatomica di passo $a/2$ ripiegato dentro $[-\\pi/a, \\pi/a]$ tramite traslazione di $G = 2\\pi/a$.'
-        ]
-      },
-      {
-        heading: 'Matrice dinamica 2×2 e interazione con la luce infrarossa',
-        paragraphs: [
-          'Nel formalismo generale la catena biatomica ($p = 2$ atomi per cella, 1D) è governata dalla matrice dinamica hermitiana $2\\times 2$ $\\mathbf{D}(k)$ (con $D_{11}=2C/M$, $D_{22}=2C/m$, $D_{12}=-\\frac{2C}{\\sqrt{Mm}}\\cos\\frac{ka}{2}$): l’equazione secolare $\\det(\\mathbf{D} - \\omega^2\\mathbf{1}) = 0$ riproduce esattamente i due rami e gli autovettori ortonormali $\\boldsymbol{\\varepsilon}^\\mp$ danno il rapporto $\\alpha = (\\varepsilon_m/\\sqrt{m})/(\\varepsilon_M/\\sqrt{M})$.',
-          'Un fotone infrarosso (con dispersione $\\omega = ck/n$ in un dielettrico di indice di rifrazione $n$) che crea un fonone conserva energia ($\\hbar\\omega_{\\mathrm{luce}} = \\hbar\\omega_{\\mathrm{ph}}$) e quasi-impulso ($k_{\\mathrm{luce}} = k_{\\mathrm{ph}} (+G)$). Poiché $c/n \\sim 10^8\\,\\text{m/s} \\gg v_s \\sim 10^3\\,\\text{m/s}$, la retta della luce è quasi verticale ($k_{\\mathrm{luce}} \\sim 10^{-5}\\,\\pi/a$): non può mai incrociare il ramo acustico a $k \\neq 0$ e interseca solo il ramo ottico a $k \\approx 0$ (in 3D i modi trasversali TO dei cristalli ionici/polari con dipolo oscillante; nel diamante i due atomi sono uguali e non c’è assorbimento IR a un fotone).'
+          'Usa i quattro modi rapidi sopra la catena: in Ac. 0 la cella trasla rigidamente; in Ott. 0 i due atomi oscillano in opposizione tenendo fermo il centro di massa $R_{\\mathrm{cm}}$; nei bordi C (π/a) e B (π/a) si ferma prima l’atomo leggero e poi quello pesante (se imposti $m > M$ con gli slider, i ruoli si scambiano).',
+          'Clicca a metà del ramo ottico per $k > 0$ e confronta il verso delle creste con la pendenza negativa della curva $(\\htmlData{q=v}{v_g} < 0)$: l’inviluppo arretra rispetto alla fase. Attiva Luce infrarossa su Coppia Na–Cl per vedere l’incrocio a $k \\approx 0$ e il dipolo oscillante $\\mathbf{p}(t)$ della cella, poi seleziona Limite M = m con Confronto M = m attivo per vedere il ripiegamento chiudere il gap.'
         ]
       }
     ],
+    details: {
+      title: 'Dettagli formali',
+      blocks: [
+        {
+          heading: 'Base biatomica, passo reticolare $a$ e rami $\\omega_-$ / $\\omega_+$',
+          paragraphs: [
+            'La catena biatomica ha una base di $p = 2$ atomi per cella di masse $\\htmlData{q=M}{M}$ (siti pari $n$) e $\\htmlData{q=m}{m}$ (siti dispari $n - 1$), collegati da molle identiche $\\htmlData{q=C}{C}$. Attenzione a non confondere il passo del reticolo di Bravais $\\htmlData{q=a}{a}$ (distanza fra atomi uguali) con la distanza fra primi vicini $a/2$: la prima zona di Brillouin è $-\\pi/a < \\htmlData{q=k}{k} \\le \\pi/a$ e la fase tra vicini vale $ka/2$.',
+            'Dalle due equazioni accoppiate $M\\ddot{u}_n = C(u_{n+1} - 2u_n + u_{n-1})$ e $m\\ddot{u}_{n-1} = C(u_n - 2u_{n-1} + u_{n-2})$ con ansatz $u_n = Ae^{i(kna/2 - \\omega t)}$ e $u_{n-1} = \\htmlData{q=u}{\\alpha} A e^{i(k(n-1)a/2 - \\omega t)}$ (dove $\\htmlData{q=u}{\\alpha}$ è il rapporto d’ampiezza, uguale a $u_{n-1}/u_n$ in $k = 0$) si ottiene l’equazione secolare quadratica in $\\omega^2$. Il segno meno dà il ramo acustico $\\htmlData{q=omega}{\\omega_-}(k)$, il segno più dà il ramo ottico $\\htmlData{q=omegaOpt}{\\omega_+}(k)$ (non invertire i segni). Con $N$ celle si hanno $N$ valori di $k$ su due rami, ossia $2N$ modi per $2N$ gradi di libertà.'
+          ]
+        },
+        {
+          heading: 'Limiti $k \\to 0$, centro di massa e bordi C / B',
+          paragraphs: [
+            'Per $k \\to 0$ sul ramo acustico si ha $\\htmlData{q=omega}{\\omega_-} \\simeq \\htmlData{q=v}{v_s}|k|$ con $\\htmlData{q=v}{v_s} = \\htmlData{q=a}{a}\\sqrt{\\htmlData{q=C}{C}/[2(\\htmlData{q=m}{m}+\\htmlData{q=M}{M})]}$ (massa di cella $m+M$ e due molle $C$ in serie equivalenti a $C/2$) e $\\htmlData{q=u}{\\alpha} = 1$: i due atomi si muovono in fase trascinando rigidamente la cella $(|R_{\\mathrm{cm}}|/u_{\\max} = 1)$.',
+            'Sul ramo ottico a $k = 0$ resta la pulsazione finita $\\htmlData{q=omegaOpt}{\\omega_+}(0) = \\sqrt{2C(m+M)/(mM)}$ con $\\htmlData{q=u}{\\alpha} = -M/m$: gli atomi oscillano in opposizione mantenendo fermo il centro di massa $R_{\\mathrm{cm}} = (Mu_n + mu_{n-1})/(M+m) = 0$. (Nei valori numerici $|R_{\\mathrm{cm}}|/u_{\\max}$ è normalizzato allo spostamento massimo: per $k \\neq 0$ lo sfasamento $ka/2$ tra i due atomi rende $|R_{\\mathrm{cm}}| > 0$.) Allontanandosi da $k = 0$ il ramo ottico scende, quindi per $k > 0$ ha $\\htmlData{q=v}{v_g} < 0$ opposta a $\\htmlData{q=vp}{v_p} > 0$.',
+            'Al bordo $k = \\pm\\pi/a$ ($\\lambda = 2a$) esistono due onde stazionarie con $v_g = 0$ (non si fermano tutti gli atomi, ma una sola specie): per $M > m$, nel punto C (acustico) $\\htmlData{q=omega}{\\omega_{\\max}^{\\mathrm{ac}}} = \\sqrt{2C/M}$ oscilla solo $M$ ($\\alpha = 0$, $m$ ferma), mentre nel punto B (ottico) $\\htmlData{q=omegaOpt}{\\omega_{\\min}^{\\mathrm{ott}}} = \\sqrt{2C/m}$ oscilla solo $m$ ($1/\\alpha = 0$, $M$ ferma); se $m > M$ i ruoli si scambiano ($\\max(M,m)$ in C, $\\min(M,m)$ in B). Il gap $\\htmlData{q=omegaOpt}{\\Delta\\omega_{\\mathrm{gap}}} = \\sqrt{2C/\\min(M,m)} - \\sqrt{2C/\\max(M,m)}$ ospita solo onde evanescenti e si chiude per $M = m$, dove il ramo ottico coincide con la catena monatomica di passo $a/2$ ripiegata di $G = 2\\pi/a$.'
+          ]
+        },
+        {
+          heading: 'Matrice dinamica $2\\times 2$ e luce infrarossa',
+          paragraphs: [
+            'Nel formalismo generale per $p = 2$ atomi per cella in 1D, il sistema è governato dalla matrice dinamica hermitiana $2\\times 2$ $\\mathbf{D}(k)$ (con $D_{11} = 2C/M$, $D_{22} = 2C/m$, $D_{12} = -\\frac{2C}{\\sqrt{Mm}}\\cos\\frac{ka}{2}$): l’equazione secolare $\\det(\\mathbf{D} - \\omega^2\\mathbf{1}) = 0$ riproduce i due rami $\\omega_\\mp^2$ e gli autovettori ortonormali $\\boldsymbol{\\varepsilon}^\\mp$ danno $\\alpha = (\\varepsilon_m/\\sqrt{m})/(\\varepsilon_M/\\sqrt{M})$.',
+            'Un fotone infrarosso (dispersione $\\omega = ck/n$ in un dielettrico di indice di rifrazione $n$) che crea un fonone conserva energia ($\\hbar\\omega_{\\mathrm{luce}} = \\hbar\\omega_{\\mathrm{ph}}$) e quasi-impulso ($k_{\\mathrm{luce}} = k_{\\mathrm{ph}} (+G)$). Poiché $c/n \\sim 10^8\\,\\text{m/s} \\gg v_s \\sim 10^3\\,\\text{m/s}$, la retta della luce è quasi verticale ($k_{\\mathrm{luce}} \\sim 10^{-5}\\,\\pi/a$): non può mai incrociare il ramo acustico a $k \\neq 0$ e interseca solo il ramo ottico a $k \\approx 0$ (in 3D i modi trasversali TO dei cristalli ionici/polari con dipolo oscillante; se $M = m$ come nel diamante non c’è dipolo né assorbimento IR a un fotone).'
+          ]
+        }
+      ]
+    },
     foot: 'Fonte: dispensa Parte 6, Lezione 2 (§§7–8, §10.3, §12) e Lezione 4 (§24, §26). La coppia Na–Cl ($m = 23\\,\\text{u}$, $M = 35{,}5\\,\\text{u}$, $a = 5{,}64\\,\\text{Å}$, $C = 10\\,\\text{N/m}$) riproduce l’esempio illustrativo 1D di §8 e §24 (non un calcolo 3D di NaCl reale); il preset «Masse M = 2m» riprende il rapporto di Fig. 11–12; «Limite M = m» e «Li–I» sono esterni alla dispensa.'
   }
 } as const

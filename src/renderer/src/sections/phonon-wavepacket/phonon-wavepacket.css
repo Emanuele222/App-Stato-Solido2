@@ -1,0 +1,151 @@
+/* Stili locali della sezione «Pacchetti d'onda» — solo token di ui/theme.ts, nessun hex. */
+
+.scene:has(.phonon-wp-view) {
+  grid-template-rows: minmax(0, 50fr) minmax(0, 50fr);
+}
+
+@media (max-height: 740px) {
+  .scene:has(.phonon-wp-view) {
+    grid-template-rows: minmax(215px, 50fr) minmax(235px, 50fr);
+  }
+}
+
+.phonon-wp-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.phonon-wp-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px 10px;
+  padding: 2px 14px 0;
+  flex-wrap: wrap;
+}
+
+.phonon-wp-bar .chart-legend {
+  padding: 0;
+}
+
+.phonon-wp-stage {
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.phonon-wp-main-wrap {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.phonon-wp-spread-wrap {
+  position: relative;
+  flex: 0 0 clamp(148px, 25%, 230px);
+  min-height: 0;
+  border-left: 1px solid var(--line);
+}
+
+.phonon-wp-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Selettore compatto dei 4 regimi nella barra parametri (max 2 righe a 1440 e 1100 px) */
+.params:has(.phonon-wp-regime-group) {
+  gap: 5px 10px;
+  padding: 7px 12px;
+}
+
+.params:has(.phonon-wp-regime-group) .param {
+  flex: 1 1 200px;
+  max-width: none;
+}
+
+.params:has(.phonon-wp-regime-group) .preset {
+  flex: 1 1 160px;
+  padding: 2px 4px;
+}
+
+.params:has(.phonon-wp-regime-group) .preset select {
+  flex: 1 1 100px;
+  min-width: 90px;
+  max-width: none;
+}
+
+.phonon-wp-regime-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--bg);
+  flex: 0 1 auto;
+}
+
+.phonon-wp-regime-btn {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 11.5px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.phonon-wp-regime-btn:last-child {
+  border-right: 0;
+}
+
+.phonon-wp-regime-btn:hover {
+  color: var(--text);
+}
+
+.phonon-wp-regime-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+}
+
+/* Mantiene zero scrollbar orizzontali in <aside> a 1440, 1100 e 800 px */
+.phonon-wp-formula-panel .formula-main {
+  font-size: clamp(0.68rem, 0.92vw, 0.86rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-wp-formula-panel .formula-defs .live-formula {
+  font-size: clamp(0.68rem, 0.88vw, 0.84rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-wp-formula-panel .values {
+  grid-template-columns: minmax(66px, 82px) minmax(0, 1fr);
+}
+
+@media (max-width: 899px) {
+  .phonon-wp-regime-btn {
+    padding: 0 7px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phonon-wp-regime-btn {
+    transition: none;
+  }
+}

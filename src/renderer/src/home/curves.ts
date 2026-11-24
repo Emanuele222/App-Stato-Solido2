@@ -29,6 +29,7 @@ import {
   pseudoCore1DBands,
   pseudopotentialBands,
   tightBindingMonoatomicBands,
+  wavepacketDispersionCurve,
   zonePath1D,
   type BandStructure
 } from '../physics'
@@ -430,15 +431,27 @@ export function computePhononPreviewCurves(): readonly MethodPreviewData[] {
     defaultColor: QUANTITIES.omega.color
   }
 
-  // 4. Pacchetti d'onda: metà zona [0, π/a] con v_g > 0 (acustico) e v_g < 0 (ottico)
-  const wp = diatomicPreviewFromPhysics(N, 5.64, 23, 35.5, 10, 0, 1)
-  const max4 = wp.optical[0]
+  // 4. Pacchetti d'onda: metà zona [0, π/a] con v_g > 0 (acustico) e v_g < 0 (ottico) da wavepacketDispersionCurve
+  const kb4 = monatomicZoneEdge(5.64)
+  const wpDiat = { a: 5.64, massHeavyAmu: 35.5, massLightAmu: 23, springC: 10 } as const
+  const wpAc = diatomicPreviewFromPhysics(N, 5.64, 23, 35.5, 10, 0, 1)
+  const wpOpt = wavepacketDispersionCurve(
+    {
+      regime: 'optical',
+      monatomic: { a: 2.5, massAmu: 63.2, springC: 20 },
+      diatomic: wpDiat
+    },
+    0,
+    kb4,
+    N
+  )
+  const max4 = wpOpt.freqThz[0]
   const s4: MethodPreviewData = {
     id: 'phonon-wavepacket',
     title: 'Pacchetti d’onda',
     subtitle: 'Velocità di fase v_p e di gruppo v_g su rami acustico e ottico',
-    bands: [wp.acoustic, wp.optical],
-    kNormalized: wp.kNorm,
+    bands: [wpAc.acoustic, wpOpt.freqThz],
+    kNormalized: wpAc.kNorm,
     eMin: -0.25,
     eMax: max4 * 1.14,
     kLabels: [

@@ -17,6 +17,7 @@ import { RealBandsSection } from './real-bands/RealBandsSection'
 import { PhononMonatomicSection } from './phonon-monatomic/PhononMonatomicSection'
 import { PhononDiatomicSection } from './phonon-diatomic/PhononDiatomicSection'
 import { Phonon3DSection } from './phonon-3d/Phonon3DSection'
+import { PhononWavepacketSection } from './phonon-wavepacket/PhononWavepacketSection'
 
 export interface SectionEntry {
   readonly id: string
@@ -37,7 +38,7 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'phonon-monatomic', chapterId: 'phonons', title: s.sections.phononMonatomic, component: PhononMonatomicSection },
   { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: PhononDiatomicSection },
   { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: Phonon3DSection },
-  { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: null },
+  { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: PhononWavepacketSection },
   { id: 'phonon-quantum', chapterId: 'phonons', title: s.sections.phononQuantum, component: null },
   { id: 'phonon-specific-heat', chapterId: 'phonons', title: s.sections.phononSpecificHeat, component: null }
 ]

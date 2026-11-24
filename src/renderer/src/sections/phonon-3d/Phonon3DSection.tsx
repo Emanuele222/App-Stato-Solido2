@@ -490,6 +490,21 @@ export function Phonon3DSection(): JSX.Element {
               ))}
             </div>
           ))}
+          <details className="panel-details">
+            <summary>{s.theory.details.title}</summary>
+            {s.theory.details.blocks.map((block) => (
+              <div key={block.heading}>
+                <h3>
+                  <RichText text={block.heading} />
+                </h3>
+                {block.paragraphs.map((para, i) => (
+                  <p key={i}>
+                    <RichText text={para} />
+                  </p>
+                ))}
+              </div>
+            ))}
+          </details>
           <p className="foot">
             <RichText text={s.theory.foot} />
           </p>
