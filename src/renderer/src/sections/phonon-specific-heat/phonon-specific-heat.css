@@ -1,0 +1,188 @@
+/* Stili locali della sezione «Calore specifico e Debye» — solo token di ui/theme.ts, zero hex. */
+
+.scene:has(.phonon-sh-curve-stage) {
+  grid-template-rows: minmax(0, 54fr) minmax(0, 46fr);
+}
+
+@media (max-height: 740px) {
+  .scene:has(.phonon-sh-curve-stage) {
+    grid-template-rows: minmax(230px, 54fr) minmax(200px, 46fr);
+  }
+}
+
+.phonon-sh-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.phonon-sh-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+  padding: 2px 14px 0;
+  flex-wrap: wrap;
+}
+
+.phonon-sh-bar .chart-legend {
+  padding: 0;
+}
+
+.phonon-sh-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.phonon-sh-quick {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.phonon-sh-quick-btn {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.phonon-sh-quick-btn:last-child {
+  border-right: 0;
+}
+
+.phonon-sh-quick-btn:hover {
+  color: var(--text);
+}
+
+.phonon-sh-quick-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+}
+
+.phonon-sh-pill-btn {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+}
+
+.phonon-sh-pill-btn:hover {
+  color: var(--text);
+  border-color: var(--dim);
+}
+
+.phonon-sh-pill-btn[aria-pressed='true'] {
+  color: var(--text);
+  border-color: var(--q-omega);
+  background: var(--raised);
+}
+
+.phonon-sh-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.phonon-sh-main-wrap {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.phonon-sh-side-wrap {
+  position: relative;
+  flex: 0 0 clamp(162px, 31%, 260px);
+  min-height: 0;
+  border-left: 1px solid var(--line);
+}
+
+.phonon-sh-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.phonon-sh-canvas.is-interactive {
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.phonon-sh-canvas:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* Fascia parametri compatta, select sempre su una sola riga */
+.params:has(.phonon-sh-params) {
+  gap: 4px 10px;
+  padding: 7px 14px;
+}
+
+.params:has(.phonon-sh-params) .param {
+  flex: 1 1 185px;
+  max-width: 295px;
+}
+
+.params:has(.phonon-sh-params) .preset {
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  padding: 2px 6px;
+}
+
+.params:has(.phonon-sh-params) .preset select {
+  flex: 0 1 auto;
+  min-width: 150px;
+  max-width: 230px;
+}
+
+/* Formula viva e valori in .aside senza overflow orizzontale */
+.phonon-sh-formula-panel .formula-main {
+  font-size: clamp(0.72rem, 0.94vw, 0.90rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-sh-formula-panel .formula-defs .live-formula {
+  font-size: clamp(0.66rem, 0.84vw, 0.80rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-sh-formula-panel .values {
+  grid-template-columns: minmax(72px, 94px) minmax(0, 1fr);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phonon-sh-quick-btn,
+  .phonon-sh-pill-btn {
+    transition: none;
+  }
+}

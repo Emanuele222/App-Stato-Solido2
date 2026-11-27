@@ -99,17 +99,17 @@ Aggiungere nello stesso unico file le costanti SI/fononiche (CODATA 2018, coeren
 * **Parametri**: regime (*Lineare* | *Ramo acustico* | *Ramo ottico $v_g<0$* | *Quadratico*), $k_0$, $\sigma_0$.
 * **Strumenti**: *Riferimento comovente ($\xi = x - v_g t$)*, *Profilo iniziale $t=0$*.
 
-### Revisione pedagogica schede guida — Sezioni 1–4 (Chat 7)
+### Revisione pedagogica schede guida — Sezioni 1–4 (Chat 7 — completata)
 * **Obiettivo**: riscrivere i pannelli teoria laterali (`strings.ts` + `*Section.tsx`) di `phonon-monatomic`, `phonon-diatomic`, `phonon-3d` e `phonon-wavepacket` nella struttura accogliente in 4 parti (*L’idea*, *Come intervengono i parametri*, *Cosa provare* + `<details className="panel-details">` per *Dettagli formali*), senza toccare `physics/` né le viste grafiche/canvas.
 
-### Sezione 5 — Modi quantizzati (fononi) e processi Umklapp (`sections/phonon-quantum/`, Chat 8)
+### Sezione 5 — Modi quantizzati (fononi) e processi Umklapp (`sections/phonon-quantum/`, Chat 8 — completata)
 * **Fonte**: Lezione 2 (§11) + Lezione 3 (§§15–18, Figg. 19–21).
 * **Fisica** (`physics/phononQuantum.ts`): oscillatore classico $P_{\text{cl}}(x) = 1/\pi\sqrt{a^2-x^2}$ e quantistico $\Psi_n$ (ricorrenza stabile Hermite), $a_{\text{ho}} = \sqrt{\hbar/m\omega}$, tunneling $\operatorname{erfc}(1) \approx 0{,}1573$, Bose–Einstein $\bar{n}(T) = (e^{\hbar\omega/k_B T}-1)^{-1}$ ($\mu = 0$), cinematica Normali ($G=0$) vs Umklapp ($G\ne 0$).
 * **Due modalità 100% visive**:
   * **Modalità A — Quantizzazione di un modo**: parabola $V(Q)$ con $P_n$ vs $P_{\text{cl}}$ (tunneling + corrispondenza di Bohr fino a $n = 25$) **sincronizzata con la catena vibrante del modo** (mostra visivamente l'ampiezza non nulla di punto zero a $n = 0$: $\Delta x \approx 1{,}7\%\,a$), con slider $n$ o accoppiamento termico a $T$ tramite Bose–Einstein.
   * **Modalità B — Collisioni nella 1BZ (Normali vs Umklapp)**: vettori $k_1, k_2$ trascinabili in 1BZ + curva $\omega(k)$ con frecce di $v_g(k_1), v_g(k_2), v_g(k_3)$; appena $|k_1+k_2| > \pi/a$ scatta $-G$ e $v_g(k_3)$ si inverte (esempio dispensa $0{,}7 + 0{,}6 \to -0{,}7\,\pi/a$).
 
-### Sezione 6 — Calore specifico del reticolo: evoluzione storica e modello di Debye (`sections/phonon-specific-heat/`, Chat 9)
+### Sezione 6 — Calore specifico del reticolo: evoluzione storica e modello di Debye (`sections/phonon-specific-heat/`, Chat 9 — completata)
 * **Fonte**: Lezione 4 (§§20–23, §25, Figg. 22–27, Tabb. 2–4).
 * **Fisica** (`physics/specificHeat.ts`): Dulong–Petit $3R$, Einstein $3R\,\mathcal{E}(\Theta_E/T)$, integrale di Debye con quadratura Gauss–Legendre composta ad alta precisione, asintoto $T^3$ ($\frac{12\pi^4}{5}R(T/\Theta_D)^3$), DOS 1D con singolarità di Van Hove e DOS 3D di Debye + schema TA/LA, analogia corpo nero ($T^4$: 3 vs 2 polarizzazioni), dataset sperimentale Tab. 2 e Tab. 3.
 * **Barra «Tappe storiche»**: **1819 Dulong–Petit** → **1907 Einstein** → **1912 Debye** → **1953 Oltre Debye (Van Hove & corpo nero)** → **Confronto completo**.

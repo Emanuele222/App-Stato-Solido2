@@ -1,0 +1,198 @@
+/* Stili locali della sezione «Modi quantizzati e processi Umklapp» — solo token di ui/theme.ts. */
+
+.scene:has(.phonon-q-quant-stage) {
+  grid-template-rows: minmax(0, 62fr) minmax(0, 38fr);
+}
+
+.scene:has(.phonon-q-umklapp-stage) {
+  grid-template-rows: minmax(0, 40fr) minmax(0, 60fr);
+}
+
+@media (max-height: 740px) {
+  .scene:has(.phonon-q-quant-stage) {
+    grid-template-rows: minmax(270px, 62fr) minmax(175px, 38fr);
+  }
+
+  .scene:has(.phonon-q-umklapp-stage) {
+    grid-template-rows: minmax(190px, 40fr) minmax(255px, 60fr);
+  }
+}
+
+.phonon-q-view {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.phonon-q-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px 10px;
+  padding: 2px 14px 0;
+  flex-wrap: wrap;
+}
+
+.phonon-q-bar .chart-legend {
+  padding: 0;
+}
+
+.phonon-q-stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.phonon-q-main-wrap {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.phonon-q-bath-wrap {
+  position: relative;
+  flex: 0 0 clamp(148px, 24%, 220px);
+  min-height: 0;
+  border-left: 1px solid var(--line);
+}
+
+.phonon-q-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.phonon-q-canvas.is-draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.phonon-q-canvas.is-draggable:active {
+  cursor: grabbing;
+}
+
+.phonon-q-canvas.is-interactive {
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.phonon-q-canvas:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* Pillola di stato N vs Umklapp nella barra vista */
+.phonon-q-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.phonon-q-status-pill.is-normal {
+  border-color: var(--q-omega);
+  color: var(--q-omega);
+}
+
+.phonon-q-status-pill.is-umklapp {
+  border-color: var(--q-a);
+  color: var(--q-a);
+}
+
+/* Controlli compatti nella fascia parametri */
+.params:has(.phonon-q-source-group) {
+  gap: 6px 12px;
+  padding: 8px 14px;
+}
+
+.params:has(.phonon-q-source-group) .param {
+  flex: 1 1 200px;
+  max-width: 310px;
+}
+
+.params:has(.phonon-q-source-group) .preset,
+.params:has(.phonon-q-umklapp-params) .preset {
+  flex: 1 1 200px;
+  padding: 2px 6px;
+}
+
+.params:has(.phonon-q-source-group) .preset select,
+.params:has(.phonon-q-umklapp-params) .preset select {
+  flex: 1 1 140px;
+  min-width: 110px;
+  max-width: 260px;
+}
+
+.phonon-q-source-group {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--bg);
+  flex: 0 0 auto;
+}
+
+.phonon-q-source-btn {
+  height: 26px;
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.phonon-q-source-btn:last-child {
+  border-right: 0;
+}
+
+.phonon-q-source-btn:hover {
+  color: var(--text);
+}
+
+.phonon-q-source-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+}
+
+.phonon-q-formula-panel .formula-main {
+  font-size: clamp(0.76rem, 1.0vw, 0.94rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-q-formula-panel .formula-defs .live-formula {
+  font-size: clamp(0.68rem, 0.88vw, 0.84rem);
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.phonon-q-formula-panel .values {
+  grid-template-columns: minmax(66px, 84px) minmax(0, 1fr);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phonon-q-source-btn {
+    transition: none;
+  }
+}

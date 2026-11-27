@@ -56,11 +56,11 @@ export const ModeCounting3DView = memo(function ModeCounting3DView(
     ctx.stroke()
 
     // --- 1. Sinistra: Griglia 2D di Born–von Kármán in 1BZ (Fig. 17) ---
-    const padTop = 36
-    const padBot = 32
-    const side = Math.max(66, Math.min(splitX - 64, h - padTop - padBot - 10))
+    const padTop = 44
+    const padBot = 30
+    const side = Math.max(66, Math.min(splitX - 64, h - padTop - padBot - 8))
     const gx0 = (splitX - side) * 0.5
-    const gy0 = padTop + (h - padTop - padBot - side) * 0.5
+    const gy0 = Math.max(padTop, padTop + (h - padTop - padBot - side) * 0.5)
     const gcx = gx0 + side * 0.5
     const gcy = gy0 + side * 0.5
 
@@ -87,11 +87,16 @@ export const ModeCounting3DView = memo(function ModeCounting3DView(
     ctx.moveTo(gx0 - 10, gcy)
     ctx.lineTo(gx0 + side + 12, gcy)
     ctx.moveTo(gcx, gy0 + side + 10)
-    ctx.lineTo(gcx, gy0 - 10)
+    ctx.lineTo(gcx, gy0 - 9)
     ctx.stroke()
 
     drawMathText(ctx, 'k_x', gx0 + side + 15, gcy + 4, { color: TOKENS.muted, size: 11, align: 'left' })
-    drawMathText(ctx, 'k_y', gcx + 6, gy0 - 2, { color: TOKENS.muted, size: 11, align: 'left' })
+    drawMathText(ctx, 'k_y', gcx + 8, gy0 - 4, {
+      color: TOKENS.muted,
+      size: 11,
+      align: 'left',
+      backdrop: TOKENS.bg
+    })
 
     const colK = quantityColor('k')
     const dotR = Math.max(2.2, Math.min(3.8, side / (N * 4.4)))

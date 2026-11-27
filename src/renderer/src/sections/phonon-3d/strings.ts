@@ -23,8 +23,8 @@ export const strings = {
 
   params: {
     crystalLabel: 'Cristallo (Tab.\u00A01)',
-    crystalFree: 'Libero (parametri modificati)',
-    crystalNote: 'Calibrazione su Tab. 1 (§14.4): Al (p = 1), Diamante (p = 2), PbTe polare (p = 2)',
+    crystalFree: 'Libero (modificato)',
+    crystalNote: 'Tab. 1 (§14.4): Al (p = 1), Diamante (p = 2), PbTe polare (p = 2)',
     transverseRatio: 'Rapporto di rigidezza trasversale C_T / C_L',
     polarRatio: 'Splitting polare LO–TO a Γ (ω_LO / ω_TO)'
   },

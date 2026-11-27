@@ -38,7 +38,7 @@ import './phonon-wavepacket.css'
 
 const PRESET_OPTIONS = PRESETS.map((p) => ({
   id: p.id,
-  label: s.presets.item(p.name, formatNumber(p.kFrac, 2), formatNumber(p.sigma0InA, 1))
+  label: s.presets.item(p.name)
 }))
 
 export function PhononWavepacketSection(): JSX.Element {

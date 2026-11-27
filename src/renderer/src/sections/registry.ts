@@ -18,6 +18,8 @@ import { PhononMonatomicSection } from './phonon-monatomic/PhononMonatomicSectio
 import { PhononDiatomicSection } from './phonon-diatomic/PhononDiatomicSection'
 import { Phonon3DSection } from './phonon-3d/Phonon3DSection'
 import { PhononWavepacketSection } from './phonon-wavepacket/PhononWavepacketSection'
+import { PhononQuantumSection } from './phonon-quantum/PhononQuantumSection'
+import { PhononSpecificHeatSection } from './phonon-specific-heat/PhononSpecificHeatSection'
 
 export interface SectionEntry {
   readonly id: string
@@ -39,8 +41,8 @@ export const SECTIONS: readonly SectionEntry[] = [
   { id: 'phonon-diatomic', chapterId: 'phonons', title: s.sections.phononDiatomic, component: PhononDiatomicSection },
   { id: 'phonon-3d', chapterId: 'phonons', title: s.sections.phonon3d, component: Phonon3DSection },
   { id: 'phonon-wavepacket', chapterId: 'phonons', title: s.sections.phononWavepacket, component: PhononWavepacketSection },
-  { id: 'phonon-quantum', chapterId: 'phonons', title: s.sections.phononQuantum, component: null },
-  { id: 'phonon-specific-heat', chapterId: 'phonons', title: s.sections.phononSpecificHeat, component: null }
+  { id: 'phonon-quantum', chapterId: 'phonons', title: s.sections.phononQuantum, component: PhononQuantumSection },
+  { id: 'phonon-specific-heat', chapterId: 'phonons', title: s.sections.phononSpecificHeat, component: PhononSpecificHeatSection }
 ]
 
 export const CHAPTERS: readonly NavChapter[] = [

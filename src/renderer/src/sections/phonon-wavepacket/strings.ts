@@ -30,8 +30,7 @@ export const strings = {
   presets: {
     label: 'Scenari (§6)',
     free: 'Libero',
-    item: (name: string, kFracStr: string, sigStr: string): string =>
-      `${name} (k₀ = ${kFracStr} π/a, σ₀ = ${sigStr} a)`
+    item: (name: string): string => name
   },
 
   playback: {
