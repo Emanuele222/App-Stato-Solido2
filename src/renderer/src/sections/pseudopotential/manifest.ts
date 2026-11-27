@@ -27,7 +27,7 @@ export const PARAMS: readonly PseudoCoreParamSpec[] = [
   { id: 'v0', quantity: 'VG', symbol: 'V_0', min: 50, max: 75, step: 1, digits: 0, unit: 'eV', default: 60 },
   { id: 's', quantity: 'VG', symbol: 's', min: 0.2, max: 0.28, step: 0.01, digits: 2, unit: 'Å', default: 0.25 },
   { id: 'f', quantity: 'V2G', symbol: 'f', min: -10, max: 65, step: 0.5, digits: 1, unit: 'eV', default: 0 },
-  { id: 'alpha', quantity: 'psi', symbol: '\\alpha', min: -2.0, max: 2.0, step: 0.01, digits: 2, unit: '', default: 0 }
+  { id: 'alpha', quantity: 'psi', symbol: '\\alpha', min: -2.0, max: 2.0, step: 0.01, digits: 2, unit: '', default: 0.59 }
 ]
 
 export type PseudoCoreParamValues = Record<PseudoCoreParamId, number>

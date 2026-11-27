@@ -12,9 +12,11 @@ import {
   gaussianCrystalPotentialZeroMean,
   meanKineticEnergy1D,
   orthogonalityIntegrand1D,
+  parityDecomposition1D,
   planeWaveConvergence1D,
   planeWaveTailWeight,
   pseudoCore1DBands,
+  pseudoCore1DBandsWithStates,
   pseudoWavefunctionAndTrue,
   smoothestAlpha,
   solvePseudoCore1DAtK,
@@ -332,5 +334,89 @@ describe('pseudoCore1d — modello 1D con stato di core (verifica_pseudo.py r. 5
     }
     expect(conv.nNeededTrue).toBe(11)
     expect(conv.nNeededPseudo).toBe(3)
+  })
+
+  it('decomposizione pari/dispari (cella e core) e onde necessarie lungo la banda 1 e in Γ bande 2–3', () => {
+    const cases: readonly {
+      readonly label: string
+      readonly fracPi: number
+      readonly band: number
+      readonly oddCorePct?: number
+      readonly oddCellPct?: number
+      readonly nTrue: number
+      readonly nPseudo: number
+    }[] = [
+      { label: 'Γ, b1', fracPi: 0, band: 1, oddCorePct: 0, oddCellPct: 0, nTrue: 11, nPseudo: 3 },
+      { label: '0,025π/a, b1', fracPi: 0.025, band: 1, nTrue: 11, nPseudo: 3 },
+      { label: '0,05π/a, b1', fracPi: 0.05, band: 1, oddCorePct: 28.3, oddCellPct: 4.2, nTrue: 11, nPseudo: 7 },
+      { label: '0,1π/a, b1', fracPi: 0.1, band: 1, oddCorePct: 58.6, oddCellPct: 13.7, nTrue: 11, nPseudo: 9 },
+      { label: '0,2π/a, b1', fracPi: 0.2, band: 1, oddCorePct: 81.4, oddCellPct: 33.8, nTrue: 11, nPseudo: 11 },
+      { label: '0,3π/a, b1', fracPi: 0.3, band: 1, oddCorePct: 89.1, oddCellPct: 49.9, nTrue: 13, nPseudo: 11 },
+      { label: '0,6π/a, b1', fracPi: 0.6, band: 1, oddCorePct: 97.2, oddCellPct: 82.9, nTrue: 13, nPseudo: 11 },
+      { label: 'π/a, b1', fracPi: 1.0, band: 1, oddCorePct: 100, oddCellPct: 100, nTrue: 13, nPseudo: 11 },
+      { label: 'Γ, b2', fracPi: 0, band: 2, oddCorePct: 100, oddCellPct: 100, nTrue: 13, nPseudo: 13 },
+      { label: 'Γ, b3', fracPi: 0, band: 3, oddCorePct: 0, oddCellPct: 0, nTrue: 15, nPseudo: 5 }
+    ]
+
+    const lines: string[] = []
+    for (const c of cases) {
+      const k = (c.fracPi * Math.PI) / params.a
+      const st = solvePseudoCore1DAtK(k, params, 40)
+      const rc = computeCoreRadius(st.vectors[0], st.G, k, params.a)
+      const p = parityDecomposition1D(st.vectors[c.band], st.G, k, params.a, rc, 2001)
+      const conv = planeWaveConvergence1D(st, c.band)
+      const oddCore = p.oddWeightCore * 100
+      const oddCell = p.oddWeightCell * 100
+      lines.push(
+        `${c.label}: oddCore=${oddCore.toFixed(2)}% oddCell=${oddCell.toFixed(2)}% waves=${conv.nNeededTrue}/${conv.nNeededPseudo} evenX=[${p.evenSignChanges.map((x) => x.toFixed(3)).join(',')}] oddX=[${p.oddSignChanges.map((x) => x.toFixed(3)).join(',')}]`
+      )
+      if (c.oddCorePct !== undefined) {
+        expect(Math.abs(oddCore - c.oddCorePct)).toBeLessThan(0.5)
+      }
+      if (c.oddCellPct !== undefined) {
+        expect(Math.abs(oddCell - c.oddCellPct)).toBeLessThan(0.5)
+      }
+      expect(conv.nNeededTrue).toBe(c.nTrue)
+      expect(conv.nNeededPseudo).toBe(c.nPseudo)
+    }
+
+    // Verifica esplicita dei cambi di segno in Γ banda 2 (1 cambio in x = 0 sulla parte dispari)
+    const stG2 = solvePseudoCore1DAtK(0, params, 40)
+    const rcG2 = computeCoreRadius(stG2.vectors[0], stG2.G, 0, params.a)
+    const pG2 = parityDecomposition1D(stG2.vectors[2], stG2.G, 0, params.a, rcG2, 2001)
+    expect(pG2.oddSignChanges).toHaveLength(1)
+    expect(Math.abs(pG2.oddSignChanges[0])).toBeLessThan(1e-6)
+    expect(pG2.evenSignChanges).toHaveLength(0)
+
+    console.info('[pseudoCore1d parity table]\n' + lines.join('\n'))
+  })
+
+  it('segno continuo lungo le bande 1–3 su 81 punti (indici 0–80) al default e agli 8 estremi dei cursori', () => {
+    const configs: PseudoCore1DParams[] = [params]
+    for (const a of [3.5, 4.8]) {
+      for (const v0 of [50, 75]) {
+        for (const s of [0.2, 0.28]) {
+          configs.push({ a, v0, s })
+        }
+      }
+    }
+
+    for (const cfg of configs) {
+      const path = zonePath1D(cfg.a, 81)
+      const { states } = pseudoCore1DBandsWithStates(cfg, path, 4, 40)
+      expect(states).toHaveLength(81)
+      for (let i = 0; i < states.length; i++) {
+        // ψ_c(0) > 0 ovunque
+        let sumCore = 0
+        for (let m = 0; m < states[i].vectors[0].length; m++) sumCore += states[i].vectors[0][m]
+        expect(sumCore).toBeGreaterThan(0)
+        if (i > 0) {
+          for (let b = 1; b <= 3; b++) {
+            const ov = dot(states[i - 1].vectors[b], states[i].vectors[b])
+            expect(ov).toBeGreaterThan(0)
+          }
+        }
+      }
+    }
   })
 })

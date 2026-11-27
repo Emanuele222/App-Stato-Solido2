@@ -24,13 +24,46 @@ import { usePseudoCoreStore } from './store'
 import { strings as s } from './strings'
 import './pseudopotential.css'
 
-function formatCrossingsText(crossings: readonly number[]): string {
+function plainGuidedBannerTitle(tex: string): string {
+  return tex
+    .replace(/\\psi\^\{\\mathrm f\}/g, 'ψᶠ')
+    .replace(/\\psi_\{\\mathbf\{k\}\}/g, 'ψk')
+    .replace(/\\psi_c/g, 'ψc')
+    .replace(/\\langle\s*T\s*\\rangle/g, '⟨T⟩')
+    .replace(/\\beta_c/g, 'βc')
+    .replace(/\\alpha/g, 'α')
+    .replace(/\$/g, '')
+}
+
+function formatCrossingList(crossings: readonly number[]): string {
   if (crossings.length === 0) return '0'
+  if (crossings.length === 1 && Math.abs(crossings[0]) < 5e-4) {
+    return '1 (x = 0)'
+  }
   if (crossings.length === 2 && Math.abs(crossings[0] + crossings[1]) < 0.004) {
     return `2 (x = ±${formatNumber(Math.abs(crossings[1]), 3)} Å)`
   }
-  const coords = crossings.map((x) => `${formatNumber(x, 3)}`).join('; ')
+  const coords = crossings
+    .map((x) => (Math.abs(x) < 5e-4 ? '0' : formatNumber(x, 3)))
+    .join('; ')
   return `${crossings.length} (x = ${coords} Å)`
+}
+
+function formatParityCrossingsText(
+  evenWeightCore: number,
+  oddWeightCore: number,
+  evenCrossings: readonly number[],
+  oddCrossings: readonly number[]
+): string {
+  const parts: string[] = []
+  if (evenWeightCore >= 0.01) {
+    parts.push(`parte pari: ${formatCrossingList(evenCrossings)}`)
+  }
+  if (oddWeightCore >= 0.01) {
+    parts.push(`parte dispari: ${formatCrossingList(oddCrossings)}`)
+  }
+  if (parts.length === 0) return '0'
+  return parts.join(' · ')
 }
 
 function formatOrthoOverlap(val: number): string {
@@ -89,6 +122,7 @@ export function PseudopotentialSection(): JSX.Element {
     { id: 'valE', keyKind: 'solid', color: 'var(--q-E)', label: <RichText text={s.scene.valEnergyLegend} /> },
     { id: 'coreW', keyKind: 'solid', color: 'var(--tone-core-state)', label: <RichText text={s.scene.psiCoreLegend} /> },
     { id: 'trueW', keyKind: 'solid', color: 'var(--q-psi)', label: <RichText text={s.scene.psiTrueLegend} /> },
+    { id: 'oddW', keyKind: 'dotted', color: 'var(--q-psi)', label: s.scene.psiOddLegend },
     { id: 'smoothW', keyKind: 'dashed', color: 'var(--tone-smooth-wavefunction)', label: <RichText text={s.scene.psiSmoothLegend} /> }
   ]
 
@@ -105,16 +139,27 @@ export function PseudopotentialSection(): JSX.Element {
           { id: 'mvps', keyKind: 'solid', color: 'var(--tone-screened-potential)', label: <RichText text={s.scene.matVpsLegend} /> }
         ]
 
-  const nTrueStr = model.convergence.nNeededTrue !== null ? String(model.convergence.nNeededTrue) : '> 21'
-  const nPseudoStr = model.convergence.nNeededPseudo !== null ? String(model.convergence.nNeededPseudo) : '> 21'
+  const nTrueVal = model.convergence.nNeededTrue
+  const nPseudoVal = model.convergence.nNeededPseudo
+  const nTrueStr = nTrueVal !== null ? String(nTrueVal) : '> 21'
+  const nPseudoStr = nPseudoVal !== null ? String(nPseudoVal) : '> 21'
+  const hasClearAdvantage =
+    nPseudoVal !== null && (nTrueVal === null || nTrueVal - nPseudoVal > 2)
 
   const guidedBannerText = s.guided.stepText(st.guidedStep, {
-    signChanges: model.realSpace.signChanges.length,
+    evenWeightCore: model.parity.evenWeightCore,
+    oddWeightCore: model.parity.oddWeightCore,
+    evenCrossings: model.parity.evenSignChanges.length,
+    oddCrossings: model.parity.oddSignChanges.length,
+    nTrueVal,
+    nPseudoVal,
     nTrue: nTrueStr,
     nPseudo: nPseudoStr,
     alphaStr: formatNumber(model.effectiveAlpha, 3, { signed: true }),
     betaStr: formatNumber(model.betaC, 3, { signed: true }),
-    maxOutDiff: formatNumber(0.04, 2),
+    kineticTrue: formatNumber(model.kineticTrue, 2),
+    kineticSmooth: formatNumber(model.kineticSmooth, 2),
+    domSmoothPct: formatNumber(model.dominantWeightSmooth * 100, 1),
     eKinIon: formatNumber(model.realSpace.eKinIon, 1),
     eKinMid: formatNumber(model.realSpace.eKinMid, 2),
     isOdd: model.isOddState
@@ -167,11 +212,9 @@ export function PseudopotentialSection(): JSX.Element {
         hint={guidedSelector}
       >
         <div className="pseudo1d-view-col">
-          {st.guidedStep !== 0 && (
-            <div className="pseudo1d-guided-banner">
-              <RichText text={guidedBannerText} />
-            </div>
-          )}
+          <div className="pseudo1d-guided-banner" title={plainGuidedBannerTitle(guidedBannerText)}>
+            <RichText text={guidedBannerText} />
+          </div>
           <ChartLegend entries={realLegend} ariaLabel={s.scene.realAria} />
           <div className="pseudo1d-canvas-box">
             <PseudoCoreRealSpaceCanvas
@@ -264,7 +307,7 @@ export function PseudopotentialSection(): JSX.Element {
           type="button"
           className="pseudo1d-f-jump num"
           title={s.params.fMarkerTitle}
-          onClick={() => st.setParam('f', model.eDiff)}
+          onClick={() => st.setParam('f', model.eDiff, { exact: true })}
         >
           <RichText text={s.params.fMarkerBtn(formatNumber(model.eDiff, 1))} />
         </button>
@@ -362,8 +405,18 @@ export function PseudopotentialSection(): JSX.Element {
             <Tex tex="|\langle\psi_c|\psi_{\mathbf{k}}\rangle|" /> {formatOrthoOverlap(model.orthoOverlap)}
           </dd>
 
+          <dt>{s.values.oddCoreLabel}</dt>
+          <dd className="num">{Math.round(model.parity.oddWeightCore * 100)} %</dd>
+
           <dt>{s.values.signChangesLabel}</dt>
-          <dd className="num">{formatCrossingsText(model.realSpace.signChanges)}</dd>
+          <dd className="num">
+            {formatParityCrossingsText(
+              model.parity.evenWeightCore,
+              model.parity.oddWeightCore,
+              model.parity.evenSignChanges,
+              model.parity.oddSignChanges
+            )}
+          </dd>
 
           <dt>{s.values.alphaBetaLabel}</dt>
           <dd className="num">
@@ -390,7 +443,22 @@ export function PseudopotentialSection(): JSX.Element {
 
           <dt>{s.values.wavesNeededLabel}</dt>
           <dd className="num">
-            <Tex tex="V" />: {nTrueStr} · <Tex tex="V + V'" />: {nPseudoStr}
+            {nTrueStr === nPseudoStr ? (
+              <>
+                <Tex tex="V" /> = <Tex tex="V + V'" />: {nTrueStr}
+              </>
+            ) : (
+              <>
+                <Tex tex="V" />: {nTrueStr} · <Tex tex="V + V'" />: {nPseudoStr}
+              </>
+            )}
+            {!hasClearAdvantage && model.parity.oddWeightCore >= 0.1 && (
+              <span className="note sub">
+                <RichText
+                  text={`parte dispari ${Math.round(model.parity.oddWeightCore * 100)} % nel core: $V'$ agisce solo sulla parte pari`}
+                />
+              </span>
+            )}
           </dd>
 
           <dt>
@@ -454,9 +522,19 @@ export function PseudopotentialSection(): JSX.Element {
               <h3>
                 <RichText text={sec.heading} />
               </h3>
-              <p>
-                <RichText text={sec.body} />
-              </p>
+              {'items' in sec ? (
+                <ol className="pseudo1d-theory-list">
+                  {sec.items.map((item, idx) => (
+                    <li key={idx}>
+                      <RichText text={item} />
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p>
+                  <RichText text={sec.body} />
+                </p>
+              )}
             </div>
           ))}
           <details className="panel-details">

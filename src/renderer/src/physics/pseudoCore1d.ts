@@ -117,11 +117,11 @@ function buildHamiltonian1D(
 }
 
 /**
- * Fissa in modo deterministico il segno di ciascun autovettore:
+ * Fissa in modo deterministico il segno di ciascun autovettore al singolo punto k (usato in Γ):
  *  - banda di core (bandIndex = 0): ψ_c(0) = ∑ c_G > 0 sullo ione;
- *  - bande di valenza (bandIndex ≥ 1): Re ψ(a/2) > 0 tra gli ioni se non nulla
- *    (così lungo tutta la banda 1 non ci sono salti di segno e in Γ ψ_k(a/2) > 0),
- *    altrimenti ψ(0) > 0, poi pendenza in x = 0 > 0, infine prima componente non nulla.
+ *  - bande di valenza (bandIndex ≥ 1): se la parte pari è non nulla, Re ψ(a/2) > 0 tra gli ioni
+ *    (o ψ(0) > 0 se ψ(a/2) = 0); se la parte pari è nulla (stato dispari), derivata della parte
+ *    dispari in x = 0 positiva: ∑ (k + G) c_G > 0.
  */
 function fixEigenvectorSign(
   vec: Float64Array,
@@ -164,6 +164,91 @@ function fixEigenvectorSign(
     for (let m = 0; m < out.length; m++) out[m] = -out[m]
   }
   return out
+}
+
+function alignSignToPrev(vec: Float64Array, prev: Float64Array): void {
+  let dot = 0
+  for (let m = 0; m < vec.length; m++) dot += vec[m] * prev[m]
+  if (dot < 0) {
+    for (let m = 0; m < vec.length; m++) vec[m] = -vec[m]
+  }
+}
+
+export interface PseudoCore1DPathResult {
+  readonly bands: BandStructure
+  readonly states: readonly PseudoCore1DState[]
+}
+
+/**
+ * Risolve l'equazione di Schrödinger 1D lungo un intero cammino 1D, fissando il segno in Γ
+ * (parte pari: ψ(a/2) > 0; parte pari nulla: derivata parte dispari in 0 > 0) e poi
+ * propagandolo per continuità (∑ c_G(k) c_G(k′) > 0) verso ±π/a. ψ_c resta con ψ_c(0) > 0.
+ */
+export function pseudoCore1DBandsWithStates(
+  params: PseudoCore1DParams,
+  path: KPath,
+  nBands: number = 4,
+  nHalf: number = DEFAULT_N_HALF
+): PseudoCore1DPathResult {
+  validateParams(params)
+  if (path.dimension !== 1) throw new RangeError('pseudoCore1DBandsWithStates: serve un cammino 1D')
+  const nPts = path.points.length
+  const G = pseudoCore1DPlaneWaves(params.a, nHalf)
+  const count = Math.min(nBands, G.length)
+  const energies = Array.from({ length: count }, () => new Float64Array(nPts))
+  const rawStates: { k: number; values: Float64Array; vecList: Float64Array[]; H: RealSymmetricMatrix }[] = []
+
+  let gammaIdx = 0
+  let bestAbsK = Infinity
+  for (let i = 0; i < nPts; i++) {
+    const k = path.points[i][0]
+    if (Math.abs(k) < bestAbsK) {
+      bestAbsK = Math.abs(k)
+      gammaIdx = i
+    }
+    const H = buildHamiltonian1D(k, params, G)
+    const { values, vectors } = eigh(H, { vectors: true })
+    const vecList: Float64Array[] = []
+    if (vectors) {
+      for (let b = 0; b < vectors.count; b++) {
+        const raw = eigenvector(vectors, b).re
+        // Banda di core (b = 0): sempre ψ_c(0) > 0
+        vecList.push(b === 0 ? fixEigenvectorSign(raw, k, G, params.a, 0) : Float64Array.from(raw))
+      }
+    }
+    for (let b = 0; b < count; b++) {
+      energies[b][i] = values[b]
+    }
+    rawStates.push({ k, values, vecList, H })
+  }
+
+  // Fissa il segno in Γ per le bande b >= 1
+  if (nPts > 0) {
+    const gState = rawStates[gammaIdx]
+    for (let b = 1; b < gState.vecList.length; b++) {
+      gState.vecList[b] = fixEigenvectorSign(gState.vecList[b], gState.k, G, params.a, b)
+    }
+    for (let i = gammaIdx + 1; i < nPts; i++) {
+      for (let b = 1; b < rawStates[i].vecList.length; b++) {
+        alignSignToPrev(rawStates[i].vecList[b], rawStates[i - 1].vecList[b])
+      }
+    }
+    for (let i = gammaIdx - 1; i >= 0; i--) {
+      for (let b = 1; b < rawStates[i].vecList.length; b++) {
+        alignSignToPrev(rawStates[i].vecList[b], rawStates[i + 1].vecList[b])
+      }
+    }
+  }
+
+  const states: PseudoCore1DState[] = rawStates.map((st) => ({
+    k: st.k,
+    nHalf,
+    G,
+    energies: st.values,
+    vectors: st.vecList,
+    hamiltonian: st.H
+  }))
+  return { bands: { method: 'pseudopotential', path, energies }, states }
 }
 
 /** Risolve l'equazione di Schrödinger 1D nel singolo punto k. */
@@ -389,6 +474,105 @@ export function findSignChangesInCore(
     }
   }
   return crossings
+}
+
+export interface ParityDecomposition {
+  readonly evenWeightCell: number
+  readonly oddWeightCell: number
+  readonly evenWeightCore: number
+  readonly oddWeightCore: number
+  readonly evenSignChanges: readonly number[]
+  readonly oddSignChanges: readonly number[]
+}
+
+function integrateSqOnInterval(
+  values: Float64Array,
+  xGrid: Float64Array,
+  xMin: number,
+  xMax: number
+): number {
+  let sum = 0
+  for (let i = 1; i < xGrid.length; i++) {
+    const x0 = xGrid[i - 1]
+    const x1 = xGrid[i]
+    if (x1 <= xMin || x0 >= xMax) continue
+    let a = x0
+    let b = x1
+    let va = values[i - 1]
+    let vb = values[i]
+    if (a < xMin) {
+      const t = (xMin - x0) / (x1 - x0)
+      va = va + t * (vb - va)
+      a = xMin
+    }
+    if (b > xMax) {
+      const t = (xMax - x0) / (x1 - x0)
+      vb = values[i - 1] + t * (values[i] - values[i - 1])
+      b = xMax
+    }
+    sum += 0.5 * (va * va + vb * vb) * (b - a)
+  }
+  return sum
+}
+
+/**
+ * Calcola i pesi della parte pari (Re ψ) e dispari (Im ψ) attorno allo ione
+ * nella cella [−a/2, a/2] e nel core |x| < r_c, insieme ai cambi di segno nel core.
+ */
+export function parityDecomposition1D(
+  coeffs: Float64Array,
+  G: Float64Array,
+  k: number,
+  a: number,
+  rc: number,
+  nSamples: number = 2001
+): ParityDecomposition {
+  const n = Math.max(3, nSamples % 2 === 1 ? nSamples : nSamples + 1)
+  const xGrid = new Float64Array(n)
+  const halfA = 0.5 * a
+  for (let i = 0; i < n; i++) {
+    xGrid[i] = -halfA + (a * i) / (n - 1)
+  }
+  const { re, im } = evalBlochWavefunction1D(coeffs, G, k, a, xGrid)
+
+  let cellEven = 0
+  let cellOdd = 0
+  let maxRe = 0
+  let maxIm = 0
+  for (let i = 0; i < n; i++) {
+    maxRe = Math.max(maxRe, Math.abs(re[i]))
+    maxIm = Math.max(maxIm, Math.abs(im[i]))
+    if (i > 0) {
+      const dx = xGrid[i] - xGrid[i - 1]
+      cellEven += 0.5 * (re[i - 1] * re[i - 1] + re[i] * re[i]) * dx
+      cellOdd += 0.5 * (im[i - 1] * im[i - 1] + im[i] * im[i]) * dx
+    }
+  }
+  const cellTot = cellEven + cellOdd
+  const evenWeightCell = cellTot > 0 ? cellEven / cellTot : 0
+  const oddWeightCell = cellTot > 0 ? cellOdd / cellTot : 0
+
+  const coreHalf = Math.min(halfA, Math.max(0, rc))
+  const coreEven = coreHalf > 0 ? integrateSqOnInterval(re, xGrid, -coreHalf, coreHalf) : 0
+  const coreOdd = coreHalf > 0 ? integrateSqOnInterval(im, xGrid, -coreHalf, coreHalf) : 0
+  const coreTot = coreEven + coreOdd
+  const evenWeightCore = coreTot > 0 ? coreEven / coreTot : 0
+  const oddWeightCore = coreTot > 0 ? coreOdd / coreTot : 0
+
+  const maxAmp = Math.max(maxRe, maxIm)
+  const evenSignChanges =
+    maxAmp > 0 && maxRe > 1e-7 * maxAmp ? findSignChangesInCore(re, xGrid, rc) : []
+  const oddSignChanges =
+    maxAmp > 0 && maxIm > 1e-7 * maxAmp ? findSignChangesInCore(im, xGrid, rc) : []
+
+  return {
+    evenWeightCell,
+    oddWeightCell,
+    evenWeightCore,
+    oddWeightCore,
+    evenSignChanges,
+    oddSignChanges
+  }
 }
 
 export interface OrthogonalityProfile {

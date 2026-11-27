@@ -11,12 +11,10 @@ import {
   dominantPlaneWaveWeight,
   emptyLatticeBands,
   evalBlochWavefunction1D,
-  findSignChangesInCore,
   gaussianCrystalPotentialZeroMean,
   meanKineticEnergy1D,
   orthogonalityIntegrand1D,
   planeWaveConvergence1D,
-  pseudoCore1DBands,
   pseudoWavefunctionAndTrue,
   rydbergToEv,
   smoothestAlpha,
@@ -28,6 +26,11 @@ import {
   type OrthogonalityProfile,
   type PlaneWaveConvergenceResult
 } from '../../physics'
+import {
+  parityDecomposition1D,
+  pseudoCore1DBandsWithStates,
+  type ParityDecomposition
+} from '../../physics/pseudoCore1d'
 import { NUMERICS, type PseudoCoreParamValues } from './manifest'
 import type { PseudoCoreTools } from './store'
 
@@ -47,10 +50,14 @@ export interface PseudoCoreRealSpaceData {
   readonly xGrid: Float64Array
   readonly potential: Float64Array
   readonly psiCoreRe: Float64Array
+  readonly psiCoreIm: Float64Array
   readonly psiTrueRe: Float64Array
+  readonly psiTrueIm: Float64Array
   readonly psiSmoothRe: Float64Array
+  readonly psiSmoothIm: Float64Array
+  readonly coreOddWeightCell: number
+  readonly smoothOddWeightCell: number
   readonly rc: number
-  readonly signChanges: readonly number[]
   readonly ortho: OrthogonalityProfile
   readonly eKinIon: number
   readonly eKinMid: number
@@ -77,6 +84,7 @@ export interface PseudoCoreModel {
   readonly effectiveAlpha: number
   readonly betaC: number
   readonly isOddState: boolean
+  readonly parity: ParityDecomposition
   readonly kineticCore: number
   readonly kineticTrue: number
   readonly kineticSmooth: number
@@ -92,6 +100,18 @@ export interface PseudoCoreModel {
   readonly bareIonRows: readonly BareIonRow[]
 }
 
+function oddWeightFraction(re: Float64Array, im: Float64Array, xGrid: Float64Array): number {
+  let evenInt = 0
+  let oddInt = 0
+  for (let i = 1; i < xGrid.length; i++) {
+    const dx = xGrid[i] - xGrid[i - 1]
+    evenInt += 0.5 * (re[i - 1] * re[i - 1] + re[i] * re[i]) * dx
+    oddInt += 0.5 * (im[i - 1] * im[i - 1] + im[i] * im[i]) * dx
+  }
+  const tot = evenInt + oddInt
+  return tot > 0 ? oddInt / tot : 0
+}
+
 export function usePseudoCoreModel(
   params: PseudoCoreParamValues,
   smoothLock: boolean,
@@ -103,10 +123,11 @@ export function usePseudoCoreModel(
 
   const path = useMemo(() => zonePath1D(a, NUMERICS.kPoints), [a])
 
-  const bands = useMemo(
-    () => pseudoCore1DBands({ a, v0, s }, path, NUMERICS.numBands, NUMERICS.nHalf),
+  const pathResult = useMemo(
+    () => pseudoCore1DBandsWithStates({ a, v0, s }, path, NUMERICS.numBands, NUMERICS.nHalf),
     [a, v0, s, path]
   )
+  const bands = pathResult.bands
 
   const emptyBands = useMemo(
     () => (tools.compare ? emptyLatticeBands(a, path, NUMERICS.numBands) : null),
@@ -116,11 +137,7 @@ export function usePseudoCoreModel(
   const safeKIndex = Math.max(0, Math.min(path.points.length - 1, kIndex))
   const safeBandIndex = Math.max(0, Math.min(NUMERICS.numBands - 1, bandIndex))
   const kValue = path.points[safeKIndex][0]
-
-  const stateAtK = useMemo(
-    () => solvePseudoCore1DAtK(kValue, { a, v0, s }, NUMERICS.nHalf),
-    [kValue, a, v0, s]
-  )
+  const stateAtK = pathResult.states[safeKIndex]
 
   const shiftedCoreBand = useMemo(() => {
     const src = bands.energies[0]
@@ -205,10 +222,18 @@ export function usePseudoCoreModel(
     [stateAtK.G, stateAtK.nHalf, a, v0, s, eValence, eCore, cCore]
   )
 
-  const { realSpace, isOddState } = useMemo<{
-    readonly realSpace: PseudoCoreRealSpaceData
-    readonly isOddState: boolean
-  }>(() => {
+  const rc = useMemo(
+    () => computeCoreRadius(cCore, stateAtK.G, kValue, a),
+    [cCore, stateAtK.G, kValue, a]
+  )
+
+  const parity = useMemo(
+    () => parityDecomposition1D(cVal, stateAtK.G, kValue, a, rc, 2001),
+    [cVal, stateAtK.G, kValue, a, rc]
+  )
+  const isOddState = parity.evenWeightCell < 1e-8 && Math.abs(alphaSmooth) < 1e-8
+
+  const realSpace = useMemo<PseudoCoreRealSpaceData>(() => {
     const nGrid = 401
     const xGrid = new Float64Array(nGrid)
     const potential = new Float64Array(nGrid)
@@ -221,47 +246,33 @@ export function usePseudoCoreModel(
     const wCore = evalBlochWavefunction1D(cCore, stateAtK.G, kValue, a, xGrid)
     const wTrue = evalBlochWavefunction1D(cVal, stateAtK.G, kValue, a, xGrid)
     const wSmooth = evalBlochWavefunction1D(cPseudoRaw, stateAtK.G, kValue, a, xGrid)
-    const rc = computeCoreRadius(cCore, stateAtK.G, kValue, a)
 
-    // Stati esattamente dispari in Γ o ±π/a hanno Re ψ_k ≡ 0 e Im ψ_k reale dispari:
-    // ruotando di −i per la visualizzazione si mostra la funzione dispari reale
-    // senza alterare α = 0 né alcuna grandezza fisica.
-    let maxRe = 0
-    let maxIm = 0
-    for (let i = 0; i < nGrid; i++) {
-      maxRe = Math.max(maxRe, Math.abs(wTrue.re[i]))
-      maxIm = Math.max(maxIm, Math.abs(wTrue.im[i]))
-    }
-    const oddByParity = maxRe < 1e-7 && maxIm > 1e-4 && Math.abs(alphaSmooth) < 1e-8
-
-    const psiTrueRe = oddByParity ? wTrue.im : wTrue.re
-    const psiSmoothRe = oddByParity ? wSmooth.im : wSmooth.re
-    const psiTrueImForOrtho = oddByParity ? wTrue.re.map((v) => -v) : wTrue.im
-
-    const signChanges = findSignChangesInCore(psiTrueRe, xGrid, rc)
-    const ortho = orthogonalityIntegrand1D(wCore.re, wCore.im, psiTrueRe, psiTrueImForOrtho, xGrid)
+    const coreOddWeightCell = oddWeightFraction(wCore.re, wCore.im, xGrid)
+    const smoothOddWeightCell = oddWeightFraction(wSmooth.re, wSmooth.im, xGrid)
+    const ortho = orthogonalityIntegrand1D(wCore.re, wCore.im, wTrue.re, wTrue.im, xGrid)
 
     const eKinIon = eValence - gaussianCrystalPotentialZeroMean(0, { a, v0, s })
     const eKinMid = eValence - gaussianCrystalPotentialZeroMean(halfCell, { a, v0, s })
     const eKinCoreIon = eCore - gaussianCrystalPotentialZeroMean(0, { a, v0, s })
 
     return {
-      isOddState: oddByParity,
-      realSpace: {
-        xGrid,
-        potential,
-        psiCoreRe: wCore.re,
-        psiTrueRe,
-        psiSmoothRe,
-        rc,
-        signChanges,
-        ortho,
-        eKinIon,
-        eKinMid,
-        eKinCoreIon
-      }
+      xGrid,
+      potential,
+      psiCoreRe: wCore.re,
+      psiCoreIm: wCore.im,
+      psiTrueRe: wTrue.re,
+      psiTrueIm: wTrue.im,
+      psiSmoothRe: wSmooth.re,
+      psiSmoothIm: wSmooth.im,
+      coreOddWeightCell,
+      smoothOddWeightCell,
+      rc,
+      ortho,
+      eKinIon,
+      eKinMid,
+      eKinCoreIon
     }
-  }, [a, v0, s, cCore, cVal, cPseudoRaw, stateAtK.G, kValue, alphaSmooth, eValence, eCore])
+  }, [a, v0, s, cCore, cVal, cPseudoRaw, stateAtK.G, kValue, rc, eValence, eCore])
 
   const massProbe = useMemo<PseudoCoreMassProbe | null>(() => {
     if (!tools.mass) return null
@@ -320,6 +331,7 @@ export function usePseudoCoreModel(
     effectiveAlpha,
     betaC,
     isOddState,
+    parity,
     kineticCore,
     kineticTrue,
     kineticSmooth,

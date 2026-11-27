@@ -2,6 +2,21 @@
  * Tutti i testi della sezione «Pseudopotenziale» (modello 1D esatto con stato di core, P4 §4).
  * Nessun trattino basso letterale nei testi visibili: le formule usano KaTeX ($…$).
  */
+function numberStartsWithVowel(n: number): boolean {
+  const k = Math.abs(Math.round(n))
+  if (k === 1 || k === 8 || k === 11) return true
+  if (k >= 80 && k <= 89) return true
+  if (k >= 800 && k <= 899) return true
+  return false
+}
+
+function pctArticle(prep: 'il' | 'al' | 'per il', n: number): string {
+  if (!numberStartsWithVowel(n)) return `${prep} ${n} %`
+  if (prep === 'il') return `l’${n} %`
+  if (prep === 'al') return `all’${n} %`
+  return `per l’${n} %`
+}
+
 export const strings = {
   chapter: 'Teoria delle bande',
   title: 'Pseudopotenziale',
@@ -45,31 +60,71 @@ export const strings = {
     stepText: (
       step: 0 | 1 | 2 | 3,
       data: {
-        readonly signChanges: number
+        readonly evenWeightCore: number
+        readonly oddWeightCore: number
+        readonly evenCrossings: number
+        readonly oddCrossings: number
+        readonly nTrueVal: number | null
+        readonly nPseudoVal: number | null
         readonly nTrue: string
         readonly nPseudo: string
         readonly alphaStr: string
         readonly betaStr: string
-        readonly maxOutDiff: string
+        readonly kineticTrue: string
+        readonly kineticSmooth: string
+        readonly domSmoothPct: string
         readonly eKinIon: string
         readonly eKinMid: string
         readonly isOdd: boolean
       }
     ): string => {
-      if (step === 1) {
-        if (data.isOdd) {
-          return 'Stato dispari attorno allo ione: cambia segno in $x = 0$ ed è ortogonale a $\\psi_c$ per simmetria ($\\int \\psi_c^* \\psi_{\\mathbf{k}}\\,dx = 0$).'
+      const hasClearAdvantage =
+        data.nPseudoVal !== null &&
+        (data.nTrueVal === null || data.nTrueVal - data.nPseudoVal > 2)
+      const oddCorePct = Math.round(data.oddWeightCore * 100)
+      const sameWaves = data.nTrue === data.nPseudo
+      const hasEven = data.evenWeightCore >= 0.01
+      const hasOdd = data.oddWeightCore >= 0.01
+
+      if (step === 0) {
+        if (hasClearAdvantage) {
+          return `$\\psi^{\\mathrm f}$ liscia: $\\langle T\\rangle$ ${data.kineticSmooth} vs ${data.kineticTrue} eV, onda ${data.domSmoothPct} %, ${data.nPseudo} onde invece di ${data.nTrue}.`
         }
-        return `$\\psi_{\\mathbf{k}}$ cambia segno ${data.signChanges} ${data.signChanges === 1 ? 'volta' : 'volte'} nel core per restare ortogonale a $\\psi_c$: servono ${data.nTrue} onde piane.`
+        if (data.isOdd) {
+          if (sameWaves) {
+            return `Stato dispari: $\\psi^{\\mathrm f} = \\psi_{\\mathbf{k}}$, $100$ % dispari nel core, $V'$ non agisce (${data.nPseudo} onde).`
+          }
+          return `Stato dispari: $\\psi^{\\mathrm f} = \\psi_{\\mathbf{k}}$, $100$ % dispari, ${data.nTrue} onde con $V$, ${data.nPseudo} con $V + V'$.`
+        }
+        const wavePart = sameWaves ? `${data.nPseudo} onde` : `${data.nTrue} contro ${data.nPseudo} onde`
+        return `Parte dispari ${pctArticle('al', oddCorePct)}: $V'$ agisce sulla parte pari (${wavePart}).`
+      }
+      if (step === 1) {
+        if (data.isOdd || (hasOdd && !hasEven) || !hasEven) {
+          if (data.oddCrossings === 1) {
+            return 'Stato dispari nel core: cambia segno in $x = 0$, ortogonale a $\\psi_c$ per simmetria.'
+          }
+          return `Parte dispari nel core: ${data.oddCrossings} cambi di segno, ortogonale a $\\psi_c$ per simmetria.`
+        }
+        if (hasEven && hasOdd) {
+          return `Pari: ${data.evenCrossings} ${data.evenCrossings === 1 ? 'cambio' : 'cambi'}; dispari (${oddCorePct} %): ${data.oddCrossings} ${data.oddCrossings === 1 ? 'cambio' : 'cambi'}. Servono ${data.nTrue} onde.`
+        }
+        return `$\\psi_{\\mathbf{k}}$ cambia segno ${data.evenCrossings} ${data.evenCrossings === 1 ? 'volta' : 'volte'} nel core per ortogonalità a $\\psi_c$: ${data.nTrue} onde.`
       }
       if (step === 2) {
         if (data.isOdd) {
-          return 'Stato dispari: non serve sottrarre alcuna copia di $\\psi_c$ ($\\alpha = 0$, $\\psi^{\\mathrm f} = \\psi_{\\mathbf{k}}$).'
+          return 'Stato dispari: nessuna copia di $\\psi_c$ da togliere ($\\alpha = 0$, $\\psi^{\\mathrm f} = \\psi_{\\mathbf{k}}$).'
         }
-        return `Tolta la copia $\\beta_c\\psi_c$ ($\\beta_c = ${data.betaStr}$, $\\alpha = ${data.alphaStr}$), resta la parte liscia $\\psi^{\\mathrm f}$ che fuori dal core coincide con $\\psi_{\\mathbf{k}}$.`
+        return `Tolta $\\beta_c\\psi_c$ ($\\beta_c = ${data.betaStr}$, $\\alpha = ${data.alphaStr}$), resta $\\psi^{\\mathrm f}$ liscia nel core.`
       }
       if (step === 3) {
-        return `Sullo ione $E - V = ${data.eKinIon}$ eV contro ${data.eKinMid} eV tra gli ioni; con $V + V'$ bastano ${data.nPseudo} onde piane invece di ${data.nTrue}.`
+        if (hasClearAdvantage) {
+          return `$E - V$: ${data.eKinIon} vs ${data.eKinMid} eV; con $V + V'$ bastano ${data.nPseudo} onde invece di ${data.nTrue}.`
+        }
+        if (oddCorePct >= 10) {
+          return `$\\psi_{\\mathbf{k}}$ è ${pctArticle('per il', oddCorePct)} dispari nel core: $\\psi_c$ è pari, il vantaggio sparisce.`
+        }
+        return `$E - V$: ${data.eKinIon} vs ${data.eKinMid} eV; ${sameWaves ? `servono ${data.nPseudo} onde per entrambi` : `con $V + V'$ servono ${data.nPseudo} onde vs ${data.nTrue}`}.`
       }
       return ''
     }
@@ -86,10 +141,12 @@ export const strings = {
     valEnergyLegend: '$E(\\mathbf{k})$',
     psiCoreLegend: 'core $\\psi_c$',
     psiTrueLegend: 'valenza $\\psi_{\\mathbf{k}}$',
+    psiOddLegend: 'parte dispari',
     psiSmoothLegend: 'liscia $\\psi^{\\mathrm f}$',
 
     recipTag: 'Onde piane',
-    recipAria: 'Vista delle onde piane: pesi |c_G|², convergenza in funzione di N e cancellazione V + V′.',
+    recipAria:
+      'Vista delle onde piane: pesi c con G al quadrato, convergenza in funzione di N e cancellazione V + V′.',
     recipTabConvergence: 'Quante onde piane',
     recipTabCancellation: 'Cancellazione',
     recipHintConv: 'pesi $|c_G|^2$ ($n = -4\\ldots 4$) ed errore su $E(\\mathbf{k})$ per $N$ onde piane',
@@ -124,6 +181,7 @@ export const strings = {
     diffLabel: 'separazione',
     orthoLabel: 'ortogonalità',
     shiftedCoreLabel: 'livello di core con f',
+    oddCoreLabel: 'parte dispari nel core',
     signChangesLabel: 'cambi di segno nel core',
     alphaBetaLabel: 'non unicità su ψᶠ',
     kineticMeanLabel: 'energia cinetica media',
@@ -151,13 +209,16 @@ export const strings = {
     sections: [
       {
         heading: 'Perché lo pseudopotenziale funziona',
-        body:
-          '1. Il problema: $\\psi_{c\\mathbf{k}}$ è confinata nella buca vicino allo ione; $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}}$ è autostato della stessa $H$ con energia diversa, quindi è ortogonale a $\\psi_{c\\mathbf{k}}$. Nel core deve cambiare segno e oscillare rapidamente, richiedendo molte onde piane; inoltre $V$ non è piccolo. 2. L’idea: quell’oscillazione è una copia di $\\psi_{c\\mathbf{k}}$, cioè $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}} = \\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}} + \\beta_c\\psi_{c\\mathbf{k}}$; la parte di core è nota e resta da calcolare solo $\\psi^{\\mathrm f}_{\\mathbf{k}}$, che è liscia. 3. Il risultato: per $\\psi^{\\mathrm f}_{\\mathbf{k}}$ il potenziale efficace è $V_{\\mathrm{ps}} = \\htmlData{q=VG}{V} + V\'$, con $V\' = (\\htmlData{q=E}{E} - E_c)|\\psi_{c\\mathbf{k}}\\rangle\\langle\\psi_{c\\mathbf{k}}| > 0$ repulsivo nel core che compensa in buona parte $V$; per questo bastano poche onde piane e il metodo dei quasi liberi funziona con $V_{\\mathrm{ps}}$ e non con $V$.'
+        items: [
+          'Il problema: $\\psi_{c\\mathbf{k}}$ è confinata nella buca vicino allo ione; $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}}$ è autostato della stessa $H$ con energia diversa, quindi è ortogonale a $\\psi_{c\\mathbf{k}}$. Nel core deve cambiare segno e oscillare rapidamente, richiedendo molte onde piane; inoltre $V$ non è piccolo.',
+          'L’idea: quell’oscillazione è una copia di $\\psi_{c\\mathbf{k}}$, cioè $\\htmlData{q=psi}{\\psi_{\\mathbf{k}}} = \\htmlData{q=psi}{\\psi^{\\mathrm f}_{\\mathbf{k}}} + \\beta_c\\psi_{c\\mathbf{k}}$; la parte di core è nota e resta da calcolare solo $\\psi^{\\mathrm f}_{\\mathbf{k}}$, che è liscia.',
+          'Il risultato: per $\\psi^{\\mathrm f}_{\\mathbf{k}}$ il potenziale efficace è $V_{\\mathrm{ps}} = \\htmlData{q=VG}{V} + V\'$, con $V\' = (\\htmlData{q=E}{E} - E_c)|\\psi_{c\\mathbf{k}}\\rangle\\langle\\psi_{c\\mathbf{k}}| > 0$ repulsivo nel core che compensa in buona parte $V$; per questo bastano poche onde piane e il metodo dei quasi liberi funziona con $V_{\\mathrm{ps}}$ e non con $V$.'
+        ]
       },
       {
         heading: 'Rispetto agli altri metodi',
         body:
-          'I legami forti descrivono bene solo la banda di core (larga meno di $0{,}1$ eV). Le onde piane con il potenziale vero devono descrivere anche l’oscillazione nel core ($11$ onde in $\\Gamma$, e $V$ non è piccolo). Le onde piane ortogonalizzate e lo pseudopotenziale tolgono la parte di core, che è nota ($3$ onde).'
+          'I legami forti descrivono bene solo la banda di core (larga meno di $0{,}1$ eV). Le onde piane con il potenziale vero devono descrivere anche l’oscillazione nel core ($11$ onde in $\\Gamma$, e $V$ non è piccolo). Le onde piane ortogonalizzate e lo pseudopotenziale tolgono la parte di core, che è nota ($3$ onde in $\\Gamma$). Il proiettore $V\' = \\sum_c (E - E_c)|\\psi_{c\\mathbf{k}}\\rangle\\langle\\psi_{c\\mathbf{k}}|$ cancella $V$ solo nella parte di $\\psi_{\\mathbf{k}}$ che «vede» uno stato di core: in questo modello 1D c’è un solo stato di core, pari, e il vantaggio vale per la parte pari ($\\Gamma$ banda 1: $11 \\to 3$; $\\Gamma$ banda 3: $15 \\to 5$; $\\Gamma$ banda 2, dispari: $13 \\to 13$). Negli atomi veri la somma su $c$ comprende stati di core di diverse simmetrie (per il Si $1s$, $2s$ e $2p$).'
       },
       {
         heading: 'Le due non unicità e il limite metallico',

@@ -43,8 +43,28 @@ export function PseudoCoreRealSpaceCanvas({
     const H = Math.max(120, h - MARGIN.top - MARGIN.bottom)
     const { a } = model.params
     const halfA = 0.5 * a
-    const { xGrid, potential, psiCoreRe, psiTrueRe, psiSmoothRe, rc, signChanges, ortho } =
-      model.realSpace
+    const {
+      xGrid,
+      potential,
+      psiCoreRe,
+      psiCoreIm,
+      psiTrueRe,
+      psiTrueIm,
+      psiSmoothRe,
+      psiSmoothIm,
+      coreOddWeightCell,
+      smoothOddWeightCell,
+      rc,
+      ortho
+    } = model.realSpace
+    const {
+      evenWeightCell,
+      oddWeightCell,
+      evenWeightCore,
+      oddWeightCore,
+      evenSignChanges,
+      oddSignChanges
+    } = model.parity
 
     const X = (x: number): number => L + ((x + halfA) / a) * W
 
@@ -235,14 +255,25 @@ export function PseudoCoreRealSpaceCanvas({
 
     // ==================== FASCIA 2: FUNZIONI D'ONDA ====================
     const wMid = wTop + wH * 0.5
+    const showCoreOdd = coreOddWeightCell >= 0.01
+    const showSmoothOdd = smoothOddWeightCell >= 0.01
+    const evenCellFactor = evenWeightCell >= 0.01 ? 1 : Math.max(0, evenWeightCell / 0.01)
+    const oddCellFactor = oddWeightCell >= 0.01 ? 1 : Math.max(0, oddWeightCell / 0.01)
+    const smoothEvenWeightCell = 1 - smoothOddWeightCell
+    const smoothEvenFactor =
+      smoothEvenWeightCell >= 0.01 ? 1 : Math.max(0, smoothEvenWeightCell / 0.01)
+
     let maxAbs = 0.25
     for (let i = 0; i < xGrid.length; i++) {
       maxAbs = Math.max(
         maxAbs,
         Math.abs(psiCoreRe[i]),
         Math.abs(psiTrueRe[i]),
+        Math.abs(psiTrueIm[i]),
         Math.abs(psiSmoothRe[i])
       )
+      if (showCoreOdd) maxAbs = Math.max(maxAbs, Math.abs(psiCoreIm[i]))
+      if (showSmoothOdd) maxAbs = Math.max(maxAbs, Math.abs(psiSmoothIm[i]))
     }
     const yW = (val: number): number => wMid - (val / (maxAbs * 1.12)) * (wH * 0.46)
 
@@ -260,7 +291,7 @@ export function PseudoCoreRealSpaceCanvas({
     ctx.textBaseline = 'middle'
     ctx.fillText('0', L - 5, wMid)
 
-    // 1. Area tra ψ_k e ψ^f (= β_c ψ_c)
+    // 1. Area tra Re ψ_k e Re ψ^f (= β_c Re ψ_c)
     if (Math.abs(model.effectiveAlpha) > 0.01) {
       ctx.save()
       ctx.fillStyle = withAlpha(coreColor, 0.16 * emBetaArea)
@@ -279,7 +310,7 @@ export function PseudoCoreRealSpaceCanvas({
       ctx.restore()
     }
 
-    // 2. ψ_c come area piena + contorno continuo >= 2 px nel colore del core
+    // 2. ψ_c come area piena + contorno continuo >= 2 px nel colore del core (parte pari)
     const coreLine: PolylinePoint[] = []
     ctx.save()
     ctx.fillStyle = withAlpha(coreColor, 0.22 * emCoreW)
@@ -305,57 +336,132 @@ export function PseudoCoreRealSpaceCanvas({
     ctx.stroke()
     ctx.restore()
 
-    // 3. ψ_k vera continua + pallini sui cambi di segno dentro il core
-    const trueLine: PolylinePoint[] = []
-    ctx.save()
-    ctx.strokeStyle = withAlpha(psiColor, emTrueW)
-    ctx.lineWidth = 2.1
-    ctx.beginPath()
-    for (let i = 0; i < xGrid.length; i++) {
-      const px = X(xGrid[i])
-      const py = yW(psiTrueRe[i])
-      trueLine.push({ x: px, y: py })
-      if (i === 0) ctx.moveTo(px, py)
-      else ctx.lineTo(px, py)
-    }
-    ctx.stroke()
-    ctx.restore()
-
-    const dotBoxes: RectBox[] = []
-    for (const xc of signChanges) {
-      const px = X(xc)
+    if (showCoreOdd) {
       ctx.save()
-      ctx.fillStyle = withAlpha(psiColor, emDots)
-      ctx.strokeStyle = TOKENS.bg
-      ctx.lineWidth = 1.6
+      ctx.strokeStyle = withAlpha(coreColor, 0.85 * emCoreW)
+      ctx.lineWidth = 1.3
+      ctx.setLineDash([2, 3])
       ctx.beginPath()
-      ctx.arc(px, wMid, 4.2, 0, Math.PI * 2)
-      ctx.fill()
+      for (let i = 0; i < xGrid.length; i++) {
+        const px = X(xGrid[i])
+        const py = yW(psiCoreIm[i])
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      }
       ctx.stroke()
       ctx.restore()
-      dotBoxes.push({ x0: px - 6, y0: wMid - 6, x1: px + 6, y1: wMid + 6 })
     }
 
-    // 4. ψ^f = ψ_k + α ψ_c non normalizzata, tratteggiata
-    const smoothLine: PolylinePoint[] = []
-    ctx.save()
-    ctx.strokeStyle = withAlpha(smoothColor, emSmoothW)
-    ctx.lineWidth = 2.2
-    ctx.setLineDash([7, 4])
-    ctx.beginPath()
-    for (let i = 0; i < xGrid.length; i++) {
-      const px = X(xGrid[i])
-      const py = yW(psiSmoothRe[i])
-      smoothLine.push({ x: px, y: py })
-      if (i === 0) ctx.moveTo(px, py)
-      else ctx.lineTo(px, py)
+    // 3. ψ_k vera (parte pari continua, parte dispari puntinata) e ψ^f tratteggiata.
+    // Disegniamo l'eventuale parte dispari di ψ^f sotto a Im ψ_k così quando Im ψ_c ≈ 0
+    // (o α = 0) non copre il tratto puntinato di «parte dispari».
+    if (showSmoothOdd && Math.abs(model.effectiveAlpha) > 0.01) {
+      ctx.save()
+      ctx.strokeStyle = withAlpha(smoothColor, 0.7 * emSmoothW)
+      ctx.lineWidth = 1.6
+      ctx.setLineDash([5, 3, 1.5, 3])
+      ctx.beginPath()
+      for (let i = 0; i < xGrid.length; i++) {
+        const px = X(xGrid[i])
+        const py = yW(psiSmoothIm[i])
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      }
+      ctx.stroke()
+      ctx.restore()
     }
-    ctx.stroke()
-    ctx.restore()
+
+    const trueLine: PolylinePoint[] = []
+    if (evenCellFactor > 0) {
+      ctx.save()
+      ctx.strokeStyle = withAlpha(psiColor, evenCellFactor * emTrueW)
+      ctx.lineWidth = 2.1
+      ctx.beginPath()
+      for (let i = 0; i < xGrid.length; i++) {
+        const px = X(xGrid[i])
+        const py = yW(psiTrueRe[i])
+        trueLine.push({ x: px, y: py })
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      }
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    const oddTrueLine: PolylinePoint[] = []
+    if (oddCellFactor > 0) {
+      ctx.save()
+      ctx.strokeStyle = withAlpha(psiColor, 0.9 * oddCellFactor * emTrueW)
+      ctx.lineWidth = 1.5
+      ctx.setLineDash([2, 3])
+      ctx.beginPath()
+      for (let i = 0; i < xGrid.length; i++) {
+        const px = X(xGrid[i])
+        const py = yW(psiTrueIm[i])
+        oddTrueLine.push({ x: px, y: py })
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      }
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    const dotBoxes: RectBox[] = []
+    if (evenWeightCore >= 0.01) {
+      for (const xc of evenSignChanges) {
+        const px = X(xc)
+        ctx.save()
+        ctx.fillStyle = withAlpha(psiColor, emDots)
+        ctx.strokeStyle = TOKENS.bg
+        ctx.lineWidth = 1.6
+        ctx.beginPath()
+        ctx.arc(px, wMid, 4.2, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+        dotBoxes.push({ x0: px - 6, y0: wMid - 6, x1: px + 6, y1: wMid + 6 })
+      }
+    }
+    if (oddWeightCore >= 0.01) {
+      for (const xc of oddSignChanges) {
+        const px = X(xc)
+        ctx.save()
+        ctx.fillStyle = TOKENS.bg
+        ctx.strokeStyle = withAlpha(psiColor, emDots)
+        ctx.lineWidth = 1.8
+        ctx.beginPath()
+        ctx.arc(px, wMid, 3.5, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.stroke()
+        ctx.restore()
+        dotBoxes.push({ x0: px - 6, y0: wMid - 6, x1: px + 6, y1: wMid + 6 })
+      }
+    }
+
+    // 4. ψ^f = ψ_k + α ψ_c non normalizzata, tratteggiata (parte pari attenuata sotto 1% nella cella)
+    const smoothLine: PolylinePoint[] = []
+    if (smoothEvenFactor > 0) {
+      ctx.save()
+      ctx.strokeStyle = withAlpha(smoothColor, smoothEvenFactor * emSmoothW)
+      ctx.lineWidth = 2.2
+      ctx.setLineDash([7, 4])
+      ctx.beginPath()
+      for (let i = 0; i < xGrid.length; i++) {
+        const px = X(xGrid[i])
+        const py = yW(psiSmoothRe[i])
+        smoothLine.push({ x: px, y: py })
+        if (i === 0) ctx.moveTo(px, py)
+        else ctx.lineTo(px, py)
+      }
+      ctx.stroke()
+      ctx.restore()
+    }
 
     // Etichette libere nella fascia funzioni d'onda (ricostruendo gli ingombri dopo ogni etichetta)
     const wRegion: RectBox = { x0: L + 4, y0: wTop + 2, x1: L + W - 4, y1: wTop + wH - 2 }
-    const wLines: readonly PolylinePoint[][] = [coreLine, trueLine, smoothLine]
+    const wLines: readonly PolylinePoint[][] = [coreLine, trueLine, oddTrueLine, smoothLine].filter(
+      (line) => line.length > 0
+    )
     const wOcc: RectBox[] = [...dotBoxes]
 
     const ionIdx = (xGrid.length - 1) >> 1
@@ -371,17 +477,42 @@ export function PseudoCoreRealSpaceCanvas({
       occupied: wOcc,
       leaderColor: withAlpha(coreColor, 0.7 * emCoreW)
     })
-    placeFreeLabel(ctx, {
-      text: 'ψ_{k}',
-      size: 11.5,
-      color: withAlpha(psiColor, emTrueW),
-      backdrop: TOKENS.bg,
-      anchor: { x: X(xGrid[edgeIdx]), y: yW(psiTrueRe[edgeIdx]) },
-      obstacles: buildObstacleMap(wRegion, wLines, wOcc),
-      region: wRegion,
-      occupied: wOcc,
-      leaderColor: withAlpha(psiColor, 0.7 * emTrueW)
-    })
+    if (evenWeightCell >= 0.01) {
+      placeFreeLabel(ctx, {
+        text: 'ψ_{k}',
+        size: 11.5,
+        color: withAlpha(psiColor, emTrueW),
+        backdrop: TOKENS.bg,
+        anchor: { x: X(xGrid[edgeIdx]), y: yW(psiTrueRe[edgeIdx]) },
+        obstacles: buildObstacleMap(wRegion, wLines, wOcc),
+        region: wRegion,
+        occupied: wOcc,
+        leaderColor: withAlpha(psiColor, 0.7 * emTrueW)
+      })
+    }
+    if (oddWeightCell >= 0.01) {
+      let oddPeakIdx = ionIdx + 1
+      let oddPeakAbs = 0
+      for (let i = ionIdx + 1; i < xGrid.length; i++) {
+        const aVal = Math.abs(psiTrueIm[i])
+        if (aVal > oddPeakAbs) {
+          oddPeakAbs = aVal
+          oddPeakIdx = i
+        }
+      }
+      placeFreeLabel(ctx, {
+        text: 'parte dispari',
+        rich: true,
+        size: 10.5,
+        color: withAlpha(psiColor, emTrueW),
+        backdrop: TOKENS.bg,
+        anchor: { x: X(xGrid[oddPeakIdx]), y: yW(psiTrueIm[oddPeakIdx]) },
+        obstacles: buildObstacleMap(wRegion, wLines, wOcc),
+        region: wRegion,
+        occupied: wOcc,
+        leaderColor: withAlpha(psiColor, 0.7 * emTrueW)
+      })
+    }
     if (Math.abs(model.effectiveAlpha) > 0.03) {
       placeFreeLabel(ctx, {
         text: 'ψ^{f}',

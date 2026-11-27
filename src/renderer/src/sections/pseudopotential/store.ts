@@ -25,7 +25,7 @@ export interface PseudoCoreState {
   readonly highlight: QuantityId | null
   readonly pulse: { readonly quantities: readonly QuantityId[]; readonly seq: number } | null
 
-  setParam: (id: PseudoCoreParamId, value: number) => void
+  setParam: (id: PseudoCoreParamId, value: number, options?: { readonly exact?: boolean }) => void
   toggleSmoothLock: (currentAlphaSmooth: number) => void
   setGuidedStep: (step: GuidedReadingStep) => void
   setRecipTab: (tab: PlaneWaveViewTab) => void
@@ -54,11 +54,13 @@ export const usePseudoCoreStore = create<PseudoCoreState>((set, get) => ({
   highlight: null,
   pulse: null,
 
-  setParam: (id, value) => {
+  setParam: (id, value, options) => {
     const spec = PARAMS.find((p) => p.id === id)
     if (!spec) return
-    const rounded = Math.round(clamp(value, spec.min, spec.max) / spec.step) * spec.step
-    const nextVal = clamp(Number(rounded.toFixed(4)), spec.min, spec.max)
+    const clamped = clamp(value, spec.min, spec.max)
+    const nextVal = options?.exact
+      ? clamped
+      : clamp(Number((Math.round(clamped / spec.step) * spec.step).toFixed(4)), spec.min, spec.max)
     set((cur) => ({
       params: { ...cur.params, [id]: nextVal },
       smoothLock: id === 'alpha' ? false : cur.smoothLock,

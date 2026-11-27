@@ -46,10 +46,13 @@ export function PseudoCoreReciprocalCanvas({
     const screenedColor = toneColor('screenedPotential')
 
     const hl = highlight !== null
-    const emPsiTrue = hl ? (highlight === 'psi' ? 1 : DIM) : guidedStep === 2 ? DIM : 1
-    const emPsiSmooth = hl ? (highlight === 'psi' ? 1 : DIM) : guidedStep === 1 ? DIM : 1
-    const emV = hl ? (highlight === 'VG' ? 1 : DIM) : 1
+    const isStep3 = !hl && guidedStep === 3
+    const emPsiTrue = hl ? (highlight === 'psi' ? 1 : DIM) : guidedStep === 2 || guidedStep === 3 ? DIM : 1
+    const emPsiSmooth = hl ? (highlight === 'psi' ? 1 : DIM) : guidedStep === 1 || guidedStep === 3 ? DIM : 1
+    const emLeftAxis = hl ? (highlight === 'psi' ? 1 : DIM) : isStep3 ? DIM : 1
+    const emV = hl ? (highlight === 'VG' ? 1 : DIM) : guidedStep === 2 ? DIM : 1
     const emVps = hl ? (highlight === 'VG' || highlight === 'E' ? 1 : DIM) : guidedStep === 1 ? DIM : 1
+    const emConvLabels = hl ? (highlight === 'VG' || highlight === 'E' ? 1 : DIM) : 1
 
     if (tab === 'convergence') {
       const gapMid = 34
@@ -75,7 +78,7 @@ export function PseudoCoreReciprocalCanvas({
         ctx.moveTo(L, yy)
         ctx.lineTo(L + leftW, yy)
         ctx.stroke()
-        ctx.fillStyle = TOKENS.dim
+        ctx.fillStyle = withAlpha(TOKENS.dim, emLeftAxis)
         ctx.fillText(`${Math.round(frac * 100)}%`, L - 4, yy)
       }
 
@@ -93,8 +96,8 @@ export function PseudoCoreReciprocalCanvas({
 
         const n = i - nDisp
         if (n % 2 === 0) {
-          drawMathText(ctx, String(n), x0 + bw * 0.5, T + H + 13, {
-            color: TOKENS.muted,
+          drawMathText(ctx, n < 0 ? `−${Math.abs(n)}` : String(n), x0 + bw * 0.5, T + H + 13, {
+            color: withAlpha(TOKENS.muted, emLeftAxis),
             size: 10,
             align: 'center'
           })
@@ -102,7 +105,7 @@ export function PseudoCoreReciprocalCanvas({
       }
       drawRichText(ctx, '$|c_{G}|^{2}$ (n = −4…4)', L, T - 8, {
         size: 10.5,
-        color: TOKENS.muted,
+        color: withAlpha(TOKENS.muted, emLeftAxis),
         align: 'left'
       })
 
@@ -110,7 +113,7 @@ export function PseudoCoreReciprocalCanvas({
       const { points, nNeededTrue, nNeededPseudo } = model.convergence
       const maxPlotN = Math.max(15, nNeededTrue ?? 15, nNeededPseudo ?? 15)
       const shownPts = points.filter((pt) => pt.nWaves <= maxPlotN)
-      const logMin = -4 // 1e-4 eV
+      const logMin = -6 // 1e-6 eV
       const logMax = 0.7 // ~5 eV
 
       const xN = (N: number): number =>
@@ -121,7 +124,7 @@ export function PseudoCoreReciprocalCanvas({
         return T + ((logMax - lg) / (logMax - logMin)) * (H - 4)
       }
 
-      // Griglia logaritmica (1, 0.1, 0.01, 0.001)
+      // Griglia logaritmica (1, 0,1, 0,01, 10⁻⁴, 10⁻⁶)
       ctx.font = sansFont(9.5)
       ctx.textAlign = 'right'
       ctx.textBaseline = 'middle'
@@ -129,12 +132,13 @@ export function PseudoCoreReciprocalCanvas({
         [1, '1'],
         [0.1, '0,1'],
         [0.01, '0,01'],
-        [0.001, '10⁻³']
+        [1e-4, '10⁻⁴'],
+        [1e-6, '10⁻⁶']
       ] as const) {
         const yy = yErr(val)
         const isThresh = val === 0.01
         ctx.save()
-        ctx.strokeStyle = isThresh ? withAlpha(TOKENS.focus, 0.7) : TOKENS.line
+        ctx.strokeStyle = isThresh ? withAlpha(TOKENS.focus, 0.7 * emConvLabels) : TOKENS.line
         ctx.lineWidth = isThresh ? 1.2 : 1
         if (isThresh) ctx.setLineDash([4, 3])
         ctx.beginPath()
@@ -142,7 +146,7 @@ export function PseudoCoreReciprocalCanvas({
         ctx.lineTo(rightL + rightW, yy)
         ctx.stroke()
         ctx.restore()
-        ctx.fillStyle = isThresh ? TOKENS.textSoft : TOKENS.dim
+        ctx.fillStyle = isThresh ? withAlpha(TOKENS.textSoft, emConvLabels) : TOKENS.dim
         ctx.fillText(lbl, rightL - 4, yy)
       }
 
@@ -201,41 +205,63 @@ export function PseudoCoreReciprocalCanvas({
       drawConvSeries((pt) => pt.errorTrue, potColor, emV)
       drawConvSeries((pt) => pt.errorPseudo, screenedColor, emVps)
 
-      // Indicatori numerici (es. «11» e «3») accanto alla soglia 0,01 eV
-      const yThresh = yErr(0.01)
-      if (nNeededPseudo !== null) {
-        const ptP = shownPts.find((p) => p.nWaves === nNeededPseudo)
-        const xp = xN(nNeededPseudo)
-        const yp = ptP && ptP.errorPseudo !== null ? yErr(ptP.errorPseudo) : yThresh
-        drawMathText(ctx, String(nNeededPseudo), xp + 6, Math.max(T + 10, yp - 8), {
-          color: withAlpha(screenedColor, emVps),
-          size: 11,
+      const hasFloorPoint = shownPts.some(
+        (pt) =>
+          (pt.errorTrue !== null && pt.errorTrue <= 1e-6) ||
+          (pt.errorPseudo !== null && pt.errorPseudo <= 1e-6)
+      )
+      if (hasFloorPoint) {
+        drawRichText(ctx, '< 10⁻⁶ eV', rightL + 4, yErr(1e-6) - 6, {
+          size: 9.5,
+          color: withAlpha(TOKENS.textSoft, 0.78 * emConvLabels),
           align: 'left',
           backdrop: TOKENS.bg
         })
       }
-      if (nNeededTrue !== null) {
-        const ptT = shownPts.find((p) => p.nWaves === nNeededTrue)
-        const xt = xN(nNeededTrue)
-        const yt = ptT && ptT.errorTrue !== null ? yErr(ptT.errorTrue) : yThresh
-        const sameAsPseudo = nNeededTrue === nNeededPseudo
-        drawMathText(
-          ctx,
-          String(nNeededTrue),
-          xt + (sameAsPseudo ? -6 : 5),
-          Math.max(T + 10, yt - (sameAsPseudo ? 16 : 9)),
-          {
+
+      // Indicatori numerici (es. «11» e «3», oppure «13 = 13» se coincidono) accanto alla soglia 0,01 eV
+      const yThresh = yErr(0.01)
+      if (nNeededTrue !== null && nNeededPseudo !== null && nNeededTrue === nNeededPseudo) {
+        const ptP = shownPts.find((p) => p.nWaves === nNeededPseudo)
+        const xp = xN(nNeededPseudo)
+        const yp =
+          ptP && ptP.errorPseudo !== null
+            ? yErr(ptP.errorPseudo)
+            : yThresh
+        drawMathText(ctx, `${nNeededTrue} = ${nNeededPseudo}`, xp + 6, Math.max(T + 10, yp - 9), {
+          color: withAlpha(TOKENS.textSoft, emConvLabels),
+          size: 11,
+          align: xp > rightL + rightW * 0.72 ? 'right' : 'left',
+          backdrop: TOKENS.bg
+        })
+      } else {
+        if (nNeededPseudo !== null) {
+          const ptP = shownPts.find((p) => p.nWaves === nNeededPseudo)
+          const xp = xN(nNeededPseudo)
+          const yp = ptP && ptP.errorPseudo !== null ? yErr(ptP.errorPseudo) : yThresh
+          drawMathText(ctx, String(nNeededPseudo), xp + 6, Math.max(T + 10, yp - 8), {
+            color: withAlpha(screenedColor, emVps),
+            size: 11,
+            align: 'left',
+            backdrop: TOKENS.bg
+          })
+        }
+        if (nNeededTrue !== null) {
+          const ptT = shownPts.find((p) => p.nWaves === nNeededTrue)
+          const xt = xN(nNeededTrue)
+          const yt = ptT && ptT.errorTrue !== null ? yErr(ptT.errorTrue) : yThresh
+          drawMathText(ctx, String(nNeededTrue), xt + 5, Math.max(T + 10, yt - 9), {
             color: withAlpha(potColor, emV),
             size: 11,
-            align: sameAsPseudo ? 'right' : 'left',
+            align: xt > rightL + rightW * 0.85 ? 'right' : 'left',
             backdrop: TOKENS.bg
-          }
-        )
+          })
+        }
       }
 
       drawRichText(ctx, 'errore su $E$ (eV) vs $N$', rightL, T - 8, {
         size: 10.5,
-        color: TOKENS.muted,
+        color: withAlpha(TOKENS.muted, emConvLabels),
         align: 'left'
       })
       return false
@@ -275,19 +301,20 @@ export function PseudoCoreReciprocalCanvas({
     for (let i = 0; i < nValues.length; i++) {
       const x0 = L + i * rStep + 1
       const bw = Math.max(3, rStep - 2)
+      const n = nValues[i]
+      const barFactor = isStep3 ? (n === 1 ? 1 : DIM) : 1
 
       const hV = vMat[i] * yScale
-      ctx.fillStyle = withAlpha(potColor, 0.85 * emV)
+      ctx.fillStyle = withAlpha(potColor, 0.85 * emV * barFactor)
       ctx.fillRect(x0, hV >= 0 ? midY - hV : midY, bw * 0.46, Math.abs(hV))
 
       const hPs = vPsMat[i] * yScale
-      ctx.fillStyle = withAlpha(screenedColor, 0.9 * emVps)
+      ctx.fillStyle = withAlpha(screenedColor, 0.9 * emVps * barFactor)
       ctx.fillRect(x0 + bw * 0.5, hPs >= 0 ? midY - hPs : midY, bw * 0.46, Math.abs(hPs))
 
-      const n = nValues[i]
       if (n % 2 === 0) {
-        drawMathText(ctx, String(n), x0 + bw * 0.5, T + H + 13, {
-          color: TOKENS.muted,
+        drawMathText(ctx, n < 0 ? `−${Math.abs(n)}` : String(n), x0 + bw * 0.5, T + H + 13, {
+          color: withAlpha(TOKENS.muted, isStep3 ? DIM : 1),
           size: 10,
           align: 'center'
         })

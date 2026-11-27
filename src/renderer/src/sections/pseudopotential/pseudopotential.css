@@ -42,7 +42,7 @@
 
 .pseudo1d-view .chart-legend {
   padding: 2px 14px 0;
-  gap: 1px 8px;
+  gap: 1px 7px;
 }
 
 .pseudo1d-view .view-hint {
@@ -123,12 +123,29 @@
 }
 
 .pseudo1d-guided-banner {
-  padding: 4px 16px 2px;
-  font-size: 12px;
-  line-height: 1.35;
+  padding: 2px 14px;
+  height: 24px;
+  font-size: 11.5px;
+  line-height: 19px;
   color: var(--text-soft);
   background: var(--raised);
   border-bottom: 1px solid var(--line);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pseudo1d-theory-list {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  color: var(--text-soft);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.pseudo1d-theory-list li + li {
+  margin-top: 4px;
 }
 
 /* Comandi: esattamente 2 righe fino a 1100×800 */

@@ -122,7 +122,7 @@ export const DERIVED_TONES = {
   /** stato di core ψ_c, banda E_c, area β_c ψ_c e lobi dell'ortogonalità */
   coreState: { from: 't', color: '#6fb6ff', name: 'stato di core ψ_c ed E_c (tinta di t)' },
   /** potenziale schermato V + V′ e convergenza della pseudo-Hamiltoniana */
-  screenedPotential: { from: 'v', color: '#56d4c0', name: 'pseudopotenziale V + V′ (tinta di v)' }
+  screenedPotential: { from: 'VG', color: '#f5b378', name: 'pseudopotenziale V + V′ (tinta chiara di V_G)' }
 } as const
 
 export type DerivedToneId = keyof typeof DERIVED_TONES
