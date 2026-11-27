@@ -90,35 +90,35 @@ export interface WavepacketPreset {
 export const PRESETS: readonly WavepacketPreset[] = [
   {
     id: 'linear-sound',
-    name: 'Regime lineare ω = vₛ|k| (§6.2)',
+    name: 'Lineare ω = vₛ|k| (§6.2)',
     regime: 'linear',
     kFrac: 0.35,
     sigma0InA: 3.0
   },
   {
     id: 'acoustic-dispersive',
-    name: 'Ramo acustico dispersivo (Fig. 7)',
+    name: 'Ramo acustico (Fig. 7)',
     regime: 'acoustic',
     kFrac: 0.66,
     sigma0InA: 3.0
   },
   {
     id: 'acoustic-edge',
-    name: 'Bordo di zona k₀ = π/a (§6.2)',
+    name: 'Bordo di zona k₀ = π/a',
     regime: 'acoustic',
     kFrac: 1.0,
     sigma0InA: 3.0
   },
   {
     id: 'optical-negative-vg',
-    name: 'Ramo ottico a pendenza negativa (§6.2)',
+    name: 'Ramo ottico (pendenza < 0)',
     regime: 'optical',
     kFrac: 0.5,
     sigma0InA: 3.0
   },
   {
     id: 'free-quadratic',
-    name: 'Particella libera ω ∝ k² (§6.3)',
+    name: 'Particella libera ω ∝ k²',
     regime: 'quadratic',
     kFrac: 0.5,
     sigma0InA: 3.0

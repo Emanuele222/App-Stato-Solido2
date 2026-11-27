@@ -74,14 +74,17 @@
 }
 
 .params:has(.phonon-wp-regime-group) .preset {
-  flex: 1 1 160px;
+  flex: 1 1 225px;
   padding: 2px 4px;
 }
 
 .params:has(.phonon-wp-regime-group) .preset select {
-  flex: 1 1 100px;
-  min-width: 90px;
-  max-width: none;
+  flex: 1 1 155px;
+  min-width: 145px;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .phonon-wp-regime-group {

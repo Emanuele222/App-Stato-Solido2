@@ -40,7 +40,7 @@ import './phonon-3d.css'
 
 const CRYSTAL_OPTIONS = CRYSTAL_PRESETS.map((p) => ({
   id: p.id,
-  label: `${p.name} — ${p.subtitle}`
+  label: p.name
 }))
 
 function roleVisualMeta(role: BranchRole3D): {
@@ -300,6 +300,7 @@ export function Phonon3DSection(): JSX.Element {
   )
 
   const sliderValues = st.transition === 'glide' ? shown : st.params
+  const activeCrystalPreset = CRYSTAL_PRESETS.find((x) => x.id === st.presetId)
 
   const params = (
     <>
@@ -309,7 +310,11 @@ export function Phonon3DSection(): JSX.Element {
         options={CRYSTAL_OPTIONS}
         value={st.presetId}
         onSelect={onCrystalChange}
-        note={s.params.crystalNote}
+        note={
+          activeCrystalPreset
+            ? `${activeCrystalPreset.subtitle} · ${s.params.crystalNote}`
+            : s.params.crystalNote
+        }
       />
       {PARAMS.filter((spec) => !spec.requiresOptical || p === 2).map((spec) => (
         <ParamSlider

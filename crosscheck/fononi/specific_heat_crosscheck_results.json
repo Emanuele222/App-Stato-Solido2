@@ -1,0 +1,532 @@
+{
+  "all_passed": true,
+  "total_checks": 14,
+  "passed_checks": 14,
+  "checks": [
+    {
+      "name": "Costanti SI 2019 e Dulong\u2013Petit (3R)",
+      "category": "costanti",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 6.127192731671329e-10,
+      "threshold": 1e-08,
+      "details": {
+        "R_app": 8.31446261815324,
+        "R_dec": 8.31446261815324,
+        "THREE_R_app": 24.94338785445972,
+        "THREE_R_dec": 24.94338785445972,
+        "HBAR_J_S_rel": 6.127192731671329e-10,
+        "DEBYE_T3_PREFACTOR_app": 233.7818184816058,
+        "DEBYE_T3_PREFACTOR_dec": 233.78181848160585
+      }
+    },
+    {
+      "name": "Funzione di Einstein \u2130(x) su x \u2208 [0, 700] (incl. x = 10\u207b\u2074) + cutoff x > 700",
+      "category": "einstein",
+      "passed": true,
+      "max_abs": 3.3306690738754696e-16,
+      "max_rel": 3.3313630210925575e-16,
+      "threshold": 1e-13,
+      "details": {
+        "n_points": 22,
+        "cutoff_gt_700_ok": true,
+        "worst_le_700": {
+          "x": 0.05,
+          "app": 0.9997916927057504,
+          "dec": 0.9997916927057501,
+          "rel": 3.3313630210925575e-16,
+          "abs": 3.3306690738754696e-16
+        }
+      }
+    },
+    {
+      "name": "Calore specifico Einstein C_V^E(T) + asintoti alta/bassa T",
+      "category": "einstein",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 2.450756611686149e-16,
+      "threshold": 1e-13,
+      "details": {
+        "highT_rel_at_15000_300": 6.666782999911633e-10,
+        "lowT_rel_at_15_300": 4.122307437752293e-09
+      }
+    },
+    {
+      "name": "Integrale di Debye D\u2083(u) su u \u2208 [0, 500] (incl. u=10\u207b\u00b3 e u=65)",
+      "category": "debye",
+      "passed": true,
+      "max_abs": 3.3306690738754696e-16,
+      "max_rel": 3.8385195875413763e-16,
+      "threshold": 1e-12,
+      "details": {
+        "n_points": 33,
+        "worst": {
+          "u": 65.1,
+          "app": 0.00028245320826406176,
+          "dec": 0.00028245320826406165,
+          "rel": 3.8385195875413763e-16,
+          "abs": 1.0842021724855044e-19
+        },
+        "ibp_identity_max_rel": 5.586111496945248e-20
+      }
+    },
+    {
+      "name": "Integrale energia interna \u03a6_D(u) su u \u2208 [0, 500]",
+      "category": "debye",
+      "passed": true,
+      "max_abs": 3.3306690738754696e-16,
+      "max_rel": 5.704875155821916e-16,
+      "threshold": 1e-12,
+      "details": {
+        "n_points": 33,
+        "worst": {
+          "u": 64.9,
+          "app": 7.126813533634419e-05,
+          "dec": 7.126813533634423e-05,
+          "rel": 5.704875155821916e-16,
+          "abs": 4.0657581468206416e-20
+        }
+      }
+    },
+    {
+      "name": "Griglia estesa Debye C_V(T, \u0398_D) e U_term(T, \u0398_D) (306 punti: T\u2208[5,1500], \u0398_D\u2208[30,2500])",
+      "category": "debye_grid",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 6.247666740036553e-16,
+      "threshold": 1e-12,
+      "details": {
+        "n_points": 306,
+        "nan_count": 0,
+        "max_cv_rel": 4.3631424230991426e-16,
+        "max_uTerm_rel": 6.247666740036553e-16,
+        "worst_cv": {
+          "T": 50,
+          "thetaD": 374,
+          "app": 4.0712786041453635,
+          "dec": 4.071278604145365,
+          "rel": 4.3631424230991426e-16
+        },
+        "worst_uTerm": {
+          "T": 450,
+          "thetaD": 1440,
+          "app": 2911.469960280265,
+          "dec": 2911.4699602802666,
+          "rel": 6.247666740036553e-16
+        }
+      }
+    },
+    {
+      "name": "Coerenza termodinamica C_V = (\u2202U_term/\u2202T)_V tramite FD4 sui valori dell'app",
+      "category": "debye",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 5.280442690389506e-12,
+      "threshold": 1e-08,
+      "details": {
+        "cases": [
+          {
+            "T": 10,
+            "thetaD": 343,
+            "cv": 0.0481684373449177,
+            "fd4": 0.0481684373449167,
+            "rel": 2.0743889095004398e-14
+          },
+          {
+            "T": 77,
+            "thetaD": 343,
+            "cv": 10.92903439739094,
+            "fd4": 10.929034397395773,
+            "rel": 4.4225928698348343e-13
+          },
+          {
+            "T": 180,
+            "thetaD": 343,
+            "cv": 20.94243327009122,
+            "fd4": 20.942433269980636,
+            "rel": 5.280442690389506e-12
+          },
+          {
+            "T": 300,
+            "thetaD": 2230,
+            "cv": 4.133240271066343,
+            "fd4": 4.133240271069856,
+            "rel": 8.498769535620862e-13
+          },
+          {
+            "T": 1200,
+            "thetaD": 343,
+            "cv": 24.841789817443125,
+            "fd4": 24.84178981741327,
+            "rel": 1.2017432424292734e-12
+          },
+          {
+            "T": 25,
+            "thetaD": 2500,
+            "cv": 0.0019437701905691983,
+            "fd4": 0.0019437701905695211,
+            "rel": 1.6610780869709445e-13
+          }
+        ]
+      }
+    },
+    {
+      "name": "Confronto T = \u0398_D/10, \u0398_D/20, \u0398_D/50 (\u00a721.5 e \u00a722.7)",
+      "category": "confronto",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 1.910317896942786e-16,
+      "threshold": 1e-13,
+      "details": {
+        "T_theta_10": {
+          "einstein_ratio_app": 0.00454040523504754,
+          "einstein_ratio_dec": 0.004540405235047541,
+          "debye_ratio_app": 0.07582100303109132,
+          "debye_ratio_dec": 0.07582100303109132,
+          "debye_over_einstein": 16.699170912284757,
+          "t3_overestimate_frac": 0.02777950319711432
+        },
+        "T_theta_20": {
+          "einstein_ratio_app": 8.244614523741065e-07,
+          "einstein_ratio_dec": 8.244614523741065e-07,
+          "debye_ratio_app": 0.00974075660070459,
+          "debye_ratio_dec": 0.00974075660070459,
+          "debye_over_einstein": 11814.690150346334
+        },
+        "T_theta_50_t3_rel_err": 1.739125041129124e-16
+      }
+    },
+    {
+      "name": "Tab. 2 (77 K e 273 K per Cu/Al/Au/Pb/Fe/Na/Si) + Diamante 77 K + Tab. 3",
+      "category": "tabelle",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 3.4685482333758137e-16,
+      "threshold": 1e-12,
+      "details": {
+        "tab2": [
+          {
+            "symbol": "Cu",
+            "thetaD": 343,
+            "app_77K": 10.92903439739094,
+            "dec_77K": 10.92903439739094,
+            "dispensa_Debye_77K": 10.9,
+            "app_273K": 23.080466754886093,
+            "dec_273K": 23.080466754886093,
+            "dispensa_Debye_273K": 23.1,
+            "rel_77K": 0.0,
+            "rel_273K": 0.0
+          },
+          {
+            "symbol": "Al",
+            "thetaD": 428,
+            "app_77K": 7.664981252369355,
+            "dec_77K": 7.664981252369355,
+            "dispensa_Debye_77K": 7.7,
+            "app_273K": 22.128003227047675,
+            "dec_273K": 22.12800322704768,
+            "dispensa_Debye_273K": 22.1,
+            "rel_77K": 0.0,
+            "rel_273K": 3.211056725134529e-16
+          },
+          {
+            "symbol": "Au",
+            "thetaD": 165,
+            "app_77K": 20.038186483629605,
+            "dec_77K": 20.0381864836296,
+            "dispensa_Debye_77K": 20.0,
+            "app_273K": 24.493681624003983,
+            "dec_273K": 24.493681624003976,
+            "dispensa_Debye_273K": 24.5,
+            "rel_77K": 1.772971661733424e-16,
+            "rel_273K": 2.900922558998903e-16
+          },
+          {
+            "symbol": "Pb",
+            "thetaD": 105,
+            "app_77K": 22.7698943128933,
+            "dec_77K": 22.769894312893303,
+            "dispensa_Debye_77K": 22.8,
+            "app_273K": 24.759865616146346,
+            "dec_273K": 24.759865616146346,
+            "dispensa_Debye_273K": 24.8,
+            "rel_77K": 1.5602679704968152e-16,
+            "rel_273K": 0.0
+          },
+          {
+            "symbol": "Fe",
+            "thetaD": 470,
+            "app_77K": 6.400751478754396,
+            "dec_77K": 6.400751478754397,
+            "dispensa_Debye_77K": 6.4,
+            "app_273K": 21.605155684537902,
+            "dec_273K": 21.605155684537902,
+            "dispensa_Debye_273K": 21.6,
+            "rel_77K": 1.3876158489330493e-16,
+            "rel_273K": 0.0
+          },
+          {
+            "symbol": "Na",
+            "thetaD": 158,
+            "app_77K": 20.39030912464366,
+            "dec_77K": 20.39030912464366,
+            "dispensa_Debye_77K": 20.4,
+            "app_273K": 24.530586146871414,
+            "dec_273K": 24.530586146871418,
+            "dispensa_Debye_273K": 24.5,
+            "rel_77K": 0.0,
+            "rel_273K": 1.4482791636243096e-16
+          },
+          {
+            "symbol": "Si",
+            "thetaD": 645,
+            "app_77K": 3.0625299225289635,
+            "dec_77K": 3.0625299225289635,
+            "dispensa_Debye_77K": 3.1,
+            "app_273K": 19.16352266813985,
+            "dec_273K": 19.16352266813985,
+            "dispensa_Debye_273K": 19.2,
+            "rel_77K": 0.0,
+            "rel_273K": 0.0
+          }
+        ],
+        "diamond_2230K_77K": {
+          "app_debye": 0.08002072840894416,
+          "dec_debye": 0.08002072840894418,
+          "app_t3": 0.08002072907004643,
+          "dispensa": 0.08
+        },
+        "diamond_1880K_77K_app": 0.13354983929904646,
+        "presets_count": 9
+      }
+    },
+    {
+      "name": "DOS 3D di Debye g\u0303(w)=3w\u00b2 e coerenza integrale spettrale \u222b\u2080\u00b9 3w\u00b2 \u2130(w \u0398_D/T) dw = D\u2083(\u0398_D/T)",
+      "category": "dos_3d",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 6.507794880864961e-11,
+      "threshold": 1e-08,
+      "details": {
+        "spec_checks": [
+          {
+            "T": 77,
+            "thetaD": 343,
+            "simpson_200": 0.4381535684675703,
+            "d3_dec": 0.4381535684390562,
+            "rel": 6.507794880864961e-11
+          },
+          {
+            "T": 300,
+            "thetaD": 343,
+            "simpson_200": 0.9375722102039641,
+            "d3_dec": 0.9375722102234728,
+            "rel": 2.0807707133044006e-11
+          },
+          {
+            "T": 77,
+            "thetaD": 2230,
+            "simpson_200": 0.0032080938193259946,
+            "d3_dec": 0.0032080938193260293,
+            "rel": 1.081466798462425e-14
+          }
+        ]
+      }
+    },
+    {
+      "name": "DOS 1D Van Hove (normalizzazione + singolarit\u00e0 w\u21921\u207b)",
+      "category": "dos_1d",
+      "passed": true,
+      "max_abs": 8.57784096994e-28,
+      "max_rel": 2.275487910733524e-12,
+      "threshold": 1e-11,
+      "details": {
+        "inf_at_w1": true,
+        "norm_integral_err_dec": 8.57784096994e-28,
+        "max_rel_plot_domain_w_le_0992": 3.936195202656126e-16,
+        "max_rel_at_w_099999_cancellation": 2.275487910733524e-12
+      }
+    },
+    {
+      "name": "Calore specifico 1D (monatomic1DCvRatio: w=sin\u03b8 vs w=1-t\u00b2, T\u2208[5,5000], \u0398\u2208[100,2500])",
+      "category": "cv_1d",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 4.1412818394540624e-16,
+      "threshold": 0.0001,
+      "details": {
+        "worst": {
+          "T": 5,
+          "thetaMax": 2500,
+          "u": 500.0,
+          "app": 0.004188856357106797,
+          "dec": 0.004188856357106795,
+          "rel": 4.1412818394540624e-16
+        },
+        "cases": [
+          {
+            "T": 5,
+            "thetaMax": 343,
+            "u": 68.6,
+            "app": 0.030556269249159017,
+            "dec": 0.030556269249159006,
+            "rel": 3.4062865368118556e-16
+          },
+          {
+            "T": 5,
+            "thetaMax": 1000,
+            "u": 200.0,
+            "app": 0.010473009601616174,
+            "dec": 0.010473009601616177,
+            "rel": 3.312750664735584e-16
+          },
+          {
+            "T": 5,
+            "thetaMax": 2230,
+            "u": 446.0,
+            "app": 0.0046960463538319765,
+            "dec": 0.0046960463538319765,
+            "rel": 0.0
+          },
+          {
+            "T": 5,
+            "thetaMax": 2500,
+            "u": 500.0,
+            "app": 0.004188856357106797,
+            "dec": 0.004188856357106795,
+            "rel": 4.1412818394540624e-16
+          },
+          {
+            "T": 10,
+            "thetaMax": 1000,
+            "u": 100.0,
+            "app": 0.020952236932400274,
+            "dec": 0.020952236932400267,
+            "rel": 3.3117675818074646e-16
+          },
+          {
+            "T": 10,
+            "thetaMax": 2230,
+            "u": 223.0,
+            "app": 0.00939265220247537,
+            "dec": 0.00939265220247537,
+            "rel": 0.0
+          },
+          {
+            "T": 10,
+            "thetaMax": 2500,
+            "u": 250.0,
+            "app": 0.008378109762558816,
+            "dec": 0.008378109762558816,
+            "rel": 0.0
+          },
+          {
+            "T": 20,
+            "thetaMax": 2500,
+            "u": 125.0,
+            "app": 0.01675939995651865,
+            "dec": 0.01675939995651865,
+            "rel": 0.0
+          },
+          {
+            "T": 50,
+            "thetaMax": 2500,
+            "u": 50.0,
+            "app": 0.04195461899981548,
+            "dec": 0.04195461899981548,
+            "rel": 0.0
+          },
+          {
+            "T": 77,
+            "thetaMax": 343,
+            "u": 4.454545454545454,
+            "app": 0.5393011975421076,
+            "dec": 0.5393011975421075,
+            "rel": 2.058632596562096e-16
+          },
+          {
+            "T": 77,
+            "thetaMax": 2230,
+            "u": 28.961038961038962,
+            "app": 0.07266717426090759,
+            "dec": 0.07266717426090759,
+            "rel": 0.0
+          },
+          {
+            "T": 300,
+            "thetaMax": 343,
+            "u": 1.1433333333333333,
+            "app": 0.9480919036634528,
+            "dec": 0.9480919036634525,
+            "rel": 2.342015621766677e-16
+          },
+          {
+            "T": 1500,
+            "thetaMax": 343,
+            "u": 0.22866666666666666,
+            "app": 0.997825579442064,
+            "dec": 0.997825579442064,
+            "rel": 0.0
+          },
+          {
+            "T": 5000,
+            "thetaMax": 100,
+            "u": 0.02,
+            "app": 0.99998333358333,
+            "dec": 0.99998333358333,
+            "rel": 0.0
+          }
+        ],
+        "low_T_linear_asymp_rel_at_5_1000_dec": 9.874828765778618e-05,
+        "high_T_asymp_rel_at_5000_100": 2.500008566969638e-10
+      }
+    },
+    {
+      "name": "Analogia corpo nero (\u00a725, eq. 62: 3 vs 2 polarizzazioni e scaling T\u2074)",
+      "category": "corpo_nero",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 1.8381579633572595e-09,
+      "threshold": 1e-08,
+      "details": {
+        "max_bb_rel_vs_SI2019": 1.8381579633572595e-09,
+        "max_pol_factor_err": 0.0,
+        "t4_scaling_err_20_over_5": 0.0
+      }
+    },
+    {
+      "name": "Scale \u03c9_D/\u03bd_D/meV (incl. Cu \u03c9_D \u2248 4,5\u00b710\u00b9\u00b3 s\u207b\u00b9) e distribuzioni FD/MB/BE",
+      "category": "scale_statistiche",
+      "passed": true,
+      "max_abs": 0.0,
+      "max_rel": 6.127194390853215e-10,
+      "threshold": 1e-08,
+      "details": {
+        "max_scale_rel_vs_SI2019": 6.127194390853215e-10,
+        "max_occ_rel": 1.4925713791816933e-16,
+        "cu_omegaD_rad_s": 44905676348071.8,
+        "summary_300_343_075": {
+          "temperatureK": 300,
+          "thetaDK": 343,
+          "thetaEK": 257.25,
+          "einsteinRatio": 0.75,
+          "dulongPetitJmolK": 24.94338785445972,
+          "einsteinJmolK": 23.469563150126724,
+          "einsteinNorm": 0.9409132106299071,
+          "debyeJmolK": 23.386227281167127,
+          "debyeNorm": 0.9375722102234728,
+          "debyeT3JmolK": 1300.5478084119798,
+          "debyeT3Norm": 52.139982587788296,
+          "thermalEnergyJmol": 4756.335357848489,
+          "omegaDRadS": 44905676348071.8,
+          "freqDThz": 7.146960363680438,
+          "energyDMev": 29.55745308866,
+          "thermalEnergyMev": 25.851999786,
+          "sphereRadiusFraction": 0.8746355685131195,
+          "tOverThetaD": 0.8746355685131195,
+          "tOverThetaE": 1.1661807580174928
+        }
+      }
+    }
+  ]
+}

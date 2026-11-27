@@ -96,6 +96,20 @@
   grid-template-columns: minmax(78px, 102px) minmax(0, 1fr);
 }
 
+/* Mantiene il menu cristalli sempre su una sola riga senza comprimere la scena */
+.stage:has(.phonon-3d-view) .params .preset {
+  flex: 1 1 260px;
+}
+
+.stage:has(.phonon-3d-view) .params .preset select {
+  flex: 1 1 180px;
+  min-width: 165px;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Contatore N compatto nella barra strumenti quando il conteggio 3D è attivo */
 .phonon-3d-stepper-wrap {
   display: inline-flex;
