@@ -1,11 +1,11 @@
 /**
  * Sezione «Pseudopotenziale» (modello 1D esatto con stato di core, P4 §4):
- *  - Bande 1D (core + valenza) con livello di core spostato E_c + f;
- *  - Spazio reale: V(x), ψ_c, ψ_k vera e pseudo-funzione ψ^f con raggio di core r_c;
- *  - Spazio reciproco: pesi |c_G|² e cancellazione ⟨k+G|V|k⟩ contro ⟨k+G|V+V′|k⟩;
- *  - Pulsante «più liscia» per α e rimando «Bande dei materiali veri →».
+ *  - Vista principale: Spazio reale su una cella [−a/2, a/2] centrata sullo ione
+ *    in tre fasce (energie, funzioni d'onda, ortogonalità) + lettura guidata in 3 passi;
+ *  - Onde piane: «Quante onde piane» (pesi |c_G|² per n = −4…4 ed errore vs N) e «Cancellazione»;
+ *  - Bande 1D: core (nel tono del core), core spostato E_c + f, valenza e strumenti trasversali.
  */
-import { useCallback, type JSX, type PointerEvent } from 'react'
+import { useCallback, type CSSProperties, type JSX, type PointerEvent } from 'react'
 import { ParamSlider, Panel, ToolToggle } from '../../ui/controls'
 import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { useNavigationStore } from '../../ui/navigation'
@@ -24,19 +24,27 @@ import { usePseudoCoreStore } from './store'
 import { strings as s } from './strings'
 import './pseudopotential.css'
 
-function HintLine({ text }: { readonly text: string }): JSX.Element {
-  return (
-    <span className="pseudo1d-hint" title={text}>
-      {text}
-    </span>
-  )
+function formatCrossingsText(crossings: readonly number[]): string {
+  if (crossings.length === 0) return '0'
+  if (crossings.length === 2 && Math.abs(crossings[0] + crossings[1]) < 0.004) {
+    return `2 (x = ±${formatNumber(Math.abs(crossings[1]), 3)} Å)`
+  }
+  const coords = crossings.map((x) => `${formatNumber(x, 3)}`).join('; ')
+  return `${crossings.length} (x = ${coords} Å)`
+}
+
+function formatOrthoOverlap(val: number): string {
+  if (val < 1e-10) return '< 10⁻¹⁰'
+  const exp = Math.floor(Math.log10(val))
+  const mant = val / Math.pow(10, exp)
+  return `${formatNumber(mant, 1)}·10^${exp}`
 }
 
 export function PseudopotentialSection(): JSX.Element {
   const st = usePseudoCoreStore()
   const navigateTo = useNavigationStore((nav) => nav.navigateTo)
 
-  const model = usePseudoCoreModel(st.params, st.kIndex, st.bandIndex, st.tools)
+  const model = usePseudoCoreModel(st.params, st.smoothLock, st.kIndex, st.bandIndex, st.tools)
   const setHighlight = st.setHighlight
 
   const over = useCallback(
@@ -76,50 +84,134 @@ export function PseudopotentialSection(): JSX.Element {
   )
 
   const realLegend: LegendEntry[] = [
-    { id: 'pot', keyKind: 'solid', color: 'var(--q-VG)', label: s.scene.potentialLegend },
-    { id: 'core', keyKind: 'dotted', color: 'var(--q-VG)', label: s.scene.psiCoreLegend },
-    { id: 'true', keyKind: 'solid', color: 'var(--q-psi)', label: s.scene.psiTrueLegend },
-    { id: 'smooth', keyKind: 'dashed', color: 'var(--tone-smooth-wavefunction)', label: s.scene.psiSmoothLegend }
+    { id: 'pot', keyKind: 'solid', color: 'var(--q-VG)', label: <RichText text={s.scene.potentialLegend} /> },
+    { id: 'coreE', keyKind: 'dashed', color: 'var(--tone-core-state)', label: <RichText text={s.scene.coreEnergyLegend} /> },
+    { id: 'valE', keyKind: 'solid', color: 'var(--q-E)', label: <RichText text={s.scene.valEnergyLegend} /> },
+    { id: 'coreW', keyKind: 'solid', color: 'var(--tone-core-state)', label: <RichText text={s.scene.psiCoreLegend} /> },
+    { id: 'trueW', keyKind: 'solid', color: 'var(--q-psi)', label: <RichText text={s.scene.psiTrueLegend} /> },
+    { id: 'smoothW', keyKind: 'dashed', color: 'var(--tone-smooth-wavefunction)', label: <RichText text={s.scene.psiSmoothLegend} /> }
   ]
 
-  const recipLegend: LegendEntry[] = [
-    { id: 'wt', keyKind: 'solid', color: 'var(--q-psi)', label: s.scene.weightsTrueLegend },
-    { id: 'ws', keyKind: 'solid', color: 'var(--tone-smooth-wavefunction)', label: s.scene.weightsSmoothLegend },
-    { id: 'mv', keyKind: 'solid', color: 'var(--q-VG)', label: s.scene.matVLegend },
-    { id: 'mvps', keyKind: 'solid', color: 'var(--q-E)', label: s.scene.matVpsLegend }
-  ]
+  const recipLegend: LegendEntry[] =
+    st.recipTab === 'convergence'
+      ? [
+          { id: 'wt', keyKind: 'solid', color: 'var(--q-psi)', label: <RichText text={s.scene.weightsTrueLegend} /> },
+          { id: 'ws', keyKind: 'solid', color: 'var(--tone-smooth-wavefunction)', label: <RichText text={s.scene.weightsSmoothLegend} /> },
+          { id: 'ct', keyKind: 'solid', color: 'var(--q-VG)', label: <RichText text={s.scene.convTrueLegend} /> },
+          { id: 'cp', keyKind: 'solid', color: 'var(--tone-screened-potential)', label: <RichText text={s.scene.convPseudoLegend} /> }
+        ]
+      : [
+          { id: 'mv', keyKind: 'solid', color: 'var(--q-VG)', label: <RichText text={s.scene.matVLegend} /> },
+          { id: 'mvps', keyKind: 'solid', color: 'var(--tone-screened-potential)', label: <RichText text={s.scene.matVpsLegend} /> }
+        ]
+
+  const nTrueStr = model.convergence.nNeededTrue !== null ? String(model.convergence.nNeededTrue) : '> 21'
+  const nPseudoStr = model.convergence.nNeededPseudo !== null ? String(model.convergence.nNeededPseudo) : '> 21'
+
+  const guidedBannerText = s.guided.stepText(st.guidedStep, {
+    signChanges: model.realSpace.signChanges.length,
+    nTrue: nTrueStr,
+    nPseudo: nPseudoStr,
+    alphaStr: formatNumber(model.effectiveAlpha, 3, { signed: true }),
+    betaStr: formatNumber(model.betaC, 3, { signed: true }),
+    maxOutDiff: formatNumber(0.04, 2),
+    eKinIon: formatNumber(model.realSpace.eKinIon, 1),
+    eKinMid: formatNumber(model.realSpace.eKinMid, 2),
+    isOdd: model.isOddState
+  })
+
+  const guidedSelector = (
+    <div className="pseudo1d-seg" role="group" aria-label={s.guided.groupLabel}>
+      {s.guided.steps.map((step) => (
+        <button
+          key={step.id}
+          type="button"
+          className="pseudo1d-seg-btn"
+          aria-pressed={st.guidedStep === step.id}
+          onClick={() => st.setGuidedStep(step.id)}
+        >
+          {step.label}
+        </button>
+      ))}
+    </div>
+  )
+
+  const recipSelector = (
+    <div className="pseudo1d-recip-head-right">
+      <div className="pseudo1d-seg" role="group" aria-label={s.scene.recipTag}>
+        <button
+          type="button"
+          className="pseudo1d-seg-btn"
+          aria-pressed={st.recipTab === 'convergence'}
+          onClick={() => st.setRecipTab('convergence')}
+        >
+          {s.scene.recipTabConvergence}
+        </button>
+        <button
+          type="button"
+          className="pseudo1d-seg-btn"
+          aria-pressed={st.recipTab === 'cancellation'}
+          onClick={() => st.setRecipTab('cancellation')}
+        >
+          {s.scene.recipTabCancellation}
+        </button>
+      </div>
+    </div>
+  )
 
   const scene = (
     <>
-      <SceneView className="pseudo1d-view pseudo1d-scene" tag={s.scene.bandsTag} hint={<HintLine text={s.scene.bandsHint} />}>
-        <PseudoCoreBandPlot
-          model={model}
-          highlight={st.highlight}
-          showFill={st.tools.fill}
-          showMass={st.tools.mass}
-          showCompare={st.tools.compare}
-          onPick={onPickState}
-          onNudge={onNudgeState}
-        />
+      <SceneView
+        className="pseudo1d-view pseudo1d-scene pseudo1d-real-view"
+        tag={s.scene.realTag}
+        hint={guidedSelector}
+      >
+        <div className="pseudo1d-view-col">
+          {st.guidedStep !== 0 && (
+            <div className="pseudo1d-guided-banner">
+              <RichText text={guidedBannerText} />
+            </div>
+          )}
+          <ChartLegend entries={realLegend} ariaLabel={s.scene.realAria} />
+          <div className="pseudo1d-canvas-box">
+            <PseudoCoreRealSpaceCanvas
+              model={model}
+              highlight={st.highlight}
+              guidedStep={st.guidedStep}
+            />
+          </div>
+        </div>
       </SceneView>
 
       <div className="pseudo1d-bottom-row">
-        <SceneView className="pseudo1d-view" tag={s.scene.realTag} hint={<HintLine text={s.scene.realHint} />}>
+        <SceneView className="pseudo1d-view" tag={s.scene.recipTag} hint={recipSelector}>
           <div className="pseudo1d-view-col">
-            <ChartLegend entries={realLegend} ariaLabel={s.scene.realAria} />
+            <ChartLegend entries={recipLegend} ariaLabel={s.scene.recipAria} />
             <div className="pseudo1d-canvas-box">
-              <PseudoCoreRealSpaceCanvas model={model} highlight={st.highlight} />
+              <PseudoCoreReciprocalCanvas
+                model={model}
+                tab={st.recipTab}
+                highlight={st.highlight}
+                guidedStep={st.guidedStep}
+              />
             </div>
           </div>
         </SceneView>
 
-        <SceneView className="pseudo1d-view" tag={s.scene.recipTag} hint={<HintLine text={s.scene.recipHint} />}>
-          <div className="pseudo1d-view-col">
-            <ChartLegend entries={recipLegend} ariaLabel={s.scene.recipAria} />
-            <div className="pseudo1d-canvas-box">
-              <PseudoCoreReciprocalCanvas model={model} highlight={st.highlight} />
-            </div>
-          </div>
+        <SceneView
+          className="pseudo1d-view"
+          tag={s.scene.bandsTag}
+          hint={<RichText text={s.scene.bandsHint} />}
+        >
+          <PseudoCoreBandPlot
+            model={model}
+            highlight={st.highlight}
+            showFill={st.tools.fill}
+            showMass={st.tools.mass}
+            showCompare={st.tools.compare}
+            onPick={onPickState}
+            onNudge={onNudgeState}
+          />
         </SceneView>
       </div>
     </>
@@ -128,6 +220,7 @@ export function PseudopotentialSection(): JSX.Element {
   const row1 = PARAMS.slice(0, 3) // a, v0, s
   const pF = PARAMS[3]
   const pAlpha = PARAMS[4]
+  const fTickPct = Math.max(0, Math.min(100, ((model.eDiff - pF.min) / (pF.max - pF.min)) * 100))
 
   const params = (
     <div className="pseudo1d-params-grid" role="group" aria-label={s.params.group}>
@@ -150,49 +243,63 @@ export function PseudopotentialSection(): JSX.Element {
         </div>
       ))}
 
-      <div className="pseudo1d-params-cell">
-        <ParamSlider
-          quantity={pF.quantity}
-          symbol={pF.symbol}
-          label={s.params.f}
-          value={st.params.f}
-          min={pF.min}
-          max={pF.max}
-          step={pF.step}
-          unit={pF.unit}
-          digits={pF.digits}
-          active={st.highlight === pF.quantity}
-          onChange={(v) => st.setParam('f', v)}
-          onHighlight={setHighlight}
-        />
-        <span className="pseudo1d-f-badge num" title={s.params.fMarkerNote(formatNumber(model.eDiff, 2))}>
-          E−E_c = {formatNumber(model.eDiff, 1)}
-        </span>
+      <div className="pseudo1d-params-cell is-stacked">
+        <div className="pseudo1d-f-wrap" style={{ '--f-pct': `${fTickPct}%` } as CSSProperties}>
+          <ParamSlider
+            quantity={pF.quantity}
+            symbol={pF.symbol}
+            label={s.params.f}
+            value={st.params.f}
+            min={pF.min}
+            max={pF.max}
+            step={pF.step}
+            unit={pF.unit}
+            digits={pF.digits}
+            active={st.highlight === pF.quantity}
+            onChange={(v) => st.setParam('f', v)}
+            onHighlight={setHighlight}
+          />
+        </div>
+        <button
+          type="button"
+          className="pseudo1d-f-jump num"
+          title={s.params.fMarkerTitle}
+          onClick={() => st.setParam('f', model.eDiff)}
+        >
+          <RichText text={s.params.fMarkerBtn(formatNumber(model.eDiff, 1))} />
+        </button>
       </div>
 
       <div className="pseudo1d-params-cell is-span-2">
-        <ParamSlider
-          quantity={pAlpha.quantity}
-          symbol={pAlpha.symbol}
-          label={s.params.alpha}
-          value={st.params.alpha}
-          min={pAlpha.min}
-          max={pAlpha.max}
-          step={pAlpha.step}
-          unit={pAlpha.unit}
-          digits={pAlpha.digits}
-          active={st.highlight === pAlpha.quantity}
-          onChange={(v) => st.setParam('alpha', v)}
-          onHighlight={setHighlight}
-        />
-        <button
-          type="button"
-          className="pseudo1d-smooth-btn"
-          title={s.params.smoothestTitle}
-          onClick={() => st.setParam('alpha', model.alphaSmooth)}
+        <div className="pseudo1d-alpha-col">
+          <ParamSlider
+            quantity={pAlpha.quantity}
+            symbol={pAlpha.symbol}
+            label={s.params.alpha}
+            value={model.effectiveAlpha}
+            min={pAlpha.min}
+            max={pAlpha.max}
+            step={pAlpha.step}
+            unit={pAlpha.unit}
+            digits={pAlpha.digits}
+            active={st.highlight === pAlpha.quantity}
+            onChange={(v) => st.setParam('alpha', v)}
+            onHighlight={setHighlight}
+          />
+          <div className="pseudo1d-alpha-zero-row" aria-hidden="true">
+            <span className="pseudo1d-alpha-zero-label">
+              <RichText text={s.params.alphaZeroMarker} />
+            </span>
+          </div>
+        </div>
+        <ToolToggle
+          pressed={st.smoothLock}
+          onToggle={() => st.toggleSmoothLock(model.alphaSmooth)}
+          quantity="psi"
+          title={s.params.smoothToggleTitle}
         >
-          {s.params.smoothestBtn}
-        </button>
+          {s.params.smoothToggle}
+        </ToolToggle>
       </div>
     </div>
   )
@@ -236,39 +343,75 @@ export function PseudopotentialSection(): JSX.Element {
         <dl className="values pseudo1d-values" onPointerOver={over} onPointerLeave={leave}>
           <dt>{s.values.ecLabel}</dt>
           <dd className="num">
-            <Tex tex="\htmlData{q=VG}{E_c}" /> = {formatNumber(model.eCore, 3)} eV
+            <span className="pseudo1d-core-tone">
+              <Tex tex="E_c" />
+            </span>{' '}
+            = {formatNumber(model.eCore, 3)} eV
           </dd>
 
           <dt>{s.values.evLabel}</dt>
           <dd className="num">
-            <Tex tex="\htmlData{q=E}{E_v}" /> = {formatNumber(model.eValence, 3)} eV
+            <Tex tex="\htmlData{q=E}{E}" /> = {formatNumber(model.eValence, 3)} eV
+            <span className="note sub">
+              <Tex tex="E - E_c" /> = {formatNumber(model.eDiff, 2)} eV
+            </span>
           </dd>
 
-          <dt>{s.values.diffLabel}</dt>
-          <dd className="num">{formatNumber(model.eDiff, 3)} eV</dd>
-
           <dt>{s.values.orthoLabel}</dt>
-          <dd className="num">{model.orthoOverlap.toExponential(1)}</dd>
+          <dd className="num">
+            <Tex tex="|\langle\psi_c|\psi_{\mathbf{k}}\rangle|" /> {formatOrthoOverlap(model.orthoOverlap)}
+          </dd>
+
+          <dt>{s.values.signChangesLabel}</dt>
+          <dd className="num">{formatCrossingsText(model.realSpace.signChanges)}</dd>
+
+          <dt>{s.values.alphaBetaLabel}</dt>
+          <dd className="num">
+            <Tex tex="\htmlData{q=psi}{\alpha}" /> = {formatNumber(model.effectiveAlpha, 3, { signed: true })} ·{' '}
+            <Tex tex="\htmlData{q=psi}{\beta_c}" /> = {formatNumber(model.betaC, 3, { signed: true })}
+            {!st.smoothLock && (
+              <span className="note sub">
+                parte liscia: {formatNumber(model.alphaSmooth, 3, { signed: true })}
+              </span>
+            )}
+          </dd>
+
+          <dt>{s.values.kineticMeanLabel}</dt>
+          <dd className="num">
+            <Tex tex="\psi_{\mathbf{k}}" />: {formatNumber(model.kineticTrue, 2)} eV ·{' '}
+            <Tex tex="\psi^{\mathrm f}" />: {formatNumber(model.kineticSmooth, 2)} eV
+          </dd>
+
+          <dt>{s.values.domWaveLabel}</dt>
+          <dd className="num">
+            <Tex tex="\psi_{\mathbf{k}}" />: {formatNumber(model.dominantWeightTrue * 100, 1)} % ·{' '}
+            <Tex tex="\psi^{\mathrm f}" />: {formatNumber(model.dominantWeightSmooth * 100, 1)} %
+          </dd>
+
+          <dt>{s.values.wavesNeededLabel}</dt>
+          <dd className="num">
+            <Tex tex="V" />: {nTrueStr} · <Tex tex="V + V'" />: {nPseudoStr}
+          </dd>
+
+          <dt>
+            <RichText text={s.values.localKinLabel} />
+          </dt>
+          <dd className="num">
+            ione: {formatNumber(model.realSpace.eKinIon, 1)} eV · tra ioni:{' '}
+            {formatNumber(model.realSpace.eKinMid, 2)} eV
+          </dd>
 
           <dt>{s.values.shiftedCoreLabel}</dt>
           <dd className="num">
             <Tex tex="\htmlData{q=V2G}{E_c + f}" /> = {formatNumber(model.shiftedCoreAtK, 3)} eV
           </dd>
 
-          <dt>{s.values.alphaLabel}</dt>
+          <dt>
+            <RichText text={s.values.rcLabel} />
+          </dt>
           <dd className="num">
-            <Tex tex="\htmlData{q=psi}{\alpha}" /> = {formatNumber(st.params.alpha, 2)} /{' '}
-            {formatNumber(model.alphaSmooth, 2)}
-            <span className="note sub">{s.params.smoothestNote}</span>
+            <Tex tex="r_c" /> = {formatNumber(model.realSpace.rc, 3)} Å
           </dd>
-
-          <dt>{s.values.lowWavesLabel}</dt>
-          <dd className="num">
-            {formatNumber(model.lowWaveWeightTrue * 100, 2)}% vs {formatNumber(model.lowWaveWeightSmooth * 100, 2)}%
-          </dd>
-
-          <dt>{s.values.rcLabel}</dt>
-          <dd className="num">{formatNumber(model.realSpace.rc, 2)} Å</dd>
 
           {st.tools.mass && model.massProbe && (
             <>
@@ -281,17 +424,25 @@ export function PseudopotentialSection(): JSX.Element {
           )}
         </dl>
 
-        <p className="pseudo1d-callout">{s.params.gaugeNote}</p>
+        {model.isOddState && (
+          <p className="pseudo1d-callout">
+            <RichText text={s.values.oddStateNote} />
+          </p>
+        )}
+
+        <p className="pseudo1d-callout">
+          <RichText text={s.params.gaugeNote} />
+        </p>
 
         {st.tools.fill && (
           <p className="pseudo1d-callout" onPointerOver={over} onPointerLeave={leave}>
-            {s.values.fillNote}
+            <RichText text={s.values.fillNote} />
           </p>
         )}
 
         {st.tools.compare && (
           <p className="pseudo1d-callout" onPointerOver={over} onPointerLeave={leave}>
-            {s.values.compareNote}
+            <RichText text={s.values.compareNote} />
           </p>
         )}
       </Panel>
@@ -300,7 +451,9 @@ export function PseudopotentialSection(): JSX.Element {
         <div onPointerOver={over} onPointerLeave={leave}>
           {s.theory.sections.map((sec) => (
             <div key={sec.heading}>
-              <h3>{sec.heading}</h3>
+              <h3>
+                <RichText text={sec.heading} />
+              </h3>
               <p>
                 <RichText text={sec.body} />
               </p>

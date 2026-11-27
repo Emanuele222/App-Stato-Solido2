@@ -37,14 +37,14 @@ export const DEFAULT_PARAMS: PseudoCoreParamValues = {
   v0: 60,
   s: 0.25,
   f: 0,
-  alpha: 0
+  alpha: 0.59
 }
 
 export const NUMERICS = {
   nHalf: 40, // 81 onde piane (n = -40..40)
   kPoints: 81, // zona ridotta [-π/a, π/a]
   numBands: 4, // 1 core + 3 valenza
-  defaultKIndex: 52, // k ≈ 0,3 π/a (40 + 0,3 * 40 = 52)
+  defaultKIndex: 40, // Γ (k = 0, centro della zona)
   defaultBandIndex: 1, // prima banda di valenza
   siBareIonA: 5.431,
   siBareIonZ: 14

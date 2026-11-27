@@ -225,7 +225,9 @@ describe('pseudopotential: confronto con materiale/parte4/epm_bande.npz e numeri
     expect(gaasSum.isDirect).toBe(true)
     expect(gaasSum.cbmDescription).toBe('Γ')
     expect(gaasSum.gap).toBeCloseTo(1.9, 1)
-  })
+    // Calcolo pesante (Si e GaAs completi, ~4 s da solo): i 5 s predefiniti non bastano
+    // quando gira insieme al resto della suite.
+  }, 30_000)
 
   it('pesi per guscio |c_G|² sommano a 1 nello stato scelto e curve di modello sono ben definite', () => {
     const path = epmBrillouinPath(GAAS_PARAMS.a, 40)

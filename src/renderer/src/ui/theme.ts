@@ -118,7 +118,11 @@ export const DERIVED_TONES = {
   /** densità degli stati 1D con singolarità di Van Hove: tinta chiara di C_V */
   vanHoveDos: { from: 'CV', color: '#8cd4fa', name: 'densità degli stati Van Hove (tinta chiara di C_V)' },
   /** modi termicamente attivati nello spettro g(ω): tinta chiara di T */
-  activatedModes: { from: 'T', color: '#ff9999', name: 'modi attivati termicamente (tinta chiara di T)' }
+  activatedModes: { from: 'T', color: '#ff9999', name: 'modi attivati termicamente (tinta chiara di T)' },
+  /** stato di core ψ_c, banda E_c, area β_c ψ_c e lobi dell'ortogonalità */
+  coreState: { from: 't', color: '#6fb6ff', name: 'stato di core ψ_c ed E_c (tinta di t)' },
+  /** potenziale schermato V + V′ e convergenza della pseudo-Hamiltoniana */
+  screenedPotential: { from: 'v', color: '#56d4c0', name: 'pseudopotenziale V + V′ (tinta di v)' }
 } as const
 
 export type DerivedToneId = keyof typeof DERIVED_TONES

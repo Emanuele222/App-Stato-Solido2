@@ -11,8 +11,14 @@ export interface PseudoCoreTools {
   readonly compare: boolean
 }
 
+export type GuidedReadingStep = 0 | 1 | 2 | 3
+export type PlaneWaveViewTab = 'convergence' | 'cancellation'
+
 export interface PseudoCoreState {
   readonly params: PseudoCoreParamValues
+  readonly smoothLock: boolean
+  readonly guidedStep: GuidedReadingStep
+  readonly recipTab: PlaneWaveViewTab
   readonly kIndex: number
   readonly bandIndex: number
   readonly tools: PseudoCoreTools
@@ -20,6 +26,9 @@ export interface PseudoCoreState {
   readonly pulse: { readonly quantities: readonly QuantityId[]; readonly seq: number } | null
 
   setParam: (id: PseudoCoreParamId, value: number) => void
+  toggleSmoothLock: (currentAlphaSmooth: number) => void
+  setGuidedStep: (step: GuidedReadingStep) => void
+  setRecipTab: (tab: PlaneWaveViewTab) => void
   selectState: (kIndex: number, bandIndex: number) => void
   nudgeState: (dk: number, dBand: number) => void
   toggleTool: (tool: keyof PseudoCoreTools) => void
@@ -36,6 +45,9 @@ function nextPulse(quantities: readonly QuantityId[]) {
 
 export const usePseudoCoreStore = create<PseudoCoreState>((set, get) => ({
   params: { ...DEFAULT_PARAMS },
+  smoothLock: true,
+  guidedStep: 0,
+  recipTab: 'convergence',
   kIndex: NUMERICS.defaultKIndex,
   bandIndex: NUMERICS.defaultBandIndex,
   tools: { fill: false, mass: false, compare: false },
@@ -49,9 +61,30 @@ export const usePseudoCoreStore = create<PseudoCoreState>((set, get) => ({
     const nextVal = clamp(Number(rounded.toFixed(4)), spec.min, spec.max)
     set((cur) => ({
       params: { ...cur.params, [id]: nextVal },
+      smoothLock: id === 'alpha' ? false : cur.smoothLock,
       pulse: nextPulse([spec.quantity, 'E'])
     }))
   },
+
+  toggleSmoothLock: (currentAlphaSmooth) => {
+    set((cur) => {
+      const nextLock = !cur.smoothLock
+      return {
+        smoothLock: nextLock,
+        params: {
+          ...cur.params,
+          alpha: nextLock
+            ? cur.params.alpha
+            : clamp(Number(currentAlphaSmooth.toFixed(2)), -2, 2)
+        },
+        pulse: nextPulse(['psi'])
+      }
+    })
+  },
+
+  setGuidedStep: (guidedStep) => set({ guidedStep }),
+
+  setRecipTab: (recipTab) => set({ recipTab }),
 
   selectState: (kIndex, bandIndex) => {
     const ki = clamp(Math.round(kIndex), 0, NUMERICS.kPoints - 1)

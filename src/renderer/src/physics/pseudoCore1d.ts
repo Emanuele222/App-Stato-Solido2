@@ -75,6 +75,14 @@ export function gaussianCrystalPotential(x: number, params: PseudoCore1DParams):
   return -v0 * sum
 }
 
+/**
+ * Potenziale cristallino V(x) − V̄ con media V̄ = V_{G=0} sottratta,
+ * cioè nello stesso zero di energia dell'Hamiltoniana (dove G = 0 è omesso).
+ */
+export function gaussianCrystalPotentialZeroMean(x: number, params: PseudoCore1DParams): number {
+  return gaussianCrystalPotential(x, params) - gaussianWellFourierCoeff(0, params)
+}
+
 /** Vettori reciproci 1D G = 2πn/a per n = −nHalf…nHalf. */
 export function pseudoCore1DPlaneWaves(a: number, nHalf: number = DEFAULT_N_HALF): Float64Array {
   if (!(a > 0)) throw new RangeError(`passo reticolare non valido: ${a}`)
@@ -110,16 +118,32 @@ function buildHamiltonian1D(
 
 /**
  * Fissa in modo deterministico il segno di ciascun autovettore:
- * ψ(0) = ∑ c_G > 0 sullo ione in x = 0; se ψ(0) ≈ 0 (stato dispari),
- * usa la pendenza in x = 0 (∑ (k+G) c_G > 0) o la prima componente non nulla.
+ *  - banda di core (bandIndex = 0): ψ_c(0) = ∑ c_G > 0 sullo ione;
+ *  - bande di valenza (bandIndex ≥ 1): Re ψ(a/2) > 0 tra gli ioni se non nulla
+ *    (così lungo tutta la banda 1 non ci sono salti di segno e in Γ ψ_k(a/2) > 0),
+ *    altrimenti ψ(0) > 0, poi pendenza in x = 0 > 0, infine prima componente non nulla.
  */
-function fixEigenvectorSign(vec: Float64Array, k: number, G: Float64Array): Float64Array {
+function fixEigenvectorSign(
+  vec: Float64Array,
+  k: number,
+  G: Float64Array,
+  a: number,
+  bandIndex: number
+): Float64Array {
   const out = Float64Array.from(vec)
   let sumAtZero = 0
   for (let m = 0; m < out.length; m++) sumAtZero += out[m]
 
+  let sumAtMid = 0
+  if (bandIndex >= 1) {
+    const halfA = 0.5 * a
+    for (let m = 0; m < out.length; m++) sumAtMid += out[m] * Math.cos((k + G[m]) * halfA)
+  }
+
   let flip = false
-  if (Math.abs(sumAtZero) > 1e-8) {
+  if (bandIndex >= 1 && Math.abs(sumAtMid) > 1e-8) {
+    flip = sumAtMid < 0
+  } else if (Math.abs(sumAtZero) > 1e-8) {
     flip = sumAtZero < 0
   } else {
     let slopeAtZero = 0
@@ -156,7 +180,7 @@ export function solvePseudoCore1DAtK(
   if (vectors) {
     for (let b = 0; b < vectors.count; b++) {
       const raw = eigenvector(vectors, b).re
-      vecList.push(fixEigenvectorSign(raw, k, G))
+      vecList.push(fixEigenvectorSign(raw, k, G, params.a, b))
     }
   }
   return { k, nHalf, G, energies: values, vectors: vecList, hamiltonian: H }
@@ -312,8 +336,10 @@ export function pseudoWavefunctionAndTrue(
 }
 
 /**
- * Scelta «più liscia»: restituisce l'α che minimizza l'energia cinetica media
- * ⟨ψ^f|T|ψ^f⟩ / ⟨ψ^f|ψ^f⟩ della pseudo-funzione normalizzata ψ^f = ψ_k + α ψ_ck.
+ * Scelta «più liscia»: restituisce l'α = −⟨ψ_c|T|ψ_k⟩ / ⟨ψ_c|T|ψ_c⟩ che minimizza
+ * l'energia cinetica della pseudo-funzione non normalizzata ψ^f = ψ_k + α ψ_c
+ * (coincide con ψ_k fuori dal core, ha ∫|dψ/dx|² minimo e resta sempre finita;
+ * vale 0 per gli stati dispari attorno allo ione).
  */
 export function smoothestAlpha(
   cValence: Float64Array,
@@ -321,25 +347,209 @@ export function smoothestAlpha(
   k: number,
   G: Float64Array
 ): number {
-  let tvv = 0
   let tcc = 0
   let tvc = 0
   for (let m = 0; m < G.length; m++) {
     const t = HBAR2_OVER_2M0 * (k + G[m]) ** 2
-    const v = cValence[m]
     const c = cCore[m]
-    tvv += t * v * v
     tcc += t * c * c
-    tvc += t * v * c
+    tvc += t * cValence[m] * c
   }
-  if (Math.abs(tvc) < 1e-12) return 0
+  if (tcc <= 1e-18) return 0
+  const alpha = -tvc / tcc
+  return Math.abs(alpha) < 1e-15 ? 0 : alpha
+}
 
-  const diff = tcc - tvv
-  const disc = Math.sqrt(diff * diff + 4 * tvc * tvc)
-  const a1 = (diff + disc) / (2 * tvc)
-  const a2 = (diff - disc) / (2 * tvc)
-  const evalT = (a: number): number => (tvv + 2 * a * tvc + a * a * tcc) / (1 + a * a)
-  return evalT(a1) <= evalT(a2) ? a1 : a2
+/** Posizioni (Å) dei cambi di segno di `psiValues` dentro la regione di core |x| < r_c. */
+export function findSignChangesInCore(
+  psiValues: Float64Array,
+  xGrid: Float64Array,
+  rc: number
+): number[] {
+  const crossings: number[] = []
+  const n = Math.min(psiValues.length, xGrid.length)
+  if (n < 2 || !(rc > 0)) return crossings
+
+  const eps = 1e-12
+  for (let i = 1; i < n; i++) {
+    const y0 = psiValues[i - 1]
+    const y1 = psiValues[i]
+    if (Math.abs(y1) <= eps) {
+      if (i + 1 < n && y0 * psiValues[i + 1] < 0) {
+        const xZero = xGrid[i]
+        if (Math.abs(xZero) < rc) crossings.push(xZero)
+      }
+      continue
+    }
+    if (Math.abs(y0) <= eps) continue
+    if (y0 * y1 < 0) {
+      const frac = -y0 / (y1 - y0)
+      const xZero = xGrid[i - 1] + frac * (xGrid[i] - xGrid[i - 1])
+      if (Math.abs(xZero) < rc) crossings.push(xZero)
+    }
+  }
+  return crossings
+}
+
+export interface OrthogonalityProfile {
+  readonly integrand: Float64Array
+  readonly posArea: number
+  readonly negArea: number
+  readonly netIntegral: number
+}
+
+/**
+ * Calcola l'integrando di ortogonalità Re[ψ_c*(x) ψ_k(x)] su `xGrid`
+ * e le aree positiva e negativa (regola dei trapezi, dividendo gli intervalli che cambiano segno).
+ */
+export function orthogonalityIntegrand1D(
+  psiCoreRe: Float64Array,
+  psiCoreIm: Float64Array,
+  psiValRe: Float64Array,
+  psiValIm: Float64Array,
+  xGrid: Float64Array
+): OrthogonalityProfile {
+  const n = xGrid.length
+  const integrand = new Float64Array(n)
+  for (let i = 0; i < n; i++) {
+    integrand[i] = psiCoreRe[i] * psiValRe[i] + psiCoreIm[i] * psiValIm[i]
+  }
+  let posArea = 0
+  let negArea = 0
+  for (let i = 1; i < n; i++) {
+    const dx = xGrid[i] - xGrid[i - 1]
+    const y0 = integrand[i - 1]
+    const y1 = integrand[i]
+    if (y0 * y1 >= 0) {
+      const area = 0.5 * (y0 + y1) * dx
+      if (area >= 0) posArea += area
+      else negArea += area
+    } else {
+      const frac = Math.abs(y0) / (Math.abs(y0) + Math.abs(y1))
+      const dx0 = frac * dx
+      const dx1 = (1 - frac) * dx
+      const a0 = 0.5 * y0 * dx0
+      const a1 = 0.5 * y1 * dx1
+      if (a0 >= 0) posArea += a0
+      else negArea += a0
+      if (a1 >= 0) posArea += a1
+      else negArea += a1
+    }
+  }
+  return { integrand, posArea, negArea, netIntegral: posArea + negArea }
+}
+
+/** Energia cinetica media ⟨ψ|T|ψ⟩ / ⟨ψ|ψ⟩ (eV) di un vettore di coefficienti in onde piane. */
+export function meanKineticEnergy1D(
+  coeffs: Float64Array,
+  G: Float64Array,
+  k: number
+): number {
+  let num = 0
+  let den = 0
+  for (let m = 0; m < G.length; m++) {
+    const c2 = coeffs[m] * coeffs[m]
+    if (c2 === 0) continue
+    const t = HBAR2_OVER_2M0 * (k + G[m]) ** 2
+    num += t * c2
+    den += c2
+  }
+  return den > 0 ? num / den : 0
+}
+
+/** Peso frazionario max_G |c_G|² / ∑_G |c_G|² dell'onda piana dominante. */
+export function dominantPlaneWaveWeight(coeffs: Float64Array): number {
+  let maxSq = 0
+  let sumSq = 0
+  for (let m = 0; m < coeffs.length; m++) {
+    const w = coeffs[m] * coeffs[m]
+    sumSq += w
+    if (w > maxSq) maxSq = w
+  }
+  return sumSq > 0 ? maxSq / sumSq : 0
+}
+
+export interface PlaneWaveConvergencePoint {
+  readonly nWaves: number
+  readonly errorTrue: number | null
+  readonly errorPseudo: number | null
+}
+
+export interface PlaneWaveConvergenceResult {
+  readonly points: readonly PlaneWaveConvergencePoint[]
+  readonly nNeededTrue: number | null
+  readonly nNeededPseudo: number | null
+}
+
+export const DEFAULT_CONVERGENCE_N_LIST: readonly number[] = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21]
+
+/**
+ * Errore su E(k) della banda di valenza `bandIndex` (≥ 1) troncando alle `N` onde piane
+ * di energia cinetica ħ²(k + G)² / 2m₀ più bassa:
+ *  (a) H vera (autovalore di indice `bandIndex`),
+ *  (b) H + (E − E_c)|ψ_c⟩⟨ψ_c| con ψ_c esatta (autovalore di indice `bandIndex − 1`).
+ */
+export function planeWaveConvergence1D(
+  state: PseudoCore1DState,
+  bandIndex: number,
+  nList: readonly number[] = DEFAULT_CONVERGENCE_N_LIST,
+  thresholdEv: number = 0.01
+): PlaneWaveConvergenceResult {
+  if (bandIndex < 1 || bandIndex >= state.energies.length) {
+    throw new RangeError(`bandIndex di valenza non valido: ${bandIndex}`)
+  }
+  const { k, G, energies, vectors, hamiltonian } = state
+  const eExact = energies[bandIndex]
+  const eCore = energies[0]
+  const cCore = vectors[0]
+  const Hps = buildPseudoHamiltonianWithF(hamiltonian, cCore, eExact - eCore)
+
+  const order = Array.from({ length: G.length }, (_, idx) => idx).sort((i, j) => {
+    const ti = (k + G[i]) ** 2
+    const tj = (k + G[j]) ** 2
+    return ti - tj || Math.abs(G[i]) - Math.abs(G[j])
+  })
+
+  const points: PlaneWaveConvergencePoint[] = []
+  let nNeededTrue: number | null = null
+  let nNeededPseudo: number | null = null
+
+  for (const rawN of nList) {
+    const N = Math.min(G.length, Math.max(1, Math.round(rawN)))
+    const sub = order.slice(0, N)
+    const subH = realSymmetricMatrix(N)
+    const subHps = realSymmetricMatrix(N)
+    const nFull = hamiltonian.n
+    for (let i = 0; i < N; i++) {
+      const si = sub[i] * nFull
+      const row = i * N
+      for (let j = i; j < N; j++) {
+        const sj = sub[j]
+        const vH = hamiltonian.data[si + sj]
+        const vP = Hps.data[si + sj]
+        subH.data[row + j] = vH
+        subH.data[j * N + i] = vH
+        subHps.data[row + j] = vP
+        subHps.data[j * N + i] = vP
+      }
+    }
+
+    const evH = eigh(subH, { vectors: false }).values
+    const evHps = eigh(subHps, { vectors: false }).values
+    const errorTrue = N > bandIndex ? evH[bandIndex] - eExact : null
+    const errorPseudo = N > bandIndex - 1 ? evHps[bandIndex - 1] - eExact : null
+
+    if (nNeededTrue === null && errorTrue !== null && errorTrue < thresholdEv) {
+      nNeededTrue = N
+    }
+    if (nNeededPseudo === null && errorPseudo !== null && errorPseudo < thresholdEv) {
+      nNeededPseudo = N
+    }
+
+    points.push({ nWaves: N, errorTrue, errorPseudo })
+  }
+
+  return { points, nNeededTrue, nNeededPseudo }
 }
 
 /** Peso ∑_{|n| > nCutoff} |c_G|² delle onde piane ad alto impulso. */

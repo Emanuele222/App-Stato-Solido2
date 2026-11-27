@@ -1,12 +1,13 @@
 /**
- * Prima vista (Sezione A «Pseudopotenziale»): bande 1D nella prima zona di Brillouin [-π/a, π/a].
- * Mostra la banda di core E_c(k), la banda di core spostata E_c(k) + f (non unicità di V_ps),
- * le 3 bande di valenza E_v(k) e gli strumenti trasversali (Riempimento, Massa efficace, Confronto).
+ * Terza vista (Sezione A «Pseudopotenziale»): bande 1D nella prima zona di Brillouin [−π/a, π/a].
+ * Mostra la banda di core E_c(k) nel tono del core, la banda di core spostata E_c(k) + f,
+ * le 3 bande di valenza E(k) e gli strumenti trasversali (Riempimento, Massa efficace, Confronto).
  */
 import { useRef, type JSX, type KeyboardEvent, type PointerEvent } from 'react'
 import { formatEffectiveMassRatio, formatNumber } from '../../ui/format'
 import { Smoothed, useReducedMotion } from '../../ui/motion'
-import { quantityColor, TOKENS, type QuantityId } from '../../ui/theme'
+import { quantityColor, toneColor, TOKENS, type QuantityId } from '../../ui/theme'
+import { RichText } from '../../ui/tex'
 import { ChartLegend, type LegendEntry } from '../../viz/ChartLegend'
 import {
   drawMathText,
@@ -18,7 +19,7 @@ import {
 import type { PseudoCoreModel } from './model'
 import { strings as s } from './strings'
 
-const MARGIN = { left: 48, right: 14, top: 10, bottom: 26 }
+const MARGIN = { left: 42, right: 12, top: 8, bottom: 22 }
 const DIM = 0.25
 
 export function PseudoCoreBandPlot({
@@ -65,10 +66,11 @@ export function PseudoCoreBandPlot({
     const emE = highlight === null || highlight === 'E' ? 1 : DIM
     const emK = highlight === null || highlight === 'k' ? 1 : DIM
     const emF = highlight === null || highlight === 'V2G' ? 1 : DIM
+    const coreColor = toneColor('coreState')
 
     // Griglia energie
-    const eStep = niceStep(e1 - e0, Math.max(4, Math.min(8, Math.round(H / 40))))
-    ctx.font = sansFont(11)
+    const eStep = niceStep(e1 - e0, Math.max(3, Math.min(6, Math.round(H / 34))))
+    ctx.font = sansFont(10)
     ctx.textAlign = 'right'
     ctx.textBaseline = 'middle'
     for (let E = Math.ceil(e0 / eStep) * eStep; E <= e1 + 1e-9; E += eStep) {
@@ -80,7 +82,7 @@ export function PseudoCoreBandPlot({
       ctx.lineTo(L + W, y)
       ctx.stroke()
       ctx.fillStyle = TOKENS.dim
-      ctx.fillText(formatNumber(E, 0), L - 6, y)
+      ctx.fillText(formatNumber(E, 0), L - 5, y)
     }
 
     // Assi k = -π/a, 0, +π/a
@@ -96,7 +98,7 @@ export function PseudoCoreBandPlot({
       ctx.moveTo(x, T)
       ctx.lineTo(x, T + H)
       ctx.stroke()
-      drawMathText(ctx, tk.label, x, T + H + 15, { color: TOKENS.muted, size: 11, align: 'center' })
+      drawMathText(ctx, tk.label, x, T + H + 13, { color: TOKENS.muted, size: 10.5, align: 'center' })
     }
 
     // Confronto: reticolo vuoto 1D
@@ -137,9 +139,9 @@ export function PseudoCoreBandPlot({
       ctx.restore()
     }
 
-    // Banda di core (b = 0)
+    // Banda di core (b = 0) nel tono del core
     ctx.save()
-    ctx.strokeStyle = withAlpha(quantityColor('VG'), emE)
+    ctx.strokeStyle = withAlpha(coreColor, emE)
     ctx.lineWidth = 2.2
     ctx.beginPath()
     for (let i = 0; i < model.bands.energies[0].length; i++) {
@@ -151,7 +153,7 @@ export function PseudoCoreBandPlot({
     ctx.stroke()
     ctx.restore()
 
-    // Livello di core spostato E_c + f (quando f != 0 o evidenziato)
+    // Livello di core spostato E_c + f
     if (Math.abs(model.params.f) > 1e-6 || highlight === 'V2G') {
       ctx.save()
       ctx.strokeStyle = withAlpha(quantityColor('V2G'), emF)
@@ -171,7 +173,7 @@ export function PseudoCoreBandPlot({
     // Bande di valenza (b >= 1)
     ctx.save()
     ctx.strokeStyle = withAlpha(quantityColor('E'), emE)
-    ctx.lineWidth = 2.1
+    ctx.lineWidth = 2.0
     for (let b = 1; b < model.bands.energies.length; b++) {
       const band = model.bands.energies[b]
       ctx.beginPath()
@@ -185,10 +187,8 @@ export function PseudoCoreBandPlot({
     }
     ctx.restore()
 
-    // Stato scelto e tacca f = E - E_c
     const xSel = X(model.kValue)
     const ySel = Y(model.selectedEnergy)
-    const yCore = Y(model.eCore)
     const yVal = Y(model.eValence)
 
     // Linea verticale k scelto
@@ -201,17 +201,17 @@ export function PseudoCoreBandPlot({
     ctx.stroke()
     ctx.restore()
 
-    // Tacca f = E_v - E_c su E_v (mostra la risonanza di degenerazione f = E - E_c)
+    // Tacca f = E - E_c su E_v
     ctx.save()
     ctx.strokeStyle = withAlpha(quantityColor('V2G'), 0.85 * emF)
     ctx.lineWidth = 2
     ctx.beginPath()
-    ctx.moveTo(xSel - 9, yVal)
-    ctx.lineTo(xSel + 9, yVal)
+    ctx.moveTo(xSel - 8, yVal)
+    ctx.lineTo(xSel + 8, yVal)
     ctx.stroke()
     ctx.restore()
 
-    // Sonda di massa efficace (parabola osculatrice)
+    // Sonda di massa efficace
     if (showMass && model.massProbe && Number.isFinite(model.massProbe.curvature)) {
       const { curvature, effectiveMassRatio } = model.massProbe
       const dkSpan = 0.25 * kMax
@@ -231,10 +231,10 @@ export function PseudoCoreBandPlot({
       }
       ctx.stroke()
       const label = `m*/m₀ ${formatEffectiveMassRatio(effectiveMassRatio, { digits: 2, withEquals: true })}`
-      ctx.font = sansFont(11, 600)
+      ctx.font = sansFont(10.5, 600)
       ctx.fillStyle = quantityColor('mstar')
       ctx.textAlign = xSel > L + W * 0.6 ? 'right' : 'left'
-      ctx.fillText(label, xSel + (xSel > L + W * 0.6 ? -10 : 10), Math.max(T + 14, ySel - 12))
+      ctx.fillText(label, xSel + (xSel > L + W * 0.6 ? -9 : 9), Math.max(T + 12, ySel - 11))
       ctx.restore()
     }
 
@@ -244,16 +244,15 @@ export function PseudoCoreBandPlot({
     ctx.strokeStyle = TOKENS.bg
     ctx.lineWidth = 2
     ctx.beginPath()
-    ctx.arc(xSel, ySel, 5, 0, Math.PI * 2)
+    ctx.arc(xSel, ySel, 4.8, 0, Math.PI * 2)
     ctx.fill()
     ctx.stroke()
     if (Math.abs(model.params.f) > 1e-6) {
       ctx.fillStyle = quantityColor('V2G')
       ctx.beginPath()
-      ctx.arc(xSel, Y(model.shiftedCoreAtK), 4, 0, Math.PI * 2)
+      ctx.arc(xSel, Y(model.shiftedCoreAtK), 3.8, 0, Math.PI * 2)
       ctx.fill()
     }
-    void yCore
     ctx.restore()
 
     return moving
@@ -314,11 +313,11 @@ export function PseudoCoreBandPlot({
   }
 
   const legend: LegendEntry[] = [
-    { id: 'core', keyKind: 'solid', color: 'var(--q-VG)', label: s.scene.coreBandLegend },
+    { id: 'core', keyKind: 'solid', color: 'var(--tone-core-state)', label: <RichText text={s.scene.coreBandLegend} /> },
     ...(Math.abs(model.params.f) > 1e-6
-      ? [{ id: 'fcore', keyKind: 'dashed' as const, color: 'var(--q-V2G)', label: s.scene.shiftedCoreLegend }]
+      ? [{ id: 'fcore', keyKind: 'dashed' as const, color: 'var(--q-V2G)', label: <RichText text={s.scene.shiftedCoreLegend} /> }]
       : []),
-    { id: 'val', keyKind: 'solid', color: 'var(--q-E)', label: s.scene.valenceBandLegend },
+    { id: 'val', keyKind: 'solid', color: 'var(--q-E)', label: <RichText text={s.scene.valenceBandLegend} /> },
     ...(showCompare
       ? [{ id: 'empty', keyKind: 'dashed' as const, color: 'var(--q-Ek)', label: s.scene.emptyLegend }]
       : [])

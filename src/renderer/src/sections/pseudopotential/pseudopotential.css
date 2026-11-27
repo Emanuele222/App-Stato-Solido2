@@ -1,17 +1,30 @@
 /* Layout e controlli della sezione «Pseudopotenziale» (modello 1D con stato di core). */
 
-.stage:has(.pseudo1d-scene) {
-  --pseudo1d-bands-min: 250px;
-  --pseudo1d-bottom-min: 220px;
+.stage:has(.pseudo1d-scene) .topbar {
+  padding: 7px 14px;
+  gap: 5px 10px;
+}
+
+.stage:has(.pseudo1d-scene) .tools {
+  gap: 5px;
+}
+
+.stage:has(.pseudo1d-scene) .tool-toggle {
+  padding: 3px 10px;
+  font-size: 11.5px;
+}
+
+.stage:has(.pseudo1d-scene) .params {
+  padding: 6px 12px;
 }
 
 .scene:has(.pseudo1d-scene) {
-  grid-template-rows: minmax(var(--pseudo1d-bands-min), 52fr) minmax(var(--pseudo1d-bottom-min), 48fr);
+  grid-template-rows: minmax(360px, 62fr) minmax(195px, 38fr);
 }
 
 .pseudo1d-bottom-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
   min-height: 0;
   border-top: 1px solid var(--line);
 }
@@ -22,20 +35,18 @@
 }
 
 .pseudo1d-view .view-head {
-  padding-top: 6px;
-  row-gap: 0;
+  padding: 4px 14px 2px;
+  align-items: center;
+  gap: 3px 8px;
+}
+
+.pseudo1d-view .chart-legend {
+  padding: 2px 14px 0;
+  gap: 1px 8px;
 }
 
 .pseudo1d-view .view-hint {
-  flex: 1 1 100%;
   min-width: 0;
-}
-
-.pseudo1d-hint {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .pseudo1d-view-col {
@@ -68,13 +79,85 @@
   display: block;
 }
 
-/* Comandi su due righe: riga 1 (a, V0, s), riga 2 (f, alpha + pulsante «più liscia») */
+/* Selettori segmentati (lettura guidata e schede onde piane) */
+.pseudo1d-seg {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.pseudo1d-seg-btn {
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.2;
+  padding: 3px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.pseudo1d-seg-btn:last-child {
+  border-right: 0;
+}
+
+.pseudo1d-seg-btn:hover {
+  color: var(--text);
+}
+
+.pseudo1d-seg-btn[aria-pressed='true'] {
+  color: var(--text);
+  background: var(--raised);
+  font-weight: 600;
+}
+
+.pseudo1d-recip-head-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pseudo1d-guided-banner {
+  padding: 4px 16px 2px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--text-soft);
+  background: var(--raised);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Comandi: esattamente 2 righe fino a 1100×800 */
 .pseudo1d-params-grid {
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  column-gap: 14px;
-  row-gap: 8px;
-  align-items: center;
+  column-gap: 10px;
+  row-gap: 4px;
+  align-items: start;
+}
+
+.pseudo1d-params-grid .param {
+  padding: 2px 6px;
+  gap: 6px;
+  max-width: none;
+}
+
+.pseudo1d-params-grid .param-symbol {
+  min-width: 24px;
+  font-size: 14px;
+}
+
+.pseudo1d-params-grid .param-track {
+  min-width: 44px;
+}
+
+.pseudo1d-params-grid .param-value {
+  font-size: 12.5px;
 }
 
 .pseudo1d-params-cell {
@@ -84,6 +167,12 @@
   gap: 8px;
 }
 
+.pseudo1d-params-cell.is-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+}
+
 .pseudo1d-params-cell > :first-child {
   flex: 1 1 auto;
   min-width: 0;
@@ -91,31 +180,57 @@
 
 .pseudo1d-params-cell.is-span-2 {
   grid-column: span 2;
+  align-items: flex-start;
 }
 
-.pseudo1d-smooth-btn {
-  flex: none;
-  padding: 4px 9px;
-  border-radius: 6px;
-  border: 1px solid var(--line-strong);
-  background: var(--raised);
-  color: var(--q-psi);
-  font: inherit;
-  font-size: 11.5px;
-  font-weight: 500;
+.pseudo1d-f-wrap {
+  position: relative;
+}
+
+.pseudo1d-f-jump {
+  align-self: flex-start;
+  margin-left: 34px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--q-V2G);
+  font-size: 10.5px;
+  line-height: 1.3;
   cursor: pointer;
   white-space: nowrap;
 }
 
-.pseudo1d-smooth-btn:hover {
-  border-color: var(--q-psi);
-  background: color-mix(in srgb, var(--q-psi) 14%, var(--raised));
+.pseudo1d-f-jump:hover {
+  border-color: var(--q-V2G);
+  background: color-mix(in srgb, var(--q-V2G) 12%, var(--raised));
 }
 
-.pseudo1d-f-badge {
-  flex: none;
-  font-size: 10.5px;
-  color: var(--q-V2G);
+.pseudo1d-alpha-col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pseudo1d-alpha-col > .param {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.pseudo1d-alpha-zero-row {
+  display: flex;
+  justify-content: center;
+  padding-left: 30px;
+  padding-right: 48px;
+  margin-top: -2px;
+}
+
+.pseudo1d-alpha-zero-label {
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--muted);
   white-space: nowrap;
 }
 
@@ -159,6 +274,10 @@
   margin-top: 2px;
 }
 
+.pseudo1d-core-tone {
+  color: var(--tone-core-state);
+}
+
 .pseudo1d-callout {
   margin: 10px 0 0;
   padding: 8px 10px;
@@ -184,28 +303,36 @@
   margin-bottom: 6px;
 }
 
-@media (max-width: 1120px) {
-  .pseudo1d-params-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 860px), (max-height: 740px) {
+  .stage:has(.pseudo1d-scene) {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
   }
-  .pseudo1d-params-cell.is-span-2 {
-    grid-column: span 1;
+  .stage:has(.pseudo1d-scene) > * {
+    flex: 0 0 auto;
   }
-}
-
-@media (max-width: 860px) {
   .scene:has(.pseudo1d-scene) {
-    grid-template-rows: auto auto;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
   }
-  .pseudo1d-view {
-    min-height: 220px;
+  .pseudo1d-real-view {
+    height: 380px;
+    min-height: 380px;
+    flex: 0 0 auto;
   }
   .pseudo1d-bottom-row {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
     border-top: 0;
   }
   .pseudo1d-bottom-row > .view {
-    min-height: 200px;
+    height: 240px;
+    min-height: 240px;
+    flex: 0 0 auto;
     border-top: 1px solid var(--line);
   }
   .pseudo1d-bottom-row > .view + .view {
@@ -213,5 +340,9 @@
   }
   .pseudo1d-params-grid {
     grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+  .pseudo1d-params-cell.is-span-2 {
+    grid-column: span 1;
   }
 }

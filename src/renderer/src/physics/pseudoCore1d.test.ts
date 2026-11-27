@@ -6,6 +6,13 @@ import {
   buildPseudoHamiltonianWithF,
   cancellationMatrixElements,
   computeCoreRadius,
+  dominantPlaneWaveWeight,
+  evalBlochWavefunction1D,
+  findSignChangesInCore,
+  gaussianCrystalPotentialZeroMean,
+  meanKineticEnergy1D,
+  orthogonalityIntegrand1D,
+  planeWaveConvergence1D,
   planeWaveTailWeight,
   pseudoCore1DBands,
   pseudoWavefunctionAndTrue,
@@ -174,14 +181,156 @@ describe('pseudoCore1d — modello 1D con stato di core (verifica_pseudo.py r. 5
       }
     }
     console.info('[pseudoCore1d corner widths]\n' + report.join('\n'))
+  })
 
-    // Benchmark di calcolo completo (bande 41 punti + stato a k)
-    const t0 = performance.now()
-    const path = zonePath1D(params.a, 41)
-    pseudoCore1DBands(params, path, 4, 40)
-    solvePseudoCore1DAtK(kpt, params, 40)
-    const dt = performance.now() - t0
-    console.info(`[pseudoCore1d timing] 41 k-points + state = ${dt.toFixed(1)} ms`)
-    expect(dt).toBeLessThan(200)
+  it('tempo di calcolo: bande su 41 punti + stato a k ben sotto il mezzo secondo', () => {
+    // Obiettivo d'interattività: ~200 ms da solo. Con la suite intera in parallelo una
+    // misura singola arriva a ~300 ms, quindi: un giro a vuoto, il migliore di tre e un
+    // margine (500 ms) che coglie solo i rallentamenti veri, di un ordine di grandezza.
+    const run = (): number => {
+      const t0 = performance.now()
+      pseudoCore1DBands(params, zonePath1D(params.a, 41), 4, 40)
+      solvePseudoCore1DAtK(kpt, params, 40)
+      return performance.now() - t0
+    }
+    run()
+    const dt = Math.min(run(), run(), run())
+    console.info(`[pseudoCore1d timing] 41 k-points + state = ${dt.toFixed(1)} ms (migliore di 3)`)
+    expect(dt).toBeLessThan(500)
+  })
+
+  it('Γ banda 1: numeri di riferimento completi, cambi di segno, ortogonalità, cinetiche e α sempre finito', () => {
+    const st0 = solvePseudoCore1DAtK(0, params, 40)
+    const cCore = st0.vectors[0]
+    const cVal1 = st0.vectors[1]
+    expect(st0.energies[0]).toBeCloseTo(-19.079, 2)
+    expect(st0.energies[1]).toBeCloseTo(13.089, 2)
+    expect(st0.energies[1] - st0.energies[0]).toBeCloseTo(32.17, 1)
+
+    const rc = computeCoreRadius(cCore, st0.G, 0, params.a)
+    expect(rc).toBeCloseTo(0.641, 2)
+
+    const ptCheck = evalBlochWavefunction1D(cCore, st0.G, 0, params.a, new Float64Array([0, params.a / 2]))
+    const valCheck = evalBlochWavefunction1D(cVal1, st0.G, 0, params.a, new Float64Array([0, params.a / 2]))
+    expect(ptCheck.re[0]).toBeCloseTo(1.202, 2)
+    expect(valCheck.re[0]).toBeCloseTo(-0.232, 2)
+    expect(valCheck.re[1]).toBeCloseTo(0.783, 2)
+
+    const alpha1 = smoothestAlpha(cVal1, cCore, 0, st0.G)
+    expect(alpha1).toBeCloseTo(0.586, 3)
+
+    const { cPseudoRaw, cPseudoNorm } = pseudoWavefunctionAndTrue(cVal1, cCore, alpha1)
+    const nGrid = 401
+    const xGrid = new Float64Array(nGrid)
+    for (let i = 0; i < nGrid; i++) xGrid[i] = -params.a / 2 + (params.a * i) / (nGrid - 1)
+
+    const wCore = evalBlochWavefunction1D(cCore, st0.G, 0, params.a, xGrid)
+    const wTrue = evalBlochWavefunction1D(cVal1, st0.G, 0, params.a, xGrid)
+    const wPsRaw = evalBlochWavefunction1D(cPseudoRaw, st0.G, 0, params.a, xGrid)
+
+    const crossings = findSignChangesInCore(wTrue.re, xGrid, rc)
+    expect(crossings).toHaveLength(2)
+    expect(crossings[0]).toBeCloseTo(-0.413, 2)
+    expect(crossings[1]).toBeCloseTo(0.413, 2)
+
+    const ionIdx = (nGrid - 1) / 2
+    expect(wPsRaw.re[ionIdx]).toBeCloseTo(0.472, 2)
+    let minInCore = Infinity
+    let maxDiffOut = 0
+    for (let i = 0; i < nGrid; i++) {
+      if (Math.abs(xGrid[i]) < rc) minInCore = Math.min(minInCore, wPsRaw.re[i])
+      if (Math.abs(xGrid[i]) > 2 * rc) maxDiffOut = Math.max(maxDiffOut, Math.abs(wPsRaw.re[i] - wTrue.re[i]))
+    }
+    expect(minInCore).toBeCloseTo(0.383, 2)
+    expect(maxDiffOut).toBeLessThanOrEqual(0.04)
+
+    expect(meanKineticEnergy1D(cCore, st0.G, 0)).toBeCloseTo(10.57, 2)
+    expect(meanKineticEnergy1D(cVal1, st0.G, 0)).toBeCloseTo(4.83, 2)
+    expect(meanKineticEnergy1D(cPseudoNorm, st0.G, 0)).toBeCloseTo(0.9, 2)
+
+    expect(dominantPlaneWaveWeight(cVal1)).toBeCloseTo(0.541, 2)
+    expect(dominantPlaneWaveWeight(cPseudoNorm)).toBeCloseTo(0.935, 2)
+
+    const ortho = orthogonalityIntegrand1D(wCore.re, wCore.im, wTrue.re, wTrue.im, xGrid)
+    expect(ortho.posArea).toBeCloseTo(0.1275, 3)
+    expect(ortho.negArea).toBeCloseTo(-0.1275, 3)
+    expect(Math.abs(ortho.netIntegral)).toBeLessThan(1e-4)
+
+    expect(st0.energies[1] - gaussianCrystalPotentialZeroMean(0, params)).toBeCloseTo(63.7, 1)
+    expect(st0.energies[1] - gaussianCrystalPotentialZeroMean(params.a / 2, params)).toBeCloseTo(3.69, 2)
+    expect(st0.energies[0] - gaussianCrystalPotentialZeroMean(0, params)).toBeCloseTo(31.5, 1)
+  })
+
+  it('α «più liscia» = 0 su stati dispari e |α| < 2 su bande 1–3 agli 8 estremi dei cursori; nessun salto su banda 1', () => {
+    const stGamma = solvePseudoCore1DAtK(0, params, 40)
+    expect(Math.abs(smoothestAlpha(stGamma.vectors[2], stGamma.vectors[0], 0, stGamma.G))).toBeLessThan(1e-8)
+
+    const stPi = solvePseudoCore1DAtK(Math.PI / params.a, params, 40)
+    expect(Math.abs(smoothestAlpha(stPi.vectors[1], stPi.vectors[0], Math.PI / params.a, stPi.G))).toBeLessThan(1e-8)
+
+    // Nessun salto di segno lungo la banda 1 in (-π/a, π/a)
+    let prevIonSign = 0
+    for (let ki = 1; ki < 80; ki++) {
+      const k = (-1 + (2 * ki) / 80) * (Math.PI / params.a)
+      const st = solvePseudoCore1DAtK(k, params, 40)
+      const w = evalBlochWavefunction1D(st.vectors[1], st.G, k, params.a, new Float64Array([0, params.a / 2]))
+      expect(w.re[1]).toBeGreaterThan(0)
+      const ionSign = Math.sign(w.re[0])
+      if (prevIonSign !== 0) expect(ionSign).toBe(prevIonSign)
+      prevIonSign = ionSign
+    }
+
+    for (const a of [3.5, 4.8]) {
+      for (const v0 of [50, 75]) {
+        for (const s of [0.2, 0.28]) {
+          for (let ki = 0; ki <= 20; ki++) {
+            const k = (-1 + (2 * ki) / 20) * (Math.PI / a)
+            const st = solvePseudoCore1DAtK(k, { a, v0, s }, 40)
+            for (let b = 1; b <= 3; b++) {
+              expect(Math.abs(smoothestAlpha(st.vectors[b], st.vectors[0], k, st.G))).toBeLessThan(2)
+            }
+          }
+        }
+      }
+    }
+  })
+
+  it('convergenza con N onde piane in Γ banda 1: potenziale vero (11 onde) vs H + (E − E_c)|ψ_c⟩⟨ψ_c| (3 onde)', () => {
+    const st0 = solvePseudoCore1DAtK(0, params, 40)
+    const conv = planeWaveConvergence1D(st0, 1, [1, 3, 5, 7, 9, 11])
+    const expectedTrue: Record<number, number> = {
+      3: 0.529,
+      5: 0.174,
+      7: 0.061,
+      9: 0.019,
+      11: 0.005
+    }
+    const expectedPseudo: Record<number, number> = {
+      1: 0.829,
+      3: 0.003,
+      5: 0.0002
+    }
+    let prevTrue = Infinity
+    let prevPseudo = Infinity
+    for (const pt of conv.points) {
+      if (pt.errorTrue !== null) {
+        expect(pt.errorTrue).toBeGreaterThanOrEqual(-1e-9)
+        expect(pt.errorTrue).toBeLessThanOrEqual(prevTrue + 1e-9)
+        prevTrue = pt.errorTrue
+        if (expectedTrue[pt.nWaves] !== undefined) {
+          expect(Math.abs(pt.errorTrue - expectedTrue[pt.nWaves])).toBeLessThan(0.002)
+        }
+      }
+      if (pt.errorPseudo !== null) {
+        expect(pt.errorPseudo).toBeGreaterThanOrEqual(-1e-9)
+        expect(pt.errorPseudo).toBeLessThanOrEqual(prevPseudo + 1e-9)
+        prevPseudo = pt.errorPseudo
+        if (expectedPseudo[pt.nWaves] !== undefined) {
+          expect(Math.abs(pt.errorPseudo - expectedPseudo[pt.nWaves])).toBeLessThan(0.002)
+        }
+      }
+    }
+    expect(conv.nNeededTrue).toBe(11)
+    expect(conv.nNeededPseudo).toBe(3)
   })
 })
